@@ -20,7 +20,7 @@ namespace dmf {
   class SparseMatrix {
     std::unordered_map<Index, T> _matrix;
     Index _rows, _cols;
-	T _defaultReturn;
+    T _defaultReturn;
 
   public:
     SparseMatrix();
@@ -251,20 +251,21 @@ namespace dmf {
   };
 
   template <typename Index, typename T>
-  SparseMatrix<Index, T>::SparseMatrix() : _matrix{std::unordered_map<Index, T>()}, _rows{}, _cols{}, _defaultReturn{0} {}
+  SparseMatrix<Index, T>::SparseMatrix()
+      : _matrix{std::unordered_map<Index, T>()}, _rows{}, _cols{}, _defaultReturn{0} {}
 
   template <typename Index, typename T>
   SparseMatrix<Index, T>::SparseMatrix(Index rows, Index cols) : _matrix{std::unordered_map<Index, T>()} {
     rows < 0 || cols < 0 ? throw std::invalid_argument("SparseMatrix: rows and cols must be > 0")
                          : _rows = rows,
                            _cols = cols;
-	_defaultReturn = 0;
+    _defaultReturn = 0;
   }
 
   template <typename Index, typename T>
   SparseMatrix<Index, T>::SparseMatrix(Index index) : _matrix{std::unordered_map<Index, T>()} {
     index < 0 ? throw std::invalid_argument("SparseMatrix: index must be > 0") : _rows = index, _cols = 1;
-	_defaultReturn = 0;
+    _defaultReturn = 0;
   }
 
   template <typename Index, typename T>
