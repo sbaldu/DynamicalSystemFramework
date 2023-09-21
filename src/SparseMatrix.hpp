@@ -6,9 +6,8 @@
 #ifndef SparseMatrix_hpp
 #define SparseMatrix_hpp
 
-#include <fstream>
 #include <iostream>
-#include <random>
+#include <limits>
 #include <stdexcept>
 #include <string>
 #include <typeinfo>
@@ -21,9 +20,10 @@ namespace dmf {
   class SparseMatrix {
     std::unordered_map<Index, T> _matrix;
     Index _rows, _cols;
+	T _defaultReturn;
 
   public:
-    SparseMatrix() = default;
+    SparseMatrix();
 
     /// @brief SparseMatrix constructor
     /// @param rows number of rows
@@ -164,27 +164,72 @@ namespace dmf {
     /// @param j column index
     /// @return the element
     /// @throw std::out_of_range if the index is out of range
-    T const &operator()(Index i, Index j);
+    const T& operator()(Index i, Index j) const;
+
+    /// @brief access an element of the matrix
+    /// @param i row index
+    /// @param j column index
+    /// @return the element
+    /// @throw std::out_of_range if the index is out of range
+    T& operator()(Index i, Index j);
 
     /// @brief access an element of the matrix
     /// @param index index in vectorial form
     /// @return the element
     /// @throw std::out_of_range if the index is out of range
-    T const &operator()(Index index);
+    const T& operator()(Index index) const;
+
+    /// @brief access an element of the matrix
+    /// @param index index in vectorial form
+    /// @return the element
+    /// @throw std::out_of_range if the index is out of range
+    T& operator()(Index index);
 
     /// @brief sum of two matrices
     /// @param other the other matrix
     /// @return the sum of the two matrices
     /// @throw std::runtime_error if the dimensions do not match
     template <typename I, typename U>
-    friend SparseMatrix operator+(const SparseMatrix<I, U> &other);
+    SparseMatrix<Index, T> operator+(const SparseMatrix<I, U>& other) {
+      if (this->_rows != other._rows || this->_cols != other._cols) {
+        throw std::runtime_error("SparseMatrix: dimensions do not match");
+      }
+      auto result = SparseMatrix<Index, T>(this->_rows, this->_cols);
+      std::unordered_map<Index, bool> unique;
+      for (auto& it : this->_matrix) {
+        unique.insert_or_assign(it.first, true);
+      }
+      for (auto& it : other._matrix) {
+        unique.insert_or_assign(it.first, true);
+      }
+      for (auto& it : unique) {
+        result.insert(it.first / this->_cols, it.first % this->_cols, (*this)(it.first) + other(it.first));
+      }
+      return result;
+    }
 
     /// @brief difference of two matrices
     /// @param other the other matrix
     /// @return the difference of the two matrices
     /// @throw std::runtime_error if the dimensions do not match
     template <typename I, typename U>
-    friend SparseMatrix operator-(const SparseMatrix<I, U> &other);
+    SparseMatrix<Index, T> operator-(const SparseMatrix<I, U>& other) {
+      if (this->_rows != other._rows || this->_cols != other._cols) {
+        throw std::runtime_error("SparseMatrix: dimensions do not match");
+      }
+      auto result = SparseMatrix(this->_rows, this->_cols);
+      std::unordered_map<Index, bool> unique;
+      for (auto& it : this->_matrix) {
+        unique.insert_or_assign(it.first, true);
+      }
+      for (auto& it : other._matrix) {
+        unique.insert_or_assign(it.first, true);
+      }
+      for (auto& it : unique) {
+        result.insert(it.first / this->_cols, it.first % this->_cols, (*this)(it.first) - other(it.first));
+      }
+      return result;
+    }
 
     /// @brief transpose the matrix
     /// @return the transposed matrix
@@ -195,27 +240,32 @@ namespace dmf {
     /// @return the sum of the two matrices
     /// @throw std::runtime_error if the dimensions do not match
     template <typename I, typename U>
-    SparseMatrix& operator+=(const SparseMatrix<I, U> &other);
+    SparseMatrix& operator+=(const SparseMatrix<I, U>& other);
 
     /// @brief difference of two matrices
     /// @param other the other matrix
     /// @return the difference of the two matrices
     /// @throw std::runtime_error if the dimensions do not match
     template <typename I, typename U>
-    SparseMatrix& operator-=(const SparseMatrix<I, U> &other);
+    SparseMatrix& operator-=(const SparseMatrix<I, U>& other);
   };
 
   template <typename Index, typename T>
-  SparseMatrix<Index, T>::SparseMatrix(Index rows, Index cols) {
+  SparseMatrix<Index, T>::SparseMatrix() : _matrix{std::unordered_map<Index, T>()}, _rows{}, _cols{}, _defaultReturn{0} {}
+
+  template <typename Index, typename T>
+  SparseMatrix<Index, T>::SparseMatrix(Index rows, Index cols) : _matrix{std::unordered_map<Index, T>()} {
     rows < 0 || cols < 0 ? throw std::invalid_argument("SparseMatrix: rows and cols must be > 0")
                          : _rows = rows,
                            _cols = cols;
-  };
+	_defaultReturn = 0;
+  }
 
   template <typename Index, typename T>
-  SparseMatrix<Index, T>::SparseMatrix(Index index) {
+  SparseMatrix<Index, T>::SparseMatrix(Index index) : _matrix{std::unordered_map<Index, T>()} {
     index < 0 ? throw std::invalid_argument("SparseMatrix: index must be > 0") : _rows = index, _cols = 1;
-  };
+	_defaultReturn = 0;
+  }
 
   template <typename Index, typename T>
   void SparseMatrix<Index, T>::insert(Index i, Index j, T value) {
@@ -223,7 +273,7 @@ namespace dmf {
       throw std::out_of_range("Index out of range");
     }
     _matrix.emplace(std::make_pair(i * _cols + j, value));
-  };
+  }
 
   template <typename Index, typename T>
   void SparseMatrix<Index, T>::insert(Index i, T value) {
@@ -231,40 +281,24 @@ namespace dmf {
       throw std::out_of_range("Index out of range");
     }
     _matrix.emplace(std::make_pair(i, value));
-  };
+  }
 
-  /// @brief insert a value in the matrix. If the element already exist, it
-  /// overwrites it
-  /// @param i row index
-  /// @param j column index
-  /// @param value value to insert
-  /// @throw std::out_of_range if the index is out of range
   template <typename Index, typename T>
   void SparseMatrix<Index, T>::insert_or_assign(Index i, Index j, T value) {
     if (i >= _rows || j >= _cols || i < 0 || j < 0) {
       throw std::out_of_range("Index out of range");
     }
     _matrix.insert_or_assign(i * _cols + j, value);
-  };
+  }
 
-  /// @brief insert a value in the matrix. If the element already exist, it
-  /// overwrites it
-  /// @param index index in vectorial form
-  /// @param value value to insert
-  /// @throw std::out_of_range if the index is out of range
   template <typename Index, typename T>
   void SparseMatrix<Index, T>::insert_or_assign(Index index, T value) {
     if (index < 0 || index > _rows * _cols - 1) {
       throw std::out_of_range("Index out of range");
     }
     _matrix.insert_or_assign(index, value);
-  };
+  }
 
-  /// @brief remove a value from the matrix
-  /// @param i row index
-  /// @param j column index
-  /// @throw std::out_of_range if the index is out of range
-  /// @throw std::runtime_error if the element is not found
   template <typename Index, typename T>
   void SparseMatrix<Index, T>::erase(Index i, Index j) {
     if (i >= _rows || j >= _cols || i < 0 || j < 0) {
@@ -273,7 +307,7 @@ namespace dmf {
     _matrix.find(i * _cols + j) != _matrix.end()
         ? _matrix.erase(i * _cols + j)
         : throw std::runtime_error("SparseMatrix: element not found");
-  };
+  }
 
   template <typename Index, typename T>
   void SparseMatrix<Index, T>::eraseRow(Index index) {
@@ -284,7 +318,7 @@ namespace dmf {
       _matrix.erase(index * _cols + i);
     }
     std::unordered_map<Index, T> new_matrix = {};
-    for (auto const &[key, value] : _matrix) {
+    for (auto const& [key, value] : _matrix) {
       if (key / _cols < index) {
         new_matrix.emplace(std::make_pair(key, value));
       } else {
@@ -293,7 +327,7 @@ namespace dmf {
     }
     --_rows;
     _matrix = new_matrix;
-  };
+  }
 
   template <typename Index, typename T>
   void SparseMatrix<Index, T>::eraseColumn(Index index) {
@@ -304,7 +338,7 @@ namespace dmf {
       _matrix.erase(i * _cols + index);
     }
     std::unordered_map<Index, T> new_matrix = {};
-    for (auto const &[key, value] : _matrix) {
+    for (auto const& [key, value] : _matrix) {
       if (key % _cols < index) {
         new_matrix.emplace(std::make_pair(key - key / _cols, value));
       } else {
@@ -313,14 +347,14 @@ namespace dmf {
     }
     --_cols;
     _matrix = new_matrix;
-  };
+  }
 
   template <typename Index, typename T>
   void SparseMatrix<Index, T>::clear() {
     _matrix.clear();
     _rows = 0;
     _cols = 0;
-  };
+  }
 
   template <typename Index, typename T>
   bool SparseMatrix<Index, T>::contains(Index i, Index j) const {
@@ -328,7 +362,7 @@ namespace dmf {
       throw std::out_of_range("Index out of range");
     }
     return _matrix.contains(i * _cols + j);
-  };
+  }
 
   template <typename Index, typename T>
   bool SparseMatrix<Index, T>::contains(Index const index) const {
@@ -336,7 +370,7 @@ namespace dmf {
       throw std::out_of_range("Index out of range");
     }
     return _matrix.contains(index);
-  };
+  }
 
   template <typename Index, typename T>
   SparseMatrix<Index, int> SparseMatrix<Index, T>::getDegreeVector() {
@@ -344,11 +378,11 @@ namespace dmf {
       throw std::runtime_error("SparseMatrix: getDegreeVector only works on square matrices");
     }
     auto degreeVector = SparseMatrix<Index, int>(_rows, 1);
-    for (auto &i : _matrix) {
+    for (auto& i : _matrix) {
       degreeVector.insert_or_assign(i.first / _cols, 0, degreeVector(i.first / _cols, 0) + 1);
     }
     return degreeVector;
-  };
+  }
 
   template <typename Index, typename T>
   SparseMatrix<Index, double> SparseMatrix<Index, T>::getStrengthVector() {
@@ -356,11 +390,11 @@ namespace dmf {
       throw std::runtime_error("SparseMatrix: getStrengthVector only works on square matrices");
     }
     auto strengthVector = SparseMatrix<Index, double>(_rows, 1);
-    for (auto &i : _matrix) {
+    for (auto& i : _matrix) {
       strengthVector.insert_or_assign(i.first / _cols, 0, strengthVector(i.first / _cols, 0) + i.second);
     }
     return strengthVector;
-  };
+  }
 
   template <typename Index, typename T>
   SparseMatrix<Index, int> SparseMatrix<Index, T>::getLaplacian() {
@@ -368,7 +402,7 @@ namespace dmf {
       throw std::runtime_error("SparseMatrix: getLaplacian only works on square matrices");
     }
     auto laplacian = SparseMatrix<Index, int>(_rows, _cols);
-    for (auto &i : _matrix) {
+    for (auto& i : _matrix) {
       laplacian.insert_or_assign(i.first / _cols, i.first % _cols, -1);
     }
     auto degreeVector = this->getDegreeVector();
@@ -376,7 +410,7 @@ namespace dmf {
       laplacian.insert_or_assign(i, i, degreeVector(i, 0));
     }
     return laplacian;
-  };
+  }
 
   template <typename Index, typename T>
   SparseMatrix<Index, T> SparseMatrix<Index, T>::getRow(Index index) const {
@@ -384,7 +418,7 @@ namespace dmf {
       throw std::out_of_range("Index out of range");
     }
     SparseMatrix row(1, _cols);
-    for (auto &it : _matrix) {
+    for (auto& it : _matrix) {
       if (it.first / _cols == index) {
         row.insert(it.first % _cols, it.second);
       }
@@ -392,17 +426,13 @@ namespace dmf {
     return row;
   }
 
-  /// @brief get a column as a column vector
-  /// @param index column index
-  /// @return a column vector
-  /// @throw std::out_of_range if the index is out of range
   template <typename Index, typename T>
   SparseMatrix<Index, T> SparseMatrix<Index, T>::getCol(Index index) const {
     if (index >= _cols || index < 0) {
       throw std::out_of_range("Index out of range");
     }
     SparseMatrix col(_rows, 1);
-    for (auto &it : _matrix) {
+    for (auto& it : _matrix) {
       if (it.first % _cols == index) {
         col.insert(it.first / _cols, it.second);
       }
@@ -410,204 +440,140 @@ namespace dmf {
     return col;
   }
 
-  /// @brief get a matrix of double with every row normalized to 1
-  /// @return a matrix of double
   template <typename Index, typename T>
   SparseMatrix<Index, double> SparseMatrix<Index, T>::getNormRows() const {
     SparseMatrix<Index, double> normRows(_rows, _cols);
     for (Index index = 0; index < _rows; ++index) {
       auto row = this->getRow(index);
       double sum = 0.;
-      for (auto &it : row) {
+      for (auto& it : row) {
         sum += std::abs(it.second);
       }
       sum < std::numeric_limits<double>::epsilon() ? sum = 1. : sum = sum;
-      for (auto &it : row) {
+      for (auto& it : row) {
         normRows.insert(it.first + index * _cols, it.second / sum);
       }
     }
     return normRows;
   }
 
-  /// @brief get a matrix of double with every column normalized to 1
-  /// @return a matrix of double
   template <typename Index, typename T>
   SparseMatrix<Index, double> SparseMatrix<Index, T>::getNormCols() const {
     SparseMatrix<Index, double> normCols(_rows, _cols);
     for (Index index = 0; index < _cols; ++index) {
       auto col = this->getCol(index);
       double sum = 0.;
-      for (auto &it : col) {
+      for (auto& it : col) {
         sum += std::abs(it.second);
       }
       sum < std::numeric_limits<double>::epsilon() ? sum = 1. : sum = sum;
-      for (auto &it : col) {
+      for (auto& it : col) {
         normCols.insert(it.first * _cols + index, it.second / sum);
       }
     }
     return normCols;
   }
 
-  /// @brief get the number of rows
-  /// @return number of rows
   template <typename Index, typename T>
   Index SparseMatrix<Index, T>::getRowDim() const {
     return this->_rows;
   }
 
-  /// @brief get the number of columns
-  /// @return number of columns
   template <typename Index, typename T>
   Index SparseMatrix<Index, T>::getColDim() const {
     return this->_cols;
   }
 
-  /// @brief get the number of non zero elements in the matrix
-  /// @return number of non zero elements
   template <typename Index, typename T>
   Index SparseMatrix<Index, T>::size() const {
     return _matrix.size();
-  };
+  }
 
-  /// @brief get the maximum number of elements in the matrix
-  /// @return maximum number of elements
   template <typename Index, typename T>
   Index SparseMatrix<Index, T>::max_size() const {
     return this->_rows * this->_cols;
   }
 
-  /// @brief symmetrize the matrix
   template <typename Index, typename T>
   void SparseMatrix<Index, T>::symmetrize() {
     *this += this->operator++();
   }
 
-  /// @brief return the begin iterator of the matrix
-  /// @return the begin iterator
   template <typename Index, typename T>
   typename std::unordered_map<Index, T>::const_iterator SparseMatrix<Index, T>::begin() const {
     return _matrix.begin();
   }
 
-  /// @brief return the end iterator of the matrix
-  /// @return the end iterator
   template <typename Index, typename T>
   typename std::unordered_map<Index, T>::const_iterator SparseMatrix<Index, T>::end() const {
     return _matrix.end();
   }
 
-  /// @brief access an element of the matrix
-  /// @param i row index
-  /// @param j column index
-  /// @return the element
-  /// @throw std::out_of_range if the index is out of range
   template <typename Index, typename T>
-  const T& SparseMatrix<Index, T>::operator()(Index i, Index j) {
+  const T& SparseMatrix<Index, T>::operator()(Index i, Index j) const {
     if (i >= _rows || j >= _cols || i < 0 || j < 0) {
       throw std::out_of_range("Index out of range");
     }
-    auto const &it = _matrix.find(i * _cols + j);
-    return it->second;
+    auto const& it = _matrix.find(i * _cols + j);
+    return it != _matrix.end() ? it->second : _defaultReturn;
   }
 
-  /// @brief access an element of the matrix
-  /// @param index index in vectorial form
-  /// @return the element
-  /// @throw std::out_of_range if the index is out of range
   template <typename Index, typename T>
-  const T& SparseMatrix<Index, T>::operator()(Index index) {
+  T& SparseMatrix<Index, T>::operator()(Index i, Index j) {
+    if (i >= _rows || j >= _cols || i < 0 || j < 0) {
+      throw std::out_of_range("Index out of range");
+    }
+    auto const& it = _matrix.find(i * _cols + j);
+    return it != _matrix.end() ? it->second : _defaultReturn;
+  }
+
+  template <typename Index, typename T>
+  const T& SparseMatrix<Index, T>::operator()(Index index) const {
     if (index >= _rows * _cols || index < 0) {
       throw std::out_of_range("Index out of range");
     }
-    auto const &it = _matrix.find(index);
-    return it->second;
+    auto const& it = _matrix.find(index);
+    return it != _matrix.end() ? it->second : _defaultReturn;
   }
 
-  /// @brief sum of two matrices
-  /// @param other the other matrix
-  /// @return the sum of the two matrices
-  /// @throw std::runtime_error if the dimensions do not match
-  template <typename Index, typename T, typename I, typename U>
-  SparseMatrix<Index, T> operator+(const SparseMatrix<Index, T>& src, const SparseMatrix<I, U>& other) {
-    if (src._rows != other._rows || src._cols != other._cols) {
-      throw std::runtime_error("SparseMatrix: dimensions do not match");
+  template <typename Index, typename T>
+  T& SparseMatrix<Index, T>::operator()(Index index) {
+    if (index >= _rows * _cols || index < 0) {
+      throw std::out_of_range("Index out of range");
     }
-    auto result = SparseMatrix(src._rows, src._cols);
-    std::unordered_map<Index, bool> unique;
-    for (auto &it : src._matrix) {
-      unique.insert_or_assign(it.first, true);
-    }
-    for (auto &it : other._matrix) {
-      unique.insert_or_assign(it.first, true);
-    }
-    for (auto &it : unique) {
-      result.insert(it.first / src._cols, it.first % src._cols, src[it.first] + other[it.first]);
-    }
-    return result;
+    auto const& it = _matrix.find(index);
+    return it != _matrix.end() ? it->second : _defaultReturn;
   }
 
-  /// @brief difference of two matrices
-  /// @param other the other matrix
-  /// @return the difference of the two matrices
-  /// @throw std::runtime_error if the dimensions do not match
-  template <typename Index, typename T, typename I, typename U>
-  SparseMatrix<Index, T> operator-(const SparseMatrix<Index, T>& src, const SparseMatrix<I, U> &other) {
-    if (src._rows != other._rows || src._cols != other._cols) {
-      throw std::runtime_error("SparseMatrix: dimensions do not match");
-    }
-    auto result = SparseMatrix(src._rows, src._cols);
-    std::unordered_map<Index, bool> unique;
-    for (auto &it : src._matrix) {
-      unique.insert_or_assign(it.first, true);
-    }
-    for (auto &it : other._matrix) {
-      unique.insert_or_assign(it.first, true);
-    }
-    for (auto &it : unique) {
-      result.insert(it.first / src._cols, it.first % src._cols, src[it.first] - other[it.first]);
-    }
-    return result;
-  }
-
-  /// @brief transpose the matrix
-  /// @return the transposed matrix
   template <typename Index, typename T>
   SparseMatrix<Index, T> SparseMatrix<Index, T>::operator++() {
     auto transpost = SparseMatrix(this->_cols, this->_rows);
-    for (auto &it : _matrix) {
+    for (auto& it : _matrix) {
       transpost.insert(it.first % _cols, it.first / _cols, it.second);
     }
     return transpost;
   }
 
-  /// @brief sum of two matrices
-  /// @param other the other matrix
-  /// @return the sum of the two matrices
-  /// @throw std::runtime_error if the dimensions do not match
   template <typename Index, typename T>
   template <typename I, typename U>
-  SparseMatrix<Index, T>& SparseMatrix<Index, T>::operator+=(const SparseMatrix<I, U> &other) {
+  SparseMatrix<Index, T>& SparseMatrix<Index, T>::operator+=(const SparseMatrix<I, U>& other) {
     if (this->_rows != other._rows || this->_cols != other._cols) {
       throw std::runtime_error("SparseMatrix: dimensions do not match");
     }
-    for (auto &it : other._matrix) {
+    for (auto& it : other._matrix) {
       this->contains(it.first) ? this->insert_or_assign(it.first, this->operator()(it.first) + it.second)
                                : this->insert(it.first, it.second);
     }
     return *this;
   }
 
-  /// @brief difference of two matrices
-  /// @param other the other matrix
-  /// @return the difference of the two matrices
-  /// @throw std::runtime_error if the dimensions do not match
   template <typename Index, typename T>
   template <typename I, typename U>
-  SparseMatrix<Index, T>& SparseMatrix<Index, T>::operator-=(const SparseMatrix<I, U> &other) {
+  SparseMatrix<Index, T>& SparseMatrix<Index, T>::operator-=(const SparseMatrix<I, U>& other) {
     if (this->_rows != other._rows || this->_cols != other._cols) {
       throw std::runtime_error("SparseMatrix: dimensions do not match");
     }
-    for (auto &it : other._matrix) {
+    for (auto& it : other._matrix) {
       this->contains(it.first) ? this->insert_or_assign(it.first, this->operator()(it.first) - it.second)
                                : this->insert(it.first, -it.second);
     }
