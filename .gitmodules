@@ -1,0 +1,4 @@
+[submodule "extern/CXXGraph"]
+	path = extern/CXXGraph
+	url = https://github.com/sbaldu/CXXGraph.git
+	branch = feature_edge_data
