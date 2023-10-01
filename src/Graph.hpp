@@ -41,12 +41,13 @@ namespace dmf {
     Graph() = default;
 
     template <typename Size>
-    Graph(std::unordered_set<shared<Street<Id, Size>>> streetSet);
+    Graph(std::unordered_set<shared<Street<Id, Container, Priority, Size>>> streetSet);
   };
 
   template <typename Id, template <typename Id_> typename Container, typename Priority>
   template <typename Size>
-  Graph<Id, Container, Priority>::Graph(std::unordered_set<shared<Street<Id, Size>>> streetSet) {
+  Graph<Id, Container, Priority>::Graph(
+      std::unordered_set<shared<Street<Id, Container, Priority, Size>>> streetSet) {
     CXXGraph::T_EdgeSet<Intersection_t<Id, Container, Priority>> edgeSet;
 
     for (auto streetIt : streetSet) {
