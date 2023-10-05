@@ -3,16 +3,17 @@
 #define Street_hpp
 
 #include <queue>
-
-#include "CXXGraph.hpp"
+#include <utility>
 
 namespace dmf {
 
-  template <typename Id, template <typename Id_> typename Container, typename Priority, typename Size>
-  class Street : public CXXGraph::Edge<std::priority_queue<Id, Container<Id>, Priority>> {
+  template <typename Id, typename Size>
+  class Street {
   private:
+    Id m_id;
     Size m_size;
     Size m_capacity;
+    std::pair<Id, Id> m_nodePair;
     std::queue<Size> m_queue;
 
   public:
@@ -25,42 +26,40 @@ namespace dmf {
     void setQueue(std::queue<Size> queue);
 
     // Getters
+    Id id() const;
     Size size() const;
     Size capacity() const;
     const std::queue<Size>& queue() const;
-
-	virtual bool isOneWay();
-	virtual bool isTwoWay();
+    const std::pair<Id, Id>& nodePair() const;
   };
 
-  template <typename Id, template <typename Id_> typename Container, typename Priority, typename Size>
-  Street<Id, Container, Priority, Size>::Street(Id index, Size capacity) : m_capacity{capacity} {}
+  template <typename Id, typename Size>
+  Street<Id, Size>::Street(Id index, Size capacity) : m_capacity{capacity} {}
 
-  template <typename Id, template <typename Id_> typename Container, typename Priority, typename Size>
-  Street<Id, Container, Priority, Size>::Street(Id index, Size size, Size capacity)
-      : m_size{size}, m_capacity{capacity} {}
+  template <typename Id, typename Size>
+  Street<Id, Size>::Street(Id index, Size size, Size capacity) : m_size{size}, m_capacity{capacity} {}
 
   // Setters
-  template <typename Id, template <typename Id_> typename Container, typename Priority, typename Size>
-  void Street<Id, Container, Priority, Size>::setCapacity(Size capacity) {
+  template <typename Id, typename Size>
+  void Street<Id, Size>::setCapacity(Size capacity) {
     m_capacity = capacity;
   }
-  template <typename Id, template <typename Id_> typename Container, typename Priority, typename Size>
-  void Street<Id, Container, Priority, Size>::setQueue(std::queue<Size> queue) {
+  template <typename Id, typename Size>
+  void Street<Id, Size>::setQueue(std::queue<Size> queue) {
     m_queue = std::move(queue);
   }
 
   // Getters
-  template <typename Id, template <typename Id_> typename Container, typename Priority, typename Size>
-  Size Street<Id, Container, Priority, Size>::size() const {
+  template <typename Id, typename Size>
+  Size Street<Id, Size>::size() const {
     return m_size;
   }
-  template <typename Id, template <typename Id_> typename Container, typename Priority, typename Size>
-  Size Street<Id, Container, Priority, Size>::capacity() const {
+  template <typename Id, typename Size>
+  Size Street<Id, Size>::capacity() const {
     return m_capacity;
   }
-  template <typename Id, template <typename Id_> typename Container, typename Priority, typename Size>
-  const std::queue<Size>& Street<Id, Container, Priority, Size>::queue() const {
+  template <typename Id, typename Size>
+  const std::queue<Size>& Street<Id, Size>::queue() const {
     return m_queue;
   }
 };  // namespace dmf
