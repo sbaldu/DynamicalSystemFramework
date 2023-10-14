@@ -4,8 +4,8 @@
 #include <functional>
 #include <memory>
 
-#include "Node.hpp"
-#include "Street.hpp"
+#include "../Node.hpp"
+#include "../Street.hpp"
 
 namespace dmf {
 
@@ -35,12 +35,12 @@ namespace dmf {
 
   // Equality operators for Nodes
   template <typename Id>
-  bool operator==(shared<const Node<T>> p1, shared<const Node<T>> p2) {
+  bool operator==(shared<const Node<Id>> p1, shared<const Node<Id>> p2) {
     return p1->id() == p2->id();
   }
   template <typename Id>
-  bool operator==(shared<Node<T>> p1, shared<Node<T>> p2) {
-    return p1->getUserId() == p2->getUserId();
+  bool operator==(shared<Node<Id>> p1, shared<Node<Id>> p2) {
+    return p1->id() == p2->id();
   }
 
   // Equality operators for Streets
