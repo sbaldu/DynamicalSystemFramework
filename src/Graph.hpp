@@ -2,61 +2,123 @@
 #ifndef Graph_hpp
 #define Graph_hpp
 
+#include <memory>
+#include <unordered_set>
 #include <queue>
+#include <type_traits>
 
+#include "Node.hpp"
+#include "SparseMatrix.hpp"
 #include "Street.hpp"
-
-#include "CXXGraph.hpp"
+#include "utility/HashFunctions.hpp"
+#include "utility/TypeTraits.hpp"
 
 namespace dmf {
-
-  // We need to overload iostream operators for the priority queue
-  template <typename Id, template <typename Id_> typename Container, typename Priority>
-  std::ostream& operator<<(std::ostream& os,
-                           const std::priority_queue<Id, Container<Id>, Priority>& queue) {
-    for (size_t i{}; i < queue.size(); ++i) {
-      os << "Index: " << i << ", " << queue[i] << '\n';
-    }
-
-    return os;
-  }
 
   // Alias for shared pointers
   template <typename T>
   using shared = std::shared_ptr<T>;
+  using std::make_shared;
 
-  // Alias for CXXGraph objects
-  using CXXGraph::Edge;
-
-  // Alias for graph Node type
-  template <typename Id, template <typename Id_> typename Container, typename Priority>
-  using Intersection_t = std::priority_queue<Id, Container<Id>, Priority>;
-
-  template <typename Id, template <typename Id_> typename Container, typename Priority>
+  template <typename Id, typename Size>
   class Graph {
   private:
-    CXXGraph::Graph<Intersection_t<Id, Container, Priority>> m_graph;
+    shared<SparseMatrix<Id, bool>> m_adjacency;
+    std::unordered_set<shared<Node<Id>>, nodeHash<Id>> m_nodes;
+    std::unordered_set<shared<Street<Id, Size>>, streetHash<Id, Size>> m_streets;
 
   public:
     Graph() = default;
+    Graph(const std::unordered_set<shared<Street<Id, Size>>, nodeHash<Id>>& streetSet);
 
-    template <typename Size>
-    Graph(std::unordered_set<shared<Street<Id, Container, Priority, Size>>> streetSet);
+    void buildAdj();
+
+    void addNode(shared<Node<Id>> node);
+    void addNode(const Node<Id>& node);
+
+    template <typename... Tn>
+      requires(is_node_v<Tn> && ...)
+    void addNodes(Tn... nodes);
+
+    template <typename T1, typename... Tn>
+      requires is_node_v<T1> && (is_node_v<Tn> && ...)
+    void addNodes(T1 node, Tn... nodes);
+
+    void addStreet(shared<Street<Id, Size>> street);
+    void addStreet(const Street<Id, Size>& street);
+
+    template <typename... Tn>
+      requires(is_street_v<Tn> && ...)
+    void addStreets(Tn... streets);
+
+    template <typename T1, typename... Tn>
+      requires is_street_v<T1> && (is_street_v<Tn> && ...)
+    void addStreets(T1 street, Tn... streets);
   };
 
-  template <typename Id, template <typename Id_> typename Container, typename Priority>
-  template <typename Size>
-  Graph<Id, Container, Priority>::Graph(
-      std::unordered_set<shared<Street<Id, Container, Priority, Size>>> streetSet) {
-    CXXGraph::T_EdgeSet<Intersection_t<Id, Container, Priority>> edgeSet;
-
-    for (auto streetIt : streetSet) {
-      edgeSet.insert(
-          std::static_pointer_cast<const CXXGraph::Edge<Intersection_t<Id, Container, Priority>>>(
-              *streetIt));
+  template <typename Id, typename Size>
+  Graph<Id, Size>::Graph(const std::unordered_set<shared<Street<Id, Size>>, nodeHash<Id>>& streetSet)
+      : m_adjacency{make_shared<SparseMatrix<Id, Size>>()} {
+    for (auto street : streetSet) {
+      m_streets.insert(street);
+      m_nodes.insert(street->nodes().first);
+      m_nodes.insert(street->nodes().second);
     }
 
-    m_graph = CXXGraph::Graph(edgeSet);
+    buildAdj();
+  }
+
+  template <typename Id, typename Size>
+  void Graph<Id, Size>::buildAdj() {
+    for (auto street : m_streets) {
+      m_adjacency->insert(street->nodes().first, street->nodes().second, true);
+    }
+  }
+
+  template <typename Id, typename Size>
+  void Graph<Id, Size>::addNode(shared<Node<Id>> node) {
+    m_nodes.insert(node);
+  }
+
+  template <typename Id, typename Size>
+  void Graph<Id, Size>::addNode(const Node<Id>& node) {
+    m_nodes.insert(make_shared<Node<Id>>(node));
+  }
+
+  template <typename Id, typename Size>
+  template <typename... Tn>
+    requires(is_node_v<Tn> && ...)
+  void Graph<Id, Size>::addNodes(Tn... nodes) {}
+
+  template <typename Id, typename Size>
+  template <typename T1, typename... Tn>
+    requires is_node_v<T1> && (is_node_v<Tn> && ...)
+  void Graph<Id, Size>::addNodes(T1 node, Tn... nodes) {
+    addNode(node);
+    addNodes(nodes...);
+  }
+
+  template <typename Id, typename Size>
+  void Graph<Id, Size>::addStreet(shared<Street<Id, Size>> street) {
+    m_streets.insert(street);
+  }
+
+  template <typename Id, typename Size>
+  void Graph<Id, Size>::addStreet(const Street<Id, Size>& street) {
+    m_streets.insert(make_shared<Street<Id, Size>>(street));
+  }
+
+  template <typename Id, typename Size>
+  template <typename... Tn>
+    requires(is_street_v<Tn> && ...)
+  void Graph<Id, Size>::addStreets(Tn... edges) {}
+
+  template <typename Id, typename Size>
+  template <typename T1, typename... Tn>
+    requires is_street_v<T1> && (is_street_v<Tn> && ...)
+  void Graph<Id, Size>::addStreets(T1 street, Tn... streets) {
+    addStreet(street);
+    addStreets(streets...);
   }
 };  // namespace dmf
 
