@@ -1,11 +1,17 @@
 #ifndef TypeTraits_hpp
 #define TypeTraits_hpp
 
+#include <concepts>
+#include <memory>
 #include <type_traits>
 
+#include "../Node.hpp"
 #include "../Street.hpp"
 
 namespace dmf {
+  // Alias for shared pointers
+  template <typename T>
+  using shared = std::shared_ptr<T>;
 
   template <typename T>
   struct is_node : std::false_type {};
