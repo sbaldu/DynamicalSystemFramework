@@ -26,20 +26,20 @@ TEST_CASE("Node") {
     CHECK(node.coords().first == 2.5);
     CHECK(node.coords().second == 3.5);
   }
-    SUBCASE("Constructor") {
-        /*This tests the constructor that takes an Id, coordinates, and a queue.
+  SUBCASE("Constructor") {
+    /*This tests the constructor that takes an Id, coordinates, and a queue.
         GIVEN: An Id, coordinates, and a queue
         WHEN: A Node is constructed
         THEN: The Id, coordinates, and queue are set correctly
         */
-        std::queue<uint16_t> queue;
-        queue.push(2);
-        queue.push(3);
-        Node node{1, std::make_pair(2.5, 3.5), queue};
-        CHECK(node.id() == 1);
-        CHECK(node.coords().first == 2.5);
-        CHECK(node.coords().second == 3.5);
-        CHECK(node.queue().front() == 2);
-        CHECK(node.queue().back() == 3);
-    }
+    std::queue<uint16_t> queue;
+    queue.push(2);
+    queue.push(3);
+    Node node{1, std::make_pair(2.5, 3.5), queue};
+    CHECK(node.id() == 1);
+    CHECK(node.coords().first == 2.5);
+    CHECK(node.coords().second == 3.5);
+    CHECK(node.queue().front() == 2);
+    CHECK(node.queue().back() == 3);
+  }
 }
