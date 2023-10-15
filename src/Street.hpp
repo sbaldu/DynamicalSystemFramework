@@ -66,6 +66,11 @@ namespace dmf {
   // Getters
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  Id Street<Id, Size>::id() const {
+    return m_id;
+  }
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   Size Street<Id, Size>::size() const {
     return m_size;
   }
