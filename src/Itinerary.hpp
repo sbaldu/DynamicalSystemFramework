@@ -2,11 +2,13 @@
 #ifndef Itinerary_hpp
 #define Itinerary_hpp
 
+#include <concepts>
 #include <utility>
 
 namespace dmf {
 
   template <typename Id>
+	requires std::unsigned_integral<Id>
   class Itinerary {
   private:
     std::pair<Id, Id> m_trip;

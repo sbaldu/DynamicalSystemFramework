@@ -4,10 +4,12 @@
 
 #include "Itinerary.hpp"
 #include "SparseMatrix.hpp"
+#include "utility/TypeTraits.hpp"
 
 namespace dmf {
 
   template <typename Id, typename Weight>
+    requires (std::unsigned_integral<Id> && is_numeric_v<Weight>)
   class Agent {
   private:
     Id m_index;
@@ -36,10 +38,12 @@ namespace dmf {
   };
 
   template <typename Id, typename Weight>
+    requires std::unsigned_integral<Id>
   Agent<Id, Weight>::Agent(Id index, Id position)
       : m_index{index}, m_position{position}, m_previousPosition{position} {}
 
   template <typename Id, typename Weight>
+    requires std::unsigned_integral<Id>
   Agent<Id, Weight>::Agent(Id index, Id position, Itinerary<Id> itinerary)
       : m_index{index},
         m_position{position},
@@ -47,6 +51,7 @@ namespace dmf {
         m_itinerary{std::move(itinerary)} {}
 
   template <typename Id, typename Weight>
+    requires std::unsigned_integral<Id>
   Agent<Id, Weight>::Agent(Id index, Id position, Itinerary<Id> itinerary, SparseMatrix<Id, Weight> matrix)
       : m_index{index},
         m_position{position},
@@ -56,36 +61,44 @@ namespace dmf {
 
   // Setters
   template <typename Id, typename Weight>
+    requires std::unsigned_integral<Id>
   void Agent<Id, Weight>::setPosition(Id position) {
     m_position = position;
   }
   template <typename Id, typename Weight>
+    requires std::unsigned_integral<Id>
   void Agent<Id, Weight>::setItinerary(Itinerary<Id> itinerary) {
     m_itinerary = std::move(itinerary);
   }
   template <typename Id, typename Weight>
+    requires std::unsigned_integral<Id>
   void Agent<Id, Weight>::setTransitionMatrix(SparseMatrix<Id, Weight> matrix) {
     m_transitionMatrix = std::move(matrix);
   }
 
   // Getters
   template <typename Id, typename Weight>
+    requires std::unsigned_integral<Id>
   int Agent<Id, Weight>::index() const {
     return m_index;
   }
   template <typename Id, typename Weight>
+    requires std::unsigned_integral<Id>
   int Agent<Id, Weight>::position() const {
     return m_position;
   }
   template <typename Id, typename Weight>
+    requires std::unsigned_integral<Id>
   int Agent<Id, Weight>::previousPosition() const {
     return m_previousPosition;
   }
   template <typename Id, typename Weight>
+    requires std::unsigned_integral<Id>
   const Itinerary<Id>& Agent<Id, Weight>::itinerary() const {
     return m_itinerary;
   }
   template <typename Id, typename Weight>
+    requires std::unsigned_integral<Id>
   const SparseMatrix<Id, Weight>& Agent<Id, Weight>::transitionMatrix() const {
     return m_transitionMatrix;
   }
