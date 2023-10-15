@@ -37,6 +37,12 @@ namespace dmf {
   template <typename T>
   inline constexpr bool is_street_v = is_street<T>::value;
 
+  // define is_numeric_v type trait
+  template <typename T>
+  inline constexpr bool is_numeric_v =
+      (std::is_integral_v<T> || std::is_floating_point_v<T>)&&!std::is_same_v<T, bool> &&
+      !std::is_same_v<T, char>;
+
 };  // namespace dmf
 
 #endif
