@@ -9,7 +9,7 @@
 namespace dmf {
 
   template <typename Id, typename Weight>
-    requires (std::unsigned_integral<Id> && is_numeric_v<Weight>)
+    requires(std::unsigned_integral<Id> && is_numeric_v<Weight>)
   class Agent {
   private:
     Id m_index;
