@@ -39,12 +39,12 @@ namespace dmf {
   template <typename Id, typename Size>
   requires(std::unsigned_integral<Id>&& std::unsigned_integral<Size>) Street<Id, Size>::Street(
       Id index, Size capacity, double len)
-      : m_capacity{capacity}, m_len{len} {}
+      : m_id{index}, m_capacity{capacity}, m_len{len} {}
 
   template <typename Id, typename Size>
   requires(std::unsigned_integral<Id>&& std::unsigned_integral<Size>) Street<Id, Size>::Street(
       Id index, Size size, Size capacity, double len)
-      : m_size{size}, m_capacity{capacity}, m_len{len} {}
+      : m_id{index}, m_size{size}, m_capacity{capacity}, m_len{len} {}
 
   // Setters
   template <typename Id, typename Size>
