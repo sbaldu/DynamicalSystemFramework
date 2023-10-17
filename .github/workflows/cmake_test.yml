@@ -1,0 +1,34 @@
+name: Run tests on CMake
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Configure CMake
+      working-directory: ${{github.workspace}}/test
+      run: cmake -B ${{github.workspace}}/test/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+
+    - name: Build
+      working-directory: ${{github.workspace}}/test
+      # Build your program with the given configuration
+      run: cmake --build ${{github.workspace}}/test/build --config ${{env.BUILD_TYPE}}
+
+    - name: Run tests
+      working-directory: ${{github.workspace}}/test
+      run: |
+        for f in ./*.out
+        do
+          ./$f
+        done
