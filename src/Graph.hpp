@@ -56,6 +56,11 @@ namespace dmf {
     template <typename T1, typename... Tn>
       requires is_street_v<T1> && (is_street_v<Tn> && ...)
     void addStreets(T1 street, Tn... streets);
+
+    // getters
+    shared<SparseMatrix<Id, bool>> adjMatrix() const;
+    std::unordered_set<shared<Node<Id>>, nodeHash<Id>> nodeSet() const;
+    std::unordered_set<shared<Street<Id, Size>>, streetHash<Id, Size>> streetSet() const;
   };
 
   template <typename Id, typename Size>
@@ -131,6 +136,24 @@ namespace dmf {
   void Graph<Id, Size>::addStreets(T1 street, Tn... streets) {
     addStreet(street);
     addStreets(streets...);
+  }
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  shared<SparseMatrix<Id, bool>> Graph<Id, Size>::adjMatrix() const {
+    return m_adjacency;
+  }
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  std::unordered_set<shared<Node<Id>>, nodeHash<Id>> Graph<Id, Size>::nodeSet() const {
+    return m_nodes;
+  }
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  std::unordered_set<shared<Street<Id, Size>>, streetHash<Id, Size>> Graph<Id, Size>::streetSet() const {
+    return m_streets;
   }
 };  // namespace dmf
 
