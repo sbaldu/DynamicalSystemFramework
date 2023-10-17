@@ -8,8 +8,7 @@
 namespace dmf {
 
   template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  class Street {
+  requires(std::unsigned_integral<Id>&& std::unsigned_integral<Size>) class Street {
   private:
     Id m_id;
     Size m_size;
@@ -38,50 +37,50 @@ namespace dmf {
   };
 
   template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  Street<Id, Size>::Street(Id index, Size capacity, double len) : m_capacity{capacity}, m_len{len} {}
+  requires(std::unsigned_integral<Id>&& std::unsigned_integral<Size>) Street<Id, Size>::Street(
+      Id index, Size capacity, double len)
+      : m_capacity{capacity}, m_len{len} {}
 
   template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  Street<Id, Size>::Street(Id index, Size size, Size capacity, double len)
+  requires(std::unsigned_integral<Id>&& std::unsigned_integral<Size>) Street<Id, Size>::Street(
+      Id index, Size size, Size capacity, double len)
       : m_size{size}, m_capacity{capacity}, m_len{len} {}
 
   // Setters
   template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Street<Id, Size>::setCapacity(Size capacity) {
+  requires(std::unsigned_integral<Id>&& std::unsigned_integral<Size>) void Street<Id, Size>::setCapacity(
+      Size capacity) {
     m_capacity = capacity;
   }
   template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Street<Id, Size>::setLength(double len) {
+  requires(std::unsigned_integral<Id>&& std::unsigned_integral<Size>) void Street<Id, Size>::setLength(
+      double len) {
     m_len = len;
   }
   template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Street<Id, Size>::setQueue(std::queue<Size> queue) {
+  requires(std::unsigned_integral<Id>&& std::unsigned_integral<Size>) void Street<Id, Size>::setQueue(
+      std::queue<Size> queue) {
     m_queue = std::move(queue);
   }
 
   // Getters
   template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  Size Street<Id, Size>::size() const {
-    return m_size;
-  }
+  requires(std::unsigned_integral<Id>&& std::unsigned_integral<Size>) Id Street<Id, Size>::id()
+  const { return m_id; }
   template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  Size Street<Id, Size>::capacity() const {
-    return m_capacity;
-  }
+  requires(std::unsigned_integral<Id>&& std::unsigned_integral<Size>) Size Street<Id, Size>::size()
+  const { return m_size; }
   template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  double Street<Id, Size>::length() const {
+  requires(std::unsigned_integral<Id>&& std::unsigned_integral<Size>) Size Street<Id, Size>::capacity()
+  const { return m_capacity; }
+  template <typename Id, typename Size>
+  requires(
+      std::unsigned_integral<Id>&& std::unsigned_integral<Size>) double Street<Id, Size>::length() const {
     return m_len;
   }
   template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  const std::queue<Size>& Street<Id, Size>::queue() const {
+  requires(std::unsigned_integral<Id>&& std::unsigned_integral<Size>)
+      const std::queue<Size>& Street<Id, Size>::queue() const {
     return m_queue;
   }
 };  // namespace dmf
