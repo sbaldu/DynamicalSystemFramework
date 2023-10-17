@@ -22,7 +22,8 @@ namespace dmf {
   using std::make_shared;
 
   template <typename Id, typename Size>
-  requires(std::unsigned_integral<Id>&& std::unsigned_integral<Size>) class Graph {
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  class Graph {
   private:
     shared<SparseMatrix<Id, bool>> m_adjacency;
     std::unordered_set<shared<Node<Id>>, nodeHash<Id>> m_nodes;
@@ -38,24 +39,28 @@ namespace dmf {
     void addNode(const Node<Id>& node);
 
     template <typename... Tn>
-    requires(is_node_v<Tn>&&...) void addNodes(Tn... nodes);
+      requires(is_node_v<Tn> && ...)
+    void addNodes(Tn... nodes);
 
     template <typename T1, typename... Tn>
-    requires is_node_v<T1> &&(is_node_v<Tn>&&...) void addNodes(T1 node, Tn... nodes);
+      requires is_node_v<T1> && (is_node_v<Tn> && ...)
+    void addNodes(T1 node, Tn... nodes);
 
     void addStreet(shared<Street<Id, Size>> street);
     void addStreet(const Street<Id, Size>& street);
 
     template <typename... Tn>
-    requires(is_street_v<Tn>&&...) void addStreets(Tn... streets);
+      requires(is_street_v<Tn> && ...)
+    void addStreets(Tn... streets);
 
     template <typename T1, typename... Tn>
-    requires is_street_v<T1> &&(is_street_v<Tn>&&...) void addStreets(T1 street, Tn... streets);
+      requires is_street_v<T1> && (is_street_v<Tn> && ...)
+    void addStreets(T1 street, Tn... streets);
   };
 
   template <typename Id, typename Size>
-  requires(std::unsigned_integral<Id>&& std::unsigned_integral<Size>) Graph<Id, Size>::Graph(
-      const std::unordered_set<shared<Street<Id, Size>>, nodeHash<Id>>& streetSet)
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  Graph<Id, Size>::Graph(const std::unordered_set<shared<Street<Id, Size>>, nodeHash<Id>>& streetSet)
       : m_adjacency{make_shared<SparseMatrix<Id, Size>>()} {
     for (auto street : streetSet) {
       m_streets.insert(street);
@@ -67,55 +72,63 @@ namespace dmf {
   }
 
   template <typename Id, typename Size>
-  requires(std::unsigned_integral<Id>&& std::unsigned_integral<Size>) void Graph<Id, Size>::buildAdj() {
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Graph<Id, Size>::buildAdj() {
     for (auto street : m_streets) {
       m_adjacency->insert(street->nodes().first, street->nodes().second, true);
     }
   }
 
   template <typename Id, typename Size>
-  requires(std::unsigned_integral<Id>&& std::unsigned_integral<Size>) void Graph<Id, Size>::addNode(
-      shared<Node<Id>> node) {
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Graph<Id, Size>::addNode(shared<Node<Id>> node) {
     m_nodes.insert(node);
   }
 
   template <typename Id, typename Size>
-  requires(std::unsigned_integral<Id>&& std::unsigned_integral<Size>) void Graph<Id, Size>::addNode(
-      const Node<Id>& node) {
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Graph<Id, Size>::addNode(const Node<Id>& node) {
     m_nodes.insert(make_shared<Node<Id>>(node));
   }
 
   template <typename Id, typename Size>
-  requires(std::unsigned_integral<Id>&& std::unsigned_integral<Size>) template <typename... Tn>
-  requires(is_node_v<Tn>&&...) void Graph<Id, Size>::addNodes(Tn... nodes) {}
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  template <typename... Tn>
+    requires(is_node_v<Tn> && ...)
+  void Graph<Id, Size>::addNodes(Tn... nodes) {}
 
   template <typename Id, typename Size>
-  requires(std::unsigned_integral<Id>&& std::unsigned_integral<Size>) template <typename T1, typename... Tn>
-  requires is_node_v<T1> &&(is_node_v<Tn>&&...) void Graph<Id, Size>::addNodes(T1 node, Tn... nodes) {
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  template <typename T1, typename... Tn>
+    requires is_node_v<T1> && (is_node_v<Tn> && ...)
+  void Graph<Id, Size>::addNodes(T1 node, Tn... nodes) {
     addNode(node);
     addNodes(nodes...);
   }
 
   template <typename Id, typename Size>
-  requires(std::unsigned_integral<Id>&& std::unsigned_integral<Size>) void Graph<Id, Size>::addStreet(
-      shared<Street<Id, Size>> street) {
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Graph<Id, Size>::addStreet(shared<Street<Id, Size>> street) {
     m_streets.insert(street);
   }
 
   template <typename Id, typename Size>
-  requires(std::unsigned_integral<Id>&& std::unsigned_integral<Size>) void Graph<Id, Size>::addStreet(
-      const Street<Id, Size>& street) {
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Graph<Id, Size>::addStreet(const Street<Id, Size>& street) {
     m_streets.insert(make_shared<Street<Id, Size>>(street));
   }
 
   template <typename Id, typename Size>
-  requires(std::unsigned_integral<Id>&& std::unsigned_integral<Size>) template <typename... Tn>
-  requires(is_street_v<Tn>&&...) void Graph<Id, Size>::addStreets(Tn... edges) {}
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  template <typename... Tn>
+    requires(is_street_v<Tn> && ...)
+  void Graph<Id, Size>::addStreets(Tn... edges) {}
 
   template <typename Id, typename Size>
-  requires(std::unsigned_integral<Id>&& std::unsigned_integral<Size>) template <typename T1, typename... Tn>
-  requires is_street_v<T1> &&
-      (is_street_v<Tn>&&...) void Graph<Id, Size>::addStreets(T1 street, Tn... streets) {
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  template <typename T1, typename... Tn>
+    requires is_street_v<T1> && (is_street_v<Tn> && ...)
+  void Graph<Id, Size>::addStreets(T1 street, Tn... streets) {
     addStreet(street);
     addStreets(streets...);
   }
