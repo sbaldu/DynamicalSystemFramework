@@ -6,3 +6,6 @@
 
 # CMake build directories
 *build
+
+# VS Code folder
+.vscode
