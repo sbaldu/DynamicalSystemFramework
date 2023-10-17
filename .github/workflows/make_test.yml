@@ -21,4 +21,4 @@ jobs:
     - name: Compile and run the C++ tests
       run: |
         cd test/ && make
-        ./sm.out
+        ./test.out
