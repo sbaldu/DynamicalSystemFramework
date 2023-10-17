@@ -15,7 +15,7 @@ namespace dmf {
 
   public:
     Itinerary(Id source, Id destination) : m_trip{std::make_pair(source, destination)} {}
-    Itinerary(std::pair<Id, Id> trip) : m_trip{std::move(trip)} {}
+    explicit Itinerary(std::pair<Id, Id> trip) : m_trip{std::move(trip)} {}
 
     // Setters
     void set_source(Id source) { m_trip.first = source; }
