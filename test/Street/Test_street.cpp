@@ -1,6 +1,9 @@
-#include "../src/Street.hpp"
+
 #include <cstdint>
 
+#include "Street.hpp"
+
+#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
 
 using Street = dmf::Street<uint16_t, uint16_t>;

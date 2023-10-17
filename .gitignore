@@ -3,3 +3,6 @@
 
 # Shared libraries
 *.so
+
+# CMake build directories
+*build

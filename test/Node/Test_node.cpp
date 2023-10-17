@@ -1,6 +1,8 @@
-#include "../src/Node.hpp"
 #include <cstdint>
 
+#include "Node.hpp"
+
+#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
 
 using Node = dmf::Node<uint16_t>;
