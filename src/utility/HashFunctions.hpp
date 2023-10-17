@@ -15,19 +15,19 @@ namespace dmf {
 
   template <typename Id>
   struct nodeHash {
-    // pointers to const nodes
+	// pointers to const nodes
     size_t operator()(const shared<const Node<Id>>& node) const { return node->id(); }
-    // pointers to non-const nodes
+	// pointers to non-const nodes
     size_t operator()(const shared<Node<Id>>& node) const { return node->id(); }
   };
 
   template <typename Id, typename Size>
   struct streetHash {
-    // pointers to const streets
+	// pointers to const streets
     size_t operator()(const shared<const Street<Id, Size>>& street) const {
       return (street->nodePair().first) ^ (street->getNodePair().second);
     }
-    // pointers to non-const streets
+	// pointers to non-const streets
     size_t operator()(const shared<Street<Id, Size>>& street) const {
       return (street->nodePair().first) ^ (street->nodePair().second);
     }
@@ -46,7 +46,8 @@ namespace dmf {
   // Equality operators for Streets
   template <typename Id, typename Size>
   bool operator==(shared<const Street<Id, Size>> p1, shared<const Street<Id, Size>> p2) {
-    return p1->nodePair().first == p2->nodePair().first && p1->nodePair().second == p2->nodePair().second;
+    return p1->nodePair().first == p2->nodePair().first &&
+           p1->nodePair().second == p2->nodePair().second;
   }
 };  // namespace dmf
 

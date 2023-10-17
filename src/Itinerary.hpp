@@ -9,7 +9,7 @@
 namespace dmf {
 
   template <typename Id>
-    requires std::unsigned_integral<Id>
+	  requires std::unsigned_integral<Id>
   class Itinerary {
   private:
     std::pair<Id, Id> m_trip;
