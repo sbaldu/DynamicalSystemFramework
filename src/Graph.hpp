@@ -30,7 +30,7 @@ namespace dmf {
     std::unordered_set<shared<Street<Id, Size>>, streetHash<Id, Size>> m_streets;
 
   public:
-    Graph() = default;
+    Graph();
     Graph(const std::unordered_set<shared<Street<Id, Size>>, nodeHash<Id>>& streetSet);
 
     void buildAdj();
@@ -65,8 +65,13 @@ namespace dmf {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  Graph<Id, Size>::Graph()
+      : m_adjacency{make_shared<SparseMatrix<Id, bool>>()} {}
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   Graph<Id, Size>::Graph(const std::unordered_set<shared<Street<Id, Size>>, nodeHash<Id>>& streetSet)
-      : m_adjacency{make_shared<SparseMatrix<Id, Size>>()} {
+      : m_adjacency{make_shared<SparseMatrix<Id, bool>>()} {
     for (auto street : streetSet) {
       m_streets.insert(street);
       m_nodes.insert(street->nodes().first);
