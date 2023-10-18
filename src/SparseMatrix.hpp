@@ -153,6 +153,12 @@ namespace dmf {
     /// @brief symmetrize the matrix
     void symmetrize();
 
+    /// @brief reshape the matrix
+    void reshape(Index rows, Index cols);
+
+    /// @brief reshape the matrix
+    void reshape(Index dim);
+
     /// @brief return the begin iterator of the matrix
     /// @return the begin iterator
     typename std::unordered_map<Index, T>::const_iterator begin() const;
@@ -523,6 +529,20 @@ namespace dmf {
     requires std::unsigned_integral<Index>
   void SparseMatrix<Index, T>::symmetrize() {
     *this += this->operator++();
+  }
+
+  template <typename Index, typename T>
+    requires std::unsigned_integral<Index>
+  void SparseMatrix<Index, T>::reshape(Index rows, Index cols) {
+    this->_rows = rows;
+    this->_cols = cols;
+  }
+
+  template <typename Index, typename T>
+    requires std::unsigned_integral<Index>
+  void SparseMatrix<Index, T>::reshape(Index dim) {
+    this->_rows = dim;
+    this->_cols = dim;
   }
 
   template <typename Index, typename T>
