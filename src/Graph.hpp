@@ -85,7 +85,7 @@ namespace dmf {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Graph<Id, Size>::buildAdj() {
     for (auto street : m_streets) {
-      m_adjacency->insert(street->nodes().first, street->nodes().second, true);
+      m_adjacency->insert(street->nodePair().first, street->nodePair().second, true);
     }
   }
 
