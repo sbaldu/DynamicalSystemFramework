@@ -536,6 +536,12 @@ namespace dmf {
   void SparseMatrix<Index, T>::reshape(Index rows, Index cols) {
     this->_rows = rows;
     this->_cols = cols;
+    auto copy = _matrix;
+    for (auto& it : copy) {
+      if (it.first > rows * cols - 1) {
+        _matrix.erase(it.first);
+      }
+    }
   }
 
   template <typename Index, typename T>
@@ -543,6 +549,12 @@ namespace dmf {
   void SparseMatrix<Index, T>::reshape(Index dim) {
     this->_rows = dim;
     this->_cols = dim;
+    auto copy = _matrix;
+    for (auto& it : copy) {
+      if (it.first > dim * dim - 1) {
+        _matrix.erase(it.first);
+      }
+    }
   }
 
   template <typename Index, typename T>
