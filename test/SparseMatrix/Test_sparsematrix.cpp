@@ -664,4 +664,38 @@ TEST_CASE("Boolean Matrix") {
     CHECK(m2(2, 2) == 0);
     CHECK(m2.size() == 5);
   }
+  SUBCASE("Reshape") {
+    /*This test tests if the reshape function works correctly
+    The reshape function should reshape the matrix
+    GIVEN: the reshape function is called
+    WHEN: the function is called on a matrix
+    THEN: the function should reshape the matrix
+    */
+    SparseMatrix<uint16_t, bool> m(3, 3);
+    m.insert(0, 0, true);
+    m.insert(0, 1, true);
+    m.insert(1, 2, true);
+    m.reshape(2, 3);
+    CHECK(m(0, 0));
+    CHECK(m(0, 1));
+    CHECK(m(1, 2));
+    CHECK(m.size() == 3);
+  }
+  SUBCASE("Reshape") {
+    /*This test tests if the reshape function works correctly
+    The reshape function should reshape the matrix
+    GIVEN: the reshape function is called
+    WHEN: the function is called on a matrix
+    THEN: the function should reshape the matrix
+    */
+    SparseMatrix<uint16_t, bool> m(3, 3);
+    m.insert(0, 0, true);
+    m.insert(0, 1, true);
+    m.insert(1, 2, true);
+    m.reshape(2);
+    CHECK(m(0, 0));
+    CHECK(m(0, 1));
+    CHECK_THROWS(m(1, 2));
+    CHECK(m.size() == 2);
+  }
 }
