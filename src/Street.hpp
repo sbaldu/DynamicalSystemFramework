@@ -6,6 +6,7 @@
 #include <type_traits>
 #include <utility>
 
+#include "Agent.hpp"
 #include "Node.hpp"
 
 namespace dmf {
@@ -27,11 +28,12 @@ namespace dmf {
     Street(Id index, Size size, Size capacity, double len);
 
     // Setters
+    void setId(Id id);
     void setCapacity(Size capacity);
     void setLength(double len);
     void setQueue(std::queue<Size> queue);
-	void setNodePair(const Node<Id>& node1, const Node<Id>& node2);
-	void setNodePair(std::pair<Id, Id> pair);
+    void setNodePair(const Node<Id>& node1, const Node<Id>& node2);
+    void setNodePair(std::pair<Id, Id> pair);
 
     // Getters
     Id id() const;
@@ -40,6 +42,11 @@ namespace dmf {
     double length() const;
     const std::queue<Size>& queue() const;
     const std::pair<Id, Id>& nodePair() const;
+
+    template <typename Weight>
+      requires is_numeric_v<Weight>
+    void enqueue(const Agent<Id, Weight>& agent);
+    Id dequeue();
   };
 
   template <typename Id, typename Size>
@@ -53,6 +60,11 @@ namespace dmf {
       : m_id{index}, m_size{size}, m_capacity{capacity}, m_len{len} {}
 
   // Setters
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Street<Id, Size>::setId(Id id) {
+    m_id = id;
+  }
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Street<Id, Size>::setCapacity(Size capacity) {
@@ -71,12 +83,12 @@ namespace dmf {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Street<Id, Size>::setNodePair(const Node<Id>& node1, const Node<Id>& node2) {
-	m_nodePair = std::make_pair(node1, node2);
+    m_nodePair = std::make_pair(node1, node2);
   }
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Street<Id, Size>::setNodePair(std::pair<Id, Id> pair) {
-	m_nodePair = std::move(pair);
+    m_nodePair = std::move(pair);
   }
 
   // Getters
@@ -110,6 +122,28 @@ namespace dmf {
   const std::pair<Id, Id>& Street<Id, Size>::nodePair() const {
     return m_nodePair;
   }
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  template <typename Weight>
+    requires is_numeric_v<Weight>
+  void Street<Id, Size>::enqueue(const Agent<Id, Weight>& agent) {
+    if (m_size < m_capacity) {
+      m_queue.enqueue(agent.index());
+      ++m_size;
+    }
+  }
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  Id Street<Id, Size>::dequeue() {
+    Id res{m_queue.front()};
+    m_queue.dequeue();
+    --m_size;
+
+    return res;
+  }
+
 };  // namespace dmf
 
 #endif
