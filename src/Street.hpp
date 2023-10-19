@@ -3,6 +3,7 @@
 #define Street_hpp
 
 #include <queue>
+#include <type_traits>
 #include <utility>
 
 namespace dmf {
