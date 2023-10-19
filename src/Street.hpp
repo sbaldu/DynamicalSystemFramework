@@ -2,6 +2,7 @@
 #ifndef Street_hpp
 #define Street_hpp
 
+#include <optional>
 #include <queue>
 #include <type_traits>
 #include <utility>
@@ -46,7 +47,7 @@ namespace dmf {
     template <typename Weight>
       requires is_numeric_v<Weight>
     void enqueue(const Agent<Id, Weight>& agent);
-    Id dequeue();
+	std::optional<Id> dequeue();
   };
 
   template <typename Id, typename Size>
@@ -136,12 +137,16 @@ namespace dmf {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  Id Street<Id, Size>::dequeue() {
-    Id res{m_queue.front()};
-    m_queue.dequeue();
-    --m_size;
+  std::optional<Id> Street<Id, Size>::dequeue() {
+	if (m_size > 0) {
+	  Id res{m_queue.front()};
+	  m_queue.dequeue();
+	  --m_size;
 
-    return res;
+	  return res;
+	}
+
+	return std::nullopt;
   }
 
 };  // namespace dmf
