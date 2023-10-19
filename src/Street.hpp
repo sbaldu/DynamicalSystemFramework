@@ -6,6 +6,8 @@
 #include <type_traits>
 #include <utility>
 
+#include "Node.hpp"
+
 namespace dmf {
 
   template <typename Id, typename Size>
@@ -28,6 +30,8 @@ namespace dmf {
     void setCapacity(Size capacity);
     void setLength(double len);
     void setQueue(std::queue<Size> queue);
+	void setNodePair(const Node<Id>& node1, const Node<Id>& node2);
+	void setNodePair(std::pair<Id, Id> pair);
 
     // Getters
     Id id() const;
@@ -63,6 +67,16 @@ namespace dmf {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Street<Id, Size>::setQueue(std::queue<Size> queue) {
     m_queue = std::move(queue);
+  }
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Street<Id, Size>::setNodePair(const Node<Id>& node1, const Node<Id>& node2) {
+	m_nodePair = std::make_pair(node1, node2);
+  }
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Street<Id, Size>::setNodePair(std::pair<Id, Id> pair) {
+	m_nodePair = std::move(pair);
   }
 
   // Getters
