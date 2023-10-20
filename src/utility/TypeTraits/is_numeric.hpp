@@ -2,6 +2,7 @@
 #define is_numeric_hpp
 
 #include <concepts>
+#include <cstdint>
 #include <memory>
 #include <type_traits>
 
@@ -12,9 +13,15 @@ namespace dmf {
 
   // define is_numeric_v type trait
   template <typename T>
-  inline constexpr bool is_numeric_v =
-      (std::is_integral_v<T> || std::is_floating_point_v<T>)&&!std::is_same_v<T, bool> &&
-      !std::is_same_v<T, char>;
+  struct is_numeric : std::is_arithmetic<T>{};
+
+  template <>
+  struct is_numeric<bool> : std::false_type{};
+  template <>
+  struct is_numeric<char> : std::false_type{};
+
+  template <typename T>
+  inline constexpr bool is_numeric_v = is_numeric<T>::value;
 
 };  // namespace dmf
 
