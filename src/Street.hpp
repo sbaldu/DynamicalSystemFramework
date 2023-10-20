@@ -34,6 +34,7 @@ namespace dmf {
     void setCapacity(Size capacity);
     void setLength(double len);
     void setQueue(std::queue<Size> queue);
+	void setNodePair(Id node1, Id node2);
     void setNodePair(const Node<Id>& node1, const Node<Id>& node2);
     void setNodePair(std::pair<Id, Id> pair);
 
@@ -84,8 +85,13 @@ namespace dmf {
   }
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Street<Id, Size>::setNodePair(const Node<Id>& node1, const Node<Id>& node2) {
+  void Street<Id, Size>::setNodePair(Id node1, Id node2) {
     m_nodePair = std::make_pair(node1, node2);
+  }
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Street<Id, Size>::setNodePair(const Node<Id>& node1, const Node<Id>& node2) {
+    m_nodePair = std::make_pair(node1.id(), node2.id());
   }
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
