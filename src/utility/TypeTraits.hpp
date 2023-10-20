@@ -5,10 +5,15 @@
 #include <memory>
 #include <type_traits>
 
-#include "../Node.hpp"
-#include "../Street.hpp"
-
 namespace dmf {
+  template <typename Id>
+    requires std::unsigned_integral<Id>
+  class Node;
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  class Street;
+
   // Alias for shared pointers
   template <typename T>
   using shared = std::shared_ptr<T>;
