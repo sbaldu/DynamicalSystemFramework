@@ -27,6 +27,7 @@ namespace dmf {
   public:
     Street() = default;
     Street(Id index, Size capacity, double len);
+    Street(Id index, Size capacity, double len, std::pair<Id, Id> nodePair);
     Street(Id index, Size size, Size capacity, double len);
 
     // Setters
@@ -55,6 +56,11 @@ namespace dmf {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   Street<Id, Size>::Street(Id index, Size capacity, double len)
       : m_id{index}, m_capacity{capacity}, m_len{len} {}
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  Street<Id, Size>::Street(Id index, Size capacity, double len, std::pair<Id, Id> nodePair)
+      : m_id{index}, m_capacity{capacity}, m_len{len}, m_nodePair{std::move(nodePair)} {}
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
