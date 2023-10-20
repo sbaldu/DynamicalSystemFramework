@@ -25,7 +25,7 @@ TEST_CASE("Street") {
     CHECK_EQ(street.id(), 1);
     CHECK_EQ(street.capacity(), 2);
     CHECK_EQ(street.length(), 3.5);
-	CHECK_EQ(street.nodePair(), std::pair<uint16_t, uint16_t>());
+    CHECK_EQ(street.nodePair(), std::pair<uint16_t, uint16_t>());
   }
 
   SUBCASE("Constructor_2") {
@@ -39,8 +39,8 @@ TEST_CASE("Street") {
     CHECK_EQ(street.id(), 1);
     CHECK_EQ(street.capacity(), 2);
     CHECK_EQ(street.length(), 3.5);
-	CHECK_EQ(street.nodePair().first, 4);
-	CHECK_EQ(street.nodePair().second, 5);
+    CHECK_EQ(street.nodePair().first, 4);
+    CHECK_EQ(street.nodePair().second, 5);
   }
 
   SUBCASE("SetNodePair_1") {
@@ -56,8 +56,8 @@ TEST_CASE("Street") {
     /*This tests the setNodePair method*/
 
     Street street{1, 2, 3.5};
-	Node node1{4};
-	Node node2{5};
+    Node node1{4};
+    Node node2{5};
     street.setNodePair(node1, node2);
     CHECK_EQ(street.nodePair().first, 4);
     CHECK_EQ(street.nodePair().second, 5);

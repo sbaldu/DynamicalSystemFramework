@@ -34,7 +34,7 @@ namespace dmf {
     void setCapacity(Size capacity);
     void setLength(double len);
     void setQueue(std::queue<Size> queue);
-	void setNodePair(Id node1, Id node2);
+    void setNodePair(Id node1, Id node2);
     void setNodePair(const Node<Id>& node1, const Node<Id>& node2);
     void setNodePair(std::pair<Id, Id> pair);
 
@@ -47,9 +47,9 @@ namespace dmf {
     const std::pair<Id, Id>& nodePair() const;
 
     template <typename Weight>
-      /* requires is_numeric_v<Weight> */
+    /* requires is_numeric_v<Weight> */
     void enqueue(const Agent<Id, Weight>& agent);
-	std::optional<Id> dequeue();
+    std::optional<Id> dequeue();
   };
 
   template <typename Id, typename Size>
@@ -134,7 +134,7 @@ namespace dmf {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   template <typename Weight>
-    /* requires is_numeric_v<Weight> */
+  /* requires is_numeric_v<Weight> */
   void Street<Id, Size>::enqueue(const Agent<Id, Weight>& agent) {
     if (m_size < m_capacity) {
       m_queue.push(agent.index());
@@ -145,15 +145,15 @@ namespace dmf {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   std::optional<Id> Street<Id, Size>::dequeue() {
-	if (m_size > 0) {
-	  Id res{m_queue.front()};
-	  m_queue.pop();
-	  --m_size;
+    if (m_size > 0) {
+      Id res{m_queue.front()};
+      m_queue.pop();
+      --m_size;
 
-	  return res;
-	}
+      return res;
+    }
 
-	return std::nullopt;
+    return std::nullopt;
   }
 
 };  // namespace dmf
