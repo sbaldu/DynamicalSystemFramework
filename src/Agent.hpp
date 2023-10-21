@@ -51,18 +51,17 @@ namespace dmf {
   template <typename Id, typename Weight>
   requires(std::unsigned_integral<Id>&& is_numeric_v<Weight>) Agent<Id, Weight>::Agent(Id index,
                                                                                        Id position)
-      : m_index{index}, m_position{position}, m_previousPosition{position} {
-    m_time = 0;
-    m_velocity = 0.;
-  }
+      : m_index{index}, m_position{position}, m_previousPosition{position}, m_velocity{0.}, m_time{0} {}
 
   template <typename Id, typename Weight>
   requires(std::unsigned_integral<Id>&& is_numeric_v<Weight>) Agent<Id, Weight>::Agent(
       Id index, Id position, Itinerary<Id> itinerary)
-      : m_index{index}, m_position{position}, m_previousPosition{position}, m_itinerary{std::move(itinerary)} {
-    m_time = 0;
-    m_velocity = 0.;
-  }
+      : m_index{index},
+        m_position{position},
+        m_previousPosition{position},
+        m_itinerary{std::move(itinerary)},
+        m_velocity{0.},
+        m_time{0} {}
 
   template <typename Id, typename Weight>
   requires(std::unsigned_integral<Id>&& is_numeric_v<Weight>) Agent<Id, Weight>::Agent(
@@ -71,10 +70,9 @@ namespace dmf {
         m_position{position},
         m_previousPosition{position},
         m_itinerary{std::move(itinerary)},
-        m_transitionMatrix{std::move(matrix)} {
-    m_time = 0;
-    m_velocity = 0.;
-  }
+        m_transitionMatrix{std::move(matrix)},
+        m_velocity{0.},
+        m_time{0} {}
 
   // Setters
   template <typename Id, typename Weight>
