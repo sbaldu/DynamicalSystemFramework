@@ -26,6 +26,7 @@ namespace dmf {
 
   public:
     Street() = default;
+    Street(Id index);
     Street(Id index, Size capacity, double len);
     Street(Id index, Size capacity, double len, std::pair<Id, Id> nodePair);
 
@@ -51,6 +52,11 @@ namespace dmf {
     void enqueue(const Agent<Id, Weight>& agent);
     std::optional<Id> dequeue();
   };
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  Street<Id, Size>::Street(Id index)
+      : m_id{index} {}
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
