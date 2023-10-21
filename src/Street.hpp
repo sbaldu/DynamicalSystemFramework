@@ -55,8 +55,7 @@ namespace dmf {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  Street<Id, Size>::Street(Id index)
-      : m_id{index} {}
+  Street<Id, Size>::Street(Id index) : m_id{index} {}
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
