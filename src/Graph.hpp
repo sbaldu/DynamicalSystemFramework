@@ -3,6 +3,7 @@
 #define Graph_hpp
 
 #include <concepts>
+#include <limits>
 #include <memory>
 #include <unordered_set>
 #include <queue>
@@ -32,6 +33,7 @@ namespace dmf {
 
   public:
     Graph();
+    Graph(const SparseMatrix<Id, bool> adj);
     Graph(const std::unordered_set<shared<Street<Id, Size>>, nodeHash<Id>>& streetSet);
 
     void buildAdj();
@@ -67,6 +69,23 @@ namespace dmf {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   Graph<Id, Size>::Graph() : m_adjacency{make_shared<SparseMatrix<Id, bool>>()} {}
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  Graph<Id, Size>::Graph(const SparseMatrix<Id, bool> adj)
+      : m_adjacency{make_shared<SparseMatrix<Id, bool>>(adj)} {
+		int n_nodes{adj.getColDim()};
+		// maybe this could be improved by using C++20 range views 
+		for (int i{}; i < n_nodes; ++i) {
+		  m_nodes.insert(make_shared<Node<Id>>(i));
+		}
+
+		int street_id{};
+		for (const auto& x : adj) {
+		  m_streets.insert(make_shared<Street<Id, Size>>(street_id));
+		  ++street_id;
+		}
+	  }
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
