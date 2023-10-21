@@ -13,7 +13,8 @@
 namespace dmf {
 
   template <typename Id, typename Weight>
-  requires(std::unsigned_integral<Id>&& is_numeric_v<Weight>) class Agent {
+    requires(std::unsigned_integral<Id> && is_numeric_v<Weight>)
+  class Agent {
   private:
     Id m_index;
     Id m_position;
@@ -49,13 +50,13 @@ namespace dmf {
   };
 
   template <typename Id, typename Weight>
-  requires(std::unsigned_integral<Id>&& is_numeric_v<Weight>) Agent<Id, Weight>::Agent(Id index,
-                                                                                       Id position)
+    requires(std::unsigned_integral<Id> && is_numeric_v<Weight>)
+  Agent<Id, Weight>::Agent(Id index, Id position)
       : m_index{index}, m_position{position}, m_previousPosition{position}, m_speed{0.}, m_time{0} {}
 
   template <typename Id, typename Weight>
-  requires(std::unsigned_integral<Id>&& is_numeric_v<Weight>) Agent<Id, Weight>::Agent(
-      Id index, Id position, Itinerary<Id> itinerary)
+    requires(std::unsigned_integral<Id> && is_numeric_v<Weight>)
+  Agent<Id, Weight>::Agent(Id index, Id position, Itinerary<Id> itinerary)
       : m_index{index},
         m_position{position},
         m_previousPosition{position},
@@ -64,8 +65,8 @@ namespace dmf {
         m_time{0} {}
 
   template <typename Id, typename Weight>
-  requires(std::unsigned_integral<Id>&& is_numeric_v<Weight>) Agent<Id, Weight>::Agent(
-      Id index, Id position, Itinerary<Id> itinerary, SparseMatrix<Id, Weight> matrix)
+    requires(std::unsigned_integral<Id> && is_numeric_v<Weight>)
+  Agent<Id, Weight>::Agent(Id index, Id position, Itinerary<Id> itinerary, SparseMatrix<Id, Weight> matrix)
       : m_index{index},
         m_position{position},
         m_previousPosition{position},
@@ -76,18 +77,18 @@ namespace dmf {
 
   // Setters
   template <typename Id, typename Weight>
-  requires(std::unsigned_integral<Id>&& is_numeric_v<Weight>) void Agent<Id, Weight>::setPosition(
-      Id position) {
+    requires(std::unsigned_integral<Id> && is_numeric_v<Weight>)
+  void Agent<Id, Weight>::setPosition(Id position) {
     m_position = position;
   }
   template <typename Id, typename Weight>
-  requires(std::unsigned_integral<Id>&& is_numeric_v<Weight>) void Agent<Id, Weight>::setItinerary(
-      Itinerary<Id> itinerary) {
+    requires(std::unsigned_integral<Id> && is_numeric_v<Weight>)
+  void Agent<Id, Weight>::setItinerary(Itinerary<Id> itinerary) {
     m_itinerary = std::move(itinerary);
   }
   template <typename Id, typename Weight>
-  requires(std::unsigned_integral<Id>&& is_numeric_v<Weight>) void Agent<Id, Weight>::setSpeed(
-      double speed) {
+    requires(std::unsigned_integral<Id> && is_numeric_v<Weight>)
+  void Agent<Id, Weight>::setSpeed(double speed) {
     if (speed < 0) {
       std::string errorMsg = "Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
                              "Speed must be positive";
@@ -96,7 +97,8 @@ namespace dmf {
     m_speed = speed;
   }
   template <typename Id, typename Weight>
-  requires(std::unsigned_integral<Id>&& is_numeric_v<Weight>) void Agent<Id, Weight>::incrementTime() {
+    requires(std::unsigned_integral<Id> && is_numeric_v<Weight>)
+  void Agent<Id, Weight>::incrementTime() {
     if (m_time == std::numeric_limits<unsigned int>::max()) {
       std::string errorMsg = "Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
                              "Time has reached its maximum value";
@@ -105,7 +107,8 @@ namespace dmf {
     ++m_time;
   }
   template <typename Id, typename Weight>
-  requires(std::unsigned_integral<Id>&& is_numeric_v<Weight>) void Agent<Id, Weight>::incrementTime(unsigned int time) {
+    requires(std::unsigned_integral<Id> && is_numeric_v<Weight>)
+  void Agent<Id, Weight>::incrementTime(unsigned int time) {
     if (m_time + time < m_time) {
       std::string errorMsg = "Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
                              "Time has reached its maximum value";
@@ -114,41 +117,45 @@ namespace dmf {
     m_time += time;
   }
   template <typename Id, typename Weight>
-  requires(std::unsigned_integral<Id>&& is_numeric_v<Weight>) void Agent<Id, Weight>::setTransitionMatrix(
-      SparseMatrix<Id, Weight> matrix) {
+    requires(std::unsigned_integral<Id> && is_numeric_v<Weight>)
+  void Agent<Id, Weight>::setTransitionMatrix(SparseMatrix<Id, Weight> matrix) {
     m_transitionMatrix = std::move(matrix);
   }
 
   // Getters
   template <typename Id, typename Weight>
-  requires(std::unsigned_integral<Id>&& is_numeric_v<Weight>) int Agent<Id, Weight>::index() const {
+    requires(std::unsigned_integral<Id> && is_numeric_v<Weight>)
+  int Agent<Id, Weight>::index() const {
     return m_index;
   }
   template <typename Id, typename Weight>
-  requires(std::unsigned_integral<Id>&& is_numeric_v<Weight>) int Agent<Id, Weight>::position() const {
+    requires(std::unsigned_integral<Id> && is_numeric_v<Weight>)
+  int Agent<Id, Weight>::position() const {
     return m_position;
   }
   template <typename Id, typename Weight>
-  requires(
-      std::unsigned_integral<Id>&& is_numeric_v<Weight>) int Agent<Id, Weight>::previousPosition() const {
+    requires(std::unsigned_integral<Id> && is_numeric_v<Weight>)
+  int Agent<Id, Weight>::previousPosition() const {
     return m_previousPosition;
   }
   template <typename Id, typename Weight>
-  requires(std::unsigned_integral<Id>&& is_numeric_v<Weight>) double Agent<Id, Weight>::speed() const {
+    requires(std::unsigned_integral<Id> && is_numeric_v<Weight>)
+  double Agent<Id, Weight>::speed() const {
     return m_speed;
   }
   template <typename Id, typename Weight>
-  requires(std::unsigned_integral<Id>&& is_numeric_v<Weight>) unsigned int Agent<Id, Weight>::time() const {
+    requires(std::unsigned_integral<Id> && is_numeric_v<Weight>)
+  unsigned int Agent<Id, Weight>::time() const {
     return m_time;
   }
   template <typename Id, typename Weight>
-  requires(std::unsigned_integral<Id>&& is_numeric_v<Weight>)
-      const Itinerary<Id>& Agent<Id, Weight>::itinerary() const {
+    requires(std::unsigned_integral<Id> && is_numeric_v<Weight>)
+  const Itinerary<Id>& Agent<Id, Weight>::itinerary() const {
     return m_itinerary;
   }
   template <typename Id, typename Weight>
-  requires(std::unsigned_integral<Id>&& is_numeric_v<Weight>) const
-      SparseMatrix<Id, Weight>& Agent<Id, Weight>::transitionMatrix() const {
+    requires(std::unsigned_integral<Id> && is_numeric_v<Weight>)
+  const SparseMatrix<Id, Weight>& Agent<Id, Weight>::transitionMatrix() const {
     return m_transitionMatrix;
   }
 };  // namespace dmf
