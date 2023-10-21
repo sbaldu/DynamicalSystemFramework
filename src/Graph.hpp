@@ -76,14 +76,13 @@ namespace dmf {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   Graph<Id, Size>::Graph(const SparseMatrix<Id, bool> adj)
       : m_adjacency{make_shared<SparseMatrix<Id, bool>>(adj)} {
-		std::ranges::for_each(std::views::iota(0, (int)adj.getColDim()), [this](auto i) -> void {
-				m_nodes.insert(make_shared<Node<Id>>(i));
-			  });
+    std::ranges::for_each(std::views::iota(0, (int)adj.getColDim()),
+                          [this](auto i) -> void { m_nodes.insert(make_shared<Node<Id>>(i)); });
 
-		std::ranges::for_each(std::views::iota(0, (int)adj.size()), [this](auto i) -> void {
-				this->m_streets.insert(make_shared<Street<Id, Size>>(i));
-			  });
-	  }
+    std::ranges::for_each(std::views::iota(0, (int)adj.size()), [this](auto i) -> void {
+      this->m_streets.insert(make_shared<Street<Id, Size>>(i));
+    });
+  }
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
