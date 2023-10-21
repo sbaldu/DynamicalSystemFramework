@@ -104,7 +104,8 @@ namespace dmf {
     }
     ++m_time;
   }
-  void incrementTime(unsigned int time) {
+  template <typename Id, typename Weight>
+  requires(std::unsigned_integral<Id>&& is_numeric_v<Weight>) void incrementTime(unsigned int time) {
     if (m_time + time < m_time) {
       std::string errorMsg = "Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
                              "Time has reached its maximum value";
