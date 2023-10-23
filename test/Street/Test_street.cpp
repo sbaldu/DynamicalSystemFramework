@@ -53,7 +53,7 @@ TEST_CASE("Street") {
     THEN: The Id, capacity, length, nodePair, and maxSpeed are set correctly
     */
 
-    Street street{1, 2, 3.5, std::make_pair(4, 5), 40.};
+    Street street{1, 2, 3.5, 40., std::make_pair(4, 5)};
     CHECK_EQ(street.id(), 1);
     CHECK_EQ(street.capacity(), 2);
     CHECK_EQ(street.length(), 3.5);
