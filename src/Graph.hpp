@@ -2,8 +2,11 @@
 #ifndef Graph_hpp
 #define Graph_hpp
 
+#include <algorithm>
 #include <concepts>
+#include <limits>
 #include <memory>
+#include <ranges>
 #include <unordered_set>
 #include <queue>
 #include <type_traits>
@@ -32,6 +35,7 @@ namespace dmf {
 
   public:
     Graph();
+    Graph(const SparseMatrix<Id, bool> adj);
     Graph(const std::unordered_set<shared<Street<Id, Size>>, nodeHash<Id>>& streetSet);
 
     void buildAdj();
@@ -67,6 +71,18 @@ namespace dmf {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   Graph<Id, Size>::Graph() : m_adjacency{make_shared<SparseMatrix<Id, bool>>()} {}
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  Graph<Id, Size>::Graph(const SparseMatrix<Id, bool> adj)
+      : m_adjacency{make_shared<SparseMatrix<Id, bool>>(adj)} {
+    std::ranges::for_each(std::views::iota(0, (int)adj.getColDim()),
+                          [this](auto i) -> void { m_nodes.insert(make_shared<Node<Id>>(i)); });
+
+    std::ranges::for_each(std::views::iota(0, (int)adj.size()), [this](auto i) -> void {
+      this->m_streets.insert(make_shared<Street<Id, Size>>(i));
+    });
+  }
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
