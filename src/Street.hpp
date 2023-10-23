@@ -6,6 +6,8 @@
 #include <queue>
 #include <type_traits>
 #include <utility>
+#include <stdexcept>
+#include <string>
 
 #include "Agent.hpp"
 #include "Node.hpp"
@@ -20,13 +22,16 @@ namespace dmf {
     Size m_size;
     Size m_capacity;
     double m_len;
+    double m_maxSpeed;
     std::pair<Id, Id> m_nodePair;
     std::queue<Size> m_queue;
 
   public:
     Street() = default;
+    Street(Id index);
     Street(Id index, Size capacity, double len);
     Street(Id index, Size capacity, double len, std::pair<Id, Id> nodePair);
+    Street(Id index, Size capacity, double len, double maxSpeed, std::pair<Id, Id> nodePair);
 
     // Setters
     void setId(Id id);
@@ -36,6 +41,7 @@ namespace dmf {
     void setNodePair(Id node1, Id node2);
     void setNodePair(const Node<Id>& node1, const Node<Id>& node2);
     void setNodePair(std::pair<Id, Id> pair);
+    void setMaxSpeed(double speed);
 
     // Getters
     Id id() const;
@@ -44,19 +50,32 @@ namespace dmf {
     double length() const;
     const std::queue<Size>& queue() const;
     const std::pair<Id, Id>& nodePair() const;
+    double density() const;
+    double maxSpeed() const;
     void enqueue(const Agent<Id>& agent);
     std::optional<Id> dequeue();
   };
 
   template <typename Id, typename Size>
-  requires(std::unsigned_integral<Id>&& std::unsigned_integral<Size>) Street<Id, Size>::Street(
-      Id index, Size capacity, double len)
-      : m_id{index}, m_capacity{capacity}, m_len{len} {}
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  Street<Id, Size>::Street(Id index) : m_id{index} {}
 
   template <typename Id, typename Size>
-  requires(std::unsigned_integral<Id>&& std::unsigned_integral<Size>) Street<Id, Size>::Street(
-      Id index, Size capacity, double len, std::pair<Id, Id> nodePair)
-      : m_id{index}, m_capacity{capacity}, m_len{len}, m_nodePair{std::move(nodePair)} {}
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  Street<Id, Size>::Street(Id index, Size capacity, double len)
+      : m_id{index}, m_capacity{capacity}, m_len{len}, m_maxSpeed{30.} {}
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  Street<Id, Size>::Street(Id index, Size capacity, double len, std::pair<Id, Id> nodePair)
+      : m_id{index}, m_capacity{capacity}, m_len{len}, m_maxSpeed{30.}, m_nodePair{std::move(nodePair)} {}
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  Street<Id, Size>::Street(Id index, Size capacity, double len, double maxSpeed, std::pair<Id, Id> nodePair)
+      : m_id{index}, m_capacity{capacity}, m_len{len}, m_nodePair{std::move(nodePair)} {
+    this->setMaxSpeed(maxSpeed);
+  }
 
   // Setters
   template <typename Id, typename Size>
@@ -93,6 +112,16 @@ namespace dmf {
       std::pair<Id, Id> pair) {
     m_nodePair = std::move(pair);
   }
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Street<Id, Size>::setMaxSpeed(double speed) {
+    if (speed < 0.) {
+      std::string errorMsg = "Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                             "The maximum speed of a street cannot be negative.";
+      throw std::invalid_argument(errorMsg);
+    }
+    m_maxSpeed = speed;
+  }
 
   // Getters
   template <typename Id, typename Size>
@@ -118,6 +147,16 @@ namespace dmf {
   requires(std::unsigned_integral<Id>&& std::unsigned_integral<Size>)
       const std::pair<Id, Id>& Street<Id, Size>::nodePair() const {
     return m_nodePair;
+  }
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  double Street<Id, Size>::density() const {
+    return static_cast<double>(m_size) / m_capacity;
+  }
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  double Street<Id, Size>::maxSpeed() const {
+    return m_maxSpeed;
   }
 
   template <typename Id, typename Size>
