@@ -20,8 +20,6 @@ TEST_CASE("Graph") {
     graph.buildAdj();
     CHECK(graph.streetSet().size() == 1);
     CHECK(graph.adjMatrix()->size() == 1);
-    // CHECK(graph.adjMatrix()->contains(1, 2));
-    // CHECK(graph.adjMatrix()->contains(2, 1));
   }
 
   SUBCASE("Constructor_2") {
@@ -35,7 +33,9 @@ TEST_CASE("Graph") {
     CHECK(graph.nodeSet().size() == 4);
     CHECK(graph.streetSet().size() == 5);
     CHECK(graph.adjMatrix()->size() == 5);
-    // CHECK(graph.adjMatrix()->contains(1, 2));
-    // CHECK(graph.adjMatrix()->contains(2, 1));
+    CHECK(graph.adjMatrix()->contains(1, 2));
+    CHECK(graph.adjMatrix()->contains(2, 3));
+    CHECK(graph.adjMatrix()->contains(3, 2));
+    CHECK_FALSE(graph.adjMatrix()->contains(2, 1));
   }
 }
