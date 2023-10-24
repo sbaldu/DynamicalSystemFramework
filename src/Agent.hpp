@@ -14,11 +14,11 @@ namespace dmf {
     requires std::unsigned_integral<Id>
   class Agent {
   private:
+    Itinerary<Id> m_itinerary;
+    double m_speed;
     Id m_index;
     Id m_position;
     Id m_previousPosition;
-    Itinerary<Id> m_itinerary;
-    double m_speed;
     unsigned int m_time;
 
   public:
@@ -46,16 +46,16 @@ namespace dmf {
   template <typename Id>
     requires std::unsigned_integral<Id>
   Agent<Id>::Agent(Id index, Id position)
-      : m_index{index}, m_position{position}, m_previousPosition{position}, m_speed{0.}, m_time{0} {}
+      : m_speed{0.}, m_index{index}, m_position{position}, m_previousPosition{position}, m_time{0} {}
 
   template <typename Id>
     requires std::unsigned_integral<Id>
   Agent<Id>::Agent(Id index, Id position, Itinerary<Id> itinerary)
-      : m_index{index},
+      : m_itinerary{std::move(itinerary)},
+        m_speed{0.},
+		m_index{index},
         m_position{position},
         m_previousPosition{position},
-        m_itinerary{std::move(itinerary)},
-        m_speed{0.},
         m_time{0} {}
 
   // Setters
