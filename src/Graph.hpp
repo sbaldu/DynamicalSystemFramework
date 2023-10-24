@@ -29,9 +29,9 @@ namespace dmf {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   class Graph {
   private:
-    shared<SparseMatrix<Id, bool>> m_adjacency;
     std::unordered_set<shared<Node<Id>>, nodeHash<Id>> m_nodes;
     std::unordered_set<shared<Street<Id, Size>>, streetHash<Id, Size>> m_streets;
+    shared<SparseMatrix<Id, bool>> m_adjacency;
 
   public:
     Graph();
