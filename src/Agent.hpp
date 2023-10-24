@@ -11,7 +11,7 @@
 namespace dmf {
 
   template <typename Id>
-  requires std::unsigned_integral<Id>
+    requires std::unsigned_integral<Id>
   class Agent {
   private:
     Id m_index;
@@ -44,11 +44,13 @@ namespace dmf {
   };
 
   template <typename Id>
-  requires std::unsigned_integral<Id> Agent<Id>::Agent(Id index, Id position)
+    requires std::unsigned_integral<Id>
+  Agent<Id>::Agent(Id index, Id position)
       : m_index{index}, m_position{position}, m_previousPosition{position}, m_speed{0.}, m_time{0} {}
 
   template <typename Id>
-  requires std::unsigned_integral<Id> Agent<Id>::Agent(Id index, Id position, Itinerary<Id> itinerary)
+    requires std::unsigned_integral<Id>
+  Agent<Id>::Agent(Id index, Id position, Itinerary<Id> itinerary)
       : m_index{index},
         m_position{position},
         m_previousPosition{position},
@@ -58,13 +60,17 @@ namespace dmf {
 
   // Setters
   template <typename Id>
-  requires std::unsigned_integral<Id>
-  void Agent<Id>::setPosition(Id position) { m_position = position; }
+    requires std::unsigned_integral<Id>
+  void Agent<Id>::setPosition(Id position) {
+    m_position = position;
+  }
   template <typename Id>
-  requires std::unsigned_integral<Id>
-  void Agent<Id>::setItinerary(Itinerary<Id> itinerary) { m_itinerary = std::move(itinerary); }
+    requires std::unsigned_integral<Id>
+  void Agent<Id>::setItinerary(Itinerary<Id> itinerary) {
+    m_itinerary = std::move(itinerary);
+  }
   template <typename Id>
-  requires std::unsigned_integral<Id>
+    requires std::unsigned_integral<Id>
   void Agent<Id>::setSpeed(double speed) {
     if (speed < 0) {
       std::string errorMsg = "Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
@@ -74,7 +80,7 @@ namespace dmf {
     m_speed = speed;
   }
   template <typename Id>
-  requires std::unsigned_integral<Id>
+    requires std::unsigned_integral<Id>
   void Agent<Id>::incrementTime() {
     if (m_time == std::numeric_limits<unsigned int>::max()) {
       std::string errorMsg = "Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
@@ -84,7 +90,7 @@ namespace dmf {
     ++m_time;
   }
   template <typename Id>
-  requires std::unsigned_integral<Id>
+    requires std::unsigned_integral<Id>
   void Agent<Id>::incrementTime(unsigned int time) {
     if (m_time + time < m_time) {
       std::string errorMsg = "Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
@@ -96,23 +102,35 @@ namespace dmf {
 
   // Getters
   template <typename Id>
-  requires std::unsigned_integral<Id>
-  int Agent<Id>::index() const { return m_index; }
+    requires std::unsigned_integral<Id>
+  int Agent<Id>::index() const {
+    return m_index;
+  }
   template <typename Id>
-  requires std::unsigned_integral<Id>
-  int Agent<Id>::position() const { return m_position; }
+    requires std::unsigned_integral<Id>
+  int Agent<Id>::position() const {
+    return m_position;
+  }
   template <typename Id>
-  requires std::unsigned_integral<Id>
-  int Agent<Id>::previousPosition() const { return m_previousPosition; }
+    requires std::unsigned_integral<Id>
+  int Agent<Id>::previousPosition() const {
+    return m_previousPosition;
+  }
   template <typename Id>
-  requires std::unsigned_integral<Id>
-  double Agent<Id>::speed() const { return m_speed; }
+    requires std::unsigned_integral<Id>
+  double Agent<Id>::speed() const {
+    return m_speed;
+  }
   template <typename Id>
-  requires std::unsigned_integral<Id>
-  unsigned int Agent<Id>::time() const { return m_time; }
+    requires std::unsigned_integral<Id>
+  unsigned int Agent<Id>::time() const {
+    return m_time;
+  }
   template <typename Id>
-  requires std::unsigned_integral<Id>
-  const Itinerary<Id>& Agent<Id>::itinerary() const { return m_itinerary; }
+    requires std::unsigned_integral<Id>
+  const Itinerary<Id>& Agent<Id>::itinerary() const {
+    return m_itinerary;
+  }
 };  // namespace dmf
 
 #endif
