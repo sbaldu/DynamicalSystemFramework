@@ -9,7 +9,7 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
 
-using Agent = dmf::Agent<uint16_t, float>;
+using Agent = dmf::Agent<uint16_t>;
 using Node = dmf::Node<uint16_t>;
 using Street = dmf::Street<uint16_t, uint16_t>;
 

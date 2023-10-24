@@ -53,10 +53,7 @@ namespace dmf {
     const std::pair<Id, Id>& nodePair() const;
     double density() const;
     double maxSpeed() const;
-
-    template <typename Weight>
-      requires is_numeric_v<Weight>
-    void enqueue(const Agent<Id, Weight>& agent);
+    void enqueue(const Agent<Id>& agent);
     std::optional<Id> dequeue();
   };
 
@@ -172,9 +169,7 @@ namespace dmf {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  template <typename Weight>
-    requires is_numeric_v<Weight>
-  void Street<Id, Size>::enqueue(const Agent<Id, Weight>& agent) {
+  void Street<Id, Size>::enqueue(const Agent<Id>& agent) {
     if (m_size < m_capacity) {
       m_queue.push(agent.index());
       ++m_size;
