@@ -3,7 +3,6 @@
 #define Agent_hpp
 
 #include "Itinerary.hpp"
-#include "utility/TypeTraits/is_numeric.hpp"
 
 #include <stdexcept>
 #include <string>
