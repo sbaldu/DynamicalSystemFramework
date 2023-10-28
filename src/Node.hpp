@@ -12,9 +12,9 @@ namespace dmf {
     requires std::unsigned_integral<Id>
   class Node {
   private:
-    Id m_id;
-    std::pair<double, double> m_coords;
     std::queue<Id> m_queue;
+    std::pair<double, double> m_coords;
+    Id m_id;
 
   public:
     Node() = default;
@@ -38,12 +38,12 @@ namespace dmf {
 
   template <typename Id>
     requires std::unsigned_integral<Id>
-  Node<Id>::Node(Id id, std::pair<double, double> coords) : m_id{id}, m_coords{std::move(coords)} {}
+  Node<Id>::Node(Id id, std::pair<double, double> coords) : m_coords{std::move(coords)}, m_id{id} {}
 
   template <typename Id>
     requires std::unsigned_integral<Id>
   Node<Id>::Node(Id id, std::pair<double, double> coords, std::queue<Id> queue)
-      : m_id{id}, m_coords{std::move(coords)}, m_queue{std::move(queue)} {}
+      : m_queue{std::move(queue)}, m_coords{std::move(coords)}, m_id{id} {}
 
   template <typename Id>
     requires std::unsigned_integral<Id>
