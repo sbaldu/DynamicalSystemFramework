@@ -35,7 +35,7 @@ namespace dmf {
 
   public:
     Graph();
-    Graph(const SparseMatrix<Id, bool> adj);
+    Graph(const SparseMatrix<Id, bool>& adj);
     Graph(const std::unordered_set<shared<Street<Id, Size>>, nodeHash<Id>>& streetSet);
 
     void buildAdj();
@@ -74,7 +74,7 @@ namespace dmf {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  Graph<Id, Size>::Graph(const SparseMatrix<Id, bool> adj)
+  Graph<Id, Size>::Graph(const SparseMatrix<Id, bool>& adj)
       : m_adjacency{make_shared<SparseMatrix<Id, bool>>(adj)} {
     std::ranges::for_each(std::views::iota(0, (int)adj.getColDim()),
                           [this](auto i) -> void { m_nodes.insert(make_shared<Node<Id>>(i)); });
