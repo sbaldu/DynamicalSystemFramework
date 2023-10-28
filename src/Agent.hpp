@@ -53,7 +53,7 @@ namespace dmf {
   Agent<Id>::Agent(Id index, Id position, Itinerary<Id> itinerary)
       : m_itinerary{std::move(itinerary)},
         m_speed{0.},
-		m_index{index},
+        m_index{index},
         m_position{position},
         m_previousPosition{position},
         m_time{0} {}
