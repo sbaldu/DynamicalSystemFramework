@@ -13,8 +13,8 @@ namespace dmf {
     requires std::unsigned_integral<Id>
   class Itinerary {
   private:
-    std::pair<Id, Id> m_trip;
     SparseMatrix<Id, bool> m_path;
+    std::pair<Id, Id> m_trip;
 
   public:
     Itinerary() = default;
@@ -40,11 +40,11 @@ namespace dmf {
   template <typename Id>
     requires std::unsigned_integral<Id>
   Itinerary<Id>::Itinerary(Id source, Id destination, SparseMatrix<Id, bool> path)
-      : m_trip{std::make_pair(source, destination)}, m_path{std::move(path)} {}
+      : m_path{std::move(path)}, m_trip{std::make_pair(source, destination)} {}
   template <typename Id>
     requires std::unsigned_integral<Id>
   Itinerary<Id>::Itinerary(std::pair<Id, Id> trip, SparseMatrix<Id, bool> path)
-      : m_trip{std::move(trip)}, m_path{std::move(path)} {}
+      : m_path{std::move(path)}, m_trip{std::move(trip)} {}
 
   //Setters
   template <typename Id>
