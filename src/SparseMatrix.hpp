@@ -2,8 +2,9 @@
 /// @brief      Defines the SparseMatrix class.
 ///
 /// @details    This file contains the definition of the SparseMatrix class.
-///             The SparseMatrix class represents a sparse matrix. It is templated by the type of the matrix's index and
-///             the type of the matrix's value. The matrix's index must be an unsigned integral type.
+///             The SparseMatrix class represents a sparse matrix. It is templated by the type
+///             of the matrix's index and the type of the matrix's value.
+///             The matrix's index must be an unsigned integral type.
 
 #ifndef SparseMatrix_hpp
 #define SparseMatrix_hpp
@@ -379,8 +380,8 @@ namespace dmf {
   }
 
   template <typename Index, typename T>
-    requires std::unsigned_integral<Index> bool
-  SparseMatrix<Index, T>::contains(Index i, Index j) const {
+    requires std::unsigned_integral<Index>
+  bool SparseMatrix<Index, T>::contains(Index i, Index j) const {
     if (i >= _rows || j >= _cols) {
       throw std::out_of_range("Index out of range");
     }
@@ -388,8 +389,8 @@ namespace dmf {
   }
 
   template <typename Index, typename T>
-    requires std::unsigned_integral<Index> bool
-  SparseMatrix<Index, T>::contains(Index const index) const {
+    requires std::unsigned_integral<Index>
+  bool SparseMatrix<Index, T>::contains(Index const index) const {
     if (index > _rows * _cols - 1) {
       throw std::out_of_range("Index out of range");
     }
