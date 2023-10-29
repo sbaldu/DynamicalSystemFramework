@@ -25,10 +25,10 @@ namespace dmf {
 
   public:
     Node() = default;
-    /// @brief Construct a new Node<Id>:: Node object
+    /// @brief Construct a new Node object
     /// @param id The node's id
     explicit Node(Id id);
-    /// @brief Construct a new Node<Id>:: Node object
+    /// @brief Construct a new Node object
     /// @param id The node's id
     /// @param coords A std::pair containing the node's coordinates
     Node(Id id, std::pair<double, double> coords);

@@ -42,10 +42,10 @@ namespace dmf {
 
   public:
     Graph();
-    /// @brief Construct a new Graph<Id, Size>:: Graph object
+    /// @brief Construct a new Graph object
     /// @param adj An adjacency matrix made by a SparseMatrix representing the graph's adjacency matrix
     Graph(const SparseMatrix<Id, bool>& adj);
-    /// @brief Construct a new Graph<Id, Size>:: Graph object
+    /// @brief Construct a new Graph object
     /// @param streetSet A set of streets representing the graph's streets
     Graph(const std::unordered_set<shared<Street<Id, Size>>, nodeHash<Id>>& streetSet);
 

@@ -37,8 +37,8 @@ namespace dmf {
 
   public:
     Street() = default;
-    /// @brief Construct a new Street<Id, Size>:: Street object
-    /// @param index The street's id
+    /// @brief Construct a new Street object
+    /// @param index, The street's id
     Street(Id index);
     /// @brief Construct a new Street<Id, Size>:: Street object
     /// @param index The street's id

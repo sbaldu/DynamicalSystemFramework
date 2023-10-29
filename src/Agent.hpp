@@ -30,11 +30,11 @@ namespace dmf {
 
   public:
     Agent() = default;
-    /// @brief Construct a new Agent<Id>:: Agent object
+    /// @brief Construct a new Agent object
     /// @param index The agent's id
     /// @param position The agent's position
     Agent(Id index, Id position);
-    /// @brief Construct a new Agent<Id>:: Agent object
+    /// @brief Construct a new Agent object
     /// @param index The agent's id
     /// @param position The agent's position
     /// @param itinerary The agent's itinerary
