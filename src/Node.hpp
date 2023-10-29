@@ -32,7 +32,7 @@ namespace dmf {
     /// @param id The node's id
     /// @param coords A std::pair containing the node's coordinates
     Node(Id id, std::pair<double, double> coords);
-    /// @brief Construct a new Node<Id>:: Node object
+    /// @brief Construct a new Node object
     /// @param id The node's id
     /// @param coords A std::pair containing the node's coordinates
     /// @param queue A std::queue containing the node's queue
