@@ -1,3 +1,9 @@
+/// @file       src/Agent.hpp
+/// @brief      Defines the Agent class.
+///
+/// @details    This file contains the definition of the Agent class.
+///             The Agent class represents an agent in the network. It is templated by the type of the agent's id. The
+///             agent's id must be an unsigned integral type.
 
 #ifndef Agent_hpp
 #define Agent_hpp
@@ -23,23 +29,59 @@ namespace dmf {
 
   public:
     Agent() = default;
+    /// @brief Construct a new Agent<Id>:: Agent object
+    /// @param index The agent's id
+    /// @param position The agent's position
     Agent(Id index, Id position);
+    /// @brief Construct a new Agent<Id>:: Agent object
+    /// @param index The agent's id
+    /// @param position The agent's position
+    /// @param itinerary The agent's itinerary
     Agent(Id index, Id position, Itinerary<Id> itinerary);
 
-    // Setters
+    /*************************************************************************/
+    /* Setters                                                               */
+    /*************************************************************************/
+    /// @brief Set the agent's position
+    /// @param position The agent's position
     void setPosition(Id position);
+    /// @brief Set the agent's itinerary
+    /// @param itinerary The agent's itinerary
     void setItinerary(Itinerary<Id> itinerary);
+    /// @brief Set the agent's speed
+    /// @param speed The agent's speed
+    /// @throw std::invalid_argument if speed is negative
     void setSpeed(double speed);
+    /// @brief Increment the agent's time by 1
+    /// @throw std::overflow_error if time has reached its maximum value
     void incrementTime();
+    /// @brief Increment the agent's time by a given value
+    /// @param time The value to increment the agent's time by
+    /// @throw std::overflow_error if time has reached its maximum value
     void incrementTime(unsigned int time);
+    /// @brief Reset the agent's time to 0
     void resetTime();
 
-    // Getters
+    /*************************************************************************/
+    /* Getters                                                               */
+    /*************************************************************************/
+    /// @brief Get the agent's id
+    /// @return The agent's id
     int index() const;
+    /// @brief Get the agent's position
+    /// @return The agent's position
     int position() const;
+    /// @brief Get the agent's previous position
+    /// @return The agent's previous position
     int previousPosition() const;
+    /// @brief Get the agent's itinerary
+    /// @return The agent's itinerary
     const Itinerary<Id>& itinerary() const;
+    /// @brief Get the agent's speed
+    /// @return The agent's speed
     double speed() const;
+    /// @brief Get the agent's travel time
+    /// @return The agent's travel time
     unsigned int time() const;
   };
 
