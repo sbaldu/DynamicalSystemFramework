@@ -29,6 +29,7 @@ namespace dmf {
   template <typename T>
   using shared = std::shared_ptr<T>;
   using std::make_shared;
+
   /// @brief The Graph class represents a graph in the network.
   /// @tparam Id The type of the graph's id. It must be an unsigned integral type.
   /// @tparam Size The type of the graph's capacity. It must be an unsigned integral type.
@@ -82,9 +83,6 @@ namespace dmf {
       requires is_street_v<T1> && (is_street_v<Tn> && ...)
     void addStreets(T1 street, Tn... streets);
 
-    /*************************************************************************/
-    /* Getters                                                               */
-    /*************************************************************************/
     /// @brief Get the graph's adjacency matrix
     /// @return A std::shared_ptr to the graph's adjacency matrix
     shared<SparseMatrix<Id, bool>> adjMatrix() const;

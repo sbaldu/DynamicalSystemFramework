@@ -42,9 +42,6 @@ namespace dmf {
     /// @param path An adjacency matrix made by a SparseMatrix representing the itinerary's path
     Itinerary(std::pair<Id, Id> trip, SparseMatrix<Id, bool> path);
 
-    /*************************************************************************/
-    /* Setters                                                               */
-    /*************************************************************************/
     /// @brief Set the itinerary's source
     /// @param source The itinerary's source
     void setSource(Id source);
@@ -55,9 +52,6 @@ namespace dmf {
     /// @param path An adjacency matrix made by a SparseMatrix representing the itinerary's path
     void setPath(SparseMatrix<Id, bool> path);
 
-    /*************************************************************************/
-    /* Getters                                                               */
-    /*************************************************************************/
     /// @brief Get the itinerary's source
     /// @return Id The itinerary's source
     Id source() const;
@@ -83,7 +77,6 @@ namespace dmf {
   Itinerary<Id>::Itinerary(std::pair<Id, Id> trip, SparseMatrix<Id, bool> path)
       : m_path{std::move(path)}, m_trip{std::move(trip)} {}
 
-  //Setters
   template <typename Id>
     requires std::unsigned_integral<Id>
   void Itinerary<Id>::setSource(Id source) {
@@ -100,7 +93,6 @@ namespace dmf {
     m_path = std::move(path);
   }
 
-  //Getters
   template <typename Id>
     requires std::unsigned_integral<Id>
   Id Itinerary<Id>::source() const {

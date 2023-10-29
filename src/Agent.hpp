@@ -40,9 +40,6 @@ namespace dmf {
     /// @param itinerary The agent's itinerary
     Agent(Id index, Id position, Itinerary<Id> itinerary);
 
-    /*************************************************************************/
-    /* Setters                                                               */
-    /*************************************************************************/
     /// @brief Set the agent's position
     /// @param position The agent's position
     void setPosition(Id position);
@@ -63,9 +60,6 @@ namespace dmf {
     /// @brief Reset the agent's time to 0
     void resetTime();
 
-    /*************************************************************************/
-    /* Getters                                                               */
-    /*************************************************************************/
     /// @brief Get the agent's id
     /// @return The agent's id
     int index() const;
@@ -101,7 +95,6 @@ namespace dmf {
         m_previousPosition{position},
         m_time{0} {}
 
-  // Setters
   template <typename Id>
     requires std::unsigned_integral<Id>
   void Agent<Id>::setPosition(Id position) {
@@ -143,7 +136,6 @@ namespace dmf {
     m_time += time;
   }
 
-  // Getters
   template <typename Id>
     requires std::unsigned_integral<Id>
   int Agent<Id>::index() const {

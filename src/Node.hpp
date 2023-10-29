@@ -38,9 +38,6 @@ namespace dmf {
     /// @param queue A std::queue containing the node's queue
     Node(Id id, std::pair<double, double> coords, std::queue<Id> queue);
 
-    /*************************************************************************/
-    /* Setters                                                               */
-    /*************************************************************************/
     /// @brief Set the node's coordinates
     /// @param coords A std::pair containing the node's coordinates
     void setCoords(std::pair<double, double> coords);
@@ -48,9 +45,6 @@ namespace dmf {
     /// @param queue A std::queue containing the node's queue
     void setQueue(std::queue<Id> queue);
 
-    /*************************************************************************/
-    /* Getters                                                               */
-    /*************************************************************************/
     /// @brief Get the node's id
     /// @return Id The node's id
     Id id() const;

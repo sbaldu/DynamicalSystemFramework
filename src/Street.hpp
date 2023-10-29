@@ -40,28 +40,25 @@ namespace dmf {
     /// @brief Construct a new Street object
     /// @param index, The street's id
     Street(Id index);
-    /// @brief Construct a new Street<Id, Size>:: Street object
-    /// @param index The street's id
-    /// @param capacity The street's capacity
-    /// @param len The street's length
+    /// @brief Construct a new Street object
+    /// @param index, The street's id
+    /// @param capacity, The street's capacity
+    /// @param len, The street's length
     Street(Id index, Size capacity, double len);
-    /// @brief Construct a new Street<Id, Size>:: Street object
-    /// @param index The street's id
-    /// @param capacity The street's capacity
-    /// @param len The street's length
-    /// @param nodePair The street's node pair
+    /// @brief Construct a new Street object
+    /// @param index, The street's id
+    /// @param capacity, The street's capacity
+    /// @param len, The street's length
+    /// @param nodePair, The street's node pair
     Street(Id index, Size capacity, double len, std::pair<Id, Id> nodePair);
-    /// @brief Construct a new Street<Id, Size>:: Street object
-    /// @param index The street's id
-    /// @param capacity The street's capacity
-    /// @param len The street's length
-    /// @param maxSpeed The street's speed limit
-    /// @param nodePair The street's node pair
+    /// @brief Construct a new Street object
+    /// @param index, The street's id
+    /// @param capacity, The street's capacity
+    /// @param len, The street's length
+    /// @param maxSpeed, The street's speed limit
+    /// @param nodePair, The street's node pair
     Street(Id index, Size capacity, double len, double maxSpeed, std::pair<Id, Id> nodePair);
 
-    /*************************************************************************/
-    /* Setters                                                               */
-    /*************************************************************************/
     /// @brief Set the street's id
     /// @param id The street's id
     void setId(Id id);
@@ -90,9 +87,6 @@ namespace dmf {
     /// @throw std::invalid_argument If the speed is negative
     void setMaxSpeed(double speed);
 
-    /*************************************************************************/
-    /* Getters                                                               */
-    /*************************************************************************/
     /// @brief Get the street's id
     /// @return Id The street's id
     Id id() const;
