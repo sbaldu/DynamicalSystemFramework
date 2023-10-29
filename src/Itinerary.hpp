@@ -1,3 +1,9 @@
+/// @file       src/Itinerary.hpp
+/// @brief      Defines the Itinerary class.
+///
+/// @details    This file contains the definition of the Itinerary class.
+///             The Itinerary class represents an itinerary in the network. It is templated by the type of the itinerary's
+///             id. The itinerary's id must be an unsigned integral type.
 
 #ifndef Itinerary_hpp
 #define Itinerary_hpp
@@ -8,7 +14,8 @@
 #include <utility>
 
 namespace dmf {
-
+  /// @brief The Itinerary class represents an itinerary in the network.
+  /// @tparam Id The type of the itinerary's id. It must be an unsigned integral type.
   template <typename Id>
     requires std::unsigned_integral<Id>
   class Itinerary {
@@ -18,20 +25,50 @@ namespace dmf {
 
   public:
     Itinerary() = default;
+    /// @brief Construct a new Itinerary<Id>:: Itinerary object
+    /// @param source The itinerary's source
+    /// @param destination The itinerary's destination
     Itinerary(Id source, Id destination);
+    /// @brief Construct a new Itinerary<Id>:: Itinerary object
+    /// @param trip An std::pair containing the itinerary's source and destination
     explicit Itinerary(std::pair<Id, Id> trip) : m_trip{std::move(trip)} {}
+    /// @brief Construct a new Itinerary<Id>:: Itinerary object
+    /// @param source The itinerary's source
+    /// @param destination The itinerary's destination
+    /// @param path An adjacency matrix made by a SparseMatrix representing the itinerary's path
     Itinerary(Id source, Id destination, SparseMatrix<Id, bool> path);
+    /// @brief Construct a new Itinerary<Id>:: Itinerary object
+    /// @param trip An std::pair containing the itinerary's source and destination
+    /// @param path An adjacency matrix made by a SparseMatrix representing the itinerary's path
     Itinerary(std::pair<Id, Id> trip, SparseMatrix<Id, bool> path);
 
-    // Setters
+    /*************************************************************************/
+    /* Setters                                                               */
+    /*************************************************************************/
+    /// @brief Set the itinerary's source
+    /// @param source The itinerary's source
     void setSource(Id source);
+    /// @brief Set the itinerary's destination
+    /// @param destination The itinerary's destination
     void setDestination(Id destination);
+    /// @brief Set the itinerary's path
+    /// @param path An adjacency matrix made by a SparseMatrix representing the itinerary's path
     void setPath(SparseMatrix<Id, bool> path);
 
-    // Getters
+    /*************************************************************************/
+    /* Getters                                                               */
+    /*************************************************************************/
+    /// @brief Get the itinerary's source
+    /// @return Id The itinerary's source
     Id source() const;
+    /// @brief Get the itinerary's destination
+    /// @return Id The itinerary's destination
     Id destination() const;
+    /// @brief Get the itinerary's trip
+    /// @return std::pair<Id, Id> An std::pair containing the itinerary's source and destination
     const std::pair<Id, Id>& trip() const;
+    /// @brief Get the itinerary's path
+    /// @return SparseMatrix<Id, bool> An adjacency matrix made by a SparseMatrix representing the itinerary's path
     const SparseMatrix<Id, bool>& path() const;
   };
   template <typename Id>
