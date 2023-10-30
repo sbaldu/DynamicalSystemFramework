@@ -63,7 +63,7 @@ namespace dmf {
     const std::pair<Id, Id>& trip() const;
     /// @brief Get the itinerary's path
     /// @return SparseMatrix<Id, bool>, An adjacency matrix made by a SparseMatrix representing the
-	/// itinerary's path
+    /// itinerary's path
     const SparseMatrix<Id, bool>& path() const;
   };
 
