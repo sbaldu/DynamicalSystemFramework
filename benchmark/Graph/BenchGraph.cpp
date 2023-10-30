@@ -20,12 +20,12 @@ int main() {
 
   std::cout << "Benchmarking addNode\n";
   Node n1(std::rand());
-  b1.benchmark([&g1](const Node& node) { g1.addNode(node); }, n1);
+  b1.benchmark([&g1](const Node& node) -> void { g1.addNode(node); }, n1);
   b1.print();
 
   std::cout << "Benchmarking addStreet\n";
   Street s1(std::rand());
-  b1.benchmark([&g1](const Street& street) { g1.addStreet(street); }, s1);
+  b1.benchmark([&g1](const Street& street) -> void { g1.addStreet(street); }, s1);
   b1.print();
 
   const int n_nodes{10000};
@@ -40,12 +40,12 @@ int main() {
   }
   Bench b2;
   std::cout << "Benchmarking construction with adjacency matrix\n";
-  b2.benchmark([&sm]() { Graph g(sm); });
+  b2.benchmark([&sm]() -> void { Graph g(sm); });
   b2.print<sb::milliseconds>();
 
   Bench b3(10);
   Graph g2(sm);
   std::cout << "Benchmarking building the adjacency matrix\n";
-  b3.benchmark([&g2]() { g2.buildAdj(); });
+  b3.benchmark([&g2]() -> void { g2.buildAdj(); });
   b3.print<sb::microseconds>();
 }
