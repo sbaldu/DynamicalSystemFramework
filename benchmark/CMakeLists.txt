@@ -11,3 +11,4 @@ include_directories(../extern/benchmark/)
 
 # add subdirectories
 add_subdirectory(Graph)
+add_subdirectory(Street)
