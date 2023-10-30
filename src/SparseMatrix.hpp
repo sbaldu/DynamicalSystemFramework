@@ -1,7 +1,10 @@
-//! SparseMatrix class v1.7.0 by Grufoony
-
-//!  This class implements a sparse matrix. The matrix is stored in a compressed
-//!  row format. ++ 20 requiered.
+/// @file       src/SparseMatrix.hpp
+/// @brief      Defines the SparseMatrix class.
+///
+/// @details    This file contains the definition of the SparseMatrix class.
+///             The SparseMatrix class represents a sparse matrix. It is templated by the type
+///             of the matrix's index and the type of the matrix's value.
+///             The matrix's index must be an unsigned integral type.
 
 #ifndef SparseMatrix_hpp
 #define SparseMatrix_hpp
@@ -16,7 +19,9 @@
 #include <vector>
 
 namespace dmf {
-
+  /// @brief The SparseMatrix class represents a sparse matrix.
+  /// @tparam Index The type of the matrix's index. It must be an unsigned integral type.
+  /// @tparam T The type of the matrix's value.
   template <typename Index, typename T>
     requires std::unsigned_integral<Index>
   class SparseMatrix {

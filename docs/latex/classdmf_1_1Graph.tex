@@ -1,0 +1,211 @@
+\hypertarget{classdmf_1_1Graph}{}\doxysection{dmf\+::Graph$<$ Id, Size $>$ Class Template Reference}
+\label{classdmf_1_1Graph}\index{dmf::Graph$<$ Id, Size $>$@{dmf::Graph$<$ Id, Size $>$}}
+
+
+The \mbox{\hyperlink{classdmf_1_1Graph}{Graph}} class represents a graph in the network.  
+
+
+
+
+{\ttfamily \#include $<$Graph.\+hpp$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classdmf_1_1Graph_a470b1aec58c56c537b46d9efd10fca92}{Graph}} (const \mbox{\hyperlink{classdmf_1_1SparseMatrix}{Sparse\+Matrix}}$<$ Id, bool $>$ \&adj)
+\begin{DoxyCompactList}\small\item\em Construct a new Graph$<$\+Id, Size$>$\+:: \mbox{\hyperlink{classdmf_1_1Graph}{Graph}} object. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classdmf_1_1Graph_a4b29d7b81c37e966abc89601f8ac237b}{Graph}} (const std\+::unordered\+\_\+set$<$ shared$<$ \mbox{\hyperlink{classdmf_1_1Street}{Street}}$<$ Id, Size $>$$>$, node\+Hash$<$ Id $>$$>$ \&\mbox{\hyperlink{classdmf_1_1Graph_a6ac8cb381ccd1d71ad04cea581a59538}{street\+Set}})
+\begin{DoxyCompactList}\small\item\em Construct a new Graph$<$\+Id, Size$>$\+:: \mbox{\hyperlink{classdmf_1_1Graph}{Graph}} object. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classdmf_1_1Graph_aea7e1e9643b7e488c6506cfbb613f45e}\label{classdmf_1_1Graph_aea7e1e9643b7e488c6506cfbb613f45e}} 
+void \mbox{\hyperlink{classdmf_1_1Graph_aea7e1e9643b7e488c6506cfbb613f45e}{build\+Adj}} ()
+\begin{DoxyCompactList}\small\item\em Build the graph\textquotesingle{}s adjacency matrix. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdmf_1_1Graph_a36cc1c35bc5be1d27f9b5b37ac564f1f}{add\+Node}} (shared$<$ \mbox{\hyperlink{classdmf_1_1Node}{Node}}$<$ Id $>$$>$ node)
+\begin{DoxyCompactList}\small\item\em Add a node to the graph. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdmf_1_1Graph_ad78401e9b96ba054fd0455f2fffedf9c}{add\+Node}} (const \mbox{\hyperlink{classdmf_1_1Node}{Node}}$<$ Id $>$ \&node)
+\begin{DoxyCompactList}\small\item\em Add a node to the graph. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classdmf_1_1Graph_a20424b37018d120c0ccef2fc88cf3330}\label{classdmf_1_1Graph_a20424b37018d120c0ccef2fc88cf3330}} 
+{\footnotesize template$<$typename... Tn$>$ }\\{\bfseries requires} (is\+\_\+node\+\_\+v$<$ Tn $>$ \&\&...) void add\+Nodes(Tn... nodes)
+\item 
+\mbox{\Hypertarget{classdmf_1_1Graph_a46a1c145b5b27e601f5ada350fd908bb}\label{classdmf_1_1Graph_a46a1c145b5b27e601f5ada350fd908bb}} 
+{\footnotesize template$<$typename T1 , typename... Tn$>$ }\\requires is\+\_\+node\+\_\+v$<$ T1 $>$ \&\&is\+\_\+node\+\_\+v$<$ Tn $>$ \&\&void {\bfseries add\+Nodes} (T1 node, Tn... nodes)
+\item 
+void \mbox{\hyperlink{classdmf_1_1Graph_af223f70c60a407eb47a968d90d7be9dc}{add\+Street}} (shared$<$ \mbox{\hyperlink{classdmf_1_1Street}{Street}}$<$ Id, Size $>$$>$ street)
+\begin{DoxyCompactList}\small\item\em Add a street to the graph. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdmf_1_1Graph_a83b6283326058ebd62023de3028de730}{add\+Street}} (const \mbox{\hyperlink{classdmf_1_1Street}{Street}}$<$ Id, Size $>$ \&street)
+\begin{DoxyCompactList}\small\item\em Add a street to the graph. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classdmf_1_1Graph_a0d1fc5c28c635c33dec5c618e080a804}\label{classdmf_1_1Graph_a0d1fc5c28c635c33dec5c618e080a804}} 
+{\footnotesize template$<$typename... Tn$>$ }\\{\bfseries requires} (is\+\_\+street\+\_\+v$<$ Tn $>$ \&\&...) void add\+Streets(Tn... streets)
+\item 
+\mbox{\Hypertarget{classdmf_1_1Graph_a660f3b2c56c45d83deecfdf500d75633}\label{classdmf_1_1Graph_a660f3b2c56c45d83deecfdf500d75633}} 
+{\footnotesize template$<$typename T1 , typename... Tn$>$ }\\requires is\+\_\+street\+\_\+v$<$ T1 $>$ \&\&is\+\_\+street\+\_\+v$<$ Tn $>$ \&\&void {\bfseries add\+Streets} (T1 street, Tn... streets)
+\item 
+shared$<$ \mbox{\hyperlink{classdmf_1_1SparseMatrix}{Sparse\+Matrix}}$<$ Id, bool $>$ $>$ \mbox{\hyperlink{classdmf_1_1Graph_a38b9f248e9005698fb3196ebddadde74}{adj\+Matrix}} () const
+\begin{DoxyCompactList}\small\item\em Get the graph\textquotesingle{}s adjacency matrix. \end{DoxyCompactList}\item 
+std\+::unordered\+\_\+set$<$ shared$<$ \mbox{\hyperlink{classdmf_1_1Node}{Node}}$<$ Id $>$ $>$, node\+Hash$<$ Id $>$ $>$ \mbox{\hyperlink{classdmf_1_1Graph_afa5317f4abfc5b146112b912f2a8f45b}{node\+Set}} () const
+\begin{DoxyCompactList}\small\item\em Get the graph\textquotesingle{}s node set. \end{DoxyCompactList}\item 
+std\+::unordered\+\_\+set$<$ shared$<$ \mbox{\hyperlink{classdmf_1_1Street}{Street}}$<$ Id, Size $>$ $>$, street\+Hash$<$ Id, Size $>$ $>$ \mbox{\hyperlink{classdmf_1_1Graph_a6ac8cb381ccd1d71ad04cea581a59538}{street\+Set}} () const
+\begin{DoxyCompactList}\small\item\em Get the graph\textquotesingle{}s street set. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Id, typename Size$>$\newline
+class dmf\+::\+Graph$<$ Id, Size $>$}
+
+The \mbox{\hyperlink{classdmf_1_1Graph}{Graph}} class represents a graph in the network. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Id} & The type of the graph\textquotesingle{}s id. It must be an unsigned integral type. \\
+\hline
+{\em Size} & The type of the graph\textquotesingle{}s capacity. It must be an unsigned integral type. \\
+\hline
+\end{DoxyTemplParams}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classdmf_1_1Graph_a470b1aec58c56c537b46d9efd10fca92}\label{classdmf_1_1Graph_a470b1aec58c56c537b46d9efd10fca92}} 
+\index{dmf::Graph$<$ Id, Size $>$@{dmf::Graph$<$ Id, Size $>$}!Graph@{Graph}}
+\index{Graph@{Graph}!dmf::Graph$<$ Id, Size $>$@{dmf::Graph$<$ Id, Size $>$}}
+\doxysubsubsection{\texorpdfstring{Graph()}{Graph()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily template$<$typename Id , typename Size $>$ \\
+\mbox{\hyperlink{classdmf_1_1Graph}{dmf\+::\+Graph}}$<$ Id, Size $>$\+::\mbox{\hyperlink{classdmf_1_1Graph}{Graph}} (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classdmf_1_1SparseMatrix}{Sparse\+Matrix}}$<$ Id, bool $>$ \&}]{adj }\end{DoxyParamCaption})}
+
+
+
+Construct a new Graph$<$\+Id, Size$>$\+:: \mbox{\hyperlink{classdmf_1_1Graph}{Graph}} object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em adj} & An adjacency matrix made by a \mbox{\hyperlink{classdmf_1_1SparseMatrix}{Sparse\+Matrix}} representing the graph\textquotesingle{}s adjacency matrix \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classdmf_1_1Graph_a4b29d7b81c37e966abc89601f8ac237b}\label{classdmf_1_1Graph_a4b29d7b81c37e966abc89601f8ac237b}} 
+\index{dmf::Graph$<$ Id, Size $>$@{dmf::Graph$<$ Id, Size $>$}!Graph@{Graph}}
+\index{Graph@{Graph}!dmf::Graph$<$ Id, Size $>$@{dmf::Graph$<$ Id, Size $>$}}
+\doxysubsubsection{\texorpdfstring{Graph()}{Graph()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily template$<$typename Id , typename Size $>$ \\
+\mbox{\hyperlink{classdmf_1_1Graph}{dmf\+::\+Graph}}$<$ Id, Size $>$\+::\mbox{\hyperlink{classdmf_1_1Graph}{Graph}} (\begin{DoxyParamCaption}\item[{const std\+::unordered\+\_\+set$<$ shared$<$ \mbox{\hyperlink{classdmf_1_1Street}{Street}}$<$ Id, Size $>$$>$, node\+Hash$<$ Id $>$$>$ \&}]{street\+Set }\end{DoxyParamCaption})}
+
+
+
+Construct a new Graph$<$\+Id, Size$>$\+:: \mbox{\hyperlink{classdmf_1_1Graph}{Graph}} object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em street\+Set} & A set of streets representing the graph\textquotesingle{}s streets \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classdmf_1_1Graph_ad78401e9b96ba054fd0455f2fffedf9c}\label{classdmf_1_1Graph_ad78401e9b96ba054fd0455f2fffedf9c}} 
+\index{dmf::Graph$<$ Id, Size $>$@{dmf::Graph$<$ Id, Size $>$}!addNode@{addNode}}
+\index{addNode@{addNode}!dmf::Graph$<$ Id, Size $>$@{dmf::Graph$<$ Id, Size $>$}}
+\doxysubsubsection{\texorpdfstring{addNode()}{addNode()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily template$<$typename Id , typename Size $>$ \\
+void \mbox{\hyperlink{classdmf_1_1Graph}{dmf\+::\+Graph}}$<$ Id, Size $>$\+::add\+Node (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classdmf_1_1Node}{Node}}$<$ Id $>$ \&}]{node }\end{DoxyParamCaption})}
+
+
+
+Add a node to the graph. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em node} & A reference to the node to add \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classdmf_1_1Graph_a36cc1c35bc5be1d27f9b5b37ac564f1f}\label{classdmf_1_1Graph_a36cc1c35bc5be1d27f9b5b37ac564f1f}} 
+\index{dmf::Graph$<$ Id, Size $>$@{dmf::Graph$<$ Id, Size $>$}!addNode@{addNode}}
+\index{addNode@{addNode}!dmf::Graph$<$ Id, Size $>$@{dmf::Graph$<$ Id, Size $>$}}
+\doxysubsubsection{\texorpdfstring{addNode()}{addNode()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily template$<$typename Id , typename Size $>$ \\
+void \mbox{\hyperlink{classdmf_1_1Graph}{dmf\+::\+Graph}}$<$ Id, Size $>$\+::add\+Node (\begin{DoxyParamCaption}\item[{shared$<$ \mbox{\hyperlink{classdmf_1_1Node}{Node}}$<$ Id $>$$>$}]{node }\end{DoxyParamCaption})}
+
+
+
+Add a node to the graph. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em node} & A std\+::shared\+\_\+ptr to the node to add \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classdmf_1_1Graph_a83b6283326058ebd62023de3028de730}\label{classdmf_1_1Graph_a83b6283326058ebd62023de3028de730}} 
+\index{dmf::Graph$<$ Id, Size $>$@{dmf::Graph$<$ Id, Size $>$}!addStreet@{addStreet}}
+\index{addStreet@{addStreet}!dmf::Graph$<$ Id, Size $>$@{dmf::Graph$<$ Id, Size $>$}}
+\doxysubsubsection{\texorpdfstring{addStreet()}{addStreet()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily template$<$typename Id , typename Size $>$ \\
+void \mbox{\hyperlink{classdmf_1_1Graph}{dmf\+::\+Graph}}$<$ Id, Size $>$\+::add\+Street (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classdmf_1_1Street}{Street}}$<$ Id, Size $>$ \&}]{street }\end{DoxyParamCaption})}
+
+
+
+Add a street to the graph. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em street} & A reference to the street to add \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classdmf_1_1Graph_af223f70c60a407eb47a968d90d7be9dc}\label{classdmf_1_1Graph_af223f70c60a407eb47a968d90d7be9dc}} 
+\index{dmf::Graph$<$ Id, Size $>$@{dmf::Graph$<$ Id, Size $>$}!addStreet@{addStreet}}
+\index{addStreet@{addStreet}!dmf::Graph$<$ Id, Size $>$@{dmf::Graph$<$ Id, Size $>$}}
+\doxysubsubsection{\texorpdfstring{addStreet()}{addStreet()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily template$<$typename Id , typename Size $>$ \\
+void \mbox{\hyperlink{classdmf_1_1Graph}{dmf\+::\+Graph}}$<$ Id, Size $>$\+::add\+Street (\begin{DoxyParamCaption}\item[{shared$<$ \mbox{\hyperlink{classdmf_1_1Street}{Street}}$<$ Id, Size $>$$>$}]{street }\end{DoxyParamCaption})}
+
+
+
+Add a street to the graph. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em street} & A std\+::shared\+\_\+ptr to the street to add \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classdmf_1_1Graph_a38b9f248e9005698fb3196ebddadde74}\label{classdmf_1_1Graph_a38b9f248e9005698fb3196ebddadde74}} 
+\index{dmf::Graph$<$ Id, Size $>$@{dmf::Graph$<$ Id, Size $>$}!adjMatrix@{adjMatrix}}
+\index{adjMatrix@{adjMatrix}!dmf::Graph$<$ Id, Size $>$@{dmf::Graph$<$ Id, Size $>$}}
+\doxysubsubsection{\texorpdfstring{adjMatrix()}{adjMatrix()}}
+{\footnotesize\ttfamily template$<$typename Id , typename Size $>$ \\
+bool \mbox{\hyperlink{classdmf_1_1Graph}{dmf\+::\+Graph}}$<$ Id, Size $>$\+::adj\+Matrix (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Get the graph\textquotesingle{}s adjacency matrix. 
+
+\begin{DoxyReturn}{Returns}
+A std\+::shared\+\_\+ptr to the graph\textquotesingle{}s adjacency matrix 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdmf_1_1Graph_afa5317f4abfc5b146112b912f2a8f45b}\label{classdmf_1_1Graph_afa5317f4abfc5b146112b912f2a8f45b}} 
+\index{dmf::Graph$<$ Id, Size $>$@{dmf::Graph$<$ Id, Size $>$}!nodeSet@{nodeSet}}
+\index{nodeSet@{nodeSet}!dmf::Graph$<$ Id, Size $>$@{dmf::Graph$<$ Id, Size $>$}}
+\doxysubsubsection{\texorpdfstring{nodeSet()}{nodeSet()}}
+{\footnotesize\ttfamily template$<$typename Id , typename Size $>$ \\
+std\+::unordered\+\_\+set$<$shared$<$\mbox{\hyperlink{classdmf_1_1Node}{Node}}$<$Id$>$ $>$, node\+Hash$<$Id$>$ $>$ \mbox{\hyperlink{classdmf_1_1Graph}{dmf\+::\+Graph}}$<$ Id, Size $>$\+::node\+Set (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Get the graph\textquotesingle{}s node set. 
+
+\begin{DoxyReturn}{Returns}
+A std\+::unordered\+\_\+set containing the graph\textquotesingle{}s nodes 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdmf_1_1Graph_a6ac8cb381ccd1d71ad04cea581a59538}\label{classdmf_1_1Graph_a6ac8cb381ccd1d71ad04cea581a59538}} 
+\index{dmf::Graph$<$ Id, Size $>$@{dmf::Graph$<$ Id, Size $>$}!streetSet@{streetSet}}
+\index{streetSet@{streetSet}!dmf::Graph$<$ Id, Size $>$@{dmf::Graph$<$ Id, Size $>$}}
+\doxysubsubsection{\texorpdfstring{streetSet()}{streetSet()}}
+{\footnotesize\ttfamily template$<$typename Id , typename Size $>$ \\
+std\+::unordered\+\_\+set$<$shared$<$\mbox{\hyperlink{classdmf_1_1Street}{Street}}$<$Id, Size$>$ $>$, street\+Hash$<$Id, Size$>$ $>$ \mbox{\hyperlink{classdmf_1_1Graph}{dmf\+::\+Graph}}$<$ Id, Size $>$\+::street\+Set (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Get the graph\textquotesingle{}s street set. 
+
+\begin{DoxyReturn}{Returns}
+A std\+::unordered\+\_\+set containing the graph\textquotesingle{}s streets 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/\mbox{\hyperlink{Graph_8hpp}{Graph.\+hpp}}\end{DoxyCompactItemize}
