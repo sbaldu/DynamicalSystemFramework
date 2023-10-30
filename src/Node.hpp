@@ -2,8 +2,8 @@
 /// @brief      Defines the Node class.
 ///
 /// @details    This file contains the definition of the Node class.
-///             The Node class represents a node in the network. It is templated by the type of the node's id. The node's
-///             id must be an unsigned integral type.
+///             The Node class represents a node in the network. It is templated by the type
+///             of the node's id, which must be an unsigned integral type.
 
 #ifndef Node_hpp
 #define Node_hpp

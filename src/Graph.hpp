@@ -2,8 +2,10 @@
 /// @brief      Defines the Graph class.
 ///
 /// @details    This file contains the definition of the Graph class.
-///             The Graph class represents a graph in the network. It is templated by the type of the graph's id and
-///             the type of the graph's capacity. The graph's id and capacity must be unsigned integral types.
+///             The Graph class represents a graph in the network. It is templated by the type
+///             of the graph's id and the type of the graph's capacity.
+///             The graph's id and capacity must be unsigned integral types.
+
 #ifndef Graph_hpp
 #define Graph_hpp
 

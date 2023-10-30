@@ -2,8 +2,8 @@
 /// @brief      Defines the Itinerary class.
 ///
 /// @details    This file contains the definition of the Itinerary class.
-///             The Itinerary class represents an itinerary in the network. It is templated by the type of the itinerary's
-///             id. The itinerary's id must be an unsigned integral type.
+///             The Itinerary class represents an itinerary in the network. It is templated
+///             by the type of the itinerary's id, which must be an unsigned integral type.
 
 #ifndef Itinerary_hpp
 #define Itinerary_hpp

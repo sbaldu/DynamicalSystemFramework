@@ -2,8 +2,9 @@
 /// @brief      Defines the Street class.
 ///
 /// @details    This file contains the definition of the Street class.
-///             The Street class represents a street in the network. It is templated by the type of the street's id and
-///             the type of the street's capacity. The street's id and capacity must be unsigned integral types.
+///             The Street class represents a street in the network. It is templated by the
+///             type of the street's id and the type of the street's capacity.
+///             The street's id and capacity must be unsigned integral types.
 
 #ifndef Street_hpp
 #define Street_hpp

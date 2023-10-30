@@ -2,8 +2,8 @@
 /// @brief      Defines the Agent class.
 ///
 /// @details    This file contains the definition of the Agent class.
-///             The Agent class represents an agent in the network. It is templated by the type of the agent's id. The
-///             agent's id must be an unsigned integral type.
+///             The Agent class represents an agent in the network. It is templated by the type
+///             of the agent's id. The agent's id must be an unsigned integral type.
 
 #ifndef Agent_hpp
 #define Agent_hpp
