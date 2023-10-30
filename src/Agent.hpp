@@ -31,31 +31,31 @@ namespace dmf {
   public:
     Agent() = default;
     /// @brief Construct a new Agent object
-    /// @param index The agent's id
-    /// @param position The agent's position
+    /// @param index, The agent's id
+    /// @param position, The agent's position
     Agent(Id index, Id position);
     /// @brief Construct a new Agent object
-    /// @param index The agent's id
-    /// @param position The agent's position
-    /// @param itinerary The agent's itinerary
+    /// @param index, The agent's id
+    /// @param position, The agent's position
+    /// @param itinerary, The agent's itinerary
     Agent(Id index, Id position, Itinerary<Id> itinerary);
 
     /// @brief Set the agent's position
-    /// @param position The agent's position
+    /// @param position, The agent's position
     void setPosition(Id position);
     /// @brief Set the agent's itinerary
-    /// @param itinerary The agent's itinerary
+    /// @param itinerary, The agent's itinerary
     void setItinerary(Itinerary<Id> itinerary);
     /// @brief Set the agent's speed
-    /// @param speed The agent's speed
-    /// @throw std::invalid_argument if speed is negative
+    /// @param speed, The agent's speed
+    /// @throw std::invalid_argument, if speed is negative
     void setSpeed(double speed);
     /// @brief Increment the agent's time by 1
-    /// @throw std::overflow_error if time has reached its maximum value
+    /// @throw std::overflow_error, if time has reached its maximum value
     void incrementTime();
     /// @brief Increment the agent's time by a given value
-    /// @param time The value to increment the agent's time by
-    /// @throw std::overflow_error if time has reached its maximum value
+    /// @param time, The value to increment the agent's time by
+    /// @throw std::overflow_error, if time has reached its maximum value
     void incrementTime(unsigned int time);
     /// @brief Reset the agent's time to 0
     void resetTime();
