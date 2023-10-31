@@ -11,9 +11,9 @@
 #include "Node.hpp"
 #include "SparseMatrix.hpp"
 #include "Street.hpp"
-#include "utility/HashFunctions.hpp"
-#include "utility/TypeTraits/is_node.hpp"
-#include "utility/TypeTraits/is_street.hpp"
+#include "../utility/HashFunctions.hpp"
+#include "../utility/TypeTraits/is_node.hpp"
+#include "../utility/TypeTraits/is_street.hpp"
 
 namespace dmf {
 

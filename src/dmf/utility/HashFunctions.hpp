@@ -4,8 +4,8 @@
 #include <functional>
 #include <memory>
 
-#include "../Node.hpp"
-#include "../Street.hpp"
+#include "../headers/Node.hpp"
+#include "../headers/Street.hpp"
 
 namespace dmf {
 

@@ -4,7 +4,7 @@
 
 #include "Itinerary.hpp"
 #include "SparseMatrix.hpp"
-#include "utility/TypeTraits/is_numeric.hpp"
+#include "../utility/TypeTraits/is_numeric.hpp"
 
 namespace dmf {
 

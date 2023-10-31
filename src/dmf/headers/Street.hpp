@@ -9,7 +9,7 @@
 
 #include "Agent.hpp"
 #include "Node.hpp"
-#include "utility/TypeTraits/is_numeric.hpp"
+#include "../utility/TypeTraits/is_numeric.hpp"
 
 namespace dmf {
 
