@@ -25,7 +25,7 @@ namespace dmf {
   /// @tparam Id, The type of the street's id. It must be an unsigned integral type.
   /// @tparam Size, The type of the street's capacity. It must be an unsigned integral type.
   template <typename Id, typename Size>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   class Street {
   private:
     std::queue<Size> m_queue;
