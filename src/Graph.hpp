@@ -17,6 +17,7 @@
 #include <unordered_set>
 #include <queue>
 #include <type_traits>
+#include <utility>
 
 #include "Node.hpp"
 #include "SparseMatrix.hpp"
@@ -64,11 +65,11 @@ namespace dmf {
 
     template <typename... Tn>
       requires(is_node_v<Tn> && ...)
-    void addNodes(Tn... nodes);
+    void addNodes(Tn&&... nodes);
 
     template <typename T1, typename... Tn>
       requires is_node_v<T1> && (is_node_v<Tn> && ...)
-    void addNodes(T1 node, Tn... nodes);
+    void addNodes(T1&& node, Tn&&... nodes);
 
     /// @brief Add a street to the graph
     /// @param street, A std::shared_ptr to the street to add
@@ -79,11 +80,11 @@ namespace dmf {
 
     template <typename... Tn>
       requires(is_street_v<Tn> && ...)
-    void addStreets(Tn... streets);
+    void addStreets(Tn&&... streets);
 
     template <typename T1, typename... Tn>
       requires is_street_v<T1> && (is_street_v<Tn> && ...)
-    void addStreets(T1 street, Tn... streets);
+    void addStreets(T1&& street, Tn&&... streets);
 
     /// @brief Get the graph's adjacency matrix
     /// @return A std::shared_ptr to the graph's adjacency matrix
@@ -161,15 +162,15 @@ namespace dmf {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   template <typename... Tn>
     requires(is_node_v<Tn> && ...)
-  void Graph<Id, Size>::addNodes(Tn... nodes) {}
+  void Graph<Id, Size>::addNodes(Tn&&... nodes) {}
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   template <typename T1, typename... Tn>
     requires is_node_v<T1> && (is_node_v<Tn> && ...)
-  void Graph<Id, Size>::addNodes(T1 node, Tn... nodes) {
-    addNode(node);
-    addNodes(nodes...);
+  void Graph<Id, Size>::addNodes(T1&& node, Tn&&... nodes) {
+    addNode(std::forward<T1>(node));
+    addNodes(std::forward<Tn>(nodes)...);
   }
 
   template <typename Id, typename Size>
@@ -188,15 +189,15 @@ namespace dmf {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   template <typename... Tn>
     requires(is_street_v<Tn> && ...)
-  void Graph<Id, Size>::addStreets(Tn... edges) {}
+  void Graph<Id, Size>::addStreets(Tn&&... edges) {}
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   template <typename T1, typename... Tn>
     requires is_street_v<T1> && (is_street_v<Tn> && ...)
-  void Graph<Id, Size>::addStreets(T1 street, Tn... streets) {
-    addStreet(street);
-    addStreets(streets...);
+  void Graph<Id, Size>::addStreets(T1&& street, Tn&&... streets) {
+    addStreet(std::forward<T1>(street));
+    addStreets(std::forward<Tn>(streets)...);
   }
 
   template <typename Id, typename Size>
