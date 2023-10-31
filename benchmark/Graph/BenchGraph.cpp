@@ -22,10 +22,18 @@ int main() {
   Node n1(std::rand());
   b1.benchmark([&g1](const Node& node) -> void { g1.addNode(node); }, n1);
   b1.print();
+  std::cout << "Benchmarking addNodes overhead for a single node\n";
+  n1 = Node(std::rand());
+  b1.benchmark([&g1](const Node& node) -> void { g1.addNodes(node); }, n1);
+  b1.print();
 
   std::cout << "Benchmarking addStreet\n";
   Street s1(std::rand());
   b1.benchmark([&g1](const Street& street) -> void { g1.addStreet(street); }, s1);
+  b1.print();
+  std::cout << "Benchmarking addStreets overhead for a single street\n";
+  s1 = Street(std::rand());
+  b1.benchmark([&g1](const Street& street) -> void { g1.addStreets(street); }, s1);
   b1.print();
 
   const int n_nodes{10000};
