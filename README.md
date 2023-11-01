@@ -21,6 +21,10 @@ To compile tests one can run:
 cd test
 cmake -B build && make -C build
 ```
+To run all the tests together use the command:
+```shell
+for f in ./*.out ; do ./$f ; done
+```
 
 ## Citing
 
