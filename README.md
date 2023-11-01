@@ -26,6 +26,20 @@ To run all the tests together use the command:
 for f in ./*.out ; do ./$f ; done
 ```
 
+## Benchmarking
+Some functionalities of the library have been benchmarked in order to assess their efficiency.  
+The benchmarks are performed using a small toolkit developed by @sbaldu, in order to keep them simple and
+without needing to rely on large external libraries.  
+To compile the benchmarks use the commands:
+```shell
+cd benchmark
+cmake -B build && make -C build
+```
+To run all the benchmarks together use the command:
+```shell
+for f in ./*.out ; do ./$f ; done
+```
+
 ## Citing
 
 ```BibTex
