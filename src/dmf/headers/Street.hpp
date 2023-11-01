@@ -1,3 +1,10 @@
+/// @file       src/Street.hpp
+/// @brief      Defines the Street class.
+///
+/// @details    This file contains the definition of the Street class.
+///             The Street class represents a street in the network. It is templated by the
+///             type of the street's id and the type of the street's capacity.
+///             The street's id and capacity must be unsigned integral types.
 
 #ifndef Street_hpp
 #define Street_hpp
@@ -6,63 +13,138 @@
 #include <queue>
 #include <type_traits>
 #include <utility>
+#include <stdexcept>
+#include <string>
 
 #include "Agent.hpp"
 #include "Node.hpp"
 #include "../utility/TypeTraits/is_numeric.hpp"
 
 namespace dmf {
-
+  /// @brief The Street class represents a street in the network.
+  /// @tparam Id, The type of the street's id. It must be an unsigned integral type.
+  /// @tparam Size, The type of the street's capacity. It must be an unsigned integral type.
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   class Street {
   private:
+    std::queue<Size> m_queue;
+    std::pair<Id, Id> m_nodePair;
+    double m_len;
+    double m_maxSpeed;
     Id m_id;
     Size m_size;
     Size m_capacity;
-    double m_len;
-    std::pair<Id, Id> m_nodePair;
-    std::queue<Size> m_queue;
 
   public:
     Street() = default;
+    /// @brief Construct a new Street object
+    /// @param index, The street's id
+    Street(Id index);
+    /// @brief Construct a new Street object
+    /// @param index, The street's id
+    /// @param capacity, The street's capacity
+    /// @param len, The street's length
     Street(Id index, Size capacity, double len);
+    /// @brief Construct a new Street object
+    /// @param index, The street's id
+    /// @param capacity, The street's capacity
+    /// @param len, The street's length
+    /// @param nodePair, The street's node pair
     Street(Id index, Size capacity, double len, std::pair<Id, Id> nodePair);
+    /// @brief Construct a new Street object
+    /// @param index, The street's id
+    /// @param capacity, The street's capacity
+    /// @param len, The street's length
+    /// @param maxSpeed, The street's speed limit
+    /// @param nodePair, The street's node pair
+    Street(Id index, Size capacity, double len, double maxSpeed, std::pair<Id, Id> nodePair);
 
-    // Setters
+    /// @brief Set the street's id
+    /// @param id, The street's id
     void setId(Id id);
+    /// @brief Set the street's capacity
+    /// @param capacity, The street's capacity
     void setCapacity(Size capacity);
+    /// @brief Set the street's length
+    /// @param len, The street's length
     void setLength(double len);
+    /// @brief Set the street's queue
+    /// @param queue, The street's queue
     void setQueue(std::queue<Size> queue);
+    /// @brief Set the street's node pair
+    /// @param node1, The source node of the street
+    /// @param node2, The destination node of the street
     void setNodePair(Id node1, Id node2);
+    /// @brief Set the street's node pair
+    /// @param node1, The source node of the street
+    /// @param node2, The destination node of the street
     void setNodePair(const Node<Id>& node1, const Node<Id>& node2);
+    /// @brief Set the street's node pair
+    /// @param pair, The street's node pair
     void setNodePair(std::pair<Id, Id> pair);
+    /// @brief Set the street's speed limit
+    /// @param speed, The street's speed limit
+    /// @throw std::invalid_argument, If the speed is negative
+    void setMaxSpeed(double speed);
 
-    // Getters
+    /// @brief Get the street's id
+    /// @return Id, The street's id
     Id id() const;
+    /// @brief Get the street's size
+    /// @return Size, The street's size
     Size size() const;
+    /// @brief Get the street's capacity
+    /// @return Size, The street's capacity
     Size capacity() const;
+    /// @brief Get the street's length
+    /// @return double, The street's length
     double length() const;
+    /// @brief Get the street's queue
+    /// @return std::queue<Size>, The street's queue
     const std::queue<Size>& queue() const;
+    /// @brief Get the street's node pair
+    /// @return std::pair<Id, Id>, The street's node pair
     const std::pair<Id, Id>& nodePair() const;
-
-    template <typename Weight>
-      requires is_numeric_v<Weight>
-    void enqueue(const Agent<Id, Weight>& agent);
+    /// @brief Get the street's density
+    /// @return double, The street's density
+    double density() const;
+    /// @brief Get the street's speed limit
+    /// @return double, The street's speed limit
+    double maxSpeed() const;
+    /// @brief Add an agent to the street's queue
+    /// @param agent, The agent to add
+    void enqueue(const Agent<Id>& agent);
+    /// @brief Remove an agent from the street's queue
     std::optional<Id> dequeue();
   };
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  Street<Id, Size>::Street(Id index) : m_id{index}, m_size{0} {}
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   Street<Id, Size>::Street(Id index, Size capacity, double len)
-      : m_id{index}, m_capacity{capacity}, m_len{len} {}
+      : m_len{len}, m_maxSpeed{30.}, m_id{index}, m_size{0}, m_capacity{capacity} {}
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   Street<Id, Size>::Street(Id index, Size capacity, double len, std::pair<Id, Id> nodePair)
-      : m_id{index}, m_capacity{capacity}, m_len{len}, m_nodePair{std::move(nodePair)} {}
+      : m_nodePair{std::move(nodePair)},
+        m_len{len},
+        m_maxSpeed{30.},
+        m_id{index},
+        m_size{0},
+        m_capacity{capacity} {}
 
-  // Setters
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  Street<Id, Size>::Street(Id index, Size capacity, double len, double maxSpeed, std::pair<Id, Id> nodePair)
+      : m_nodePair{std::move(nodePair)}, m_len{len}, m_id{index}, m_size{0}, m_capacity{capacity} {
+    this->setMaxSpeed(maxSpeed);
+  }
+
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Street<Id, Size>::setId(Id id) {
@@ -98,8 +180,17 @@ namespace dmf {
   void Street<Id, Size>::setNodePair(std::pair<Id, Id> pair) {
     m_nodePair = std::move(pair);
   }
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Street<Id, Size>::setMaxSpeed(double speed) {
+    if (speed < 0.) {
+      std::string errorMsg = "Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                             "The maximum speed of a street cannot be negative.";
+      throw std::invalid_argument(errorMsg);
+    }
+    m_maxSpeed = speed;
+  }
 
-  // Getters
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   Id Street<Id, Size>::id() const {
@@ -130,12 +221,20 @@ namespace dmf {
   const std::pair<Id, Id>& Street<Id, Size>::nodePair() const {
     return m_nodePair;
   }
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  double Street<Id, Size>::density() const {
+    return static_cast<double>(m_size) / m_capacity;
+  }
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  double Street<Id, Size>::maxSpeed() const {
+    return m_maxSpeed;
+  }
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  template <typename Weight>
-    requires is_numeric_v<Weight>
-  void Street<Id, Size>::enqueue(const Agent<Id, Weight>& agent) {
+  void Street<Id, Size>::enqueue(const Agent<Id>& agent) {
     if (m_size < m_capacity) {
       m_queue.push(agent.index());
       ++m_size;

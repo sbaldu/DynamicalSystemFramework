@@ -9,7 +9,7 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
 
-using Agent = dmf::Agent<uint16_t, float>;
+using Agent = dmf::Agent<uint16_t>;
 using Node = dmf::Node<uint16_t>;
 using Street = dmf::Street<uint16_t, uint16_t>;
 
@@ -26,6 +26,8 @@ TEST_CASE("Street") {
     CHECK_EQ(street.capacity(), 2);
     CHECK_EQ(street.length(), 3.5);
     CHECK_EQ(street.nodePair(), std::pair<uint16_t, uint16_t>());
+    CHECK_EQ(street.density(), 0);
+    CHECK_EQ(street.maxSpeed(), 30.);
   }
 
   SUBCASE("Constructor_2") {
@@ -41,6 +43,24 @@ TEST_CASE("Street") {
     CHECK_EQ(street.length(), 3.5);
     CHECK_EQ(street.nodePair().first, 4);
     CHECK_EQ(street.nodePair().second, 5);
+    CHECK_EQ(street.density(), 0);
+    CHECK_EQ(street.maxSpeed(), 30.);
+  }
+  SUBCASE("Constructor_3") {
+    /*This tests the constructor that takes an Id, capacity, length, nodePair, and maxSpeed.
+    GIVEN: An Id, capacity, length, nodePair, and maxSpeed
+    WHEN: A Street is constructed
+    THEN: The Id, capacity, length, nodePair, and maxSpeed are set correctly
+    */
+
+    Street street{1, 2, 3.5, 40., std::make_pair(4, 5)};
+    CHECK_EQ(street.id(), 1);
+    CHECK_EQ(street.capacity(), 2);
+    CHECK_EQ(street.length(), 3.5);
+    CHECK_EQ(street.nodePair().first, 4);
+    CHECK_EQ(street.nodePair().second, 5);
+    CHECK_EQ(street.density(), 0);
+    CHECK_EQ(street.maxSpeed(), 40.);
   }
 
   SUBCASE("SetNodePair_1") {
@@ -85,12 +105,14 @@ TEST_CASE("Street") {
     // fill the queue
     street.enqueue(a1);
     street.enqueue(a2);
+    CHECK_EQ(street.density(), 0.5);
     street.enqueue(a3);
     street.enqueue(a4);
     CHECK_EQ(street.queue().front(), 1);
     CHECK_EQ(street.queue().back(), 4);
     CHECK_EQ(street.queue().size(), street.capacity());
     CHECK_EQ(street.size(), street.capacity());
+    CHECK_EQ(street.density(), 1);
   }
 
   SUBCASE("Dequeue") {
