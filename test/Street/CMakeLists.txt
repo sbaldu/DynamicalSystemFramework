@@ -22,7 +22,7 @@ if(NOT doctest_POPULATED)
   FetchContent_Populate(doctest)
 endif()
 
-include_directories(../../src/)
+include_directories(../../src/dmf/headers/)
 
 # Compile
 add_executable(test_street.out ./Test_street.cpp)

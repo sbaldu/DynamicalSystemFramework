@@ -11,7 +11,7 @@ string(APPEND CMAKE_CXX_FLAGS "-Wall -Wextra -O3 -g")
 # Set the folder for the executable
 set(EXECUTABLE_OUTPUT_PATH ../../)
 
-include_directories(../../src/utility/TypeTraits/)
+include_directories(../../src/dmf/utility/TypeTraits/)
 
 # Compile
 add_executable(is_numeric.out ./is_numeric.cpp)
