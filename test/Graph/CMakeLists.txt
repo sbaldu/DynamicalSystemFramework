@@ -22,8 +22,8 @@ if(NOT doctest_POPULATED)
   FetchContent_Populate(doctest)
 endif()
 
-include_directories(../../src/dmf/headers/)
-include_directories(../../src/dmf/utility/)
+include_directories(../../src/dsm/headers/)
+include_directories(../../src/dsm/utility/)
 
 # Compile
 add_executable(test_graph.out ./Test_graph.cpp)
