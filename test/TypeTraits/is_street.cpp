@@ -4,9 +4,9 @@
 
 #include "is_street.hpp"
 
-using dmf::is_street;
-using dmf::is_street_v;
-using dmf::Street;
+using dsm::is_street;
+using dsm::is_street_v;
+using dsm::Street;
 
 // check the type trait
 static_assert(is_street<Street<uint8_t, uint8_t>>::value);

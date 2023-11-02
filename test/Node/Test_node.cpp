@@ -5,7 +5,7 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
 
-using Node = dmf::Node<uint16_t>;
+using Node = dsm::Node<uint16_t>;
 
 TEST_CASE("Node") {
   SUBCASE("Constructor") {

@@ -18,9 +18,9 @@
 
 #include "Agent.hpp"
 #include "Node.hpp"
-#include "utility/TypeTraits/is_numeric.hpp"
+#include "../utility/TypeTraits/is_numeric.hpp"
 
-namespace dmf {
+namespace dsm {
   /// @brief The Street class represents a street in the network.
   /// @tparam Id, The type of the street's id. It must be an unsigned integral type.
   /// @tparam Size, The type of the street's capacity. It must be an unsigned integral type.
@@ -255,6 +255,6 @@ namespace dmf {
     return std::nullopt;
   }
 
-};  // namespace dmf
+};  // namespace dsm
 
 #endif

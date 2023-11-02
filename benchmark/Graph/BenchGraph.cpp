@@ -6,10 +6,10 @@
 
 #include "Graph.hpp"
 
-using Graph = dmf::Graph<uint32_t, uint32_t>;
-using Node = dmf::Node<uint32_t>;
-using Street = dmf::Street<uint32_t, uint32_t>;
-using SparseMatrix = dmf::SparseMatrix<uint32_t, bool>;
+using Graph = dsm::Graph<uint32_t, uint32_t>;
+using Node = dsm::Node<uint32_t>;
+using Street = dsm::Street<uint32_t, uint32_t>;
+using SparseMatrix = dsm::SparseMatrix<uint32_t, bool>;
 
 using Bench = sb::Bench<long long int>;
 

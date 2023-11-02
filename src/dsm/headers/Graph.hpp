@@ -22,11 +22,11 @@
 #include "Node.hpp"
 #include "SparseMatrix.hpp"
 #include "Street.hpp"
-#include "utility/HashFunctions.hpp"
-#include "utility/TypeTraits/is_node.hpp"
-#include "utility/TypeTraits/is_street.hpp"
+#include "../utility/HashFunctions.hpp"
+#include "../utility/TypeTraits/is_node.hpp"
+#include "../utility/TypeTraits/is_street.hpp"
 
-namespace dmf {
+namespace dsm {
 
   // Alias for shared pointers
   template <typename T>
@@ -217,6 +217,6 @@ namespace dmf {
   std::unordered_set<shared<Street<Id, Size>>, streetHash<Id, Size>> Graph<Id, Size>::streetSet() const {
     return m_streets;
   }
-};  // namespace dmf
+};  // namespace dsm
 
 #endif
