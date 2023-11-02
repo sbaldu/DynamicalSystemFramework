@@ -26,7 +26,7 @@
 #include "../utility/TypeTraits/is_node.hpp"
 #include "../utility/TypeTraits/is_street.hpp"
 
-namespace dmf {
+namespace dsm {
 
   // Alias for shared pointers
   template <typename T>

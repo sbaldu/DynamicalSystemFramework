@@ -1,6 +1,6 @@
 
-#ifndef dmf_hpp
-#define dmf_hpp
+#ifndef dsm_hpp
+#define dsm_hpp
 
 #include "headers/Agent.hpp"
 #include "headers/Graph.hpp"

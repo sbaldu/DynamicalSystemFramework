@@ -12,7 +12,7 @@
 #include <queue>
 #include <utility>
 
-namespace dmf {
+namespace dsm {
   /// @brief The Node class represents a node in the network.
   /// @tparam Id The type of the node's id. It must be an unsigned integral type.
   template <typename Id>

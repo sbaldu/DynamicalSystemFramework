@@ -4,7 +4,7 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
 
-using namespace dmf;
+using namespace dsm;
 
 TEST_CASE("Boolean Matrix") {
   SUBCASE("Default constructor") {

@@ -8,9 +8,9 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
 
-using Graph = dmf::Graph<uint16_t, uint16_t>;
-using SparseMatrix = dmf::SparseMatrix<uint16_t, bool>;
-using Street = dmf::Street<uint16_t, uint16_t>;
+using Graph = dsm::Graph<uint16_t, uint16_t>;
+using SparseMatrix = dsm::SparseMatrix<uint16_t, bool>;
+using Street = dsm::Street<uint16_t, uint16_t>;
 
 TEST_CASE("Graph") {
   SUBCASE("Constructor_1") {

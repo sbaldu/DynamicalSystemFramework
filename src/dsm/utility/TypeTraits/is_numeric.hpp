@@ -6,7 +6,7 @@
 #include <memory>
 #include <type_traits>
 
-namespace dmf {
+namespace dsm {
   // Alias for shared pointers
   template <typename T>
   using shared = std::shared_ptr<T>;

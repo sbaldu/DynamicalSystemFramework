@@ -7,7 +7,7 @@
 #include "../headers/Node.hpp"
 #include "../headers/Street.hpp"
 
-namespace dmf {
+namespace dsm {
 
   // Alias for shared pointers
   template <typename T>

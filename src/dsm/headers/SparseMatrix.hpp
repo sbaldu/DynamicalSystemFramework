@@ -18,7 +18,7 @@
 #include <unordered_map>
 #include <vector>
 
-namespace dmf {
+namespace dsm {
   /// @brief The SparseMatrix class represents a sparse matrix.
   /// @tparam Index The type of the matrix's index. It must be an unsigned integral type.
   /// @tparam T The type of the matrix's value.

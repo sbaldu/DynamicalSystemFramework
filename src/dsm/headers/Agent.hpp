@@ -16,7 +16,7 @@
 #include <string>
 #include <limits>
 
-namespace dmf {
+namespace dsm {
   /// @brief The Agent class represents an agent in the network.
   /// @tparam Id The type of the agent's id. It must be an unsigned integral type.
   template <typename Id>
