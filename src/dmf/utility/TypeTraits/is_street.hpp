@@ -22,6 +22,9 @@ namespace dmf {
   struct is_street<Street<Id, Size>> : std::true_type {};
 
   template <typename Id, typename Size>
+  struct is_street<const Street<Id, Size>&> : std::true_type {};
+
+  template <typename Id, typename Size>
   struct is_street<shared<Street<Id, Size>>> : std::true_type {};
 
   template <typename T>
