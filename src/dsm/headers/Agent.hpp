@@ -168,6 +168,6 @@ namespace dsm {
   const Itinerary<Id>& Agent<Id>::itinerary() const {
     return m_itinerary;
   }
-};  // namespace dmf
+};  // namespace dsm
 
 #endif

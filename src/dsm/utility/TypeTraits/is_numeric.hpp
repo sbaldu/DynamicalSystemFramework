@@ -23,6 +23,6 @@ namespace dsm {
   template <typename T>
   inline constexpr bool is_numeric_v = is_numeric<T>::value;
 
-};  // namespace dmf
+};  // namespace dsm
 
 #endif

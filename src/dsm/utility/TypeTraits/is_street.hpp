@@ -30,6 +30,6 @@ namespace dsm {
   template <typename T>
   inline constexpr bool is_street_v = is_street<T>::value;
 
-};  // namespace dmf
+};  // namespace dsm
 
 #endif

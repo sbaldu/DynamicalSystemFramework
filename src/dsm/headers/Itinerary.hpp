@@ -116,6 +116,6 @@ namespace dsm {
     return m_path;
   }
 
-};  // namespace dmf
+};  // namespace dsm
 
 #endif

@@ -48,6 +48,6 @@ namespace dsm {
   bool operator==(shared<const Street<Id, Size>> p1, shared<const Street<Id, Size>> p2) {
     return p1->nodePair().first == p2->nodePair().first && p1->nodePair().second == p2->nodePair().second;
   }
-};  // namespace dmf
+};  // namespace dsm
 
 #endif

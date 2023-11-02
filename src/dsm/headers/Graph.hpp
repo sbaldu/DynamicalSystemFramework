@@ -217,6 +217,6 @@ namespace dsm {
   std::unordered_set<shared<Street<Id, Size>>, streetHash<Id, Size>> Graph<Id, Size>::streetSet() const {
     return m_streets;
   }
-};  // namespace dmf
+};  // namespace dsm
 
 #endif

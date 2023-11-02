@@ -653,6 +653,6 @@ namespace dsm {
     }
     return *this;
   }
-};  // namespace dmf
+};  // namespace dsm
 
 #endif

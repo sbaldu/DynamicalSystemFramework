@@ -255,6 +255,6 @@ namespace dsm {
     return std::nullopt;
   }
 
-};  // namespace dmf
+};  // namespace dsm
 
 #endif

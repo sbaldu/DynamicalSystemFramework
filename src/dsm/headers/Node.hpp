@@ -117,6 +117,6 @@ namespace dsm {
   /* private: */
   /*   std::function<void()> m_priority; */
   /* }; */
-};  // namespace dmf
+};  // namespace dsm
 
 #endif

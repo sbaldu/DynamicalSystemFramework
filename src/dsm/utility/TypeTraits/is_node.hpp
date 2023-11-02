@@ -30,6 +30,6 @@ namespace dsm {
   template <typename T>
   inline constexpr bool is_node_v = is_node<T>::value;
 
-};  // namespace dmf
+};  // namespace dsm
 
 #endif
