@@ -7,10 +7,6 @@ This rework consists of a full code rewriting, in order to implement more featur
 
 Right now the project only requires `C++20` and `cmake`.
 
-## Installing
-
-The framework is still WIP, more details will be available in the future.
-
 ## Testing
 To compile tests one can run:
 ```shell
