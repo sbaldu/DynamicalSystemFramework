@@ -5,11 +5,7 @@ This rework consists of a full code rewriting, in order to implement more featur
 
 ## Requirements
 
-By now the project only requires `C++20` and `cmake`.
-To install `cmake`:
-```shell
-sudo apt install cmake
-```
+Right now the project only requires `C++20` and `cmake`.
 
 ## Installing
 
