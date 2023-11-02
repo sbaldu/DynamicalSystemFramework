@@ -6,7 +6,7 @@
 #include <memory>
 #include <type_traits>
 
-namespace dmf {
+namespace dsm {
   // Alias for shared pointers
   template <typename T>
   using shared = std::shared_ptr<T>;
@@ -23,6 +23,6 @@ namespace dmf {
   template <typename T>
   inline constexpr bool is_numeric_v = is_numeric<T>::value;
 
-};  // namespace dmf
+};  // namespace dsm
 
 #endif

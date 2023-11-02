@@ -7,6 +7,17 @@ This rework consists of a full code rewriting, in order to implement more featur
 
 Right now the project only requires `C++20` and `cmake`.
 
+## installation
+The library can be installed using CMake. To do this build it with the commands:
+```
+    mkdir -p build && cd build
+    cmake ..
+```
+and then install it with:
+```
+    sudo make install
+```
+
 ## Testing
 To compile tests one can run:
 ```shell
@@ -35,7 +46,7 @@ for f in ./*.out ; do ./$f ; done
 ## Citing
 
 ```BibTex
-@misc{DSF,
+@misc{DSM,
   author = {Berselli, Gregorio and Balducci, Simone},
   title = {Framework for modelling dynamical complex systems.},
   year = {2023},
@@ -43,4 +54,3 @@ for f in ./*.out ; do ./$f ; done
   publisher = {GitHub},
   howpublished = {\url{https://github.com/sbaldu/DynamicalSystemFramework}}
 }
-```

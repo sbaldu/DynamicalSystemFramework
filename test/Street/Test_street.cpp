@@ -9,9 +9,9 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
 
-using Agent = dmf::Agent<uint16_t>;
-using Node = dmf::Node<uint16_t>;
-using Street = dmf::Street<uint16_t, uint16_t>;
+using Agent = dsm::Agent<uint16_t>;
+using Node = dsm::Node<uint16_t>;
+using Street = dsm::Street<uint16_t, uint16_t>;
 
 TEST_CASE("Street") {
   SUBCASE("Constructor_1") {

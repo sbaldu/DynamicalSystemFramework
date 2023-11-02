@@ -13,7 +13,7 @@
 #include <concepts>
 #include <utility>
 
-namespace dmf {
+namespace dsm {
   /// @brief The Itinerary class represents an itinerary in the network.
   /// @tparam Id The type of the itinerary's id. It must be an unsigned integral type.
   template <typename Id>
@@ -116,6 +116,6 @@ namespace dmf {
     return m_path;
   }
 
-};  // namespace dmf
+};  // namespace dsm
 
 #endif

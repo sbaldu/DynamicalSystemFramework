@@ -5,7 +5,7 @@
 #include <memory>
 #include <type_traits>
 
-namespace dmf {
+namespace dsm {
   template <typename Id>
     requires std::unsigned_integral<Id>
   class Node;
@@ -30,6 +30,6 @@ namespace dmf {
   template <typename T>
   inline constexpr bool is_node_v = is_node<T>::value;
 
-};  // namespace dmf
+};  // namespace dsm
 
 #endif

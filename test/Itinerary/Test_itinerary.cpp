@@ -5,7 +5,7 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
 
-using Itinerary = dmf::Itinerary<uint16_t>;
+using Itinerary = dsm::Itinerary<uint16_t>;
 
 TEST_CASE("Itinerary") {
   SUBCASE("Constructor_1") {
@@ -34,7 +34,7 @@ TEST_CASE("Itinerary") {
     WHEN: An Itinerary is constructed
     THEN: The source, destination, and path are set correctly
     */
-    Itinerary itinerary{1, 2, dmf::SparseMatrix<uint16_t, bool>{1, 1}};
+    Itinerary itinerary{1, 2, dsm::SparseMatrix<uint16_t, bool>{1, 1}};
     CHECK(itinerary.source() == 1);
     CHECK(itinerary.destination() == 2);
     CHECK(itinerary.path().getRowDim() == 1);
@@ -46,7 +46,7 @@ TEST_CASE("Itinerary") {
     WHEN: An Itinerary is constructed
     THEN: The source, destination, and path are set correctly
     */
-    Itinerary itinerary{std::pair{1, 2}, dmf::SparseMatrix<uint16_t, bool>{1, 1}};
+    Itinerary itinerary{std::pair{1, 2}, dsm::SparseMatrix<uint16_t, bool>{1, 1}};
     CHECK(itinerary.source() == 1);
     CHECK(itinerary.destination() == 2);
     CHECK(itinerary.path().getRowDim() == 1);

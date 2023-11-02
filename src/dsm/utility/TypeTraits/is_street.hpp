@@ -5,7 +5,7 @@
 #include <memory>
 #include <type_traits>
 
-namespace dmf {
+namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   class Street;
@@ -30,6 +30,6 @@ namespace dmf {
   template <typename T>
   inline constexpr bool is_street_v = is_street<T>::value;
 
-};  // namespace dmf
+};  // namespace dsm
 
 #endif
