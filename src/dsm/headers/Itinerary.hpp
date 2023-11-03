@@ -1,4 +1,4 @@
-/// @file       src/Itinerary.hpp
+/// @file       /src/dsm/headers/Itinerary.hpp
 /// @brief      Defines the Itinerary class.
 ///
 /// @details    This file contains the definition of the Itinerary class.

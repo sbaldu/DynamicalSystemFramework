@@ -1,4 +1,4 @@
-/// @file       src/Graph.hpp
+/// @file       /src/dsm/headers/Graph.hpp
 /// @brief      Defines the Graph class.
 ///
 /// @details    This file contains the definition of the Graph class.
@@ -39,7 +39,7 @@ namespace dsm {
   /// @tparam Id, The type of the graph's id. It must be an unsigned integral type.
   /// @tparam Size, The type of the graph's capacity. It must be an unsigned integral type.
   template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   class Graph {
   private:
     std::unordered_set<shared<Node<Id>>, nodeHash<Id>> m_nodes;

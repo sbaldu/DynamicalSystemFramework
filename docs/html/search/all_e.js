@@ -1,5 +1,6 @@
 var searchData=
 [
+<<<<<<< HEAD
   ['setcapacity_0',['setCapacity',['../classdsm_1_1Street.html#a7022595cc57600fb0b531acea0f49456',1,'dsm::Street']]],
   ['setcoords_1',['setCoords',['../classdsm_1_1Node.html#a1e66e41903d9ed19c20de4b5669186af',1,'dsm::Node']]],
   ['setdestination_2',['setDestination',['../classdsm_1_1Itinerary.html#a2b13323c1753fce6097534b9133f665d',1,'dsm::Itinerary']]],
@@ -22,4 +23,8 @@ var searchData=
   ['streethash_19',['streetHash',['../structdsm_1_1streetHash.html',1,'dsm']]],
   ['streetset_20',['streetSet',['../classdsm_1_1Graph.html#aff1ae77416eff8585c376192ed4fc595',1,'dsm::Graph']]],
   ['symmetrize_21',['symmetrize',['../classdsm_1_1SparseMatrix.html#ac514a1ba68b6b76ab41c04a63a182533',1,'dsm::SparseMatrix']]]
+=======
+  ['time_54',['time',['../classdsm_1_1Agent.html#a212bed6d6cc71711ad0d9aab17852118',1,'dsm::Agent']]],
+  ['trip_55',['trip',['../classdsm_1_1Itinerary.html#ae942a76b5e1ea0b10e83ed458ef58488',1,'dsm::Itinerary']]]
+>>>>>>> 88dffe6 (Updated docs)
 ];

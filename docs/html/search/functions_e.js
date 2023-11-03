@@ -1,5 +1,6 @@
 var searchData=
 [
+<<<<<<< HEAD
   ['setcapacity_0',['setCapacity',['../classdsm_1_1Street.html#a7022595cc57600fb0b531acea0f49456',1,'dsm::Street']]],
   ['setcoords_1',['setCoords',['../classdsm_1_1Node.html#a1e66e41903d9ed19c20de4b5669186af',1,'dsm::Node']]],
   ['setdestination_2',['setDestination',['../classdsm_1_1Itinerary.html#a2b13323c1753fce6097534b9133f665d',1,'dsm::Itinerary']]],
@@ -20,4 +21,8 @@ var searchData=
   ['street_17',['street',['../classdsm_1_1Street.html#afe71e982cae1f045e0133696a3191854',1,'dsm::Street::Street(Id index)'],['../classdsm_1_1Street.html#a31ad3cfa5833a0367bb35ac4f5fe8d81',1,'dsm::Street::Street(Id index, Size capacity, double len)'],['../classdsm_1_1Street.html#afd4e2460e804f9b2806a52b571cc18bf',1,'dsm::Street::Street(Id index, Size capacity, double len, std::pair&lt; Id, Id &gt; nodePair)'],['../classdsm_1_1Street.html#aaa00040f1a658da889fab600ce61e5f1',1,'dsm::Street::Street(Id index, Size capacity, double len, double maxSpeed, std::pair&lt; Id, Id &gt; nodePair)']]],
   ['streetset_18',['streetSet',['../classdsm_1_1Graph.html#aff1ae77416eff8585c376192ed4fc595',1,'dsm::Graph']]],
   ['symmetrize_19',['symmetrize',['../classdsm_1_1SparseMatrix.html#ac514a1ba68b6b76ab41c04a63a182533',1,'dsm::SparseMatrix']]]
+=======
+  ['time_114',['time',['../classdsm_1_1Agent.html#a212bed6d6cc71711ad0d9aab17852118',1,'dsm::Agent']]],
+  ['trip_115',['trip',['../classdsm_1_1Itinerary.html#ae942a76b5e1ea0b10e83ed458ef58488',1,'dsm::Itinerary']]]
+>>>>>>> 88dffe6 (Updated docs)
 ];

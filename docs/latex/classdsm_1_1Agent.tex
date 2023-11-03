@@ -1,14 +1,23 @@
+<<<<<<< HEAD
 \doxysection{dsm\+::Agent\texorpdfstring{$<$}{<} Id \texorpdfstring{$>$}{>} Class Template Reference}
 \hypertarget{classdsm_1_1Agent}{}\label{classdsm_1_1Agent}\index{dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}}
 
 
 The \doxylink{classdsm_1_1Agent}{Agent} class represents an agent in the network.  
+=======
+\hypertarget{classdsm_1_1Agent}{}\doxysection{dsm\+::Agent$<$ Id $>$ Class Template Reference}
+\label{classdsm_1_1Agent}\index{dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}}
+
+
+The \mbox{\hyperlink{classdsm_1_1Agent}{Agent}} class represents an agent in the network.  
+>>>>>>> 88dffe6 (Updated docs)
 
 
 
 
 {\ttfamily \#include $<$Agent.\+hpp$>$}
 
+<<<<<<< HEAD
 \doxysubsubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
@@ -40,14 +49,53 @@ const \mbox{\hyperlink{classdsm_1_1Itinerary}{Itinerary}}$<$ Id $>$ \& \mbox{\hy
 double \mbox{\hyperlink{classdsm_1_1Agent_a3437faa68aa546741a48f2ea47b1758f}{speed}} () const
 \begin{DoxyCompactList}\small\item\em Get the agent\textquotesingle{}s speed. \end{DoxyCompactList}\item 
 unsigned int \mbox{\hyperlink{classdsm_1_1Agent_a0219ef98df9eecb95623fa689e5a6b3e}{time}} () const
+=======
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classdsm_1_1Agent_aa83bbb5e2770e1591706f4b45e88734e}{Agent}} (Id \mbox{\hyperlink{classdsm_1_1Agent_adb3cdce2bb651f3fc6214fc2459b4d2b}{index}}, Id \mbox{\hyperlink{classdsm_1_1Agent_a471e7e29979c9c3c2cd4f4b89a8522e6}{position}})
+\begin{DoxyCompactList}\small\item\em Construct a new \mbox{\hyperlink{classdsm_1_1Agent}{Agent}} object. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classdsm_1_1Agent_aceb0f35b9f4f94850fe423b6181a80b2}{Agent}} (Id \mbox{\hyperlink{classdsm_1_1Agent_adb3cdce2bb651f3fc6214fc2459b4d2b}{index}}, Id \mbox{\hyperlink{classdsm_1_1Agent_a471e7e29979c9c3c2cd4f4b89a8522e6}{position}}, \mbox{\hyperlink{classdsm_1_1Itinerary}{Itinerary}}$<$ Id $>$ \mbox{\hyperlink{classdsm_1_1Agent_a12ed58054fed378978922a8f9605f677}{itinerary}})
+\begin{DoxyCompactList}\small\item\em Construct a new \mbox{\hyperlink{classdsm_1_1Agent}{Agent}} object. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdsm_1_1Agent_a20043fd6b241a4f08f12665e7256def9}{set\+Position}} (Id \mbox{\hyperlink{classdsm_1_1Agent_a471e7e29979c9c3c2cd4f4b89a8522e6}{position}})
+\begin{DoxyCompactList}\small\item\em Set the agent\textquotesingle{}s position. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdsm_1_1Agent_ad683c8c2d23a08214dec013359f452ea}{set\+Itinerary}} (\mbox{\hyperlink{classdsm_1_1Itinerary}{Itinerary}}$<$ Id $>$ \mbox{\hyperlink{classdsm_1_1Agent_a12ed58054fed378978922a8f9605f677}{itinerary}})
+\begin{DoxyCompactList}\small\item\em Set the agent\textquotesingle{}s itinerary. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdsm_1_1Agent_a021d399731db8eddd085c4f03ff90778}{set\+Speed}} (double \mbox{\hyperlink{classdsm_1_1Agent_abdd35246882ab8457cfa7783b6ecac82}{speed}})
+\begin{DoxyCompactList}\small\item\em Set the agent\textquotesingle{}s speed. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdsm_1_1Agent_a0aaf38fe590adb2bfb93ca07276d5a7f}{increment\+Time}} ()
+\begin{DoxyCompactList}\small\item\em Increment the agent\textquotesingle{}s time by 1. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdsm_1_1Agent_a57975f32446d6a58f153bdeb0c13730e}{increment\+Time}} (unsigned int \mbox{\hyperlink{classdsm_1_1Agent_a212bed6d6cc71711ad0d9aab17852118}{time}})
+\begin{DoxyCompactList}\small\item\em Increment the agent\textquotesingle{}s time by a given value. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classdsm_1_1Agent_a264ef7083f883bc7f104cf75fc17f33e}\label{classdsm_1_1Agent_a264ef7083f883bc7f104cf75fc17f33e}} 
+void \mbox{\hyperlink{classdsm_1_1Agent_a264ef7083f883bc7f104cf75fc17f33e}{reset\+Time}} ()
+\begin{DoxyCompactList}\small\item\em Reset the agent\textquotesingle{}s time to 0. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{classdsm_1_1Agent_adb3cdce2bb651f3fc6214fc2459b4d2b}{index}} () const
+\begin{DoxyCompactList}\small\item\em Get the agent\textquotesingle{}s id. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{classdsm_1_1Agent_a471e7e29979c9c3c2cd4f4b89a8522e6}{position}} () const
+\begin{DoxyCompactList}\small\item\em Get the agent\textquotesingle{}s position. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{classdsm_1_1Agent_abec243c454a18c676a794ce9bfc5972b}{previous\+Position}} () const
+\begin{DoxyCompactList}\small\item\em Get the agent\textquotesingle{}s previous position. \end{DoxyCompactList}\item 
+const \mbox{\hyperlink{classdsm_1_1Itinerary}{Itinerary}}$<$ Id $>$ \& \mbox{\hyperlink{classdsm_1_1Agent_a12ed58054fed378978922a8f9605f677}{itinerary}} () const
+\begin{DoxyCompactList}\small\item\em Get the agent\textquotesingle{}s itinerary. \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{classdsm_1_1Agent_abdd35246882ab8457cfa7783b6ecac82}{speed}} () const
+\begin{DoxyCompactList}\small\item\em Get the agent\textquotesingle{}s speed. \end{DoxyCompactList}\item 
+unsigned int \mbox{\hyperlink{classdsm_1_1Agent_a212bed6d6cc71711ad0d9aab17852118}{time}} () const
+>>>>>>> 88dffe6 (Updated docs)
 \begin{DoxyCompactList}\small\item\em Get the agent\textquotesingle{}s travel time. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \doxysubsection{Detailed Description}
 \subsubsection*{template$<$typename Id$>$\newline
+<<<<<<< HEAD
 requires std\+::unsigned\+\_\+integral$<$Id$>$\newline
 class dsm\+::\+Agent$<$ Id $>$}
 The \doxylink{classdsm_1_1Agent}{Agent} class represents an agent in the network. 
+=======
+class dsm\+::\+Agent$<$ Id $>$}
+
+The \mbox{\hyperlink{classdsm_1_1Agent}{Agent}} class represents an agent in the network. 
+>>>>>>> 88dffe6 (Updated docs)
 
 
 \begin{DoxyTemplParams}{Template Parameters}
@@ -57,6 +105,7 @@ The \doxylink{classdsm_1_1Agent}{Agent} class represents an agent in the network
 
 
 \doxysubsection{Constructor \& Destructor Documentation}
+<<<<<<< HEAD
 \Hypertarget{classdsm_1_1Agent_a5683483f462e39f7365b8fe6dbaac384}\label{classdsm_1_1Agent_a5683483f462e39f7365b8fe6dbaac384} 
 \index{dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}!Agent@{Agent}}
 \index{Agent@{Agent}!dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}}
@@ -68,6 +117,18 @@ requires std\+::unsigned\+\_\+integral$<$Id$>$\\
 
 
 Construct a new \doxylink{classdsm_1_1Agent}{Agent} object. 
+=======
+\mbox{\Hypertarget{classdsm_1_1Agent_aa83bbb5e2770e1591706f4b45e88734e}\label{classdsm_1_1Agent_aa83bbb5e2770e1591706f4b45e88734e}} 
+\index{dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}!Agent@{Agent}}
+\index{Agent@{Agent}!dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}}
+\doxysubsubsection{\texorpdfstring{Agent()}{Agent()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily template$<$typename Id $>$ \\
+requires std\+::unsigned\+\_\+integral$<$ Id $>$ \mbox{\hyperlink{classdsm_1_1Agent}{dsm\+::\+Agent}}$<$ Id $>$\+::\mbox{\hyperlink{classdsm_1_1Agent}{Agent}} (\begin{DoxyParamCaption}\item[{Id}]{index,  }\item[{Id}]{position }\end{DoxyParamCaption})}
+
+
+
+Construct a new \mbox{\hyperlink{classdsm_1_1Agent}{Agent}} object. 
+>>>>>>> 88dffe6 (Updated docs)
 
 
 \begin{DoxyParams}{Parameters}
@@ -76,6 +137,7 @@ Construct a new \doxylink{classdsm_1_1Agent}{Agent} object.
 {\em position,The} & agent\textquotesingle{}s position \\
 \hline
 \end{DoxyParams}
+<<<<<<< HEAD
 \Hypertarget{classdsm_1_1Agent_a66235488bdfec5a3cd25ae400f20f4c4}\label{classdsm_1_1Agent_a66235488bdfec5a3cd25ae400f20f4c4} 
 \index{dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}!Agent@{Agent}}
 \index{Agent@{Agent}!dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}}
@@ -87,6 +149,18 @@ requires std\+::unsigned\+\_\+integral$<$Id$>$\\
 
 
 Construct a new \doxylink{classdsm_1_1Agent}{Agent} object. 
+=======
+\mbox{\Hypertarget{classdsm_1_1Agent_aceb0f35b9f4f94850fe423b6181a80b2}\label{classdsm_1_1Agent_aceb0f35b9f4f94850fe423b6181a80b2}} 
+\index{dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}!Agent@{Agent}}
+\index{Agent@{Agent}!dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}}
+\doxysubsubsection{\texorpdfstring{Agent()}{Agent()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily template$<$typename Id $>$ \\
+requires std\+::unsigned\+\_\+integral$<$ Id $>$ \mbox{\hyperlink{classdsm_1_1Agent}{dsm\+::\+Agent}}$<$ Id $>$\+::\mbox{\hyperlink{classdsm_1_1Agent}{Agent}} (\begin{DoxyParamCaption}\item[{Id}]{index,  }\item[{Id}]{position,  }\item[{\mbox{\hyperlink{classdsm_1_1Itinerary}{Itinerary}}$<$ Id $>$}]{itinerary }\end{DoxyParamCaption})}
+
+
+
+Construct a new \mbox{\hyperlink{classdsm_1_1Agent}{Agent}} object. 
+>>>>>>> 88dffe6 (Updated docs)
 
 
 \begin{DoxyParams}{Parameters}
@@ -100,6 +174,7 @@ Construct a new \doxylink{classdsm_1_1Agent}{Agent} object.
 
 
 \doxysubsection{Member Function Documentation}
+<<<<<<< HEAD
 \Hypertarget{classdsm_1_1Agent_a9fc9f454c8062efe7a01c56a87c8e893}\label{classdsm_1_1Agent_a9fc9f454c8062efe7a01c56a87c8e893} 
 \index{dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}!incrementTime@{incrementTime}}
 \index{incrementTime@{incrementTime}!dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}}
@@ -107,6 +182,14 @@ Construct a new \doxylink{classdsm_1_1Agent}{Agent} object.
 {\footnotesize\ttfamily template$<$typename Id $>$ \newline
 requires std\+::unsigned\+\_\+integral$<$Id$>$\\
 void \mbox{\hyperlink{classdsm_1_1Agent}{dsm\+::\+Agent}}$<$ Id $>$\+::increment\+Time (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+=======
+\mbox{\Hypertarget{classdsm_1_1Agent_a0aaf38fe590adb2bfb93ca07276d5a7f}\label{classdsm_1_1Agent_a0aaf38fe590adb2bfb93ca07276d5a7f}} 
+\index{dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}!incrementTime@{incrementTime}}
+\index{incrementTime@{incrementTime}!dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}}
+\doxysubsubsection{\texorpdfstring{incrementTime()}{incrementTime()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily template$<$typename Id $>$ \\
+requires std\+::unsigned\+\_\+integral$<$ Id $>$ void \mbox{\hyperlink{classdsm_1_1Agent}{dsm\+::\+Agent}}$<$ Id $>$\+::increment\+Time}
+>>>>>>> 88dffe6 (Updated docs)
 
 
 
@@ -117,6 +200,7 @@ Increment the agent\textquotesingle{}s time by 1.
 {\em std\+::overflow\+\_\+error,if} & time has reached its maximum value \\
 \hline
 \end{DoxyExceptions}
+<<<<<<< HEAD
 \Hypertarget{classdsm_1_1Agent_a2d429a1bb925b886a0e82eca32266287}\label{classdsm_1_1Agent_a2d429a1bb925b886a0e82eca32266287} 
 \index{dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}!incrementTime@{incrementTime}}
 \index{incrementTime@{incrementTime}!dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}}
@@ -124,6 +208,14 @@ Increment the agent\textquotesingle{}s time by 1.
 {\footnotesize\ttfamily template$<$typename Id $>$ \newline
 requires std\+::unsigned\+\_\+integral$<$Id$>$\\
 void \mbox{\hyperlink{classdsm_1_1Agent}{dsm\+::\+Agent}}$<$ Id $>$\+::increment\+Time (\begin{DoxyParamCaption}\item[{unsigned int}]{time }\end{DoxyParamCaption})}
+=======
+\mbox{\Hypertarget{classdsm_1_1Agent_a57975f32446d6a58f153bdeb0c13730e}\label{classdsm_1_1Agent_a57975f32446d6a58f153bdeb0c13730e}} 
+\index{dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}!incrementTime@{incrementTime}}
+\index{incrementTime@{incrementTime}!dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}}
+\doxysubsubsection{\texorpdfstring{incrementTime()}{incrementTime()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily template$<$typename Id $>$ \\
+requires std\+::unsigned\+\_\+integral$<$ Id $>$ void \mbox{\hyperlink{classdsm_1_1Agent}{dsm\+::\+Agent}}$<$ Id $>$\+::increment\+Time (\begin{DoxyParamCaption}\item[{unsigned int}]{time }\end{DoxyParamCaption})}
+>>>>>>> 88dffe6 (Updated docs)
 
 
 
@@ -139,6 +231,7 @@ Increment the agent\textquotesingle{}s time by a given value.
 {\em std\+::overflow\+\_\+error,if} & time has reached its maximum value \\
 \hline
 \end{DoxyExceptions}
+<<<<<<< HEAD
 \Hypertarget{classdsm_1_1Agent_ab1851b81a5e275610187a7d28047f648}\label{classdsm_1_1Agent_ab1851b81a5e275610187a7d28047f648} 
 \index{dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}!index@{index}}
 \index{index@{index}!dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}}
@@ -146,6 +239,14 @@ Increment the agent\textquotesingle{}s time by a given value.
 {\footnotesize\ttfamily template$<$typename Id $>$ \newline
 requires std\+::unsigned\+\_\+integral$<$Id$>$\\
 Id \mbox{\hyperlink{classdsm_1_1Agent}{dsm\+::\+Agent}}$<$ Id $>$\+::index (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+=======
+\mbox{\Hypertarget{classdsm_1_1Agent_adb3cdce2bb651f3fc6214fc2459b4d2b}\label{classdsm_1_1Agent_adb3cdce2bb651f3fc6214fc2459b4d2b}} 
+\index{dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}!index@{index}}
+\index{index@{index}!dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}}
+\doxysubsubsection{\texorpdfstring{index()}{index()}}
+{\footnotesize\ttfamily template$<$typename Id $>$ \\
+requires std\+::unsigned\+\_\+integral$<$ Id $>$ int \mbox{\hyperlink{classdsm_1_1Agent}{dsm\+::\+Agent}}$<$ Id $>$\+::index}
+>>>>>>> 88dffe6 (Updated docs)
 
 
 
@@ -154,6 +255,7 @@ Get the agent\textquotesingle{}s id.
 \begin{DoxyReturn}{Returns}
 The agent\textquotesingle{}s id 
 \end{DoxyReturn}
+<<<<<<< HEAD
 \Hypertarget{classdsm_1_1Agent_aae480cf9cad655ff4136e1dc77314841}\label{classdsm_1_1Agent_aae480cf9cad655ff4136e1dc77314841} 
 \index{dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}!itinerary@{itinerary}}
 \index{itinerary@{itinerary}!dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}}
@@ -161,6 +263,14 @@ The agent\textquotesingle{}s id
 {\footnotesize\ttfamily template$<$typename Id $>$ \newline
 requires std\+::unsigned\+\_\+integral$<$Id$>$\\
 const \mbox{\hyperlink{classdsm_1_1Itinerary}{Itinerary}}$<$ Id $>$ \& \mbox{\hyperlink{classdsm_1_1Agent}{dsm\+::\+Agent}}$<$ Id $>$\+::itinerary (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+=======
+\mbox{\Hypertarget{classdsm_1_1Agent_a12ed58054fed378978922a8f9605f677}\label{classdsm_1_1Agent_a12ed58054fed378978922a8f9605f677}} 
+\index{dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}!itinerary@{itinerary}}
+\index{itinerary@{itinerary}!dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}}
+\doxysubsubsection{\texorpdfstring{itinerary()}{itinerary()}}
+{\footnotesize\ttfamily template$<$typename Id $>$ \\
+requires std\+::unsigned\+\_\+integral$<$ Id $>$ const \mbox{\hyperlink{classdsm_1_1Itinerary}{Itinerary}}$<$ Id $>$ \& \mbox{\hyperlink{classdsm_1_1Agent}{dsm\+::\+Agent}}$<$ Id $>$\+::itinerary}
+>>>>>>> 88dffe6 (Updated docs)
 
 
 
@@ -169,6 +279,7 @@ Get the agent\textquotesingle{}s itinerary.
 \begin{DoxyReturn}{Returns}
 The agent\textquotesingle{}s itinerary 
 \end{DoxyReturn}
+<<<<<<< HEAD
 \Hypertarget{classdsm_1_1Agent_a7a7910fe55a211cdff4daccdffa4d1d8}\label{classdsm_1_1Agent_a7a7910fe55a211cdff4daccdffa4d1d8} 
 \index{dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}!position@{position}}
 \index{position@{position}!dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}}
@@ -176,6 +287,14 @@ The agent\textquotesingle{}s itinerary
 {\footnotesize\ttfamily template$<$typename Id $>$ \newline
 requires std\+::unsigned\+\_\+integral$<$Id$>$\\
 Id \mbox{\hyperlink{classdsm_1_1Agent}{dsm\+::\+Agent}}$<$ Id $>$\+::position (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+=======
+\mbox{\Hypertarget{classdsm_1_1Agent_a471e7e29979c9c3c2cd4f4b89a8522e6}\label{classdsm_1_1Agent_a471e7e29979c9c3c2cd4f4b89a8522e6}} 
+\index{dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}!position@{position}}
+\index{position@{position}!dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}}
+\doxysubsubsection{\texorpdfstring{position()}{position()}}
+{\footnotesize\ttfamily template$<$typename Id $>$ \\
+requires std\+::unsigned\+\_\+integral$<$ Id $>$ int \mbox{\hyperlink{classdsm_1_1Agent}{dsm\+::\+Agent}}$<$ Id $>$\+::position}
+>>>>>>> 88dffe6 (Updated docs)
 
 
 
@@ -184,6 +303,7 @@ Get the agent\textquotesingle{}s position.
 \begin{DoxyReturn}{Returns}
 The agent\textquotesingle{}s position 
 \end{DoxyReturn}
+<<<<<<< HEAD
 \Hypertarget{classdsm_1_1Agent_af4c66c9bd994d16fa5b110559556a41e}\label{classdsm_1_1Agent_af4c66c9bd994d16fa5b110559556a41e} 
 \index{dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}!previousPosition@{previousPosition}}
 \index{previousPosition@{previousPosition}!dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}}
@@ -191,6 +311,14 @@ The agent\textquotesingle{}s position
 {\footnotesize\ttfamily template$<$typename Id $>$ \newline
 requires std\+::unsigned\+\_\+integral$<$Id$>$\\
 Id \mbox{\hyperlink{classdsm_1_1Agent}{dsm\+::\+Agent}}$<$ Id $>$\+::previous\+Position (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+=======
+\mbox{\Hypertarget{classdsm_1_1Agent_abec243c454a18c676a794ce9bfc5972b}\label{classdsm_1_1Agent_abec243c454a18c676a794ce9bfc5972b}} 
+\index{dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}!previousPosition@{previousPosition}}
+\index{previousPosition@{previousPosition}!dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}}
+\doxysubsubsection{\texorpdfstring{previousPosition()}{previousPosition()}}
+{\footnotesize\ttfamily template$<$typename Id $>$ \\
+requires std\+::unsigned\+\_\+integral$<$ Id $>$ int \mbox{\hyperlink{classdsm_1_1Agent}{dsm\+::\+Agent}}$<$ Id $>$\+::previous\+Position}
+>>>>>>> 88dffe6 (Updated docs)
 
 
 
@@ -199,6 +327,7 @@ Get the agent\textquotesingle{}s previous position.
 \begin{DoxyReturn}{Returns}
 The agent\textquotesingle{}s previous position 
 \end{DoxyReturn}
+<<<<<<< HEAD
 \Hypertarget{classdsm_1_1Agent_a74fadc6586f0d0ea2bf17cb210216a00}\label{classdsm_1_1Agent_a74fadc6586f0d0ea2bf17cb210216a00} 
 \index{dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}!setItinerary@{setItinerary}}
 \index{setItinerary@{setItinerary}!dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}}
@@ -206,6 +335,14 @@ The agent\textquotesingle{}s previous position
 {\footnotesize\ttfamily template$<$typename Id $>$ \newline
 requires std\+::unsigned\+\_\+integral$<$Id$>$\\
 void \mbox{\hyperlink{classdsm_1_1Agent}{dsm\+::\+Agent}}$<$ Id $>$\+::set\+Itinerary (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdsm_1_1Itinerary}{Itinerary}}$<$ Id $>$}]{itinerary }\end{DoxyParamCaption})}
+=======
+\mbox{\Hypertarget{classdsm_1_1Agent_ad683c8c2d23a08214dec013359f452ea}\label{classdsm_1_1Agent_ad683c8c2d23a08214dec013359f452ea}} 
+\index{dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}!setItinerary@{setItinerary}}
+\index{setItinerary@{setItinerary}!dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}}
+\doxysubsubsection{\texorpdfstring{setItinerary()}{setItinerary()}}
+{\footnotesize\ttfamily template$<$typename Id $>$ \\
+requires std\+::unsigned\+\_\+integral$<$ Id $>$ void \mbox{\hyperlink{classdsm_1_1Agent}{dsm\+::\+Agent}}$<$ Id $>$\+::set\+Itinerary (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdsm_1_1Itinerary}{Itinerary}}$<$ Id $>$}]{itinerary }\end{DoxyParamCaption})}
+>>>>>>> 88dffe6 (Updated docs)
 
 
 
@@ -216,6 +353,7 @@ Set the agent\textquotesingle{}s itinerary.
 {\em itinerary,The} & agent\textquotesingle{}s itinerary \\
 \hline
 \end{DoxyParams}
+<<<<<<< HEAD
 \Hypertarget{classdsm_1_1Agent_a51f7c54f9e507d51b7a679b4fe4b3d60}\label{classdsm_1_1Agent_a51f7c54f9e507d51b7a679b4fe4b3d60} 
 \index{dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}!setPosition@{setPosition}}
 \index{setPosition@{setPosition}!dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}}
@@ -223,6 +361,14 @@ Set the agent\textquotesingle{}s itinerary.
 {\footnotesize\ttfamily template$<$typename Id $>$ \newline
 requires std\+::unsigned\+\_\+integral$<$Id$>$\\
 void \mbox{\hyperlink{classdsm_1_1Agent}{dsm\+::\+Agent}}$<$ Id $>$\+::set\+Position (\begin{DoxyParamCaption}\item[{Id}]{position }\end{DoxyParamCaption})}
+=======
+\mbox{\Hypertarget{classdsm_1_1Agent_a20043fd6b241a4f08f12665e7256def9}\label{classdsm_1_1Agent_a20043fd6b241a4f08f12665e7256def9}} 
+\index{dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}!setPosition@{setPosition}}
+\index{setPosition@{setPosition}!dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}}
+\doxysubsubsection{\texorpdfstring{setPosition()}{setPosition()}}
+{\footnotesize\ttfamily template$<$typename Id $>$ \\
+requires std\+::unsigned\+\_\+integral$<$ Id $>$ void \mbox{\hyperlink{classdsm_1_1Agent}{dsm\+::\+Agent}}$<$ Id $>$\+::set\+Position (\begin{DoxyParamCaption}\item[{Id}]{position }\end{DoxyParamCaption})}
+>>>>>>> 88dffe6 (Updated docs)
 
 
 
@@ -233,6 +379,7 @@ Set the agent\textquotesingle{}s position.
 {\em position,The} & agent\textquotesingle{}s position \\
 \hline
 \end{DoxyParams}
+<<<<<<< HEAD
 \Hypertarget{classdsm_1_1Agent_ade761cb1f91af8b91fe67401594cc305}\label{classdsm_1_1Agent_ade761cb1f91af8b91fe67401594cc305} 
 \index{dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}!setSpeed@{setSpeed}}
 \index{setSpeed@{setSpeed}!dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}}
@@ -240,6 +387,14 @@ Set the agent\textquotesingle{}s position.
 {\footnotesize\ttfamily template$<$typename Id $>$ \newline
 requires std\+::unsigned\+\_\+integral$<$Id$>$\\
 void \mbox{\hyperlink{classdsm_1_1Agent}{dsm\+::\+Agent}}$<$ Id $>$\+::set\+Speed (\begin{DoxyParamCaption}\item[{double}]{speed }\end{DoxyParamCaption})}
+=======
+\mbox{\Hypertarget{classdsm_1_1Agent_a021d399731db8eddd085c4f03ff90778}\label{classdsm_1_1Agent_a021d399731db8eddd085c4f03ff90778}} 
+\index{dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}!setSpeed@{setSpeed}}
+\index{setSpeed@{setSpeed}!dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}}
+\doxysubsubsection{\texorpdfstring{setSpeed()}{setSpeed()}}
+{\footnotesize\ttfamily template$<$typename Id $>$ \\
+requires std\+::unsigned\+\_\+integral$<$ Id $>$ void \mbox{\hyperlink{classdsm_1_1Agent}{dsm\+::\+Agent}}$<$ Id $>$\+::set\+Speed (\begin{DoxyParamCaption}\item[{double}]{speed }\end{DoxyParamCaption})}
+>>>>>>> 88dffe6 (Updated docs)
 
 
 
@@ -255,6 +410,7 @@ Set the agent\textquotesingle{}s speed.
 {\em std\+::invalid\+\_\+argument,if} & speed is negative \\
 \hline
 \end{DoxyExceptions}
+<<<<<<< HEAD
 \Hypertarget{classdsm_1_1Agent_a3437faa68aa546741a48f2ea47b1758f}\label{classdsm_1_1Agent_a3437faa68aa546741a48f2ea47b1758f} 
 \index{dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}!speed@{speed}}
 \index{speed@{speed}!dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}}
@@ -262,6 +418,14 @@ Set the agent\textquotesingle{}s speed.
 {\footnotesize\ttfamily template$<$typename Id $>$ \newline
 requires std\+::unsigned\+\_\+integral$<$Id$>$\\
 double \mbox{\hyperlink{classdsm_1_1Agent}{dsm\+::\+Agent}}$<$ Id $>$\+::speed (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+=======
+\mbox{\Hypertarget{classdsm_1_1Agent_abdd35246882ab8457cfa7783b6ecac82}\label{classdsm_1_1Agent_abdd35246882ab8457cfa7783b6ecac82}} 
+\index{dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}!speed@{speed}}
+\index{speed@{speed}!dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}}
+\doxysubsubsection{\texorpdfstring{speed()}{speed()}}
+{\footnotesize\ttfamily template$<$typename Id $>$ \\
+requires std\+::unsigned\+\_\+integral$<$ Id $>$ double \mbox{\hyperlink{classdsm_1_1Agent}{dsm\+::\+Agent}}$<$ Id $>$\+::speed}
+>>>>>>> 88dffe6 (Updated docs)
 
 
 
@@ -270,6 +434,7 @@ Get the agent\textquotesingle{}s speed.
 \begin{DoxyReturn}{Returns}
 The agent\textquotesingle{}s speed 
 \end{DoxyReturn}
+<<<<<<< HEAD
 \Hypertarget{classdsm_1_1Agent_a0219ef98df9eecb95623fa689e5a6b3e}\label{classdsm_1_1Agent_a0219ef98df9eecb95623fa689e5a6b3e} 
 \index{dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}!time@{time}}
 \index{time@{time}!dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}}
@@ -277,6 +442,14 @@ The agent\textquotesingle{}s speed
 {\footnotesize\ttfamily template$<$typename Id $>$ \newline
 requires std\+::unsigned\+\_\+integral$<$Id$>$\\
 unsigned int \mbox{\hyperlink{classdsm_1_1Agent}{dsm\+::\+Agent}}$<$ Id $>$\+::time (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+=======
+\mbox{\Hypertarget{classdsm_1_1Agent_a212bed6d6cc71711ad0d9aab17852118}\label{classdsm_1_1Agent_a212bed6d6cc71711ad0d9aab17852118}} 
+\index{dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}!time@{time}}
+\index{time@{time}!dsm::Agent$<$ Id $>$@{dsm::Agent$<$ Id $>$}}
+\doxysubsubsection{\texorpdfstring{time()}{time()}}
+{\footnotesize\ttfamily template$<$typename Id $>$ \\
+requires std\+::unsigned\+\_\+integral$<$ Id $>$ unsigned int \mbox{\hyperlink{classdsm_1_1Agent}{dsm\+::\+Agent}}$<$ Id $>$\+::time}
+>>>>>>> 88dffe6 (Updated docs)
 
 
 

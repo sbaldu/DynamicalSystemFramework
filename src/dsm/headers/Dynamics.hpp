@@ -1,3 +1,10 @@
+/// @file       /src/dsm/headers/Dynamics.hpp
+/// @brief      Defines the Dynamics class.
+///
+/// @details    This file contains the definition of the Dynamics class.
+///             The Dynamics class represents the dynamics of the network. It is templated by the type
+///             of the graph's id and the type of the graph's capacity.
+///             The graph's id and capacity must be unsigned integral types.
 
 #ifndef dynamics_hpp
 #define dynamics_hpp
@@ -19,8 +26,11 @@ namespace dsm {
 
   using TimePoint = long long unsigned int;
 
+  /// @brief The Dynamics class represents the dynamics of the network.
+  /// @tparam Id, The type of the graph's id. It must be an unsigned integral type.
+  /// @tparam Size, The type of the graph's capacity. It must be an unsigned integral type.
   template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   class Dynamics {
   private:
     std::vector<Itinerary<Id>> m_itineraries;
@@ -31,16 +41,28 @@ namespace dsm {
 
   public:
     Dynamics() = delete;
+    /// @brief Construct a new Dynamics object
+    /// @param graph The graph representing the network
     Dynamics(const Graph<Id, Size>& graph);
 
-    // setters
+    /// @brief Set the itineraries
+    /// @param itineraries The itineraries
     void setItineraries(const std::vector<Itinerary<Id>>& itineraries);
+    /// @brief Set the agents
+    /// @param agents The agents
     void setAgents(const std::vector<Agent<Id>>& agents);
 
-    // getters
+    /// @brief Get the graph
+    /// @return const Graph<Id, Size>& The graph
     const Graph<Id, Size>& graph() const;
+    /// @brief Get the itineraries
+    /// @return const std::vector<Itinerary<Id>>& The itineraries
     const std::vector<shared<Itinerary<Id>>>& itineraries() const;
+    /// @brief Get the agents
+    /// @return const std::vector<Agent<Id>>& The agents
     const std::vector<shared<Agent<Id>>>& agents() const;
+    /// @brief Get the time
+    /// @return TimePoint The time
     TimePoint time() const;
 
     void addAgent(const Agent<Id>& agent);
@@ -155,6 +177,6 @@ namespace dsm {
     f(args...);
   }
 
-};  // namespace dmf
+};  // namespace dsm
 
 #endif
