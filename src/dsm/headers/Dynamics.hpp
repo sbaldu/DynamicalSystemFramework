@@ -38,6 +38,7 @@ namespace dsm {
     TimePoint m_time;
     shared<Graph<Id, Size>> m_graph;
     double m_temperature;
+    std::mt19937_64 m_generator{std::random_device{}()};
 
   public:
     Dynamics() = delete;
@@ -51,6 +52,9 @@ namespace dsm {
     /// @brief Set the agents
     /// @param agents The agents
     void setAgents(const std::vector<Agent<Id>>& agents);
+    /// @brief Set the seed for the graph's random number generator
+    /// @param seed The seed
+    void setSeed(uint seed);
 
     /// @brief Get the graph
     /// @return const Graph<Id, Size>& The graph
@@ -101,6 +105,12 @@ namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Dynamics<Id, Size>::setAgents(const std::vector<Agent<Id>>& agents) {}
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Dynamics<Id, Size>::setSeed(uint seed) {
+    m_generator.seed(seed);
+  }
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
