@@ -26,6 +26,6 @@ include_directories(../../src/dsm/headers/)
 include_directories(../../src/dsm/utility/)
 
 # Compile
-add_executable(test_dynamics.out ./test_dynamics.cpp)
+add_executable(test_dynamics.out ./Test_dynamics.cpp)
 target_include_directories(test_dynamics.out SYSTEM PRIVATE ${doctest_SOURCE_DIR}/doctest)
 add_test(NAME test_dynamics.out COMMAND test_dynamics.out)

@@ -10,12 +10,13 @@
 #define dynamics_hpp
 
 #include <vector>
+#include <random>
 
 #include "Agent.hpp"
 #include "Itinerary.hpp"
 #include "Graph.hpp"
-#include "utility/TypeTraits/is_agent.hpp"
-#include "utility/TypeTraits/is_itinerary.hpp"
+#include "../utility/TypeTraits/is_agent.hpp"
+#include "../utility/TypeTraits/is_itinerary.hpp"
 
 namespace dsm {
 
@@ -74,10 +75,10 @@ namespace dsm {
     void addAgent(const Agent<Id>& agent);
     void addAgent(shared<Agent<Id>> agent);
     template <typename... Tn>
-      requires(is_agent_v<Tn> && ...)
+      requires(dmf::is_agent_v<Tn> && ...)
     void addAgents(Tn... agents);
     template <typename T1, typename... Tn>
-      requires(is_agent_v<T1> && (is_agent_v<Tn> && ...))
+      requires(dmf::is_agent_v<T1> && (dmf::is_agent_v<Tn> && ...))
     void addAgents(T1 agent, Tn... agents);
 
     void addRandomAgents(uint nAgents);  // TODO: implement
@@ -89,10 +90,10 @@ namespace dsm {
     /// @param itinerary Shared pointer to the itinerary
     void addItinerary(shared<Itinerary<Id>> itinerary);
     template <typename... Tn>
-      requires(is_agent_v<Tn> && ...)
+      requires(dmf::is_agent_v<Tn> && ...)
     void addItineraries(Tn... itineraries);
     template <typename T1, typename... Tn>
-      requires(is_agent_v<T1> && (is_agent_v<Tn> && ...))
+      requires(dmf::is_agent_v<T1> && (dmf::is_agent_v<Tn> && ...))
     void addItineraries(T1 itinerary, Tn... itineraries);
 
     /// @brief Reset the simulation time
@@ -151,12 +152,12 @@ namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   template <typename... Tn>
-    requires(is_agent_v<Tn> && ...)
+    requires(dmf::is_agent_v<Tn> && ...)
   void Dynamics<Id, Size>::addAgents(Tn... agents) {}
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   template <typename T1, typename... Tn>
-    requires(is_agent_v<T1> && (is_agent_v<Tn> && ...))
+    requires(dmf::is_agent_v<T1> && (dmf::is_agent_v<Tn> && ...))
   void Dynamics<Id, Size>::addAgents(T1 agent, Tn... agents) {
     addAgent(agent);
     addAgents(agents...);
@@ -171,12 +172,12 @@ namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   template <typename... Tn>
-    requires(is_agent_v<Tn> && ...)
+    requires(dmf::is_agent_v<Tn> && ...)
   void Dynamics<Id, Size>::addItineraries(Tn... itineraries) {}
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   template <typename T1, typename... Tn>
-    requires(is_agent_v<T1> && (is_agent_v<Tn> && ...))
+    requires(dmf::is_agent_v<T1> && (dmf::is_agent_v<Tn> && ...))
   void Dynamics<Id, Size>::addItineraries(T1 itinerary, Tn... itineraries) {
     addItinerary(itinerary);
     addItineraries(itineraries...);
