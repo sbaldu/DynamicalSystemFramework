@@ -69,7 +69,7 @@ $(function() {
 <div class="title">Graph.hpp</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160; </div>
+<a href="Graph_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160; </div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#ifndef Graph_hpp</span></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#define Graph_hpp</span></div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160; </div>
@@ -83,9 +83,9 @@ $(function() {
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#include &lt;type_traits&gt;</span></div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#include &lt;utility&gt;</span></div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#include &quot;Node.hpp&quot;</span></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#include &quot;SparseMatrix.hpp&quot;</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#include &quot;Street.hpp&quot;</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Node_8hpp.html">Node.hpp</a>&quot;</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="SparseMatrix_8hpp.html">SparseMatrix.hpp</a>&quot;</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Street_8hpp.html">Street.hpp</a>&quot;</span></div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="preprocessor">#include &quot;../utility/HashFunctions.hpp&quot;</span></div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="preprocessor">#include &quot;../utility/TypeTraits/is_node.hpp&quot;</span></div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="preprocessor">#include &quot;../utility/TypeTraits/is_street.hpp&quot;</span></div>
@@ -98,22 +98,22 @@ $(function() {
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;  <span class="keyword">using</span> std::make_shared;</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> Id, <span class="keyword">typename</span> Size&gt;</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    requires(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  <span class="keyword">class </span>Graph {</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    requires std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;</div>
+<div class="line"><a name="l00041"></a><span class="lineno"><a class="line" href="classdsm_1_1Graph.html">   41</a></span>&#160;  <span class="keyword">class </span><a class="code" href="classdsm_1_1Graph.html">Graph</a> {</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;  <span class="keyword">private</span>:</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    std::unordered_set&lt;shared&lt;Node&lt;Id&gt;&gt;, nodeHash&lt;Id&gt;&gt; m_nodes;</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    std::unordered_set&lt;shared&lt;Street&lt;Id, Size&gt;&gt;, streetHash&lt;Id, Size&gt;&gt; m_streets;</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    shared&lt;SparseMatrix&lt;Id, bool&gt;&gt; m_adjacency;</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;  <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    Graph();</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    Graph(<span class="keyword">const</span> SparseMatrix&lt;Id, bool&gt;&amp; adj);</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    Graph(<span class="keyword">const</span> std::unordered_set&lt;shared&lt;Street&lt;Id, Size&gt;&gt;, nodeHash&lt;Id&gt;&gt;&amp; streetSet);</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <a class="code" href="classdsm_1_1Graph.html">Graph</a>();</div>
+<div class="line"><a name="l00051"></a><span class="lineno"><a class="line" href="classdsm_1_1Graph.html#ae94f60ddcb3ead6fc9d3d479509c7d40">   51</a></span>&#160;    <a class="code" href="classdsm_1_1Graph.html#ae94f60ddcb3ead6fc9d3d479509c7d40">Graph</a>(<span class="keyword">const</span> <a class="code" href="classdsm_1_1SparseMatrix.html">SparseMatrix&lt;Id, bool&gt;</a>&amp; adj);</div>
+<div class="line"><a name="l00054"></a><span class="lineno"><a class="line" href="classdsm_1_1Graph.html#a6987dc90eb73fec07096ab8c3dc0d8ce">   54</a></span>&#160;    <a class="code" href="classdsm_1_1Graph.html#a6987dc90eb73fec07096ab8c3dc0d8ce">Graph</a>(<span class="keyword">const</span> std::unordered_set&lt;shared&lt;<a class="code" href="classdsm_1_1Street.html">Street&lt;Id, Size&gt;</a>&gt;, nodeHash&lt;Id&gt;&gt;&amp; <a class="code" href="classdsm_1_1Graph.html#a27f9d6dd5f104e449a68f868c060ccb7">streetSet</a>);</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <span class="keywordtype">void</span> buildAdj();</div>
+<div class="line"><a name="l00057"></a><span class="lineno"><a class="line" href="classdsm_1_1Graph.html#a2852d1d70368f1ecdefefc1119ea9ce6">   57</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classdsm_1_1Graph.html#a2852d1d70368f1ecdefefc1119ea9ce6">buildAdj</a>();</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160; </div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <span class="keywordtype">void</span> addNode(shared&lt;Node&lt;Id&gt;&gt; node);</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <span class="keywordtype">void</span> addNode(<span class="keyword">const</span> Node&lt;Id&gt;&amp; node);</div>
+<div class="line"><a name="l00061"></a><span class="lineno"><a class="line" href="classdsm_1_1Graph.html#a9527b73abd6f2f6063385e2874323106">   61</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classdsm_1_1Graph.html#a9527b73abd6f2f6063385e2874323106">addNode</a>(shared&lt;<a class="code" href="classdsm_1_1Node.html">Node&lt;Id&gt;</a>&gt; node);</div>
+<div class="line"><a name="l00064"></a><span class="lineno"><a class="line" href="classdsm_1_1Graph.html#ae5510cf1ee92d268f38c1731af23cd74">   64</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classdsm_1_1Graph.html#ae5510cf1ee92d268f38c1731af23cd74">addNode</a>(<span class="keyword">const</span> <a class="code" href="classdsm_1_1Node.html">Node&lt;Id&gt;</a>&amp; node);</div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160; </div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">typename</span>... Tn&gt;</div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;      requires(is_node_v&lt;Tn&gt; &amp;&amp; ...)</div>
@@ -123,8 +123,8 @@ $(function() {
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;      requires is_node_v&lt;T1&gt; &amp;&amp; (is_node_v&lt;Tn&gt; &amp;&amp; ...)</div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keywordtype">void</span> addNodes(T1&amp;&amp; node, Tn&amp;&amp;... nodes);</div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160; </div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    <span class="keywordtype">void</span> addStreet(shared&lt;Street&lt;Id, Size&gt;&gt; street);</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="keywordtype">void</span> addStreet(const Street&lt;Id, Size&gt;&amp; street);</div>
+<div class="line"><a name="l00076"></a><span class="lineno"><a class="line" href="classdsm_1_1Graph.html#a9fdbadf03f93c862bdaa2a6c4bf0f389">   76</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classdsm_1_1Graph.html#a9fdbadf03f93c862bdaa2a6c4bf0f389">addStreet</a>(shared&lt;<a class="code" href="classdsm_1_1Street.html">Street</a>&lt;Id, Size&gt;&gt; street);</div>
+<div class="line"><a name="l00079"></a><span class="lineno"><a class="line" href="classdsm_1_1Graph.html#a51bcd5cfd4b2960f2f80e510279dd2dd">   79</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classdsm_1_1Graph.html#a9fdbadf03f93c862bdaa2a6c4bf0f389">addStreet</a>(const <a class="code" href="classdsm_1_1Street.html">Street</a>&lt;Id, Size&gt;&amp; street);</div>
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160; </div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    template &lt;typename... Tn&gt;</div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;      requires(is_street_v&lt;Tn&gt; &amp;&amp; ...)</div>
@@ -134,14 +134,14 @@ $(function() {
 <div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;      requires is_street_v&lt;T1&gt; &amp;&amp; (is_street_v&lt;Tn&gt; &amp;&amp; ...)</div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <span class="keywordtype">void</span> addStreets(T1&amp;&amp; street, Tn&amp;&amp;... streets);</div>
 <div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160; </div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    shared&lt;SparseMatrix&lt;Id, <span class="keywordtype">bool</span>&gt;&gt; adjMatrix() const;</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    std::unordered_set&lt;shared&lt;Node&lt;Id&gt;&gt;, nodeHash&lt;Id&gt;&gt; nodeSet() const;</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    std::unordered_set&lt;shared&lt;Street&lt;Id, Size&gt;&gt;, streetHash&lt;Id, Size&gt;&gt; streetSet() const;</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    shared&lt;<a class="code" href="classdsm_1_1SparseMatrix.html">SparseMatrix</a>&lt;Id, <span class="keywordtype">bool</span>&gt;&gt; <a class="code" href="classdsm_1_1Graph.html#a52dcd5d4731075794981931edd1102a4">adjMatrix</a>() const;</div>
+<div class="line"><a name="l00094"></a><span class="lineno"><a class="line" href="classdsm_1_1Graph.html#adae599df130c2980c2b0938d6e4a468e">   94</a></span>&#160;    std::unordered_set&lt;shared&lt;<a class="code" href="classdsm_1_1Node.html">Node</a>&lt;Id&gt;&gt;, nodeHash&lt;Id&gt;&gt; <a class="code" href="classdsm_1_1Graph.html#adae599df130c2980c2b0938d6e4a468e">nodeSet</a>() const;</div>
+<div class="line"><a name="l00097"></a><span class="lineno"><a class="line" href="classdsm_1_1Graph.html#a27f9d6dd5f104e449a68f868c060ccb7">   97</a></span>&#160;    std::unordered_set&lt;shared&lt;<a class="code" href="classdsm_1_1Street.html">Street</a>&lt;Id, Size&gt;&gt;, streetHash&lt;Id, Size&gt;&gt; <a class="code" href="classdsm_1_1Graph.html#a27f9d6dd5f104e449a68f868c060ccb7">streetSet</a>() const;</div>
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;  };</div>
 <div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160; </div>
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;  template &lt;typename Id, typename Size&gt;</div>
 <div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    requires(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;  Graph&lt;Id, Size&gt;::Graph() : m_adjacency{make_shared&lt;SparseMatrix&lt;Id, bool&gt;&gt;()} {}</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;  <a class="code" href="classdsm_1_1Graph.html">Graph</a>&lt;Id, Size&gt;::<a class="code" href="classdsm_1_1Graph.html">Graph</a>() : m_adjacency{make_shared&lt;SparseMatrix&lt;Id, bool&gt;&gt;()} {}</div>
 <div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160; </div>
 <div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> Id, <span class="keyword">typename</span> Size&gt;</div>
 <div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    requires(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)</div>
@@ -159,18 +159,18 @@ $(function() {
 <div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    requires(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)</div>
 <div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;  Graph&lt;Id, Size&gt;::Graph(<span class="keyword">const</span> std::unordered_set&lt;shared&lt;Street&lt;Id, Size&gt;&gt;, nodeHash&lt;Id&gt;&gt;&amp; streetSet)</div>
 <div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;      : m_adjacency{make_shared&lt;SparseMatrix&lt;Id, bool&gt;&gt;()} {</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span> street : streetSet) {</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span> street : <a class="code" href="classdsm_1_1Graph.html#a27f9d6dd5f104e449a68f868c060ccb7">streetSet</a>) {</div>
 <div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;      m_streets.insert(street);</div>
 <div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;      m_nodes.insert(street-&gt;nodes().first);</div>
 <div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;      m_nodes.insert(street-&gt;nodes().second);</div>
 <div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    }</div>
 <div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160; </div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;    buildAdj();</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;    <a class="code" href="classdsm_1_1Graph.html#a2852d1d70368f1ecdefefc1119ea9ce6">buildAdj</a>();</div>
 <div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;  }</div>
 <div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160; </div>
 <div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> Id, <span class="keyword">typename</span> Size&gt;</div>
 <div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    requires(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;  <span class="keywordtype">void</span> Graph&lt;Id, Size&gt;::buildAdj() {</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="classdsm_1_1Graph.html#a2852d1d70368f1ecdefefc1119ea9ce6">Graph&lt;Id, Size&gt;::buildAdj</a>() {</div>
 <div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;    <span class="comment">// find max values in streets node pairs</span></div>
 <div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    Id maxNode = 0;</div>
 <div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span> street : m_streets) {</div>
@@ -190,13 +190,13 @@ $(function() {
 <div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160; </div>
 <div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> Id, <span class="keyword">typename</span> Size&gt;</div>
 <div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;    requires(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;  <span class="keywordtype">void</span> Graph&lt;Id, Size&gt;::addNode(shared&lt;Node&lt;Id&gt;&gt; node) {</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="classdsm_1_1Graph.html#a9527b73abd6f2f6063385e2874323106">Graph&lt;Id, Size&gt;::addNode</a>(shared&lt;Node&lt;Id&gt;&gt; node) {</div>
 <div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;    m_nodes.insert(node);</div>
 <div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;  }</div>
 <div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160; </div>
 <div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> Id, <span class="keyword">typename</span> Size&gt;</div>
 <div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;    requires(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)</div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;  <span class="keywordtype">void</span> Graph&lt;Id, Size&gt;::addNode(<span class="keyword">const</span> Node&lt;Id&gt;&amp; node) {</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="classdsm_1_1Graph.html#a9527b73abd6f2f6063385e2874323106">Graph&lt;Id, Size&gt;::addNode</a>(<span class="keyword">const</span> Node&lt;Id&gt;&amp; node) {</div>
 <div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;    m_nodes.insert(make_shared&lt;Node&lt;Id&gt;&gt;(node));</div>
 <div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;  }</div>
 <div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160; </div>
@@ -217,13 +217,13 @@ $(function() {
 <div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160; </div>
 <div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> Id, <span class="keyword">typename</span> Size&gt;</div>
 <div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;    requires(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)</div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;  <span class="keywordtype">void</span> Graph&lt;Id, Size&gt;::addStreet(shared&lt;Street&lt;Id, Size&gt;&gt; street) {</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="classdsm_1_1Graph.html#a9fdbadf03f93c862bdaa2a6c4bf0f389">Graph&lt;Id, Size&gt;::addStreet</a>(shared&lt;Street&lt;Id, Size&gt;&gt; street) {</div>
 <div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;    m_streets.insert(street);</div>
 <div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;  }</div>
 <div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160; </div>
 <div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> Id, <span class="keyword">typename</span> Size&gt;</div>
 <div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;    requires(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)</div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;  <span class="keywordtype">void</span> Graph&lt;Id, Size&gt;::addStreet(<span class="keyword">const</span> Street&lt;Id, Size&gt;&amp; street) {</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="classdsm_1_1Graph.html#a9fdbadf03f93c862bdaa2a6c4bf0f389">Graph&lt;Id, Size&gt;::addStreet</a>(<span class="keyword">const</span> Street&lt;Id, Size&gt;&amp; street) {</div>
 <div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;    m_streets.insert(make_shared&lt;Street&lt;Id, Size&gt;&gt;(street));</div>
 <div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;  }</div>
 <div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160; </div>
@@ -244,24 +244,40 @@ $(function() {
 <div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160; </div>
 <div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> Id, <span class="keyword">typename</span> Size&gt;</div>
 <div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;    requires(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)</div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;  shared&lt;SparseMatrix&lt;Id, bool&gt;&gt; Graph&lt;Id, Size&gt;::adjMatrix()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00205"></a><span class="lineno"><a class="line" href="classdsm_1_1Graph.html#a52dcd5d4731075794981931edd1102a4">  205</a></span>&#160;  shared&lt;<a class="code" href="classdsm_1_1SparseMatrix.html">SparseMatrix</a>&lt;Id, <span class="keywordtype">bool</span>&gt;&gt; <a class="code" href="classdsm_1_1Graph.html">Graph</a>&lt;Id, Size&gt;::adjMatrix()<span class="keyword"> const </span>{</div>
 <div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;    <span class="keywordflow">return</span> m_adjacency;</div>
 <div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;  }</div>
 <div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160; </div>
 <div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> Id, <span class="keyword">typename</span> Size&gt;</div>
 <div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;    requires(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)</div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;  std::unordered_set&lt;shared&lt;Node&lt;Id&gt;&gt;, nodeHash&lt;Id&gt;&gt; Graph&lt;Id, Size&gt;::nodeSet()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;  std::unordered_set&lt;shared&lt;Node&lt;Id&gt;&gt;, nodeHash&lt;Id&gt;&gt; <a class="code" href="classdsm_1_1Graph.html#adae599df130c2980c2b0938d6e4a468e">Graph&lt;Id, Size&gt;::nodeSet</a>()<span class="keyword"> const </span>{</div>
 <div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;    <span class="keywordflow">return</span> m_nodes;</div>
 <div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;  }</div>
 <div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160; </div>
 <div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">typename</span> Id, <span class="keyword">typename</span> Size&gt;</div>
 <div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;    requires(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)</div>
-<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;  std::unordered_set&lt;shared&lt;Street&lt;Id, Size&gt;&gt;, streetHash&lt;Id, Size&gt;&gt; Graph&lt;Id, Size&gt;::streetSet()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;  std::unordered_set&lt;shared&lt;Street&lt;Id, Size&gt;&gt;, streetHash&lt;Id, Size&gt;&gt; <a class="code" href="classdsm_1_1Graph.html#a27f9d6dd5f104e449a68f868c060ccb7">Graph&lt;Id, Size&gt;::streetSet</a>()<span class="keyword"> const </span>{</div>
 <div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;    <span class="keywordflow">return</span> m_streets;</div>
 <div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;  }</div>
 <div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;};  <span class="comment">// namespace dsm</span></div>
 <div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160; </div>
 <div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="aNode_8hpp_html"><div class="ttname"><a href="Node_8hpp.html">Node.hpp</a></div><div class="ttdoc">Defines the Node class.</div></div>
+<div class="ttc" id="aSparseMatrix_8hpp_html"><div class="ttname"><a href="SparseMatrix_8hpp.html">SparseMatrix.hpp</a></div><div class="ttdoc">Defines the SparseMatrix class.</div></div>
+<div class="ttc" id="aStreet_8hpp_html"><div class="ttname"><a href="Street_8hpp.html">Street.hpp</a></div><div class="ttdoc">Defines the Street class.</div></div>
+<div class="ttc" id="aclassdsm_1_1Graph_html"><div class="ttname"><a href="classdsm_1_1Graph.html">dsm::Graph</a></div><div class="ttdoc">The Graph class represents a graph in the network.</div><div class="ttdef"><b>Definition:</b> Graph.hpp:41</div></div>
+<div class="ttc" id="aclassdsm_1_1Graph_html_a27f9d6dd5f104e449a68f868c060ccb7"><div class="ttname"><a href="classdsm_1_1Graph.html#a27f9d6dd5f104e449a68f868c060ccb7">dsm::Graph::streetSet</a></div><div class="ttdeci">std::unordered_set&lt; shared&lt; Street&lt; Id, Size &gt; &gt;, streetHash&lt; Id, Size &gt; &gt; streetSet() const</div><div class="ttdoc">Get the graph's street set.</div></div>
+<div class="ttc" id="aclassdsm_1_1Graph_html_a2852d1d70368f1ecdefefc1119ea9ce6"><div class="ttname"><a href="classdsm_1_1Graph.html#a2852d1d70368f1ecdefefc1119ea9ce6">dsm::Graph::buildAdj</a></div><div class="ttdeci">void buildAdj()</div><div class="ttdoc">Build the graph's adjacency matrix.</div></div>
+<div class="ttc" id="aclassdsm_1_1Graph_html_a52dcd5d4731075794981931edd1102a4"><div class="ttname"><a href="classdsm_1_1Graph.html#a52dcd5d4731075794981931edd1102a4">dsm::Graph::adjMatrix</a></div><div class="ttdeci">shared&lt; SparseMatrix&lt; Id, bool &gt; &gt; adjMatrix() const</div><div class="ttdoc">Get the graph's adjacency matrix.</div><div class="ttdef"><b>Definition:</b> Graph.hpp:205</div></div>
+<div class="ttc" id="aclassdsm_1_1Graph_html_a6987dc90eb73fec07096ab8c3dc0d8ce"><div class="ttname"><a href="classdsm_1_1Graph.html#a6987dc90eb73fec07096ab8c3dc0d8ce">dsm::Graph::Graph</a></div><div class="ttdeci">Graph(const std::unordered_set&lt; shared&lt; Street&lt; Id, Size &gt;&gt;, nodeHash&lt; Id &gt;&gt; &amp;streetSet)</div><div class="ttdoc">Construct a new Graph object.</div></div>
+<div class="ttc" id="aclassdsm_1_1Graph_html_a9527b73abd6f2f6063385e2874323106"><div class="ttname"><a href="classdsm_1_1Graph.html#a9527b73abd6f2f6063385e2874323106">dsm::Graph::addNode</a></div><div class="ttdeci">void addNode(shared&lt; Node&lt; Id &gt;&gt; node)</div><div class="ttdoc">Add a node to the graph.</div></div>
+<div class="ttc" id="aclassdsm_1_1Graph_html_a9fdbadf03f93c862bdaa2a6c4bf0f389"><div class="ttname"><a href="classdsm_1_1Graph.html#a9fdbadf03f93c862bdaa2a6c4bf0f389">dsm::Graph::addStreet</a></div><div class="ttdeci">void addStreet(shared&lt; Street&lt; Id, Size &gt;&gt; street)</div><div class="ttdoc">Add a street to the graph.</div></div>
+<div class="ttc" id="aclassdsm_1_1Graph_html_adae599df130c2980c2b0938d6e4a468e"><div class="ttname"><a href="classdsm_1_1Graph.html#adae599df130c2980c2b0938d6e4a468e">dsm::Graph::nodeSet</a></div><div class="ttdeci">std::unordered_set&lt; shared&lt; Node&lt; Id &gt; &gt;, nodeHash&lt; Id &gt; &gt; nodeSet() const</div><div class="ttdoc">Get the graph's node set.</div></div>
+<div class="ttc" id="aclassdsm_1_1Graph_html_ae5510cf1ee92d268f38c1731af23cd74"><div class="ttname"><a href="classdsm_1_1Graph.html#ae5510cf1ee92d268f38c1731af23cd74">dsm::Graph::addNode</a></div><div class="ttdeci">void addNode(const Node&lt; Id &gt; &amp;node)</div><div class="ttdoc">Add a node to the graph.</div></div>
+<div class="ttc" id="aclassdsm_1_1Graph_html_ae94f60ddcb3ead6fc9d3d479509c7d40"><div class="ttname"><a href="classdsm_1_1Graph.html#ae94f60ddcb3ead6fc9d3d479509c7d40">dsm::Graph::Graph</a></div><div class="ttdeci">Graph(const SparseMatrix&lt; Id, bool &gt; &amp;adj)</div><div class="ttdoc">Construct a new Graph object.</div></div>
+<div class="ttc" id="aclassdsm_1_1Node_html"><div class="ttname"><a href="classdsm_1_1Node.html">dsm::Node</a></div><div class="ttdoc">The Node class represents a node in the network.</div><div class="ttdef"><b>Definition:</b> Node.hpp:20</div></div>
+<div class="ttc" id="aclassdsm_1_1SparseMatrix_html"><div class="ttname"><a href="classdsm_1_1SparseMatrix.html">dsm::SparseMatrix&lt; Id, bool &gt;</a></div></div>
+<div class="ttc" id="aclassdsm_1_1Street_html"><div class="ttname"><a href="classdsm_1_1Street.html">dsm::Street</a></div><div class="ttdoc">The Street class represents a street in the network.</div><div class="ttdef"><b>Definition:</b> Street.hpp:29</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

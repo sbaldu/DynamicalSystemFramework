@@ -1,6 +1,7 @@
 var searchData=
 [
 <<<<<<< HEAD
+<<<<<<< HEAD
   ['is_5fnode_0',['is_node',['../structdsm_1_1is__node.html',1,'dsm']]],
   ['is_5fnode_3c_20const_20node_3c_20id_20_3e_20_26_20_3e_1',['is_node&lt; const Node&lt; Id &gt; &amp; &gt;',['../structdsm_1_1is__node_3_01const_01Node_3_01Id_01_4_01_6_01_4.html',1,'dsm']]],
   ['is_5fnode_3c_20node_3c_20id_20_3e_20_3e_2',['is_node&lt; Node&lt; Id &gt; &gt;',['../structdsm_1_1is__node_3_01Node_3_01Id_01_4_01_4.html',1,'dsm']]],
@@ -16,4 +17,7 @@ var searchData=
 =======
   ['node_58',['Node',['../classdsm_1_1Node.html',1,'dsm']]]
 >>>>>>> 88dffe6 (Updated docs)
+=======
+  ['graph_93',['Graph',['../classdsm_1_1Graph.html',1,'dsm']]]
+>>>>>>> ebf2eca (Updated docs)
 ];

@@ -1,0 +1,58 @@
+\hypertarget{Graph_8hpp}{}\doxysection{src/dsm/headers/\+Graph.hpp File Reference}
+\label{Graph_8hpp}\index{src/dsm/headers/Graph.hpp@{src/dsm/headers/Graph.hpp}}
+
+
+Defines the Graph class.  
+
+
+{\ttfamily \#include $<$algorithm$>$}\newline
+{\ttfamily \#include $<$concepts$>$}\newline
+{\ttfamily \#include $<$limits$>$}\newline
+{\ttfamily \#include $<$memory$>$}\newline
+{\ttfamily \#include $<$ranges$>$}\newline
+{\ttfamily \#include $<$unordered\+\_\+set$>$}\newline
+{\ttfamily \#include $<$queue$>$}\newline
+{\ttfamily \#include $<$type\+\_\+traits$>$}\newline
+{\ttfamily \#include $<$utility$>$}\newline
+{\ttfamily \#include \char`\"{}Node.\+hpp\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}Sparse\+Matrix.\+hpp\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}Street.\+hpp\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}../utility/\+Hash\+Functions.\+hpp\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}../utility/\+Type\+Traits/is\+\_\+node.\+hpp\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}../utility/\+Type\+Traits/is\+\_\+street.\+hpp\char`\"{}}\newline
+Include dependency graph for Graph.\+hpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{Graph_8hpp__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=250pt]{Graph_8hpp__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{classdsm_1_1Graph}{dsm\+::\+Graph$<$ Id, Size $>$}}
+\begin{DoxyCompactList}\small\item\em The \mbox{\hyperlink{classdsm_1_1Graph}{Graph}} class represents a graph in the network. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{Dynamics_8hpp_afb17e178111f5c33d44692a1bab0909a}\label{Dynamics_8hpp_afb17e178111f5c33d44692a1bab0909a}} 
+{\footnotesize template$<$typename Id , typename Size $>$ }\\{\bfseries dsm\+::requires} (std\+::unsigned\+\_\+integral$<$ Id $>$ \&\&std\+::unsigned\+\_\+integral$<$ Size $>$) Dynamics$<$ Id
+\item 
+\mbox{\Hypertarget{Dynamics_8hpp_a8b8363e6ff3618e365dcba9feff4f1f5}\label{Dynamics_8hpp_a8b8363e6ff3618e365dcba9feff4f1f5}} 
+{\footnotesize template$<$typename Id , typename Size $>$ }\\{\bfseries dsm\+::requires} (std\+::unsigned\+\_\+integral$<$ Id $>$ \&\&std\+::unsigned\+\_\+integral$<$ Size $>$) template$<$ typename... Tn $>$ requires(is\+\_\+agent\+\_\+v$<$ Tn $>$ \&\&...) void Dynamics$<$ Id
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Defines the Graph class. 
+
+This file contains the definition of the Graph class. The Graph class represents a graph in the network. It is templated by the type of the graph\textquotesingle{}s id and the type of the graph\textquotesingle{}s capacity. The graph\textquotesingle{}s id and capacity must be unsigned integral types. 

@@ -1,6 +1,7 @@
 var searchData=
 [
 <<<<<<< HEAD
+<<<<<<< HEAD
   ['node_0',['node',['../classdsm_1_1Node.html',1,'dsm::Node&lt; Id &gt;'],['../classdsm_1_1Node.html#a77816db7c053668e21fc29778862ead5',1,'dsm::Node::Node(Id id)'],['../classdsm_1_1Node.html#af34885977123568417fa9bff1c683a72',1,'dsm::Node::Node(Id id, std::pair&lt; double, double &gt; coords)'],['../classdsm_1_1Node.html#a7280a4a30847faf7abf54e4dcd309a5f',1,'dsm::Node::Node(Id id, std::pair&lt; double, double &gt; coords, std::queue&lt; Id &gt; queue)']]],
   ['nodehash_1',['nodeHash',['../structdsm_1_1nodeHash.html',1,'dsm']]],
   ['nodepair_2',['nodePair',['../classdsm_1_1Street.html#afb91d15f9d075abff5e003b65c66993d',1,'dsm::Street']]],
@@ -13,4 +14,10 @@ var searchData=
   ['operator_2d_32',['operator-',['../classdsm_1_1SparseMatrix.html#ab75404692818cf899304cac8704e185d',1,'dsm::SparseMatrix']]],
   ['operator_2d_3d_33',['operator-=',['../classdsm_1_1SparseMatrix.html#a5c6f729555f6b6f051a4b13cb747041a',1,'dsm::SparseMatrix']]]
 >>>>>>> 88dffe6 (Updated docs)
+=======
+  ['node_48',['Node',['../classdsm_1_1Node.html',1,'dsm::Node&lt; Id &gt;'],['../classdsm_1_1Node.html#a892ce1333095c40e25e5018f33514ae6',1,'dsm::Node::Node(Id id)'],['../classdsm_1_1Node.html#adb1781f3464d8ac34c5f52c90858459c',1,'dsm::Node::Node(Id id, std::pair&lt; double, double &gt; coords)'],['../classdsm_1_1Node.html#a92106f14d03da91df50ab229733f59a5',1,'dsm::Node::Node(Id id, std::pair&lt; double, double &gt; coords, std::queue&lt; Id &gt; queue)']]],
+  ['node_2ehpp_49',['Node.hpp',['../Node_8hpp.html',1,'']]],
+  ['nodepair_50',['nodePair',['../classdsm_1_1Street.html#aba9d19bc8c1f4857949e393b7e9072b9',1,'dsm::Street']]],
+  ['nodeset_51',['nodeSet',['../classdsm_1_1Graph.html#adae599df130c2980c2b0938d6e4a468e',1,'dsm::Graph']]]
+>>>>>>> ebf2eca (Updated docs)
 ];

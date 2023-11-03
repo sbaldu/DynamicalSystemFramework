@@ -1,6 +1,7 @@
 var searchData=
 [
 <<<<<<< HEAD
+<<<<<<< HEAD
   ['end_0',['end',['../classdsm_1_1SparseMatrix.html#ad79de75b148c1efac96c15e7739ed147',1,'dsm::SparseMatrix']]],
   ['enqueue_1',['enqueue',['../classdsm_1_1Street.html#a838f1a6ceb2f32e12e063707ac65e446',1,'dsm::Street']]],
   ['erase_2',['erase',['../classdsm_1_1SparseMatrix.html#ad8c9da7dc8cb3c5d20555b77d371102c',1,'dsm::SparseMatrix']]],
@@ -12,4 +13,11 @@ var searchData=
   ['erasecolumn_8',['eraseColumn',['../classdsm_1_1SparseMatrix.html#a1c2500e9a378261858f9080168cd8a70',1,'dsm::SparseMatrix']]],
   ['eraserow_9',['eraseRow',['../classdsm_1_1SparseMatrix.html#ab90fbdc9bef8a76372794f6c5663e379',1,'dsm::SparseMatrix']]]
 >>>>>>> 88dffe6 (Updated docs)
+=======
+  ['end_17',['end',['../classdsm_1_1SparseMatrix.html#a2bef1265fcc398018886e922e9dc8a32',1,'dsm::SparseMatrix']]],
+  ['enqueue_18',['enqueue',['../classdsm_1_1Street.html#af617e0c198d8f6d9fbf90795107f354f',1,'dsm::Street']]],
+  ['erase_19',['erase',['../classdsm_1_1SparseMatrix.html#aa6fa072085421ac384ccc51643a5ad71',1,'dsm::SparseMatrix']]],
+  ['erasecolumn_20',['eraseColumn',['../classdsm_1_1SparseMatrix.html#a1c2500e9a378261858f9080168cd8a70',1,'dsm::SparseMatrix']]],
+  ['eraserow_21',['eraseRow',['../classdsm_1_1SparseMatrix.html#ab90fbdc9bef8a76372794f6c5663e379',1,'dsm::SparseMatrix']]]
+>>>>>>> ebf2eca (Updated docs)
 ];
