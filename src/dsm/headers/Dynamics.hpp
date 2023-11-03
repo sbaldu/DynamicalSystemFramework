@@ -55,6 +55,8 @@ namespace dsm {
     /// @brief Set the seed for the graph's random number generator
     /// @param seed The seed
     void setSeed(uint seed);
+    /// @brief Update the paths of the itineraries based on the actual travel times
+    void updatePaths();  //TODO: implement
 
     /// @brief Get the graph
     /// @return const Graph<Id, Size>& The graph
@@ -78,7 +80,13 @@ namespace dsm {
       requires(is_agent_v<T1> && (is_agent_v<Tn> && ...))
     void addAgents(T1 agent, Tn... agents);
 
+    void addRandomAgents(uint nAgents);  // TODO: implement
+
+    /// @brief Add an itinerary
+    /// @param itinerary The itinerary
     void addItinerary(const Itinerary<Id>& itinerary);
+    /// @brief Add an itinerary
+    /// @param itinerary Shared pointer to the itinerary
     void addItinerary(shared<Itinerary<Id>> itinerary);
     template <typename... Tn>
       requires(is_agent_v<Tn> && ...)
@@ -87,11 +95,12 @@ namespace dsm {
       requires(is_agent_v<T1> && (is_agent_v<Tn> && ...))
     void addItineraries(T1 itinerary, Tn... itineraries);
 
+    /// @brief Reset the simulation time
     void resetTime();
 
     template <typename F, typename... Tn>
       requires std::is_invocable_v<F, Tn...>
-    void evolve(F f, Tn... args);
+    void evolve(F f, Tn... args);  // TODO: implement
   };
 
   template <typename Id, typename Size>
