@@ -18,6 +18,8 @@
 #include <queue>
 #include <type_traits>
 #include <utility>
+#include <string>
+#include <fstream>
 
 #include "Node.hpp"
 #include "SparseMatrix.hpp"
@@ -55,6 +57,12 @@ namespace dsm {
 
     /// @brief Build the graph's adjacency matrix
     void buildAdj();
+
+    /// @brief Import the graph's adjacency matrix from a file
+    /// @param fileName, The name of the file to import the adjacency matrix from.
+    /// @throws std::invalid_argument if the file is not found or the format is not supported
+    /// The matrix format is deduced from the file extension. Currently only .mtx files are supported.
+    void importAdj(const std::string& fileName);
 
     /// @brief Add a node to the graph
     /// @param node, A std::shared_ptr to the node to add
@@ -143,6 +151,40 @@ namespace dsm {
     for (auto street : m_streets) {
       m_adjacency->insert(street->nodePair().first, street->nodePair().second, true);
       m_adjacency->insert(street->nodePair().second, street->nodePair().first, true);
+    }
+  }
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Graph<Id, Size>::importAdj(const std::string& fileName) {
+    // check the file extension
+    std::string fileExt = fileName.substr(fileName.find_last_of(".") + 1);
+    if (fileExt == "mtx") {
+      std::ifstream file(fileName);
+      if (!file.is_open()) {
+        std::string errrorMsg =
+            "Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " + "File not found";
+        throw std::invalid_argument(errrorMsg);
+      }
+      Id rows, cols;
+      file >> rows >> cols;
+      if (rows != cols) {
+        std::string errrorMsg = "Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ +
+                                ": " + "Adjacency matrix must be square";
+        throw std::invalid_argument(errrorMsg);
+      }
+      m_adjacency = make_shared<SparseMatrix<Id, bool>>(rows, cols);
+      // each line has (should have) 3 elements
+      while (!file.eof()) {
+        Id index;
+        bool val;
+        file >> index >> val;
+        m_adjacency->insert(index, val);
+      }
+    } else {
+      std::string errrorMsg = "Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                              "File extension not supported";
+      throw std::invalid_argument(errrorMsg);
     }
   }
 
