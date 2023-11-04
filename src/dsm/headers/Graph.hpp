@@ -71,7 +71,7 @@ namespace dsm {
     void addNode(const Node<Id>& node);
 
     template <typename... Tn>
-      requires is_node_v<Tn> && ...
+      requires is_node_v<Tn> && ...)
     void addNodes(Tn&&... nodes);
 
     template <typename T1, typename... Tn>
@@ -204,13 +204,13 @@ namespace dsm {
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   template <typename... Tn>
-    requires is_node_v<Tn> && ...
+    requires is_node_v<Tn> && ...)
   void Graph<Id, Size>::addNodes(Tn&&... nodes) {}
 
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
-                                         template <typename T1, typename... Tn>
-               requires is_node_v<T1> && (is_node_v<Tn> && ...)
+  template <typename T1, typename... Tn>
+    requires is_node_v<T1> && (is_node_v<Tn> && ...)
   void Graph<Id, Size>::addNodes(T1&& node, Tn&&... nodes) {
     addNode(std::forward<T1>(node));
     addNodes(std::forward<Tn>(nodes)...);
@@ -256,8 +256,8 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
-                                         template <typename T1, typename... Tn>
-               requires is_street_v<T1> && (is_street_v<Tn> && ...)
+  template <typename T1, typename... Tn>
+    requires is_street_v<T1> && (is_street_v<Tn> && ...)
   void Graph<Id, Size>::addStreets(T1&& street, Tn&&... streets) {
     addStreet(std::forward<T1>(street));
     addStreets(std::forward<Tn>(streets)...);
