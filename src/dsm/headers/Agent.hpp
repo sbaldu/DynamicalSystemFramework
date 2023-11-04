@@ -25,6 +25,7 @@ namespace dsm {
   private:
     Itinerary<Id> m_itinerary;
     double m_speed;
+    double m_position;
     Id m_index;
     Id m_street;
     unsigned int m_time;
@@ -41,9 +42,12 @@ namespace dsm {
     /// @param itinerary, The agent's itinerary
     Agent(Id index, Id street, Itinerary<Id> itinerary);
 
+    /// @brief Set the agent's street
+    /// @param street, The agent's street
+    void setStreet(Id street);
     /// @brief Set the agent's position
     /// @param position, The agent's position
-    void setPosition(Id position);
+    void setPosition(double position);
     /// @brief Set the agent's itinerary
     /// @param itinerary, The agent's itinerary
     void setItinerary(Itinerary<Id> itinerary);
@@ -64,6 +68,9 @@ namespace dsm {
     /// @brief Get the agent's id
     /// @return The agent's id
     int index() const;
+    /// @brief Get the agent's street
+    /// @return The agent's street
+    int street() const;
     /// @brief Get the agent's position
     /// @return The agent's position
     int position() const;
@@ -84,20 +91,26 @@ namespace dsm {
   template <typename Id>
     requires std::unsigned_integral<Id>
   Agent<Id>::Agent(Id index, Id street)
-      : m_speed{0.}, m_index{index}, m_street{street}, m_time{0} {}
+      : m_speed{0.}, m_position{0.}, m_index{index}, m_street{street}, m_time{0} {}
 
   template <typename Id>
     requires std::unsigned_integral<Id>
   Agent<Id>::Agent(Id index, Id street, Itinerary<Id> itinerary)
       : m_itinerary{std::move(itinerary)},
         m_speed{0.},
+        m_position{0.},
         m_index{index},
         m_street{street},
         m_time{0} {}
 
   template <typename Id>
     requires std::unsigned_integral<Id>
-  void Agent<Id>::setPosition(Id position) {
+  void Agent<Id>::setStreet(Id street) {
+    m_street = street;
+  }
+  template <typename Id>
+    requires std::unsigned_integral<Id>
+  void Agent<Id>::setPosition(double position) {
     m_position = position;
   }
   template <typename Id>
@@ -140,6 +153,11 @@ namespace dsm {
     requires std::unsigned_integral<Id>
   int Agent<Id>::index() const {
     return m_index;
+  }
+  template <typename Id>
+    requires std::unsigned_integral<Id>
+  int Agent<Id>::street() const {
+    return m_street;
   }
   template <typename Id>
     requires std::unsigned_integral<Id>
