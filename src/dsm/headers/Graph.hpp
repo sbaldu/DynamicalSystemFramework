@@ -280,6 +280,217 @@ namespace dsm {
   std::unordered_map<Id, shared<Street<Id, Size>>> Graph<Id, Size>::streetSet() const {
     return m_streets;
   }
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  std::optional<dt> Graph<Id, Size>::dijkstra(const Node<Id>& source, const Node<Id>& dest) const {
+    dt result;
+
+    auto source_node_it = std::find_if(nodeSet.begin(), nodeSet.end(), [&source](auto node) {
+      return node->getUserId() == source.getUserId();
+    });
+    if (source_node_it == nodeSet.end()) {
+      // check if source node exist in the graph
+      return std::nullopt;
+    }
+
+    auto target_node_it = std::find_if(nodeSet.begin(), nodeSet.end(), [&target](auto node) {
+      return node->getUserId() == target.getUserId();
+    });
+    if (target_node_it == nodeSet.end()) {
+      // check if target node exist in the graph
+      return std::nullopt;
+    }
+    // n denotes the number of vertices in graph
+    auto n = m_nodes.size();
+
+    // setting all the distances initially to INF_DOUBLE
+    std::unordered_map<shared<const Node<Id>>, double, nodeHash<Id>> dist;
+
+    for (const auto& node : m_nodes) {
+      dist[node] = INF_DOUBLE;
+    }
+
+    // creating a min heap using priority queue
+    // first element of pair contains the distance
+    // second element of pair contains the vertex
+    std::priority_queue<std::pair<double, shared<const Node<Id>>>,
+                        std::vector<std::pair<double, shared<const Node<Id>>>>,
+                        std::greater<std::pair<double, shared<const Node<Id>>>>>
+        pq;
+
+    // pushing the source vertex 's' with 0 distance in min heap
+    pq.push(std::make_pair(0.0, *source_node_it));
+
+    // marking the distance of source as 0
+    dist[*source_node_it] = 0;
+
+    std::unordered_map<std::string, std::string> parent;
+    parent[source.getUserId()] = "";
+
+    while (!pq.empty()) {
+      // second element of pair denotes the node / vertex
+      shared<const Node<Id>> currentNode = pq.top().second;
+      // first element of pair denotes the distance
+      double currentDist = pq.top().first;
+
+      pq.pop();
+
+      // for all the reachable vertex from the currently exploring vertex
+      // we will try to minimize the distance
+      if (cachedAdjMatrix->find(currentNode) != cachedAdjMatrix->end()) {
+        for (const auto& elem : cachedAdjMatrix->at(currentNode)) {
+          // minimizing distances
+          if (elem.second->isWeighted().has_value() && elem.second->isWeighted().value()) {
+            if (elem.second->isDirected().has_value() && elem.second->isDirected().value()) {
+              shared<const DirectedWeightedEdge> dw_edge =
+                  std::static_pointer_cast<const DirectedWeightedEdge>(elem.second);
+              if (dw_edge->getWeight() < 0) {
+                result.errorMessage = ERR_NEGATIVE_WEIGHTED_EDGE;
+                return result;
+              } else if (currentDist + dw_edge->getWeight() < dist[elem.first]) {
+                dist[elem.first] = currentDist + dw_edge->getWeight();
+                pq.push(std::make_pair(dist[elem.first], elem.first));
+                parent[elem.first.get()->getUserId()] = currentNode.get()->getUserId();
+              }
+            } else if (elem.second->isDirected().has_value() && !elem.second->isDirected().value()) {
+              shared<const UndirectedWeightedEdge> udw_edge =
+                  std::static_pointer_cast<const UndirectedWeightedEdge>(elem.second);
+              if (udw_edge->getWeight() < 0) {
+                result.errorMessage = ERR_NEGATIVE_WEIGHTED_EDGE;
+                return result;
+              } else if (currentDist + udw_edge->getWeight() < dist[elem.first]) {
+                dist[elem.first] = currentDist + udw_edge->getWeight();
+                pq.push(std::make_pair(dist[elem.first], elem.first));
+                parent[elem.first.get()->getUserId()] = currentNode.get()->getUserId();
+              }
+            } else {
+              // ERROR it shouldn't never returned ( does not exist a Node
+              // Weighted and not Directed/Undirected)
+              result.errorMessage = ERR_NO_DIR_OR_UNDIR_EDGE;
+              return result;
+            }
+          } else {
+            // No Weighted Edge
+            result.errorMessage = ERR_NO_WEIGHTED_EDGE;
+            return result;
+          }
+        }
+      }
+    }
+    if (dist[*target_node_it] != INF_DOUBLE) {
+      result.success = true;
+      result.errorMessage = "";
+      result.result = dist[*target_node_it];
+      std::string id = target.getUserId();
+      while (parent[id] != "") {
+        result.path.push_back(id);
+        id = parent[id];
+      }
+      result.path.push_back(source.getUserId());
+      std::reverse(result.path.begin(), result.path.end());
+      return result;
+    }
+    result.errorMessage = ERR_TARGET_NODE_NOT_REACHABLE;
+    return result;
+  }
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  std::optional<dt> Graph<Id, Size>::dijkstra(const Node<Id>& source, const Node<Id>& dest) const {
+    std::vector<int> dist;  // The output array. dist.at(i) will hold the shortest
+    // distance from src to i
+    dist.reserve(_n);
+
+    std::vector<bool> sptSet;  // sptSet.at(i) will be true if vertex i is included in shortest
+    // path tree or shortest distance from src to i is finalized
+    sptSet.reserve(_n);
+
+    // Initialize all distances as INFINITE and stpSet as false
+    for (int i{}; i < _n; ++i) {
+      dist.push_back(std::numeric_limits<int>::max());
+	  sptSet.push_back(false);
+	}
+
+    // Distance of source vertex from itself is always 0
+    dist[source.id()] = 0;
+
+    // Find shortest path for all vertices
+    for (int count{}; count < _n - 1; ++count) {
+      // Pick the minimum distance vertex from the set of vertices not
+      // yet processed. u is always equal to src in the first iteration.
+      int u{minDistance(dist, sptSet, _n)};
+
+      // Mark the picked vertex as processed
+      sptSet[u] = true;
+
+      // Update dist value of the adjacent vertices of the picked vertex.
+      for (int v{}; v < _n; ++v) {
+        // Update dist.at(v) only if is not in sptSet, there is an edge from
+        // u to v, and total weight of path from src to v through u is
+        // smaller than current value of dist.at(v)
+
+        // auto length = _adjMatrix.at(u).at(v);
+        int time{};
+        if (_adjMatrix.contains(u, v)) {
+          auto weight = _streets[_findStreet(u, v)]->getLength();
+          weight /= this->_getStreetMeanVelocity(_findStreet(u, v));
+          time = static_cast<int>(weight);
+        }
+        if (!sptSet[v] && time && dist[u] != std::numeric_limits<int>::max() && dist[u] + time < dist[v])
+          dist[v] = dist[u] + time;
+      }
+    }
+
+    return dist[dst];
+  }
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  std::optional<dt> Graph<Id, Size>::shortestPath(Id source, Id dest) const {
+	const Id n_nodes{m_nodes.size()};
+    std::vector<int> dist(n_nodes, std::numeric_limits<Id>::max());  // The output array. dist.at(i) will hold the shortest
+    // distance from src to i
+
+    std::vector<bool> sptSet(n_nodes, std::numeric_limits<Id>::max());  // sptSet.at(i) will be true if vertex i is included in shortest
+    // path tree or shortest distance from src to i is finalized
+
+    // Initialize all distances as INFINITE and stpSet as false
+    for (int i{}; i < n_nodes; ++i)
+      dist.push_back(std::numeric_limits<int>::max()), sptSet.push_back(false);
+
+    // Distance of source vertex from itself is always 0
+    dist[source] = 0;
+
+    // Find shortest path for all vertices
+    for (int count{}; count < n_nodes - 1; ++count) {
+      // Pick the minimum distance vertex from the set of vertices not
+      // yet processed. u is always equal to src in the first iteration.
+      int u = minDistance(dist, sptSet, _n);
+
+      // Mark the picked vertex as processed
+      sptSet[u] = true;
+
+      // Update dist value of the adjacent vertices of the picked vertex.
+      for (int v{}; v < n_nodes; ++v) {
+        // Update dist.at(v) only if is not in sptSet, there is an edge from
+        // u to v, and total weight of path from src to v through u is
+        // smaller than current value of dist.at(v)
+
+        // auto length = _adjMatrix.at(u).at(v);
+        int time{};
+        if (_adjMatrix.contains(u, v)) {
+          auto weight = _streets[_findStreet(u, v)]->getLength();
+          weight /= this->_getStreetMeanVelocity(_findStreet(u, v));
+          time = static_cast<int>(weight);
+        }
+        if (!sptSet[v] && time && dist[u] != std::numeric_limits<Id>::max() && dist[u] + time < dist[v])
+          dist[v] = dist[u] + time;
+      }
+    }
+    return dist[dst];
+  }
+
 };  // namespace dsm
 
 #endif
