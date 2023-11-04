@@ -9,8 +9,11 @@
 #ifndef dynamics_hpp
 #define dynamics_hpp
 
+#include <algorithm>
+#include <concepts>
 #include <vector>
 #include <random>
+#include <span>
 
 #include "Agent.hpp"
 #include "Itinerary.hpp"
@@ -43,11 +46,8 @@ namespace dsm {
     Dynamics(const Graph<Id, Size>& graph);
 
     /// @brief Set the itineraries
-    /// @param itineraries The itineraries
-    void setItineraries(const std::vector<Itinerary<Id>>& itineraries);
-    /// @brief Set the agents
-    /// @param agents The agents
-    void setAgents(const std::vector<Agent<Id>>& agents);
+    /// @param itineraries, The itineraries
+    void setItineraries(std::span<Itinerary<Id>> itineraries);
     /// @brief Set the seed for the graph's random number generator
     /// @param seed The seed
     void setSeed(uint seed);
@@ -79,6 +79,9 @@ namespace dsm {
     template <typename T1, typename... Tn>
       requires(is_agent_v<T1> && (is_agent_v<Tn> && ...))
     void addAgents(T1 agent, Tn... agents);
+    /// @brief Add a set of agents to the simulation
+    /// @param agents, Generic container of agents, represented by an std::span
+	void addAgents(std::span<Agent<Id>> agents);
 
     /// @brief Remove an agent from the simulation
     /// @param agentId, the index of the agent to remove
@@ -104,6 +107,7 @@ namespace dsm {
     template <typename T1, typename... Tn>
       requires(is_itinerary_v<T1> && (is_itinerary_v<Tn> && ...))
     void addItineraries(T1 itinerary, Tn... itineraries);
+	void addItineraries(std::span<Itinerary<Id>> itineraries);
 
     /// @brief Reset the simulation time
     void resetTime();
@@ -120,10 +124,11 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Dynamics<Id, Size>::setItineraries(const std::vector<Itinerary<Id>>& itineraries) {}
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Dynamics<Id, Size>::setAgents(const std::vector<Agent<Id>>& agents) {}
+  void Dynamics<Id, Size>::setItineraries(std::span<Itinerary<Id>> itineraries) {
+    std::ranges::for_each(itineraries, [this](const auto& itinerary) {
+      this->m_itineraries.insert(std::make_unique<Itinerary<Id>>(itinerary));
+    });
+  }
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
@@ -184,6 +189,13 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Dynamics<Id, Size>::addAgents(std::span<Agent<Id>> agents) {
+    std::ranges::for_each(
+        agents, [this](const auto& agent) -> void { this->m_agents.push_back(std::make_unique(agent)); });
+  }
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Dynamics<Id, Size>::removeAgent(Size agentId) {
     auto agentIt{std::find_if(
         m_agents.begin(), m_agents.end(), [agentId](auto agent) { return agent->index() == agentId; })};
@@ -226,6 +238,14 @@ namespace dsm {
   void Dynamics<Id, Size>::addItineraries(T1 itinerary, Tn... itineraries) {
     addItinerary(itinerary);
     addItineraries(itineraries...);
+  }
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Dynamics<Id, Size>::addItineraries(std::span<Itinerary<Id>> itineraries) {
+    std::ranges::for_each(itineraries, [this](const auto& itinerary) -> void {
+      this->m_itineraries.push_back(std::make_unique(itinerary));
+    });
   }
 
   template <typename Id, typename Size>
