@@ -80,6 +80,16 @@ namespace dsm {
       requires(is_agent_v<T1> && (is_agent_v<Tn> && ...))
     void addAgents(T1 agent, Tn... agents);
 
+    /// @brief Remove an agent from the simulation
+    /// @param agentId, the index of the agent to remove
+    void removeAgent(Size agentId);
+    template <typename T1, typename... Tn>
+      requires(std::is_convertible_v<T1, Size> && (std::is_convertible_v<Tn, Size> && ...))
+    /// @brief Remove a pack of agents from the simulation
+    /// @param id, the index of the first agent to remove
+    /// @param ids, the pack of indexes of the agents to remove
+    void removeAgents(T1 id, Tn... ids);
+
     void addRandomAgents(uint nAgents);  // TODO: implement
 
     /// @brief Add an itinerary
@@ -174,7 +184,29 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Dynamics<Id, Size>::addItinerary(const Itinerary<Id>& itinerary) {}
+  void Dynamics<Id, Size>::removeAgent(Size agentId) {
+    auto agentIt{std::find_if(
+        m_agents.begin(), m_agents.end(), [agentId](auto agent) { return agent->index() == agentId; })};
+    if (agentIt != m_agents.end()) {
+      m_agents.erase(agentIt);
+    }
+  }
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  template <typename T1, typename... Tn>
+    requires(std::is_convertible_v<T1, Size> && (std::is_convertible_v<Tn, Size> && ...))
+  void Dynamics<Id, Size>::removeAgents(T1 id, Tn... ids) {
+    removeAgent(id);
+    removeAgents(ids...);
+  }
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Dynamics<Id, Size>::addItinerary(const Itinerary<Id>& itinerary) {
+    m_itineraries.insert(std::make_unique<Itinerary<Id>>(itinerary));
+  }
+
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Dynamics<Id, Size>::addItinerary(std::unique_ptr<Itinerary<Id>> itinerary) {
