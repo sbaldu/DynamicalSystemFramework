@@ -20,11 +20,6 @@
 
 namespace dsm {
 
-  // Alias for shared pointers
-  template <typename T>
-  using shared = std::shared_ptr<T>;
-  using std::make_shared;
-
   using TimePoint = long long unsigned int;
 
   /// @brief The Dynamics class represents the dynamics of the network.
@@ -34,10 +29,10 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   class Dynamics {
   private:
-    std::vector<Itinerary<Id>> m_itineraries;
-    std::vector<shared<Agent<Id>>> m_agents;
+    std::vector<std::unique_ptr<Itinerary<Id>>> m_itineraries;
+    std::vector<std::unique_ptr<Agent<Id>>> m_agents;
     TimePoint m_time;
-    shared<Graph<Id, Size>> m_graph;
+    std::unique_ptr<Graph<Id, Size>> m_graph;
     double m_temperature;
     std::mt19937_64 m_generator{std::random_device{}()};
 
@@ -63,17 +58,21 @@ namespace dsm {
     /// @return const Graph<Id, Size>& The graph
     const Graph<Id, Size>& graph() const;
     /// @brief Get the itineraries
-    /// @return const std::vector<Itinerary<Id>>& The itineraries
-    const std::vector<shared<Itinerary<Id>>>& itineraries() const;
+    /// @return const std::vector<Itinerary<Id>>&, The itineraries
+    const std::vector<std::unique_ptr<Itinerary<Id>>>& itineraries() const;
     /// @brief Get the agents
-    /// @return const std::vector<Agent<Id>>& The agents
-    const std::vector<shared<Agent<Id>>>& agents() const;
+    /// @return const std::vector<Agent<Id>>&, The agents
+    const std::vector<std::unique_ptr<Agent<Id>>>& agents() const;
     /// @brief Get the time
     /// @return TimePoint The time
     TimePoint time() const;
 
     void addAgent(const Agent<Id>& agent);
-    void addAgent(shared<Agent<Id>> agent);
+    /// @brief Add an agent to the simulation
+    /// @param agent, Unique pointer to the agent
+    void addAgent(std::unique_ptr<Agent<Id>> agent);
+    /// @brief Add a pack of agents to the simulation
+    /// @param agents, Parameter pack of agents
     template <typename... Tn>
       requires(is_agent_v<Tn> && ...)
     void addAgents(Tn... agents);
@@ -87,8 +86,8 @@ namespace dsm {
     /// @param itinerary The itinerary
     void addItinerary(const Itinerary<Id>& itinerary);
     /// @brief Add an itinerary
-    /// @param itinerary Shared pointer to the itinerary
-    void addItinerary(shared<Itinerary<Id>> itinerary);
+    /// @param itinerary, Unique pointer to the itinerary
+    void addItinerary(std::unique_ptr<Itinerary<Id>> itinerary);
     template <typename... Tn>
       requires(is_agent_v<Tn> && ...)
     void addItineraries(Tn... itineraries);
@@ -107,7 +106,7 @@ namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   Dynamics<Id, Size>::Dynamics(const Graph<Id, Size>& graph)
-      : m_graph{make_shared<Graph<Id, Size>>(graph)} {}
+      : m_graph{std::make_unique<Graph<Id, Size>>(graph)} {}
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
@@ -127,16 +126,19 @@ namespace dsm {
   const Graph<Id, Size>& Dynamics<Id, Size>::graph() const {
     return *m_graph;
   }
+
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  const std::vector<shared<Itinerary<Id>>>& Dynamics<Id, Size>::itineraries() const {
+  const std::vector<std::unique_ptr<Itinerary<Id>>>& Dynamics<Id, Size>::itineraries() const {
     return m_itineraries;
   }
+
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  const std::vector<shared<Agent<Id>>>& Dynamics<Id, Size>::agents() const {
+  const std::vector<std::unique_ptr<Agent<Id>>>& Dynamics<Id, Size>::agents() const {
     return m_agents;
   }
+
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   TimePoint Dynamics<Id, Size>::time() const {
@@ -145,15 +147,22 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Dynamics<Id, Size>::addAgent(const Agent<Id>& agent) {}
+  void Dynamics<Id, Size>::addAgent(const Agent<Id>& agent) {
+    m_agents.insert(std::make_unique<Agent<Id>>(agent));
+  }
+
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Dynamics<Id, Size>::addAgent(shared<Agent<Id>> agent) {}
+  void Dynamics<Id, Size>::addAgent(std::unique_ptr<Agent<Id>> agent) {
+    m_agents.insert(std::move(agent));
+  }
+
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   template <typename... Tn>
     requires(dmf::is_agent_v<Tn> && ...)
   void Dynamics<Id, Size>::addAgents(Tn... agents) {}
+
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   template <typename T1, typename... Tn>
@@ -168,12 +177,16 @@ namespace dsm {
   void Dynamics<Id, Size>::addItinerary(const Itinerary<Id>& itinerary) {}
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Dynamics<Id, Size>::addItinerary(shared<Itinerary<Id>> itinerary) {}
+  void Dynamics<Id, Size>::addItinerary(std::unique_ptr<Itinerary<Id>> itinerary) {
+    m_itineraries.insert(std::move(itinerary));
+  }
+
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   template <typename... Tn>
     requires(is_agent_v<Tn> && ...)
   void Dynamics<Id, Size>::addItineraries(Tn... itineraries) {}
+
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   template <typename T1, typename... Tn>
