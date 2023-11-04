@@ -93,16 +93,16 @@ namespace dsm {
     void addRandomAgents(uint nAgents);  // TODO: implement
 
     /// @brief Add an itinerary
-    /// @param itinerary The itinerary
+    /// @param itinerary, The itinerary
     void addItinerary(const Itinerary<Id>& itinerary);
     /// @brief Add an itinerary
     /// @param itinerary, Unique pointer to the itinerary
     void addItinerary(std::unique_ptr<Itinerary<Id>> itinerary);
     template <typename... Tn>
-      requires(is_agent_v<Tn> && ...)
+      requires(is_itinerary_v<Tn> && ...)
     void addItineraries(Tn... itineraries);
     template <typename T1, typename... Tn>
-      requires(is_agent_v<T1> && (is_agent_v<Tn> && ...))
+      requires(is_itinerary_v<T1> && (is_itinerary_v<Tn> && ...))
     void addItineraries(T1 itinerary, Tn... itineraries);
 
     /// @brief Reset the simulation time
@@ -170,13 +170,13 @@ namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   template <typename... Tn>
-    requires(dmf::is_agent_v<Tn> && ...)
+    requires(is_agent_v<Tn> && ...)
   void Dynamics<Id, Size>::addAgents(Tn... agents) {}
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   template <typename T1, typename... Tn>
-    requires(dmf::is_agent_v<T1> && (dmf::is_agent_v<Tn> && ...))
+    requires(is_agent_v<T1> && (is_agent_v<Tn> && ...))
   void Dynamics<Id, Size>::addAgents(T1 agent, Tn... agents) {
     addAgent(agent);
     addAgents(agents...);
