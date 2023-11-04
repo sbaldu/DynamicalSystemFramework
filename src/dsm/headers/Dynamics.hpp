@@ -86,7 +86,7 @@ namespace dsm {
     void addAgents(T1 agent, Tn... agents);
     /// @brief Add a set of agents to the simulation
     /// @param agents, Generic container of agents, represented by an std::span
-	void addAgents(std::span<Agent<Id>> agents);
+    void addAgents(std::span<Agent<Id>> agents);
 
     /// @brief Remove an agent from the simulation
     /// @param agentId, the index of the agent to remove
@@ -112,7 +112,7 @@ namespace dsm {
     template <typename T1, typename... Tn>
       requires(is_itinerary_v<T1> && (is_itinerary_v<Tn> && ...))
     void addItineraries(T1 itinerary, Tn... itineraries);
-	void addItineraries(std::span<Itinerary<Id>> itineraries);
+    void addItineraries(std::span<Itinerary<Id>> itineraries);
 
     /// @brief Reset the simulation time
     void resetTime();
