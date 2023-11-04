@@ -26,21 +26,20 @@ namespace dsm {
     Itinerary<Id> m_itinerary;
     double m_speed;
     Id m_index;
-    Id m_position;
-    Id m_previousPosition;
+    Id m_street;
     unsigned int m_time;
 
   public:
     Agent() = default;
     /// @brief Construct a new Agent object
     /// @param index, The agent's id
-    /// @param position, The agent's position
-    Agent(Id index, Id position);
+    /// @param street, The agent's street
+    Agent(Id index, Id street);
     /// @brief Construct a new Agent object
     /// @param index, The agent's id
-    /// @param position, The agent's position
+    /// @param street, The agent's street
     /// @param itinerary, The agent's itinerary
-    Agent(Id index, Id position, Itinerary<Id> itinerary);
+    Agent(Id index, Id street, Itinerary<Id> itinerary);
 
     /// @brief Set the agent's position
     /// @param position, The agent's position
@@ -84,17 +83,16 @@ namespace dsm {
 
   template <typename Id>
     requires std::unsigned_integral<Id>
-  Agent<Id>::Agent(Id index, Id position)
-      : m_speed{0.}, m_index{index}, m_position{position}, m_previousPosition{position}, m_time{0} {}
+  Agent<Id>::Agent(Id index, Id street)
+      : m_speed{0.}, m_index{index}, m_street{street}, m_time{0} {}
 
   template <typename Id>
     requires std::unsigned_integral<Id>
-  Agent<Id>::Agent(Id index, Id position, Itinerary<Id> itinerary)
+  Agent<Id>::Agent(Id index, Id street, Itinerary<Id> itinerary)
       : m_itinerary{std::move(itinerary)},
         m_speed{0.},
         m_index{index},
-        m_position{position},
-        m_previousPosition{position},
+        m_street{street},
         m_time{0} {}
 
   template <typename Id>
@@ -147,11 +145,6 @@ namespace dsm {
     requires std::unsigned_integral<Id>
   int Agent<Id>::position() const {
     return m_position;
-  }
-  template <typename Id>
-    requires std::unsigned_integral<Id>
-  int Agent<Id>::previousPosition() const {
-    return m_previousPosition;
   }
   template <typename Id>
     requires std::unsigned_integral<Id>
