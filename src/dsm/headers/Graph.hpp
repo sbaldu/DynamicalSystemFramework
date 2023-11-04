@@ -61,7 +61,7 @@ namespace dsm {
     /// @brief Import the graph's adjacency matrix from a file
     /// @param fileName, The name of the file to import the adjacency matrix from.
     /// @throws std::invalid_argument if the file is not found or the format is not supported
-    /// The matrix format is deduced from the file extension. Currently only .mtx files are supported.
+    /// The matrix format is deduced from the file extension. Currently only .dsm files are supported.
     void importAdj(const std::string& fileName);
 
     /// @brief Add a node to the graph
@@ -159,7 +159,7 @@ namespace dsm {
   void Graph<Id, Size>::importAdj(const std::string& fileName) {
     // check the file extension
     std::string fileExt = fileName.substr(fileName.find_last_of(".") + 1);
-    if (fileExt == "mtx") {
+    if (fileExt == "dsm") {
       std::ifstream file(fileName);
       if (!file.is_open()) {
         std::string errrorMsg =

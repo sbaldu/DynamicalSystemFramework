@@ -39,13 +39,13 @@ TEST_CASE("Graph") {
     CHECK_FALSE(graph.adjMatrix()->contains(2, 1));
   }
 
-  SUBCASE("importAdj - mtx") {
-    // This tests the importAdj function over .mtx files
+  SUBCASE("importAdj - dsm") {
+    // This tests the importAdj function over .dsm files
     // GIVEN: a graph
-    // WHEN: we import a .mtx file
+    // WHEN: we import a .dsm file
     // THEN: the graph's adjacency matrix is the same as the one in the file
     Graph graph{};
-    graph.importAdj("./data/matrix.mtx");
+    graph.importAdj("./data/matrix.dsm");
     CHECK_EQ(graph.adjMatrix()->max_size(), 9);
     CHECK_EQ(graph.adjMatrix()->getRowDim(), 3);
     CHECK_EQ(graph.adjMatrix()->getColDim(), 3);
@@ -61,6 +61,6 @@ TEST_CASE("Graph") {
     // THEN: an exception is thrown
     Graph graph{};
     CHECK_THROWS(graph.importAdj("./data/matrix.nogood"));
-    CHECK_THROWS(graph.importAdj("./data/not_found.mtx"));
+    CHECK_THROWS(graph.importAdj("./data/not_found.dsm"));
   }
 }
