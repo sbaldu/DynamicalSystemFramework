@@ -42,20 +42,20 @@ namespace dsm {
   public:
     Dynamics() = delete;
     /// @brief Construct a new Dynamics object
-    /// @param graph The graph representing the network
+    /// @param graph, The graph representing the network
     Dynamics(const Graph<Id, Size>& graph);
 
     /// @brief Set the itineraries
     /// @param itineraries, The itineraries
     void setItineraries(std::span<Itinerary<Id>> itineraries);
     /// @brief Set the seed for the graph's random number generator
-    /// @param seed The seed
-    void setSeed(uint seed);
+    /// @param seed, The seed
+    void setSeed(unsigned int seed);
     /// @brief Update the paths of the itineraries based on the actual travel times
     void updatePaths();  //TODO: implement
 
     /// @brief Get the graph
-    /// @return const Graph<Id, Size>& The graph
+    /// @return const Graph<Id, Size>&, The graph
     const Graph<Id, Size>& graph() const;
     /// @brief Get the itineraries
     /// @return const std::vector<Itinerary<Id>>&, The itineraries
@@ -64,9 +64,11 @@ namespace dsm {
     /// @return const std::vector<Agent<Id>>&, The agents
     const std::vector<std::unique_ptr<Agent<Id>>>& agents() const;
     /// @brief Get the time
-    /// @return TimePoint The time
+    /// @return TimePoint, The time
     TimePoint time() const;
 
+    /// @brief Add an agent to the simulation
+    /// @param agent, The agent
     void addAgent(const Agent<Id>& agent);
     /// @brief Add an agent to the simulation
     /// @param agent, Unique pointer to the agent
@@ -76,6 +78,9 @@ namespace dsm {
     template <typename... Tn>
       requires(is_agent_v<Tn> && ...)
     void addAgents(Tn... agents);
+    /// @brief Add a pack of agents to the simulation
+    /// @param agent, An agent
+    /// @param agents, Parameter pack of agents
     template <typename T1, typename... Tn>
       requires(is_agent_v<T1> && (is_agent_v<Tn> && ...))
     void addAgents(T1 agent, Tn... agents);
@@ -114,7 +119,7 @@ namespace dsm {
 
     template <typename F, typename... Tn>
       requires std::is_invocable_v<F, Tn...>
-    void evolve(F f, Tn... args);  // TODO: implement
+    void evolve(F f, Tn... args);
   };
 
   template <typename Id, typename Size>
@@ -132,7 +137,7 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Dynamics<Id, Size>::setSeed(uint seed) {
+  void Dynamics<Id, Size>::setSeed(unsigned int seed) {
     m_generator.seed(seed);
   }
 
