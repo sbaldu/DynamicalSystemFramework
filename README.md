@@ -10,12 +10,12 @@ Right now the project only requires `C++20` and `cmake`.
 ## installation
 The library can be installed using CMake. To do this build it with the commands:
 ```
-    mkdir -p build && cd build
-    cmake ..
+mkdir -p build && cd build
+cmake ..
 ```
 and then install it with:
 ```
-    sudo make install
+sudo make install
 ```
 
 ## Testing
