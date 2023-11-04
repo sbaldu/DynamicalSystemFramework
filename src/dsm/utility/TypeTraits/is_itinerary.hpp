@@ -5,7 +5,7 @@
 #include <memory>
 #include <type_traits>
 
-namespace dmf {
+namespace dsm {
   template <typename Id>
     requires std::unsigned_integral<Id>
   class Itinerary;
