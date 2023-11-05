@@ -140,17 +140,17 @@ namespace dsm {
 
   template <typename Id>
     requires std::unsigned_integral<Id>
-  int Agent<Id>::index() const {
+  Id Agent<Id>::index() const {
     return m_index;
   }
   template <typename Id>
     requires std::unsigned_integral<Id>
-  int Agent<Id>::position() const {
+  Id Agent<Id>::position() const {
     return m_position;
   }
   template <typename Id>
     requires std::unsigned_integral<Id>
-  int Agent<Id>::previousPosition() const {
+  Id Agent<Id>::previousPosition() const {
     return m_previousPosition;
   }
   template <typename Id>
