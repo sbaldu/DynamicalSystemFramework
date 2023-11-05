@@ -74,9 +74,6 @@ namespace dsm {
     /// @brief Get the agent's position
     /// @return The agent's position
     int position() const;
-    /// @brief Get the agent's previous position
-    /// @return The agent's previous position
-    int previousPosition() const;
     /// @brief Get the agent's itinerary
     /// @return The agent's itinerary
     const Itinerary<Id>& itinerary() const;

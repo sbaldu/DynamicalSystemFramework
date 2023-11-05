@@ -38,4 +38,29 @@ TEST_CASE("Graph") {
     CHECK(graph.adjMatrix()->contains(3, 2));
     CHECK_FALSE(graph.adjMatrix()->contains(2, 1));
   }
+
+  SUBCASE("importAdj - dsm") {
+    // This tests the importAdj function over .dsm files
+    // GIVEN: a graph
+    // WHEN: we import a .dsm file
+    // THEN: the graph's adjacency matrix is the same as the one in the file
+    Graph graph{};
+    graph.importAdj("./data/matrix.dsm");
+    CHECK_EQ(graph.adjMatrix()->max_size(), 9);
+    CHECK_EQ(graph.adjMatrix()->getRowDim(), 3);
+    CHECK_EQ(graph.adjMatrix()->getColDim(), 3);
+    CHECK(graph.adjMatrix()->operator()(8));
+    CHECK(graph.adjMatrix()->operator()(6));
+    CHECK(graph.adjMatrix()->operator()(3));
+    CHECK(graph.adjMatrix()->operator()(1));
+  }
+  SUBCASE("importAdj - EXCEPTIONS") {
+    // This tests the importAdj throws an exception when the file has not the correct format or is not found
+    // GIVEN: a graph
+    // WHEN: we import a file with a wrong format
+    // THEN: an exception is thrown
+    Graph graph{};
+    CHECK_THROWS(graph.importAdj("./data/matrix.nogood"));
+    CHECK_THROWS(graph.importAdj("./data/not_found.dsm"));
+  }
 }
