@@ -64,13 +64,13 @@ namespace dsm {
 
     /// @brief Get the agent's id
     /// @return The agent's id
-    int index() const;
+    Id index() const;
     /// @brief Get the agent's position
     /// @return The agent's position
-    int position() const;
+    Id position() const;
     /// @brief Get the agent's previous position
     /// @return The agent's previous position
-    int previousPosition() const;
+    Id previousPosition() const;
     /// @brief Get the agent's itinerary
     /// @return The agent's itinerary
     const Itinerary<Id>& itinerary() const;
@@ -140,17 +140,17 @@ namespace dsm {
 
   template <typename Id>
     requires std::unsigned_integral<Id>
-  int Agent<Id>::index() const {
+  Id Agent<Id>::index() const {
     return m_index;
   }
   template <typename Id>
     requires std::unsigned_integral<Id>
-  int Agent<Id>::position() const {
+  Id Agent<Id>::position() const {
     return m_position;
   }
   template <typename Id>
     requires std::unsigned_integral<Id>
-  int Agent<Id>::previousPosition() const {
+  Id Agent<Id>::previousPosition() const {
     return m_previousPosition;
   }
   template <typename Id>
