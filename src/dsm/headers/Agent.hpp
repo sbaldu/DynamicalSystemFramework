@@ -107,16 +107,14 @@ namespace dsm {
     m_streetId = streetId;
   }
 
-  template <typename Id, typename Size>
+  template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
   void Agent<Id, Size, Delay>::setItinerary(Itinerary<Id> itinerary) {
     m_itinerary = std::move(itinerary);
   }
 
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
   template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
   void Agent<Id, Size, Delay>::setSpeed(double speed) {
     if (speed < 0) {
       std::string errorMsg = "Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
