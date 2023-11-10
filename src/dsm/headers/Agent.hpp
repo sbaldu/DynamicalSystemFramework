@@ -45,7 +45,7 @@ namespace dsm {
 
     /// @brief Set the street occupied by the agent
     /// @param streetId, The id of the street currently occupied by the agent
-    void setPosition(Id streetId);
+    void setStreetId(Id streetId);
     /// @brief Set the agent's itinerary
     /// @param itinerary, The agent's itinerary
     void setItinerary(Itinerary<Id> itinerary);
@@ -96,7 +96,7 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Agent<Id, Size>::setPosition(Id streetId) {
+  void Agent<Id, Size>::setStreetId(Id streetId) {
     m_streetId = streetId;
   }
 
