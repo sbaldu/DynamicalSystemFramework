@@ -3,7 +3,7 @@
 ///
 /// @details    This file contains the definition of the Agent class.
 ///             The Agent class represents an agent in the network. It is templated by the type
-///             of the agent's id. The agent's id must be an unsigned integral type.
+///             of the agent's id and the size of agents, which must both be unsigned integrals.
 
 #ifndef Agent_hpp
 #define Agent_hpp
@@ -12,15 +12,17 @@
 #include "SparseMatrix.hpp"
 #include "../utility/TypeTraits/is_numeric.hpp"
 
+#include <concepts>
 #include <stdexcept>
 #include <string>
 #include <limits>
 
 namespace dsm {
   /// @brief The Agent class represents an agent in the network.
-  /// @tparam Id The type of the agent's id. It must be an unsigned integral type.
-  template <typename Id>
-    requires std::unsigned_integral<Id>
+  /// @tparam Id, The type of the agent's id. It must be an unsigned integral type.
+  /// @tparam Size, The type of the size of a street. It must be an unsigned integral type.
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   class Agent {
   private:
     Itinerary<Id> m_itinerary;
@@ -78,33 +80,35 @@ namespace dsm {
     unsigned int time() const;
   };
 
-  template <typename Id>
-    requires std::unsigned_integral<Id>
-  Agent<Id>::Agent(Id index, Id streetId)
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  Agent<Id, Size>::Agent(Id index, Id streetId)
       : m_speed{0.}, m_index{index}, m_streetId{streetId}, m_time{0} {}
 
-  template <typename Id>
-    requires std::unsigned_integral<Id>
-  Agent<Id>::Agent(Id index, Id streetId, Itinerary<Id> itinerary)
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  Agent<Id, Size>::Agent(Id index, Id streetId, Itinerary<Id> itinerary)
       : m_itinerary{std::move(itinerary)},
         m_speed{0.},
         m_index{index},
         m_streetId{streetId},
         m_time{0} {}
 
-  template <typename Id>
-    requires std::unsigned_integral<Id>
-  void Agent<Id>::setPosition(Id streetId) {
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Agent<Id, Size>::setPosition(Id streetId) {
     m_streetId = streetId;
   }
-  template <typename Id>
-    requires std::unsigned_integral<Id>
-  void Agent<Id>::setItinerary(Itinerary<Id> itinerary) {
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Agent<Id, Size>::setItinerary(Itinerary<Id> itinerary) {
     m_itinerary = std::move(itinerary);
   }
-  template <typename Id>
-    requires std::unsigned_integral<Id>
-  void Agent<Id>::setSpeed(double speed) {
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Agent<Id, Size>::setSpeed(double speed) {
     if (speed < 0) {
       std::string errorMsg = "Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
                              "Speed must be positive";
@@ -112,9 +116,10 @@ namespace dsm {
     }
     m_speed = speed;
   }
-  template <typename Id>
-    requires std::unsigned_integral<Id>
-  void Agent<Id>::incrementTime() {
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Agent<Id, Size>::incrementTime() {
     if (m_time == std::numeric_limits<unsigned int>::max()) {
       std::string errorMsg = "Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
                              "Time has reached its maximum value";
@@ -122,9 +127,10 @@ namespace dsm {
     }
     ++m_time;
   }
-  template <typename Id>
-    requires std::unsigned_integral<Id>
-  void Agent<Id>::incrementTime(unsigned int time) {
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Agent<Id, Size>::incrementTime(unsigned int time) {
     if (m_time + time < m_time) {
       std::string errorMsg = "Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
                              "Time has reached its maximum value";
@@ -133,29 +139,33 @@ namespace dsm {
     m_time += time;
   }
 
-  template <typename Id>
-    requires std::unsigned_integral<Id>
-  Id Agent<Id>::index() const {
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  Id Agent<Id, Size>::index() const {
     return m_index;
   }
-  template <typename Id>
-    requires std::unsigned_integral<Id>
-  Id Agent<Id>::streetId() const {
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  Id Agent<Id, Size>::streetId() const {
     return m_streetId;
   }
-  template <typename Id>
-    requires std::unsigned_integral<Id>
-  double Agent<Id>::speed() const {
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  double Agent<Id, Size>::speed() const {
     return m_speed;
   }
-  template <typename Id>
-    requires std::unsigned_integral<Id>
-  unsigned int Agent<Id>::time() const {
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  unsigned int Agent<Id, Size>::time() const {
     return m_time;
   }
-  template <typename Id>
-    requires std::unsigned_integral<Id>
-  const Itinerary<Id>& Agent<Id>::itinerary() const {
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  const Itinerary<Id>& Agent<Id, Size>::itinerary() const {
     return m_itinerary;
   }
 };  // namespace dsm
