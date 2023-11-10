@@ -1,4 +1,7 @@
 [submodule "extern/benchmark"]
 	path = extern/benchmark
 	url = https://github.com/sbaldu/benchmark.git
-	branch = v2.2.1
+
+[submodule "extern/doxygen-awesome"]
+	path = extern/doxygen-awesome
+	url = https://github.com/jothepro/doxygen-awesome-css.git
