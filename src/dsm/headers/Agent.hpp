@@ -4,9 +4,9 @@
 /// @details    This file contains the definition of the Agent class.
 ///             The Agent class represents an agent in the network. It is templated by the type
 ///             of the agent's id and the size of agents, which must both be unsigned integrals.
-///				It is also templated by the Delay type, which must be a numeric (see utility/TypeTraits/is_numeric.hpp)
-///				and represents the spatial or temporal (depending on the type of the template) distance
-///				between the agent and the one in front of it.
+///				      It is also templated by the Delay type, which must be a numeric (see utility/TypeTraits/is_numeric.hpp)
+///				      and represents the spatial or temporal (depending on the type of the template) distance
+///				      between the agent and the one in front of it.
 
 #ifndef Agent_hpp
 #define Agent_hpp
@@ -26,7 +26,7 @@ namespace dsm {
   /// @tparam Size, The type of the size of a street. It must be an unsigned integral type.
   /// @tparam Delay, The type of the agent's delay. It must be a numeric type (see utility/TypeTraits/is_numeric.hpp).
   template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
   class Agent {
   private:
     Itinerary<Id> m_itinerary;
