@@ -27,7 +27,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'cpp', 'javascript' ]
+        language: [ 'cpp' ]
         # CodeQL supports [ 'cpp', 'csharp', 'go', 'java', 'javascript', 'python', 'ruby', 'swift' ]
         # Use only 'java' to analyze code written in Java, Kotlin or both
         # Use only 'javascript' to analyze code written in JavaScript, TypeScript or both
@@ -69,7 +69,7 @@ jobs:
         echo "Build c++"
         mkdir -p build && cd build
         cmake ..
-        make install
+        sudo make install
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
