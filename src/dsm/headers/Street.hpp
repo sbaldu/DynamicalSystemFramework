@@ -114,7 +114,7 @@ namespace dsm {
     double maxSpeed() const;
     /// @brief Add an agent to the street's queue
     /// @param agent, The agent to add
-	template <typename Delay>
+    template <typename Delay>
     void enqueue(const Agent<Id, Size, Delay>& agent);
     /// @brief Remove an agent from the street's queue
     std::optional<Id> dequeue();
