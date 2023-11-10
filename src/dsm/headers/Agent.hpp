@@ -27,7 +27,6 @@ namespace dsm {
     double m_speed;
     Id m_index;
     Id m_position;
-    Id m_previousPosition;
     unsigned int m_time;
 
   public:
@@ -68,9 +67,6 @@ namespace dsm {
     /// @brief Get the agent's position
     /// @return The agent's position
     Id position() const;
-    /// @brief Get the agent's previous position
-    /// @return The agent's previous position
-    Id previousPosition() const;
     /// @brief Get the agent's itinerary
     /// @return The agent's itinerary
     const Itinerary<Id>& itinerary() const;
@@ -85,7 +81,7 @@ namespace dsm {
   template <typename Id>
     requires std::unsigned_integral<Id>
   Agent<Id>::Agent(Id index, Id position)
-      : m_speed{0.}, m_index{index}, m_position{position}, m_previousPosition{position}, m_time{0} {}
+      : m_speed{0.}, m_index{index}, m_position{position}, m_time{0} {}
 
   template <typename Id>
     requires std::unsigned_integral<Id>
@@ -94,7 +90,6 @@ namespace dsm {
         m_speed{0.},
         m_index{index},
         m_position{position},
-        m_previousPosition{position},
         m_time{0} {}
 
   template <typename Id>
@@ -147,11 +142,6 @@ namespace dsm {
     requires std::unsigned_integral<Id>
   Id Agent<Id>::position() const {
     return m_position;
-  }
-  template <typename Id>
-    requires std::unsigned_integral<Id>
-  Id Agent<Id>::previousPosition() const {
-    return m_previousPosition;
   }
   template <typename Id>
     requires std::unsigned_integral<Id>
