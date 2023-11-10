@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="dir_30b8eb66e65756cb0ed7e2a18e7ceca1" kind="dir">
+    <compoundname>src/dsm/utility</compoundname>
+    <innerdir refid="dir_eeea95d5ca333e1cee1479dad84c0265">src/dsm/utility/TypeTraits</innerdir>
+    <innerfile refid="HashFunctions_8hpp">HashFunctions.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="src/dsm/utility/"/>
+  </compounddef>
+</doxygen>

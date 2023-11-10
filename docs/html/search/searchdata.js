@@ -2,23 +2,20 @@ var indexSectionsWithContent =
 {
   0: "abcdegilmnopqrst",
   1: "agins",
-  2: "agins",
-  3: "abcdegilmnopqrst"
+  2: "abcdegilmnopqrst"
 };
 
 var indexSectionNames =
 {
   0: "all",
   1: "classes",
-  2: "files",
-  3: "functions"
+  2: "functions"
 };
 
 var indexSectionLabels =
 {
   0: "All",
   1: "Classes",
-  2: "Files",
-  3: "Functions"
+  2: "Functions"
 };
 

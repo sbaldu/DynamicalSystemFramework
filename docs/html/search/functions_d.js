@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['resettime_147',['resetTime',['../classdmf_1_1Agent.html#a202752fd8c6ccb262201741282193acd',1,'dmf::Agent']]],
-  ['reshape_148',['reshape',['../classdmf_1_1SparseMatrix.html#a3f06bfddec85b2769848ed6a0166d4c4',1,'dmf::SparseMatrix::reshape(Index rows, Index cols)'],['../classdmf_1_1SparseMatrix.html#a255eaf18faa51c233184a0db9524a326',1,'dmf::SparseMatrix::reshape(Index dim)']]]
+  ['resettime_0',['resetTime',['../classdsm_1_1Agent.html#a264ef7083f883bc7f104cf75fc17f33e',1,'dsm::Agent']]],
+  ['reshape_1',['reshape',['../classdsm_1_1SparseMatrix.html#a5ca3ccd61b5f0909edccc4b717468c79',1,'dsm::SparseMatrix::reshape(Index rows, Index cols)'],['../classdsm_1_1SparseMatrix.html#af61a9b16d9f534fd31e1f1482763cd2e',1,'dsm::SparseMatrix::reshape(Index dim)']]]
 ];

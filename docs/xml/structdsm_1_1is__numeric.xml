@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structdsm_1_1is__numeric" kind="struct" language="C++" prot="public">
+    <compoundname>dsm::is_numeric</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">std::is_arithmetic&lt; T &gt;</basecompoundref>
+    <templateparamlist>
+      <param>
+        <type>typename T</type>
+      </param>
+    </templateparamlist>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>dsm::is_numeric&lt; T &gt;</label>
+        <link refid="structdsm_1_1is__numeric"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>std::is_arithmetic&lt; T &gt;</label>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>dsm::is_numeric&lt; T &gt;</label>
+        <link refid="structdsm_1_1is__numeric"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>std::is_arithmetic&lt; T &gt;</label>
+      </node>
+    </collaborationgraph>
+    <location file="src/dsm/utility/TypeTraits/is_numeric.hpp" line="16" column="3" bodyfile="src/dsm/utility/TypeTraits/is_numeric.hpp" bodystart="16" bodyend="16"/>
+    <listofallmembers>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

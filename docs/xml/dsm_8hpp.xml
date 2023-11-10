@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="dsm_8hpp" kind="file" language="C++">
+    <compoundname>dsm.hpp</compoundname>
+    <includes refid="Agent_8hpp" local="yes">headers/Agent.hpp</includes>
+    <includes refid="Graph_8hpp" local="yes">headers/Graph.hpp</includes>
+    <includes refid="Itinerary_8hpp" local="yes">headers/Itinerary.hpp</includes>
+    <includes refid="Node_8hpp" local="yes">headers/Node.hpp</includes>
+    <includes refid="SparseMatrix_8hpp" local="yes">headers/SparseMatrix.hpp</includes>
+    <includes refid="Street_8hpp" local="yes">headers/Street.hpp</includes>
+    <includes refid="HashFunctions_8hpp" local="yes">utility/HashFunctions.hpp</includes>
+    <includes refid="is__node_8hpp" local="yes">utility/TypeTraits/is_node.hpp</includes>
+    <includes refid="is__street_8hpp" local="yes">utility/TypeTraits/is_street.hpp</includes>
+    <includes refid="is__numeric_8hpp" local="yes">utility/TypeTraits/is_numeric.hpp</includes>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>dsm_hpp</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>dsm_hpp</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;headers/Agent.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;headers/Graph.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;headers/Itinerary.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;headers/Node.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;headers/SparseMatrix.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;headers/Street.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;utility/HashFunctions.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;utility/TypeTraits/is_node.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;utility/TypeTraits/is_street.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;utility/TypeTraits/is_numeric.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="src/dsm/dsm.hpp"/>
+  </compounddef>
+</doxygen>
