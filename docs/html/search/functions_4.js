@@ -1,8 +1,8 @@
 var searchData=
 [
-  ['end_109',['end',['../classdmf_1_1SparseMatrix.html#abea6f2b266011ef910c8d864e74cdbc3',1,'dmf::SparseMatrix']]],
-  ['enqueue_110',['enqueue',['../classdmf_1_1Street.html#aebaa9efd97401f114c64b7be5171d24e',1,'dmf::Street']]],
-  ['erase_111',['erase',['../classdmf_1_1SparseMatrix.html#a3abf6cab2ce52c42eea1a07bd68e977d',1,'dmf::SparseMatrix']]],
-  ['erasecolumn_112',['eraseColumn',['../classdmf_1_1SparseMatrix.html#ac521a54f07872b70ae40c80b587ed2ad',1,'dmf::SparseMatrix']]],
-  ['eraserow_113',['eraseRow',['../classdmf_1_1SparseMatrix.html#ad1098af0001d176567b794d519e00cbb',1,'dmf::SparseMatrix']]]
+  ['end_0',['end',['../classdsm_1_1SparseMatrix.html#ad79de75b148c1efac96c15e7739ed147',1,'dsm::SparseMatrix']]],
+  ['enqueue_1',['enqueue',['../classdsm_1_1Street.html#a838f1a6ceb2f32e12e063707ac65e446',1,'dsm::Street']]],
+  ['erase_2',['erase',['../classdsm_1_1SparseMatrix.html#ad8c9da7dc8cb3c5d20555b77d371102c',1,'dsm::SparseMatrix']]],
+  ['erasecolumn_3',['eraseColumn',['../classdsm_1_1SparseMatrix.html#a79b1b4382f46151b2d041323f4f0cd87',1,'dsm::SparseMatrix']]],
+  ['eraserow_4',['eraseRow',['../classdsm_1_1SparseMatrix.html#a8f46edacde72b5536601aa34afdf6c9c',1,'dsm::SparseMatrix']]]
 ];

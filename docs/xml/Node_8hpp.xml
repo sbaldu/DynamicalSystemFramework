@@ -1,0 +1,139 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="Node_8hpp" kind="file" language="C++">
+    <compoundname>Node.hpp</compoundname>
+    <includes local="no">functional</includes>
+    <includes local="no">queue</includes>
+    <includes local="no">utility</includes>
+    <includedby refid="dsm_8hpp" local="yes">src/dsm/dsm.hpp</includedby>
+    <includedby refid="Graph_8hpp" local="yes">src/dsm/headers/Graph.hpp</includedby>
+    <includedby refid="Street_8hpp" local="yes">src/dsm/headers/Street.hpp</includedby>
+    <includedby refid="HashFunctions_8hpp" local="yes">src/dsm/utility/HashFunctions.hpp</includedby>
+    <incdepgraph>
+      <node id="1">
+        <label>src/dsm/headers/Node.hpp</label>
+        <link refid="Node_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>functional</label>
+      </node>
+      <node id="3">
+        <label>queue</label>
+      </node>
+      <node id="4">
+        <label>utility</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classdsm_1_1Node" prot="public">dsm::Node</innerclass>
+    <innernamespace refid="namespacedsm">dsm</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>Node_hpp</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>Node_hpp</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;functional&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;queue&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;utility&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">dsm<sp/>{</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Id&gt;</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">requires</highlight><highlight class="normal"><sp/>std::unsigned_integral&lt;Id&gt;</highlight></codeline>
+<codeline lineno="20" refid="classdsm_1_1Node" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classdsm_1_1Node" kindref="compound">Node</ref><sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/>std::queue&lt;Id&gt;<sp/>m_queue;</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/>std::pair&lt;double,<sp/>double&gt;<sp/>m_coords;</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classdsm_1_1Itinerary" kindref="compound">Id</ref><sp/>m_id;</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classdsm_1_1Node" kindref="compound">Node</ref>()<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">explicit</highlight><highlight class="normal"><sp/><ref refid="classdsm_1_1Node" kindref="compound">Node</ref>(<ref refid="classdsm_1_1Itinerary" kindref="compound">Id</ref><sp/></highlight><highlight class="keywordtype">id</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classdsm_1_1Node" kindref="compound">Node</ref>(<ref refid="classdsm_1_1Itinerary" kindref="compound">Id</ref><sp/></highlight><highlight class="keywordtype">id</highlight><highlight class="normal">,<sp/>std::pair&lt;double,<sp/>double&gt;<sp/><ref refid="classdsm_1_1Node_1a155a31e830a3f25d93f4191289e671b0" kindref="member">coords</ref>);</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classdsm_1_1Node" kindref="compound">Node</ref>(<ref refid="classdsm_1_1Itinerary" kindref="compound">Id</ref><sp/></highlight><highlight class="keywordtype">id</highlight><highlight class="normal">,<sp/>std::pair&lt;double,<sp/>double&gt;<sp/><ref refid="classdsm_1_1Node_1a155a31e830a3f25d93f4191289e671b0" kindref="member">coords</ref>,<sp/>std::queue&lt;Id&gt;<sp/><ref refid="classdsm_1_1Node_1a57a37129a23899424df886dc3beb75a1" kindref="member">queue</ref>);</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classdsm_1_1Node_1a1e66e41903d9ed19c20de4b5669186af" kindref="member">setCoords</ref>(std::pair&lt;double,<sp/>double&gt;<sp/><ref refid="classdsm_1_1Node_1a155a31e830a3f25d93f4191289e671b0" kindref="member">coords</ref>);</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classdsm_1_1Node_1a299b2503986e933d4dfd3db02cd65b31" kindref="member">setQueue</ref>(std::queue&lt;Id&gt;<sp/><ref refid="classdsm_1_1Node_1a57a37129a23899424df886dc3beb75a1" kindref="member">queue</ref>);</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classdsm_1_1Itinerary" kindref="compound">Id</ref><sp/><ref refid="classdsm_1_1Node_1a47d352ec6008a49e73fcacb308762bb5" kindref="member">id</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::pair&lt;double,<sp/>double&gt;&amp;<sp/><ref refid="classdsm_1_1Node_1a155a31e830a3f25d93f4191289e671b0" kindref="member">coords</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::queue&lt;Id&gt;&amp;<sp/><ref refid="classdsm_1_1Node_1a57a37129a23899424df886dc3beb75a1" kindref="member">queue</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Id&gt;</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">requires</highlight><highlight class="normal"><sp/>std::unsigned_integral&lt;Id&gt;</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><ref refid="classdsm_1_1Node" kindref="compound">Node&lt;Id&gt;::Node</ref>(<ref refid="classdsm_1_1Itinerary" kindref="compound">Id</ref><sp/></highlight><highlight class="keywordtype">id</highlight><highlight class="normal">)<sp/>:<sp/>m_id{id}<sp/>{}</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Id&gt;</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">requires</highlight><highlight class="normal"><sp/>std::unsigned_integral&lt;Id&gt;</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/>Node&lt;Id&gt;::Node(Id<sp/></highlight><highlight class="keywordtype">id</highlight><highlight class="normal">,<sp/>std::pair&lt;double,<sp/>double&gt;<sp/>coords)<sp/>:<sp/>m_coords{std::move(coords)},<sp/>m_id{id}<sp/>{}</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Id&gt;</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">requires</highlight><highlight class="normal"><sp/>std::unsigned_integral&lt;Id&gt;</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/>Node&lt;Id&gt;::Node(Id<sp/></highlight><highlight class="keywordtype">id</highlight><highlight class="normal">,<sp/>std::pair&lt;double,<sp/>double&gt;<sp/>coords,<sp/>std::queue&lt;Id&gt;<sp/>queue)</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>m_queue{std::move(queue)},<sp/>m_coords{std::move(coords)},<sp/>m_id{id}<sp/>{}</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Id&gt;</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">requires</highlight><highlight class="normal"><sp/>std::unsigned_integral&lt;Id&gt;</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/>Id<sp/><ref refid="classdsm_1_1Node_1a47d352ec6008a49e73fcacb308762bb5" kindref="member">Node&lt;Id&gt;::id</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>m_id;</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Id&gt;</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">requires</highlight><highlight class="normal"><sp/>std::unsigned_integral&lt;Id&gt;</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classdsm_1_1Node_1a1e66e41903d9ed19c20de4b5669186af" kindref="member">Node&lt;Id&gt;::setCoords</ref>(std::pair&lt;double,<sp/>double&gt;<sp/>coords)<sp/>{</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/>m_coords<sp/>=<sp/>std::move(coords);</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Id&gt;</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">requires</highlight><highlight class="normal"><sp/>std::unsigned_integral&lt;Id&gt;</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classdsm_1_1Node_1a299b2503986e933d4dfd3db02cd65b31" kindref="member">Node&lt;Id&gt;::setQueue</ref>(std::queue&lt;Id&gt;<sp/>queue)<sp/>{</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/>m_queue<sp/>=<sp/>std::move(queue);</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Id&gt;</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">requires</highlight><highlight class="normal"><sp/>std::unsigned_integral&lt;Id&gt;</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::pair&lt;double,<sp/>double&gt;&amp;<sp/><ref refid="classdsm_1_1Node_1a155a31e830a3f25d93f4191289e671b0" kindref="member">Node&lt;Id&gt;::coords</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>m_coords;</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Id&gt;</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">requires</highlight><highlight class="normal"><sp/>std::unsigned_integral&lt;Id&gt;</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::queue&lt;Id&gt;&amp;<sp/><ref refid="classdsm_1_1Node_1a57a37129a23899424df886dc3beb75a1" kindref="member">Node&lt;Id&gt;::queue</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>m_queue;</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>to<sp/>be<sp/>implemented</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>template<sp/>&lt;typename<sp/>Id&gt;<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>class<sp/>Intersection<sp/>:<sp/>public<sp/>Node&lt;Id&gt;<sp/>{<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>private:<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/><sp/><sp/>std::function&lt;void()&gt;<sp/>m_priority;<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>};<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>template<sp/>&lt;typename<sp/>Id&gt;<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>class<sp/>Roundabout<sp/>:<sp/>public<sp/>Node&lt;Id&gt;<sp/>{<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>private:<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/><sp/><sp/>std::function&lt;void()&gt;<sp/>m_priority;<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>};<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>template<sp/>&lt;typename<sp/>Id&gt;<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>class<sp/>TrafficLight<sp/>:<sp/>public<sp/>Node&lt;Id&gt;<sp/>{<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>private:<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/><sp/><sp/>std::function&lt;void()&gt;<sp/>m_priority;<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>};<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal">};<sp/><sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>dsm</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="src/dsm/headers/Node.hpp"/>
+  </compounddef>
+</doxygen>

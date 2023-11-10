@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['max_5fsize_40',['max_size',['../classdmf_1_1SparseMatrix.html#a439e5e8a094529b6ffbf2b4fe6794c20',1,'dmf::SparseMatrix']]],
-  ['maxspeed_41',['maxSpeed',['../classdmf_1_1Street.html#ad3d6fcecc5f6cbd01bc7b3e0f216e68f',1,'dmf::Street']]]
+  ['max_5fsize_0',['max_size',['../classdsm_1_1SparseMatrix.html#a01ba0d4bb2c3b39bcf1baa39a565d381',1,'dsm::SparseMatrix']]],
+  ['maxspeed_1',['maxSpeed',['../classdsm_1_1Street.html#ac4e212a4d223925f5d3138a7a86b753b',1,'dsm::Street']]]
 ];

@@ -1,9 +1,9 @@
 var searchData=
 [
-  ['operator_28_29_137',['operator()',['../classdmf_1_1SparseMatrix.html#aa140915ec63d6de42684c3cfa7fe1689',1,'dmf::SparseMatrix::operator()(Index i, Index j) const'],['../classdmf_1_1SparseMatrix.html#a5725426ad25295cea82e1170e8fd6fdb',1,'dmf::SparseMatrix::operator()(Index i, Index j)'],['../classdmf_1_1SparseMatrix.html#aff934ec514ec0ddf5fc61f81466a3dbd',1,'dmf::SparseMatrix::operator()(Index index) const'],['../classdmf_1_1SparseMatrix.html#a0e890caf2c96a2d89bf5e116533191c8',1,'dmf::SparseMatrix::operator()(Index index)']]],
-  ['operator_2b_138',['operator+',['../classdmf_1_1SparseMatrix.html#a26f5481ecfbe9b9273034d4509252303',1,'dmf::SparseMatrix']]],
-  ['operator_2b_2b_139',['operator++',['../classdmf_1_1SparseMatrix.html#a536c77b73863759ccd5c640d6d4d0799',1,'dmf::SparseMatrix']]],
-  ['operator_2b_3d_140',['operator+=',['../classdmf_1_1SparseMatrix.html#a16197caaf1a7dcb0bea56a6364b3651d',1,'dmf::SparseMatrix']]],
-  ['operator_2d_141',['operator-',['../classdmf_1_1SparseMatrix.html#a1532ed3ff51d65192c6a6b29bf810275',1,'dmf::SparseMatrix']]],
-  ['operator_2d_3d_142',['operator-=',['../classdmf_1_1SparseMatrix.html#ab65cfc24020cea52a2eede72e784fe6d',1,'dmf::SparseMatrix']]]
+  ['operator_28_29_0',['operator()',['../classdsm_1_1SparseMatrix.html#a6860c09d6293e53ed9633f5943b86075',1,'dsm::SparseMatrix::operator()(Index i, Index j) const'],['../classdsm_1_1SparseMatrix.html#a0263a77fef7e41d26d7dec1708d574dc',1,'dsm::SparseMatrix::operator()(Index i, Index j)'],['../classdsm_1_1SparseMatrix.html#a9ba5d323b069a446f14f8d0a912e8666',1,'dsm::SparseMatrix::operator()(Index index) const'],['../classdsm_1_1SparseMatrix.html#a8bd55e2d01646882e62c07f52f6f3645',1,'dsm::SparseMatrix::operator()(Index index)']]],
+  ['operator_2b_1',['operator+',['../classdsm_1_1SparseMatrix.html#a91bd4c01d3181be7b297ecd9a4914888',1,'dsm::SparseMatrix']]],
+  ['operator_2b_2b_2',['operator++',['../classdsm_1_1SparseMatrix.html#a54e568a8554b883278ad72cdd4384baa',1,'dsm::SparseMatrix']]],
+  ['operator_2b_3d_3',['operator+=',['../classdsm_1_1SparseMatrix.html#aa90b33f56364b548294485cd0cbb73c6',1,'dsm::SparseMatrix']]],
+  ['operator_2d_4',['operator-',['../classdsm_1_1SparseMatrix.html#a54b3d02da778b737f276aeb700034569',1,'dsm::SparseMatrix']]],
+  ['operator_2d_3d_5',['operator-=',['../classdsm_1_1SparseMatrix.html#a91895519f35ff4c734fd02dd2fbd37ab',1,'dsm::SparseMatrix']]]
 ];

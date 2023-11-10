@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['queue_55',['queue',['../classdmf_1_1Node.html#adb822d15fb37a8689a1c6b45a46cc87c',1,'dmf::Node::queue()'],['../classdmf_1_1Street.html#a4741e43dbc378ec0120d0393c64895c5',1,'dmf::Street::queue()']]]
+  ['queue_0',['queue',['../classdsm_1_1Node.html#a57a37129a23899424df886dc3beb75a1',1,'dsm::Node::queue()'],['../classdsm_1_1Street.html#afb41a6b8ef3cf1bd247a726672506d7f',1,'dsm::Street::queue()']]]
 ];

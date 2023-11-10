@@ -1,0 +1,246 @@
+\doxysection{dsm\+::Itinerary\texorpdfstring{$<$}{<} Id \texorpdfstring{$>$}{>} Class Template Reference}
+\hypertarget{classdsm_1_1Itinerary}{}\label{classdsm_1_1Itinerary}\index{dsm::Itinerary$<$ Id $>$@{dsm::Itinerary$<$ Id $>$}}
+
+
+The \doxylink{classdsm_1_1Itinerary}{Itinerary} class represents an itinerary in the network.  
+
+
+
+
+{\ttfamily \#include $<$Itinerary.\+hpp$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classdsm_1_1Itinerary_a879d5ab63362c054d60e381d6431643f}{Itinerary}} (Id \mbox{\hyperlink{classdsm_1_1Itinerary_a5002ea744e6274813484bcde170de517}{source}}, Id \mbox{\hyperlink{classdsm_1_1Itinerary_a9d7e78e7e3df89692290fc0ca0731a17}{destination}})
+\begin{DoxyCompactList}\small\item\em Construct a new \doxylink{classdsm_1_1Itinerary}{Itinerary} object. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classdsm_1_1Itinerary_a80b029a98863cbe8faefe1eeb9f01eaa}{Itinerary}} (std\+::pair$<$ Id, Id $>$ \mbox{\hyperlink{classdsm_1_1Itinerary_a333c9a66c8ceddcc2345fcee40dcdfb3}{trip}})
+\begin{DoxyCompactList}\small\item\em Construct a new \doxylink{classdsm_1_1Itinerary}{Itinerary} object. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classdsm_1_1Itinerary_adce71ba8dfc64afdc33fb3361026ee49}{Itinerary}} (Id \mbox{\hyperlink{classdsm_1_1Itinerary_a5002ea744e6274813484bcde170de517}{source}}, Id \mbox{\hyperlink{classdsm_1_1Itinerary_a9d7e78e7e3df89692290fc0ca0731a17}{destination}}, \mbox{\hyperlink{classdsm_1_1SparseMatrix}{Sparse\+Matrix}}$<$ Id, bool $>$ \mbox{\hyperlink{classdsm_1_1Itinerary_a15fe02a7d9eabeeeb0333ae53e025527}{path}})
+\begin{DoxyCompactList}\small\item\em Construct a new Itinerary$<$\+Id$>$\+:: \doxylink{classdsm_1_1Itinerary}{Itinerary} object. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classdsm_1_1Itinerary_ab0b0e118d2abeef6a56c363927976b6e}{Itinerary}} (std\+::pair$<$ Id, Id $>$ \mbox{\hyperlink{classdsm_1_1Itinerary_a333c9a66c8ceddcc2345fcee40dcdfb3}{trip}}, \mbox{\hyperlink{classdsm_1_1SparseMatrix}{Sparse\+Matrix}}$<$ Id, bool $>$ \mbox{\hyperlink{classdsm_1_1Itinerary_a15fe02a7d9eabeeeb0333ae53e025527}{path}})
+\begin{DoxyCompactList}\small\item\em Construct a new Itinerary$<$\+Id$>$\+:: \doxylink{classdsm_1_1Itinerary}{Itinerary} object. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdsm_1_1Itinerary_a68087a6fdba498daf947f8879bded605}{set\+Source}} (Id \mbox{\hyperlink{classdsm_1_1Itinerary_a5002ea744e6274813484bcde170de517}{source}})
+\begin{DoxyCompactList}\small\item\em Set the itinerary\textquotesingle{}s source. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdsm_1_1Itinerary_a2b13323c1753fce6097534b9133f665d}{set\+Destination}} (Id \mbox{\hyperlink{classdsm_1_1Itinerary_a9d7e78e7e3df89692290fc0ca0731a17}{destination}})
+\begin{DoxyCompactList}\small\item\em Set the itinerary\textquotesingle{}s destination. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdsm_1_1Itinerary_adcc12cb21df1a4f3f4eac6c32916c9f9}{set\+Path}} (\mbox{\hyperlink{classdsm_1_1SparseMatrix}{Sparse\+Matrix}}$<$ Id, bool $>$ \mbox{\hyperlink{classdsm_1_1Itinerary_a15fe02a7d9eabeeeb0333ae53e025527}{path}})
+\begin{DoxyCompactList}\small\item\em Set the itinerary\textquotesingle{}s path. \end{DoxyCompactList}\item 
+Id \mbox{\hyperlink{classdsm_1_1Itinerary_a5002ea744e6274813484bcde170de517}{source}} () const
+\begin{DoxyCompactList}\small\item\em Get the itinerary\textquotesingle{}s source. \end{DoxyCompactList}\item 
+Id \mbox{\hyperlink{classdsm_1_1Itinerary_a9d7e78e7e3df89692290fc0ca0731a17}{destination}} () const
+\begin{DoxyCompactList}\small\item\em Get the itinerary\textquotesingle{}s destination. \end{DoxyCompactList}\item 
+const std\+::pair$<$ Id, Id $>$ \& \mbox{\hyperlink{classdsm_1_1Itinerary_a333c9a66c8ceddcc2345fcee40dcdfb3}{trip}} () const
+\begin{DoxyCompactList}\small\item\em Get the itinerary\textquotesingle{}s trip. \end{DoxyCompactList}\item 
+const \mbox{\hyperlink{classdsm_1_1SparseMatrix}{Sparse\+Matrix}}$<$ Id, bool $>$ \& \mbox{\hyperlink{classdsm_1_1Itinerary_a15fe02a7d9eabeeeb0333ae53e025527}{path}} () const
+\begin{DoxyCompactList}\small\item\em Get the itinerary\textquotesingle{}s path. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Id$>$\newline
+requires std\+::unsigned\+\_\+integral$<$Id$>$\newline
+class dsm\+::\+Itinerary$<$ Id $>$}
+The \doxylink{classdsm_1_1Itinerary}{Itinerary} class represents an itinerary in the network. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Id} & The type of the itinerary\textquotesingle{}s id. It must be an unsigned integral type. \\
+\hline
+\end{DoxyTemplParams}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classdsm_1_1Itinerary_a879d5ab63362c054d60e381d6431643f}\label{classdsm_1_1Itinerary_a879d5ab63362c054d60e381d6431643f} 
+\index{dsm::Itinerary$<$ Id $>$@{dsm::Itinerary$<$ Id $>$}!Itinerary@{Itinerary}}
+\index{Itinerary@{Itinerary}!dsm::Itinerary$<$ Id $>$@{dsm::Itinerary$<$ Id $>$}}
+\doxysubsubsection{\texorpdfstring{Itinerary()}{Itinerary()}\hspace{0.1cm}{\footnotesize\ttfamily [1/4]}}
+{\footnotesize\ttfamily template$<$typename Id $>$ \newline
+requires std\+::unsigned\+\_\+integral$<$Id$>$\\
+\mbox{\hyperlink{classdsm_1_1Itinerary}{dsm\+::\+Itinerary}}$<$ Id $>$\+::\+Itinerary (\begin{DoxyParamCaption}\item[{Id}]{source,  }\item[{Id}]{destination }\end{DoxyParamCaption})}
+
+
+
+Construct a new \doxylink{classdsm_1_1Itinerary}{Itinerary} object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em source,The} & itinerary\textquotesingle{}s source \\
+\hline
+{\em destination,The} & itinerary\textquotesingle{}s destination \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classdsm_1_1Itinerary_a80b029a98863cbe8faefe1eeb9f01eaa}\label{classdsm_1_1Itinerary_a80b029a98863cbe8faefe1eeb9f01eaa} 
+\index{dsm::Itinerary$<$ Id $>$@{dsm::Itinerary$<$ Id $>$}!Itinerary@{Itinerary}}
+\index{Itinerary@{Itinerary}!dsm::Itinerary$<$ Id $>$@{dsm::Itinerary$<$ Id $>$}}
+\doxysubsubsection{\texorpdfstring{Itinerary()}{Itinerary()}\hspace{0.1cm}{\footnotesize\ttfamily [2/4]}}
+{\footnotesize\ttfamily template$<$typename Id $>$ \\
+\mbox{\hyperlink{classdsm_1_1Itinerary}{dsm\+::\+Itinerary}}$<$ Id $>$\+::\+Itinerary (\begin{DoxyParamCaption}\item[{std\+::pair$<$ Id, Id $>$}]{trip }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [explicit]}}
+
+
+
+Construct a new \doxylink{classdsm_1_1Itinerary}{Itinerary} object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em trip,An} & std\+::pair containing the itinerary\textquotesingle{}s source and destination \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classdsm_1_1Itinerary_adce71ba8dfc64afdc33fb3361026ee49}\label{classdsm_1_1Itinerary_adce71ba8dfc64afdc33fb3361026ee49} 
+\index{dsm::Itinerary$<$ Id $>$@{dsm::Itinerary$<$ Id $>$}!Itinerary@{Itinerary}}
+\index{Itinerary@{Itinerary}!dsm::Itinerary$<$ Id $>$@{dsm::Itinerary$<$ Id $>$}}
+\doxysubsubsection{\texorpdfstring{Itinerary()}{Itinerary()}\hspace{0.1cm}{\footnotesize\ttfamily [3/4]}}
+{\footnotesize\ttfamily template$<$typename Id $>$ \newline
+requires std\+::unsigned\+\_\+integral$<$Id$>$\\
+\mbox{\hyperlink{classdsm_1_1Itinerary}{dsm\+::\+Itinerary}}$<$ Id $>$\+::\+Itinerary (\begin{DoxyParamCaption}\item[{Id}]{source,  }\item[{Id}]{destination,  }\item[{\mbox{\hyperlink{classdsm_1_1SparseMatrix}{Sparse\+Matrix}}$<$ Id, bool $>$}]{path }\end{DoxyParamCaption})}
+
+
+
+Construct a new Itinerary$<$\+Id$>$\+:: \doxylink{classdsm_1_1Itinerary}{Itinerary} object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em source,The} & itinerary\textquotesingle{}s source \\
+\hline
+{\em destination,The} & itinerary\textquotesingle{}s destination \\
+\hline
+{\em path,An} & adjacency matrix made by a \doxylink{classdsm_1_1SparseMatrix}{Sparse\+Matrix} representing the itinerary\textquotesingle{}s path \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classdsm_1_1Itinerary_ab0b0e118d2abeef6a56c363927976b6e}\label{classdsm_1_1Itinerary_ab0b0e118d2abeef6a56c363927976b6e} 
+\index{dsm::Itinerary$<$ Id $>$@{dsm::Itinerary$<$ Id $>$}!Itinerary@{Itinerary}}
+\index{Itinerary@{Itinerary}!dsm::Itinerary$<$ Id $>$@{dsm::Itinerary$<$ Id $>$}}
+\doxysubsubsection{\texorpdfstring{Itinerary()}{Itinerary()}\hspace{0.1cm}{\footnotesize\ttfamily [4/4]}}
+{\footnotesize\ttfamily template$<$typename Id $>$ \newline
+requires std\+::unsigned\+\_\+integral$<$Id$>$\\
+\mbox{\hyperlink{classdsm_1_1Itinerary}{dsm\+::\+Itinerary}}$<$ Id $>$\+::\+Itinerary (\begin{DoxyParamCaption}\item[{std\+::pair$<$ Id, Id $>$}]{trip,  }\item[{\mbox{\hyperlink{classdsm_1_1SparseMatrix}{Sparse\+Matrix}}$<$ Id, bool $>$}]{path }\end{DoxyParamCaption})}
+
+
+
+Construct a new Itinerary$<$\+Id$>$\+:: \doxylink{classdsm_1_1Itinerary}{Itinerary} object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em trip,An} & std\+::pair containing the itinerary\textquotesingle{}s source and destination \\
+\hline
+{\em path,An} & adjacency matrix made by a \doxylink{classdsm_1_1SparseMatrix}{Sparse\+Matrix} representing the itinerary\textquotesingle{}s path \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classdsm_1_1Itinerary_a9d7e78e7e3df89692290fc0ca0731a17}\label{classdsm_1_1Itinerary_a9d7e78e7e3df89692290fc0ca0731a17} 
+\index{dsm::Itinerary$<$ Id $>$@{dsm::Itinerary$<$ Id $>$}!destination@{destination}}
+\index{destination@{destination}!dsm::Itinerary$<$ Id $>$@{dsm::Itinerary$<$ Id $>$}}
+\doxysubsubsection{\texorpdfstring{destination()}{destination()}}
+{\footnotesize\ttfamily template$<$typename Id $>$ \newline
+requires std\+::unsigned\+\_\+integral$<$Id$>$\\
+Id \mbox{\hyperlink{classdsm_1_1Itinerary}{dsm\+::\+Itinerary}}$<$ Id $>$\+::destination (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Get the itinerary\textquotesingle{}s destination. 
+
+\begin{DoxyReturn}{Returns}
+Id, The itinerary\textquotesingle{}s destination 
+\end{DoxyReturn}
+\Hypertarget{classdsm_1_1Itinerary_a15fe02a7d9eabeeeb0333ae53e025527}\label{classdsm_1_1Itinerary_a15fe02a7d9eabeeeb0333ae53e025527} 
+\index{dsm::Itinerary$<$ Id $>$@{dsm::Itinerary$<$ Id $>$}!path@{path}}
+\index{path@{path}!dsm::Itinerary$<$ Id $>$@{dsm::Itinerary$<$ Id $>$}}
+\doxysubsubsection{\texorpdfstring{path()}{path()}}
+{\footnotesize\ttfamily template$<$typename Id $>$ \newline
+requires std\+::unsigned\+\_\+integral$<$Id$>$\\
+const \mbox{\hyperlink{classdsm_1_1SparseMatrix}{Sparse\+Matrix}}$<$ Id, bool $>$ \& \mbox{\hyperlink{classdsm_1_1Itinerary}{dsm\+::\+Itinerary}}$<$ Id $>$\+::path (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Get the itinerary\textquotesingle{}s path. 
+
+\begin{DoxyReturn}{Returns}
+\doxylink{classdsm_1_1SparseMatrix}{Sparse\+Matrix$<$\+Id, bool$>$}, An adjacency matrix made by a \doxylink{classdsm_1_1SparseMatrix}{Sparse\+Matrix} representing the itinerary\textquotesingle{}s path 
+\end{DoxyReturn}
+\Hypertarget{classdsm_1_1Itinerary_a2b13323c1753fce6097534b9133f665d}\label{classdsm_1_1Itinerary_a2b13323c1753fce6097534b9133f665d} 
+\index{dsm::Itinerary$<$ Id $>$@{dsm::Itinerary$<$ Id $>$}!setDestination@{setDestination}}
+\index{setDestination@{setDestination}!dsm::Itinerary$<$ Id $>$@{dsm::Itinerary$<$ Id $>$}}
+\doxysubsubsection{\texorpdfstring{setDestination()}{setDestination()}}
+{\footnotesize\ttfamily template$<$typename Id $>$ \newline
+requires std\+::unsigned\+\_\+integral$<$Id$>$\\
+void \mbox{\hyperlink{classdsm_1_1Itinerary}{dsm\+::\+Itinerary}}$<$ Id $>$\+::set\+Destination (\begin{DoxyParamCaption}\item[{Id}]{destination }\end{DoxyParamCaption})}
+
+
+
+Set the itinerary\textquotesingle{}s destination. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em destination,The} & itinerary\textquotesingle{}s destination \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classdsm_1_1Itinerary_adcc12cb21df1a4f3f4eac6c32916c9f9}\label{classdsm_1_1Itinerary_adcc12cb21df1a4f3f4eac6c32916c9f9} 
+\index{dsm::Itinerary$<$ Id $>$@{dsm::Itinerary$<$ Id $>$}!setPath@{setPath}}
+\index{setPath@{setPath}!dsm::Itinerary$<$ Id $>$@{dsm::Itinerary$<$ Id $>$}}
+\doxysubsubsection{\texorpdfstring{setPath()}{setPath()}}
+{\footnotesize\ttfamily template$<$typename Id $>$ \newline
+requires std\+::unsigned\+\_\+integral$<$Id$>$\\
+void \mbox{\hyperlink{classdsm_1_1Itinerary}{dsm\+::\+Itinerary}}$<$ Id $>$\+::set\+Path (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classdsm_1_1SparseMatrix}{Sparse\+Matrix}}$<$ Id, bool $>$}]{path }\end{DoxyParamCaption})}
+
+
+
+Set the itinerary\textquotesingle{}s path. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em path,An} & adjacency matrix made by a \doxylink{classdsm_1_1SparseMatrix}{Sparse\+Matrix} representing the itinerary\textquotesingle{}s path \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classdsm_1_1Itinerary_a68087a6fdba498daf947f8879bded605}\label{classdsm_1_1Itinerary_a68087a6fdba498daf947f8879bded605} 
+\index{dsm::Itinerary$<$ Id $>$@{dsm::Itinerary$<$ Id $>$}!setSource@{setSource}}
+\index{setSource@{setSource}!dsm::Itinerary$<$ Id $>$@{dsm::Itinerary$<$ Id $>$}}
+\doxysubsubsection{\texorpdfstring{setSource()}{setSource()}}
+{\footnotesize\ttfamily template$<$typename Id $>$ \newline
+requires std\+::unsigned\+\_\+integral$<$Id$>$\\
+void \mbox{\hyperlink{classdsm_1_1Itinerary}{dsm\+::\+Itinerary}}$<$ Id $>$\+::set\+Source (\begin{DoxyParamCaption}\item[{Id}]{source }\end{DoxyParamCaption})}
+
+
+
+Set the itinerary\textquotesingle{}s source. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em source,The} & itinerary\textquotesingle{}s source \\
+\hline
+\end{DoxyParams}
+\Hypertarget{classdsm_1_1Itinerary_a5002ea744e6274813484bcde170de517}\label{classdsm_1_1Itinerary_a5002ea744e6274813484bcde170de517} 
+\index{dsm::Itinerary$<$ Id $>$@{dsm::Itinerary$<$ Id $>$}!source@{source}}
+\index{source@{source}!dsm::Itinerary$<$ Id $>$@{dsm::Itinerary$<$ Id $>$}}
+\doxysubsubsection{\texorpdfstring{source()}{source()}}
+{\footnotesize\ttfamily template$<$typename Id $>$ \newline
+requires std\+::unsigned\+\_\+integral$<$Id$>$\\
+Id \mbox{\hyperlink{classdsm_1_1Itinerary}{dsm\+::\+Itinerary}}$<$ Id $>$\+::source (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Get the itinerary\textquotesingle{}s source. 
+
+\begin{DoxyReturn}{Returns}
+Id, The itinerary\textquotesingle{}s source 
+\end{DoxyReturn}
+\Hypertarget{classdsm_1_1Itinerary_a333c9a66c8ceddcc2345fcee40dcdfb3}\label{classdsm_1_1Itinerary_a333c9a66c8ceddcc2345fcee40dcdfb3} 
+\index{dsm::Itinerary$<$ Id $>$@{dsm::Itinerary$<$ Id $>$}!trip@{trip}}
+\index{trip@{trip}!dsm::Itinerary$<$ Id $>$@{dsm::Itinerary$<$ Id $>$}}
+\doxysubsubsection{\texorpdfstring{trip()}{trip()}}
+{\footnotesize\ttfamily template$<$typename Id $>$ \newline
+requires std\+::unsigned\+\_\+integral$<$Id$>$\\
+const std\+::pair$<$ Id, Id $>$ \& \mbox{\hyperlink{classdsm_1_1Itinerary}{dsm\+::\+Itinerary}}$<$ Id $>$\+::trip (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Get the itinerary\textquotesingle{}s trip. 
+
+\begin{DoxyReturn}{Returns}
+std\+::pair$<$\+Id, Id$>$, An std\+::pair containing the itinerary\textquotesingle{}s source and destination 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/dsm/headers/Itinerary.\+hpp\end{DoxyCompactItemize}
