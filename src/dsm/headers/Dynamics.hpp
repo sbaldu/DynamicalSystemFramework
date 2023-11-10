@@ -33,7 +33,6 @@ namespace dsm {
   class Dynamics {
   private:
     std::vector<std::unique_ptr<Itinerary<Id>>> m_itineraries;
-    std::vector<std::unique_ptr<Agent<Id>>> m_agents;
     TimePoint m_time;
     std::unique_ptr<Graph<Id, Size>> m_graph;
     double m_temperature;
@@ -266,6 +265,43 @@ namespace dsm {
   void Dynamics<Id, Size>::evolve(F f, Tn... args) {
     f(args...);
   }
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  template <typename Delay>
+  class FirstOrderDynamics<Delay> : public Dynamics<Id, Size> {
+  private:
+    std::vector<std::unique_ptr<Agent<Id, Delay>>> m_agents;
+
+  public:
+    void setAgentSpeed(Size agentId);
+    void setSpeed();
+  };
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void FirstOrderDynamics<Id, Size>::setAgentSpeed(Size agentId) {
+  }
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void FirstOrderDynamics<Id, Size>::setSpeed() {}
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  class SecondOrderDynamics : public Dynamics<Id, Size> {
+  public:
+    void setAgentSpeed(Size agentId);
+    void setSpeed();
+  };
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void SecondOrderDynamics<Id, Size>::setAgentSpeed(Size agentId) {}
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void SecondOrderDynamics<Id, Size>::setSpeed() {}
 
 };  // namespace dsm
 
