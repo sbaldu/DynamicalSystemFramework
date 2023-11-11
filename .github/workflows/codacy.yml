@@ -32,11 +32,8 @@ jobs:
       security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
       actions: read # only required for a private repository by github/codeql-action/upload-sarif to get the Action run status
     name: Codacy Security Scan
-    exclude_paths: [
-      'extern/',
-      'docs',
-    ]
     runs-on: ubuntu-latest
+    exclude: [ 'extern' ]
     steps:
       # Checkout the repository to the GitHub Actions runner
       - name: Checkout code
