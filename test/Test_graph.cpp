@@ -89,3 +89,23 @@ TEST_CASE("Graph") {
     CHECK_THROWS(graph.importAdj("./data/not_found.dsm"));
   }
 }
+
+TEST_CASE("Dijkstra") {
+  Street street1{0, 5, 3, std::make_pair(0, 1)};
+  Street street2{1, 5, 2, std::make_pair(1, 2)};
+  Street street3{2, 5, 4, std::make_pair(2, 3)};
+  Street street4{3, 5, 5, std::make_pair(3, 0)};
+  Street street5{4, 5, 6, std::make_pair(0, 2)};
+  Graph graph{};
+  graph.addStreet(street1);
+  graph.addStreet(street2);
+  graph.addStreet(street3);
+  graph.addStreet(street4);
+  graph.addStreet(street5);
+  auto result = graph.dijkstra(0, 1);
+  CHECK(result.value().getPath().size() == 2);
+  CHECK(result.value().getDistance() == 3);
+  result = graph.dijkstra(0, 2);
+  CHECK(result.value().getPath().size() == 3);
+  CHECK(result.value().getDistance() == 5);
+}
