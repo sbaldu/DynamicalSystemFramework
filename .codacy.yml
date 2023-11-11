@@ -3,5 +3,6 @@
 ---
 
 exclude_paths: [
-    'extern/**',
+    'extern/benchmark/**',
+    'extern/doxygen-awesome/**',
 ]
