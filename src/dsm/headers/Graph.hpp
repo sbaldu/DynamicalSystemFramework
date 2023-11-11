@@ -304,7 +304,7 @@ namespace dsm {
 		  element.second = std::numeric_limits<double>::max();
 		  ++count;
 		});
-    dist[source] = 0;
+    dist[source] = std::make_pair(source, 0);
 
     std::vector<Id> path{source};
     double distance{};
@@ -312,7 +312,7 @@ namespace dsm {
 	  source = std::min_element(dist.begin(), dist.end(), [](const auto& a, const auto& b) -> bool {
 		  return a.second < b.second;
 		})->first;
-	  distance += dist[source];
+	  distance += dist[source].second;
 	  unvisitedNodes.erase(source);
       visitedNodes.insert(source);
 	  path.push_back(source);
