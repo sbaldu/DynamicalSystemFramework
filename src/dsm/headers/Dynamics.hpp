@@ -36,6 +36,7 @@ namespace dsm {
     TimePoint m_time;
     std::unique_ptr<Graph<Id, Size>> m_graph;
     double m_temperature;
+    double m_minSpeedRateo;
     std::mt19937_64 m_generator{std::random_device{}()};
 
   public:
@@ -50,6 +51,10 @@ namespace dsm {
     /// @brief Set the seed for the graph's random number generator
     /// @param seed, The seed
     void setSeed(unsigned int seed);
+    /// @brief Set the minim speed rateo, i.e. the minim speed with respect to the speed limit
+    /// @param minSpeedRateo The minim speed rateo
+    /// @throw std::invalid_argument, If the minim speed rateo is not between 0 and 1
+    void setMinSpeedRateo(double minSpeedRateo);
     /// @brief Update the paths of the itineraries based on the actual travel times
     void updatePaths();  //TODO: implement
 
@@ -138,6 +143,17 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Dynamics<Id, Size>::setSeed(unsigned int seed) {
     m_generator.seed(seed);
+  }
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Dynamics<Id, Size>::setMinSpeedRateo(double minSpeedRateo) {
+    if (minSpeedRateo < 0. || minSpeedRateo > 1.) {
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                           "The minim speed rateo must be between 0 and 1"};
+      throw std::invalid_argument(errorMsg);
+    }
+    m_minSpeedRateo = minSpeedRateo;
   }
 
   template <typename Id, typename Size>
@@ -274,6 +290,9 @@ namespace dsm {
     std::vector<std::unique_ptr<Agent<Id, Delay>>> m_agents;
 
   public:
+    /// @brief Set the speed of an agent
+    /// @param agentId, The index of the agent
+    /// @throw std::invalid_argument, If the agent is not found
     void setAgentSpeed(Size agentId);
     void setSpeed();
   };
@@ -281,6 +300,16 @@ namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void FirstOrderDynamics<Id, Size>::setAgentSpeed(Size agentId) {
+    auto agentIt{std::find_if(
+        m_agents.begin(), m_agents.end(), [agentId](auto agent) { return agent->index() == agentId; })};
+    if (agentIt == m_agents.end()) {
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                           "Agent " + std::to_string(agentId) + " not found"};
+      throw std::invalid_argument(errorMsg);
+    }
+    auto& agent{*agentIt};
+    auto& street{m_graph->street(agent->position())};
+    double speed{street->maxSpeed() * (1. - m_minSpeedRateo * street->density())};
   }
 
   template <typename Id, typename Size>
