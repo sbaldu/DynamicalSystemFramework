@@ -1,5 +1,3 @@
-# codacy configuration file
-
 ---
 engines:
     cppchek:
