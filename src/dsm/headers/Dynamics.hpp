@@ -29,12 +29,12 @@ namespace dsm {
   /// @brief The Dynamics class represents the dynamics of the network.
   /// @tparam Id, The type of the graph's id. It must be an unsigned integral type.
   /// @tparam Size, The type of the graph's capacity. It must be an unsigned integral type.
-  template <typename Id, typename Size>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
+  template <typename Id, typename Size, typename Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
   class Dynamics {
   private:
     std::vector<std::unique_ptr<Itinerary<Id>>> m_itineraries;
-    std::vector<std::unique_ptr<Agent<Id>>> m_agents;
+    std::vector<std::unique_ptr<Agent<Id, Size, Delay>>> m_agents;
     TimePoint m_time;
     std::unique_ptr<Graph<Id, Size>> m_graph;
     double m_temperature;
@@ -68,17 +68,17 @@ namespace dsm {
     const std::vector<std::unique_ptr<Itinerary<Id>>>& itineraries() const;
     /// @brief Get the agents
     /// @return const std::vector<Agent<Id>>&, The agents
-    const std::vector<std::unique_ptr<Agent<Id>>>& agents() const;
+    const std::vector<std::unique_ptr<Agent<Id, Size, Delay>>>& agents() const;
     /// @brief Get the time
     /// @return TimePoint, The time
     TimePoint time() const;
 
     /// @brief Add an agent to the simulation
     /// @param agent, The agent
-    void addAgent(const Agent<Id>& agent);
+    void addAgent(const Agent<Id, Size, Delay>& agent);
     /// @brief Add an agent to the simulation
     /// @param agent, Unique pointer to the agent
-    void addAgent(std::unique_ptr<Agent<Id>> agent);
+    void addAgent(std::unique_ptr<Agent<Id, Size, Delay>> agent);
     /// @brief Add a pack of agents to the simulation
     /// @param agents, Parameter pack of agents
     template <typename... Tn>
@@ -92,7 +92,7 @@ namespace dsm {
     void addAgents(T1 agent, Tn... agents);
     /// @brief Add a set of agents to the simulation
     /// @param agents, Generic container of agents, represented by an std::span
-    void addAgents(std::span<Agent<Id>> agents);
+    void addAgents(std::span<Agent<Id, Size, Delay>> agents);
 
     /// @brief Remove an agent from the simulation
     /// @param agentId, the index of the agent to remove
@@ -129,28 +129,28 @@ namespace dsm {
     void evolve(F f, Tn... args);
   };
 
-  template <typename Id, typename Size>
+  template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  Dynamics<Id, Size>::Dynamics(const Graph<Id, Size>& graph)
+  Dynamics<Id, Size, Delay>::Dynamics(const Graph<Id, Size>& graph)
       : m_graph{std::make_unique<Graph<Id, Size>>(graph)} {}
 
-  template <typename Id, typename Size>
+  template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Dynamics<Id, Size>::setItineraries(std::span<Itinerary<Id>> itineraries) {
+  void Dynamics<Id, Size, Delay>::setItineraries(std::span<Itinerary<Id>> itineraries) {
     std::ranges::for_each(itineraries, [this](const auto& itinerary) {
       this->m_itineraries.insert(std::make_unique<Itinerary<Id>>(itinerary));
     });
   }
 
-  template <typename Id, typename Size>
+  template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Dynamics<Id, Size>::setSeed(unsigned int seed) {
+  void Dynamics<Id, Size, Delay>::setSeed(unsigned int seed) {
     m_generator.seed(seed);
   }
 
-  template <typename Id, typename Size>
+  template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Dynamics<Id, Size>::setMinSpeedRateo(double minSpeedRateo) {
+  void Dynamics<Id, Size, Delay>::setMinSpeedRateo(double minSpeedRateo) {
     if (minSpeedRateo < 0. || minSpeedRateo > 1.) {
       std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
                            "The minim speed rateo must be between 0 and 1"};
@@ -159,67 +159,67 @@ namespace dsm {
     m_minSpeedRateo = minSpeedRateo;
   }
 
-  template <typename Id, typename Size>
+  template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  const Graph<Id, Size>& Dynamics<Id, Size>::graph() const {
+  const Graph<Id, Size>& Dynamics<Id, Size, Delay>::graph() const {
     return *m_graph;
   }
 
-  template <typename Id, typename Size>
+  template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  const std::vector<std::unique_ptr<Itinerary<Id>>>& Dynamics<Id, Size>::itineraries() const {
+  const std::vector<std::unique_ptr<Itinerary<Id>>>& Dynamics<Id, Size, Delay>::itineraries() const {
     return m_itineraries;
   }
 
-  template <typename Id, typename Size>
+  template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  const std::vector<std::unique_ptr<Agent<Id>>>& Dynamics<Id, Size>::agents() const {
+  const std::vector<std::unique_ptr<Agent<Id, Size, Delay>>>& Dynamics<Id, Size, Delay>::agents() const {
     return m_agents;
   }
 
-  template <typename Id, typename Size>
+  template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  TimePoint Dynamics<Id, Size>::time() const {
+  TimePoint Dynamics<Id, Size, Delay>::time() const {
     return m_time;
   }
 
-  template <typename Id, typename Size>
+  template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Dynamics<Id, Size>::addAgent(const Agent<Id>& agent) {
-    m_agents.insert(std::make_unique<Agent<Id>>(agent));
+  void Dynamics<Id, Size, Delay>::addAgent(const Agent<Id, Size, Delay>& agent) {
+    m_agents.insert(std::make_unique<Agent<Id, Size, Delay>>(agent));
   }
 
-  template <typename Id, typename Size>
+  template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Dynamics<Id, Size>::addAgent(std::unique_ptr<Agent<Id>> agent) {
+  void Dynamics<Id, Size, Delay>::addAgent(std::unique_ptr<Agent<Id, Size, Delay>> agent) {
     m_agents.insert(std::move(agent));
   }
 
-  template <typename Id, typename Size>
+  template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   template <typename... Tn>
     requires(is_agent_v<Tn> && ...)
-  void Dynamics<Id, Size>::addAgents(Tn... agents) {}
+  void Dynamics<Id, Size, Delay>::addAgents(Tn... agents) {}
 
-  template <typename Id, typename Size>
+  template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   template <typename T1, typename... Tn>
     requires(is_agent_v<T1> && (is_agent_v<Tn> && ...))
-  void Dynamics<Id, Size>::addAgents(T1 agent, Tn... agents) {
+  void Dynamics<Id, Size, Delay>::addAgents(T1 agent, Tn... agents) {
     addAgent(agent);
     addAgents(agents...);
   }
 
-  template <typename Id, typename Size>
+  template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Dynamics<Id, Size>::addAgents(std::span<Agent<Id>> agents) {
+  void Dynamics<Id, Size, Delay>::addAgents(std::span<Agent<Id, Size, Delay>> agents) {
     std::ranges::for_each(
         agents, [this](const auto& agent) -> void { this->m_agents.push_back(std::make_unique(agent)); });
   }
 
-  template <typename Id, typename Size>
+  template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Dynamics<Id, Size>::removeAgent(Size agentId) {
+  void Dynamics<Id, Size, Delay>::removeAgent(Size agentId) {
     auto agentIt{std::find_if(
         m_agents.begin(), m_agents.end(), [agentId](auto agent) { return agent->index() == agentId; })};
     if (agentIt != m_agents.end()) {
@@ -227,69 +227,69 @@ namespace dsm {
     }
   }
 
-  template <typename Id, typename Size>
+  template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   template <typename T1, typename... Tn>
     requires(std::is_convertible_v<T1, Size> && (std::is_convertible_v<Tn, Size> && ...))
-  void Dynamics<Id, Size>::removeAgents(T1 id, Tn... ids) {
+  void Dynamics<Id, Size, Delay>::removeAgents(T1 id, Tn... ids) {
     removeAgent(id);
     removeAgents(ids...);
   }
 
-  template <typename Id, typename Size>
+  template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Dynamics<Id, Size>::addItinerary(const Itinerary<Id>& itinerary) {
+  void Dynamics<Id, Size, Delay>::addItinerary(const Itinerary<Id>& itinerary) {
     m_itineraries.insert(std::make_unique<Itinerary<Id>>(itinerary));
   }
 
-  template <typename Id, typename Size>
+  template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Dynamics<Id, Size>::addItinerary(std::unique_ptr<Itinerary<Id>> itinerary) {
+  void Dynamics<Id, Size, Delay>::addItinerary(std::unique_ptr<Itinerary<Id>> itinerary) {
     m_itineraries.insert(std::move(itinerary));
   }
 
-  template <typename Id, typename Size>
+  template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   template <typename... Tn>
     requires(is_agent_v<Tn> && ...)
-  void Dynamics<Id, Size>::addItineraries(Tn... itineraries) {}
+  void Dynamics<Id, Size, Delay>::addItineraries(Tn... itineraries) {}
 
-  template <typename Id, typename Size>
+  template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   template <typename T1, typename... Tn>
     requires(is_agent_v<T1> && (is_agent_v<Tn> && ...))
-  void Dynamics<Id, Size>::addItineraries(T1 itinerary, Tn... itineraries) {
+  void Dynamics<Id, Size, Delay>::addItineraries(T1 itinerary, Tn... itineraries) {
     addItinerary(itinerary);
     addItineraries(itineraries...);
   }
 
-  template <typename Id, typename Size>
+  template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Dynamics<Id, Size>::addItineraries(std::span<Itinerary<Id>> itineraries) {
+  void Dynamics<Id, Size, Delay>::addItineraries(std::span<Itinerary<Id>> itineraries) {
     std::ranges::for_each(itineraries, [this](const auto& itinerary) -> void {
       this->m_itineraries.push_back(std::make_unique(itinerary));
     });
   }
 
-  template <typename Id, typename Size>
+  template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Dynamics<Id, Size>::resetTime() {
+  void Dynamics<Id, Size, Delay>::resetTime() {
     m_time = 0;
   }
 
-  template <typename Id, typename Size>
+  template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   template <typename F, typename... Tn>
     requires std::is_invocable_v<F, Tn...>
-  void Dynamics<Id, Size>::evolve(F f, Tn... args) {
+  void Dynamics<Id, Size, Delay>::evolve(F f, Tn... args) {
     f(args...);
   }
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>)
-  class FirstOrderDynamics<Delay> : public Dynamics<Id, Size> {
+  class FirstOrderDynamics<Delay> : public Dynamics<Id, Size, Delay> {
   private:
-    std::vector<std::unique_ptr<Agent<Id, Delay>>> m_agents;
+    std::vector<std::unique_ptr<Agent<Id, Size, Delay>>> m_agents;
 
   public:
     /// @brief Set the speed of an agent
