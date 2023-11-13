@@ -239,15 +239,13 @@ namespace dsm {
   }
 
 <<<<<<< HEAD
+=======
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   template <typename Delay>
-  void Street<Id, Size>::enqueue(const Agent<Id, Size, Delay>& agent) {
-=======
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && dsm::is_numeric_v<Delay>)
-  void Street<Id, Size, Delay>::enqueue(const Agent<Id, Delay>& agent) {
->>>>>>> ae1cdc1 (Add Delay template parameter to Agent class and)
+    requires dsm::is_numeric_v<Delay>
+  void Street<Id, Size>::enqueue(const Agent<Id, Delay>& agent) {
+>>>>>>> f5c7472 (Refactor Street class templates to improve)
     if (m_size < m_capacity) {
       m_queue.push(agent.index());
       ++m_size;
