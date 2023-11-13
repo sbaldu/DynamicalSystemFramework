@@ -251,23 +251,16 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   template <typename... Tn>
-    requires(is_agent_v<Tn> && ...)
-  void Dynamics<Id, Size, Delay>::addItineraries(Tn... itineraries) {}
-
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  template <typename T1, typename... Tn>
-    requires(is_agent_v<T1> && (is_agent_v<Tn> && ...))
-  void Dynamics<Id, Size, Delay>::addItineraries(T1 itinerary, Tn... itineraries) {
-    addItinerary(itinerary);
-    addItineraries(itineraries...);
+    requires(is_itinerary_v<Tn> && ...)
+  void Dynamics<Id, Size, Delay>::addItineraries(Tn... itineraries) {
+    (this->addItinerary(itineraries), ...);
   }
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Dynamics<Id, Size, Delay>::addItineraries(std::span<Itinerary<Id>> itineraries) {
     std::ranges::for_each(itineraries, [this](const auto& itinerary) -> void {
-      this->m_itineraries.push_back(std::make_unique(itinerary));
+      this->m_itineraries.push_back(std::make_unique<Itinerary<Id>>(itinerary));
     });
   }
 
@@ -287,7 +280,7 @@ namespace dsm {
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>)
-  class FirstOrderDynamics<Delay> : public Dynamics<Id, Size, Delay> {
+  class FirstOrderDynamics : public Dynamics<Id, Size, Delay> {
   private:
     std::vector<std::unique_ptr<Agent<Id, Size, Delay>>> m_agents;
 
@@ -299,9 +292,9 @@ namespace dsm {
     void setSpeed();
   };
 
-  template <typename Id, typename Size>
+  template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void FirstOrderDynamics<Id, Size>::setAgentSpeed(Size agentId) {
+  void FirstOrderDynamics<Id, Size, Delay>::setAgentSpeed(Size agentId) {
     auto agentIt{std::find_if(
         m_agents.begin(), m_agents.end(), [agentId](auto agent) { return agent->index() == agentId; })};
     if (agentIt == m_agents.end()) {
@@ -310,17 +303,17 @@ namespace dsm {
       throw std::invalid_argument(errorMsg);
     }
     auto& agent{*agentIt};
-    auto& street{m_graph->street(agent->position())};
-    double speed{street->maxSpeed() * (1. - m_minSpeedRateo * street->density())};
+    auto& street{this->m_graph->street(agent->position())};
+    double speed{street->maxSpeed() * (1. - this->m_minSpeedRateo * street->density())};
   }
 
-  template <typename Id, typename Size>
+  template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void FirstOrderDynamics<Id, Size>::setSpeed() {}
+  void FirstOrderDynamics<Id, Size, Delay>::setSpeed() {}
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  class SecondOrderDynamics : public Dynamics<Id, Size> {
+  class SecondOrderDynamics : public Dynamics<Id, Size, double> {
   public:
     void setAgentSpeed(Size agentId);
     void setSpeed();
