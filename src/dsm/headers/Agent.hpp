@@ -35,7 +35,6 @@ namespace dsm {
     Id m_index;
     Id m_streetId;
     unsigned int m_time;
-    Delay m_delay;
 
   public:
     Agent() = default;
