@@ -14,6 +14,7 @@
 #include <vector>
 #include <random>
 #include <span>
+#include <string>
 
 #include "Agent.hpp"
 #include "Itinerary.hpp"
@@ -33,6 +34,7 @@ namespace dsm {
   class Dynamics {
   private:
     std::vector<std::unique_ptr<Itinerary<Id>>> m_itineraries;
+    std::vector<std::unique_ptr<Agent<Id>>> m_agents;
     TimePoint m_time;
     std::unique_ptr<Graph<Id, Size>> m_graph;
     double m_temperature;
@@ -116,6 +118,7 @@ namespace dsm {
     template <typename T1, typename... Tn>
       requires(is_itinerary_v<T1> && (is_itinerary_v<Tn> && ...))
     void addItineraries(T1 itinerary, Tn... itineraries);
+
     void addItineraries(std::span<Itinerary<Id>> itineraries);
 
     /// @brief Reset the simulation time
@@ -282,9 +285,8 @@ namespace dsm {
     f(args...);
   }
 
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  template <typename Delay>
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>)
   class FirstOrderDynamics<Delay> : public Dynamics<Id, Size> {
   private:
     std::vector<std::unique_ptr<Agent<Id, Delay>>> m_agents;
