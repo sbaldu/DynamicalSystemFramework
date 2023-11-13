@@ -16,9 +16,10 @@ using Street = dsm::Street<uint16_t, uint16_t>;
 
 TEST_CASE("Dynamics") {
     SUBCASE("Constructor") {
-        // Dynamics dynamics;
-        // CHECK(dynamics.getGraph().getNodes().empty());
-        // CHECK(dynamics.getGraph().getStreets().empty());
-        // CHECK(dynamics.getGraph().getAdjacency() == nullptr);
+        auto graph = Graph{};
+        Dynamics dynamics(graph);
+    //     CHECK(dynamics.getGraph().getNodes().empty());
+    //     CHECK(dynamics.getGraph().getStreets().empty());
+    //     CHECK(dynamics.getGraph().getAdjacency() == nullptr);
     }
 }
