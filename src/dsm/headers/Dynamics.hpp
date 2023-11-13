@@ -285,12 +285,21 @@ namespace dsm {
     std::vector<std::unique_ptr<Agent<Id, Size, Delay>>> m_agents;
 
   public:
+    FirstOrderDynamics() = delete;
+    /// @brief Construct a new First Order Dynamics object
+    /// @param graph, The graph representing the network
+    FirstOrderDynamics(const Graph<Id, Size>& graph);
     /// @brief Set the speed of an agent
     /// @param agentId, The index of the agent
     /// @throw std::invalid_argument, If the agent is not found
     void setAgentSpeed(Size agentId);
     void setSpeed();
   };
+
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>)
+  FirstOrderDynamics<Id, Size, Delay>::FirstOrderDynamics(const Graph<Id, Size>& graph)
+      : Dynamics<Id, Size, Delay>(graph) {}
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
