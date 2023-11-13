@@ -1,0 +1,9 @@
+# codacy configuration file
+
+---
+engines:
+    cppchek:
+        language: c++
+    exclude_paths: [
+        'extern/**/**',,
+    ]

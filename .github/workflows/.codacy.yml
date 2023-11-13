@@ -1,8 +1,0 @@
-# codacy configuration file
-
----
-
-exclude_paths: [
-    'extern/benchmark/**',
-    'extern/doxygen-awesome/**',
-]
