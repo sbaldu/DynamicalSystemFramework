@@ -103,8 +103,10 @@ namespace dsm {
     /// @param id, the index of the first agent to remove
     /// @param ids, the pack of indexes of the agents to remove
     void removeAgents(T1 id, Tn... ids);
-
-    void addRandomAgents(uint nAgents);  // TODO: implement
+    /// @brief Add a set of agents to the simulation
+    /// @param nAgents The number of agents to add
+    /// @throw std::runtime_error If there are no itineraries
+    void addRandomAgents(Size nAgents);
 
     /// @brief Add an itinerary
     /// @param itinerary, The itinerary
@@ -115,15 +117,21 @@ namespace dsm {
     template <typename... Tn>
       requires(is_itinerary_v<Tn> && ...)
     void addItineraries(Tn... itineraries);
+    /// @brief Add a pack of itineraries
+    /// @tparam T1 
+    /// @tparam ...Tn 
+    /// @param itinerary 
+    /// @param ...itineraries 
     template <typename T1, typename... Tn>
       requires(is_itinerary_v<T1> && (is_itinerary_v<Tn> && ...))
     void addItineraries(T1 itinerary, Tn... itineraries);
-
+    /// @brief Add a set of itineraries
+    /// @param itineraries, Generic container of itineraries, represented by an std::span
     void addItineraries(std::span<Itinerary<Id>> itineraries);
 
     /// @brief Reset the simulation time
     void resetTime();
-
+    
     template <typename F, typename... Tn>
       requires std::is_invocable_v<F, Tn...>
     void evolve(F f, Tn... args);
@@ -186,13 +194,13 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Dynamics<Id, Size, Delay>::addAgent(const Agent<Id, Size, Delay>& agent) {
-    m_agents.insert(std::make_unique<Agent<Id, Size, Delay>>(agent));
+    m_agents.push_back(std::make_unique<Agent<Id, Size, Delay>>(agent));
   }
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Dynamics<Id, Size, Delay>::addAgent(std::unique_ptr<Agent<Id, Size, Delay>> agent) {
-    m_agents.insert(std::move(agent));
+    m_agents.push_back(std::move(agent));
   }
 
   template <typename Id, typename Size, typename Delay>
@@ -237,15 +245,31 @@ namespace dsm {
   }
 
   template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>)
+  void Dynamics<Id, Size, Delay>::addRandomAgents(Size nAgents) {
+    if (m_itineraries.empty()) {
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                           "It is not possible to add random agents without itineraries"};
+      throw std::runtime_error(errorMsg);
+    }
+    std::uniform_int_distribution<Size> itineraryDist{0, static_cast<Size>(m_itineraries.size() - 1)};
+    for (Size i{0}; i < nAgents; ++i) {
+      Size itineraryIndex{itineraryDist(m_generator)};
+      auto& itinerary{*m_itineraries[itineraryIndex]};
+      this->addAgent(Agent<Id, Size, Delay>{static_cast<Size>(m_agents.size()), itinerary.source(), itinerary});
+    }
+  }
+
+  template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Dynamics<Id, Size, Delay>::addItinerary(const Itinerary<Id>& itinerary) {
-    m_itineraries.insert(std::make_unique<Itinerary<Id>>(itinerary));
+    m_itineraries.push_back(std::make_unique<Itinerary<Id>>(itinerary));
   }
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Dynamics<Id, Size, Delay>::addItinerary(std::unique_ptr<Itinerary<Id>> itinerary) {
-    m_itineraries.insert(std::move(itinerary));
+    m_itineraries.push_back(std::move(itinerary));
   }
 
   template <typename Id, typename Size, typename Delay>
