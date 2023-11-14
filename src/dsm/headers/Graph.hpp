@@ -183,6 +183,10 @@ namespace dsm {
         bool val;
         file >> index >> val;
         m_adjacency->insert(index, val);
+        m_nodes.insert_or_assign(index / rows, make_shared<Node<Id>>(index / rows));
+        m_nodes.insert_or_assign(index % rows, make_shared<Node<Id>>(index % rows));
+        m_streets.insert_or_assign(index, make_shared<Street<Id, Size>>(index));
+        m_streets[index]->setNodePair(index / rows, index % rows);
       }
     } else {
       std::string errrorMsg = "Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
