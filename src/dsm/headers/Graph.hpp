@@ -180,14 +180,13 @@ namespace dsm {
       // each line has (should have) 3 elements
       while (!file.eof()) {
         Id index;
-        double val;
+        bool val;
         file >> index >> val;
-        m_adjacency->insert(index, val > 0);
+        m_adjacency->insert(index, val);
         m_nodes.insert_or_assign(index / rows, make_shared<Node<Id>>(index / rows));
         m_nodes.insert_or_assign(index % rows, make_shared<Node<Id>>(index % rows));
         m_streets.insert_or_assign(index, make_shared<Street<Id, Size>>(index));
         m_streets.at(index)->setNodePair(index / rows, index % rows);
-        m_streets.at(index)->setLength(val);
       }
     } else {
       std::string errrorMsg = "Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
