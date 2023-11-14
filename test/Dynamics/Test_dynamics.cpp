@@ -38,6 +38,25 @@ TEST_CASE("Dynamics") {
         CHECK(dynamics.agents()[0]->itinerary().source() == itineary.source());
         CHECK(dynamics.agents()[0]->itinerary().destination() == itineary.destination());
     }
+    SUBCASE("AddRandomAgents with many itineraries") {
+        /// GIVEN: a dynamics object
+        /// WHEN: we add many itineraries
+        /// THEN: the number of agents is the same as the number of itineraries
+        Dynamics dynamics(graph);
+        dynamics.setSeed(69);
+        Itineary itineary{0, 2}, itineary2{1, 2}, itineary3{0, 1};
+        dynamics.addItinerary(itineary);
+        dynamics.addItinerary(itineary2);
+        dynamics.addItinerary(itineary3);
+        dynamics.addRandomAgents(3);
+        CHECK(dynamics.agents().size() == 3);
+        CHECK(dynamics.agents()[0]->itinerary().source() == itineary2.source());
+        CHECK(dynamics.agents()[0]->itinerary().destination() == itineary2.destination());
+        CHECK(dynamics.agents()[1]->itinerary().source() == itineary.source());
+        CHECK(dynamics.agents()[1]->itinerary().destination() == itineary.destination());
+        CHECK(dynamics.agents()[2]->itinerary().source() == itineary3.source());
+        CHECK(dynamics.agents()[2]->itinerary().destination() == itineary3.destination());
+    }
     SUBCASE("AddRandomAgents - exceptions") {
         /// GIVEN: a dynamics object
         /// WHEN: we add a random agent with a negative number of agents
