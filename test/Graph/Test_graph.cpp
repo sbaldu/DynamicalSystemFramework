@@ -53,6 +53,8 @@ TEST_CASE("Graph") {
     CHECK(graph.adjMatrix()->operator()(6));
     CHECK(graph.adjMatrix()->operator()(3));
     CHECK(graph.adjMatrix()->operator()(1));
+    CHECK(graph.nodeSet().size() == 3);
+    CHECK(graph.streetSet().size() == 4);
   }
   SUBCASE("importAdj - EXCEPTIONS") {
     // This tests the importAdj throws an exception when the file has not the correct format or is not found
