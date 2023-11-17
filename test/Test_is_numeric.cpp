@@ -29,5 +29,3 @@ static_assert(is_numeric_v<double>);
 static_assert(is_numeric_v<long double>);
 static_assert(!is_numeric_v<char>);
 static_assert(!is_numeric_v<bool>);
-
-int main() {}

@@ -5,7 +5,6 @@
 #include "Street.hpp"
 #include "SparseMatrix.hpp"
 
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
 
 using Graph = dsm::Graph<uint16_t, uint16_t>;
