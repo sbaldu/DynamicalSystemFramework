@@ -37,9 +37,10 @@ namespace dsm {
     std::vector<std::unique_ptr<Agent<Id, Size, Delay>>> m_agents;
     TimePoint m_time;
     std::unique_ptr<Graph<Id, Size>> m_graph;
-    double m_temperature;
+    double m_errorProbability;
     double m_minSpeedRateo;
     std::mt19937_64 m_generator{std::random_device{}()};
+    std::uniform_real_distribution<double> m_uniformDist{0., 1.};
 
   public:
     Dynamics() = delete;
@@ -57,6 +58,10 @@ namespace dsm {
     /// @param minSpeedRateo The minim speed rateo
     /// @throw std::invalid_argument, If the minim speed rateo is not between 0 and 1
     void setMinSpeedRateo(double minSpeedRateo);
+    /// @brief Set the error probability
+    /// @param errorProbability, The error probability
+    /// @throw std::invalid_argument, If the error probability is not between 0 and 1
+    void setErrorProbability(double errorProbability);
     /// @brief Update the paths of the itineraries based on the actual travel times
     void updatePaths();  //TODO: implement
 
@@ -131,7 +136,16 @@ namespace dsm {
 
     /// @brief Reset the simulation time
     void resetTime();
+    /// @brief Move an agent
+    /// @param agentId The index of the agent to move
+    /// @return true If the agent has been moved, false otherwise
+    bool moveAgent(Size agentId);
     
+    /// @brief Evolve the simulation
+    /// @tparam F The type of the function to call
+    /// @tparam ...Tn The types of the arguments of the function
+    /// @param f The function to call
+    /// @param ...args The arguments of the function
     template <typename F, typename... Tn>
       requires std::is_invocable_v<F, Tn...>
     void evolve(F f, Tn... args);
@@ -165,6 +179,17 @@ namespace dsm {
       throw std::invalid_argument(errorMsg);
     }
     m_minSpeedRateo = minSpeedRateo;
+  }
+
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Dynamics<Id, Size, Delay>::setErrorProbability(double errorProbability) {
+    if (errorProbability < 0. || errorProbability > 1.) {
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                           "The error probability must be between 0 and 1"};
+      throw std::invalid_argument(errorMsg);
+    }
+    m_errorProbability = errorProbability;
   }
 
   template <typename Id, typename Size, typename Delay>
@@ -292,6 +317,33 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Dynamics<Id, Size, Delay>::resetTime() {
     m_time = 0;
+  }
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  bool Dynamics<Id, Size, Delay>::moveAgent(Size agentId) {
+    auto agentIt{std::find_if(
+        m_agents.begin(), m_agents.end(), [agentId](const auto& agent) -> bool { return agent->index() == agentId; })};
+    if (agentIt == m_agents.end()) {
+      return false;
+    }
+    const auto& street{m_graph->street((*agentIt)->position())};
+    const auto& possibleMoves{(*agent)->path().getRow((*agent).position())}
+    const auto p = m_uniformDist(m_generator);
+    auto sum = 0.;
+    for (const auto& move: possibleMoves) {
+      sum  += move.second;
+      if (p < sum) {
+        const auto& nextStreet = m_graph->street(move.first);
+        if (street->density() < 1.) {
+          street->dequeue();
+          nextStreet->enqueue(*agent);
+          (*agent)->setPosition(move.first);
+          return true;
+        }
+        return false;
+      }
+    }
+    return false;
   }
 
   template <typename Id, typename Size, typename Delay>
