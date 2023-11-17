@@ -1,8 +1,0 @@
----
-engines:
-    cppchek:
-        language: c++
-    exclude_paths: [
-        'extern/**',
-        'extern/*'
-    ]
