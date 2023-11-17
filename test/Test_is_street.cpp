@@ -35,5 +35,3 @@ static_assert(is_street_v<std::shared_ptr<Street<uint32_t, uint32_t>>>);
 static_assert(!is_street_v<std::shared_ptr<int>>);
 static_assert(!is_street_v<std::shared_ptr<unsigned int>>);
 static_assert(!is_street_v<std::shared_ptr<std::string>>);
-
-int main() {}
