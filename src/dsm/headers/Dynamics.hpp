@@ -193,6 +193,10 @@ namespace dsm {
   }
 
   template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>)
+  void Dynamics<Id, Size, Delay>::updatePaths() {}
+
+  template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   const Graph<Id, Size>& Dynamics<Id, Size, Delay>::graph() const {
     return *m_graph;
@@ -327,7 +331,7 @@ namespace dsm {
       return false;
     }
     const auto& street{m_graph->street((*agentIt)->position())};
-    const auto& possibleMoves{(*agent)->path().getRow((*agent).position())}
+    const auto& possibleMoves{(*agent)->itinerary().path().getRow((*agent).position())}
     const auto p = m_uniformDist(m_generator);
     auto sum = 0.;
     for (const auto& move: possibleMoves) {
