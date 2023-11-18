@@ -98,7 +98,7 @@ TEST_CASE("Street") {
     Agent a3{3, 1};
     Agent a4{4, 1};
 
-    Street street{1, std::make_pair(0, 1)};
+    Street street{1, 4, 3.5, std::make_pair(0, 1)};
     // fill the queue
     street.enqueue(a1);
     street.enqueue(a2);
@@ -121,7 +121,7 @@ TEST_CASE("Street") {
     Agent a3{3, 1};
     Agent a4{4, 1};
 
-    Street street{1, std::make_pair(0, 1)};
+    Street street{1, 4, 3.5, std::make_pair(0, 1)};
     // fill the queue
     street.enqueue(a1);
     street.enqueue(a2);
