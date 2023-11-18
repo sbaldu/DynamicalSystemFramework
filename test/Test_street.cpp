@@ -20,12 +20,10 @@ TEST_CASE("Street") {
     THEN: The Id, capacity, and length are set correctly
     */
 
-    Street street{1, 2, 3.5};
+    Street street{1, std::make_pair(0, 1)};
     CHECK_EQ(street.id(), 1);
-    CHECK_EQ(street.capacity(), 2);
-    CHECK_EQ(street.length(), 3.5);
-    CHECK_EQ(street.nodePair(), std::pair<uint16_t, uint16_t>());
-    CHECK_EQ(street.density(), 0);
+    CHECK_EQ(street.nodePair().first, 0);
+    CHECK_EQ(street.nodePair().second, 1);
     CHECK_EQ(street.maxSpeed(), 30.);
   }
 
@@ -65,7 +63,7 @@ TEST_CASE("Street") {
   SUBCASE("SetNodePair_1") {
     /*This tests the setNodePair method*/
 
-    Street street{1, 2, 3.5};
+    Street street{1, std::make_pair(0, 1)};
     street.setNodePair(4, 5);
     CHECK_EQ(street.nodePair().first, 4);
     CHECK_EQ(street.nodePair().second, 5);
@@ -74,7 +72,7 @@ TEST_CASE("Street") {
   SUBCASE("SetNodePair_2") {
     /*This tests the setNodePair method*/
 
-    Street street{1, 2, 3.5};
+    Street street{1, std::make_pair(0, 1)};
     Node node1{4};
     Node node2{5};
     street.setNodePair(node1, node2);
@@ -85,7 +83,7 @@ TEST_CASE("Street") {
   SUBCASE("SetNodePair_3") {
     /*This tests the setNodePair method*/
 
-    Street street{1, 2, 3.5};
+    Street street{1, std::make_pair(0, 1)};
     street.setNodePair(std::make_pair(4, 5));
     CHECK_EQ(street.nodePair().first, 4);
     CHECK_EQ(street.nodePair().second, 5);
@@ -100,7 +98,7 @@ TEST_CASE("Street") {
     Agent a3{3, 1};
     Agent a4{4, 1};
 
-    Street street{1, 4, 3.5};
+    Street street{1, std::make_pair(0, 1)};
     // fill the queue
     street.enqueue(a1);
     street.enqueue(a2);
@@ -123,7 +121,7 @@ TEST_CASE("Street") {
     Agent a3{3, 1};
     Agent a4{4, 1};
 
-    Street street{1, 4, 3.5};
+    Street street{1, std::make_pair(0, 1)};
     // fill the queue
     street.enqueue(a1);
     street.enqueue(a2);
