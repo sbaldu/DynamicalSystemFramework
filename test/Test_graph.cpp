@@ -18,7 +18,7 @@ TEST_CASE("Graph") {
     graph.addStreet(street);
     graph.buildAdj();
     CHECK(graph.streetSet().size() == 1);
-	CHECK_EQ(graph.nodeSet().size(), 2);
+    CHECK_EQ(graph.nodeSet().size(), 2);
     CHECK(graph.adjMatrix()->size() == 1);
   }
 
@@ -51,10 +51,10 @@ TEST_CASE("Graph") {
     graph.addStreet(s3);
     graph.addStreet(s4);
     graph.addStreet(s5);
-	graph.buildAdj();
+    graph.buildAdj();
 
-	CHECK_EQ(graph.streetSet().size(), 5);
-	CHECK_EQ(graph.nodeSet().size(), 4);
+    CHECK_EQ(graph.streetSet().size(), 5);
+    CHECK_EQ(graph.nodeSet().size(), 4);
     CHECK_EQ(graph.adjMatrix()->size(), 5);
     CHECK(graph.adjMatrix()->contains(0, 1));
     CHECK(graph.adjMatrix()->contains(1, 2));
