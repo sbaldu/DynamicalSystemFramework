@@ -26,7 +26,7 @@ cmake -B build && make -C build
 ```
 To run all the tests together use the command:
 ```shell
-for f in ./*.out ; do ./$f ; done
+./dsm_tests.out
 ```
 
 ## Benchmarking

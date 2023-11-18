@@ -2,7 +2,6 @@
 
 #include "Itinerary.hpp"
 
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
 
 using Itinerary = dsm::Itinerary<uint16_t>;
