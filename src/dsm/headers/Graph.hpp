@@ -226,12 +226,20 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Graph<Id, Size>::addStreet(shared<Street<Id, Size>> street) {
     m_streets.insert(std::make_pair(street->id(), street));
+	Id node1{street->nodePair().first};
+	Id node2{street->nodePair().second};
+	m_nodes.insert_or_assign(std::make_pair(node1, make_shared<Node<Id>(node1)));
+	m_nodes.insert_or_assign(std::make_pair(node2, make_shared<Node<Id>(node2)));
   }
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Graph<Id, Size>::addStreet(const Street<Id, Size>& street) {
     m_streets.insert(std::make_pair(street.id(), make_shared<Street<Id, Size>>(street)));
+	Id node1{street.nodePair().first};
+	Id node2{street.nodePair().second};
+	m_nodes.insert_or_assign(std::make_pair(node1, make_shared<Node<Id>(node1)));
+	m_nodes.insert_or_assign(std::make_pair(node2, make_shared<Node<Id>(node2)));
   }
 
   template <typename Id, typename Size>
