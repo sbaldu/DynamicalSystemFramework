@@ -71,11 +71,11 @@ namespace dsm {
     void addNode(const Node<Id>& node);
 
     template <typename... Tn>
-      requires(is_node_v<Tn> && ...)
+      requires(is_node_v<std::remove_reference<Tn>> && ...)
     void addNodes(Tn&&... nodes);
 
     template <typename T1, typename... Tn>
-      requires is_node_v<T1> && (is_node_v<Tn> && ...)
+      requires is_node_v<std::remove_reference<T1>> && (is_node_v<std::remove_reference<Tn>> && ...)
     void addNodes(T1&& node, Tn&&... nodes);
 
     /// @brief Add a street to the graph
@@ -85,12 +85,12 @@ namespace dsm {
     /// @param street, A reference to the street to add
     void addStreet(const Street<Id, Size>& street);
 
-    template <typename T1>
-      requires is_street_v<T1>
-    void addStreets(T1&& street);
+    template <typename... Tn>
+      requires(is_street_v<std::remove_reference<Tn>> && ...)
+    void addStreets(Tn&&... streets);
 
     template <typename T1, typename... Tn>
-      requires is_street_v<T1> && (is_street_v<Tn> && ...)
+      requires is_street_v<std::remove_reference<T1>> && (is_street_v<std::remove_reference<Tn>> && ...)
     void addStreets(T1&& street, Tn&&... streets);
 
     /// @brief Get the graph's adjacency matrix
@@ -204,13 +204,13 @@ namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   template <typename... Tn>
-    requires(is_node_v<Tn> && ...)
+    requires(is_node_v<std::remove_reference<Tn>> && ...)
   void Graph<Id, Size>::addNodes(Tn&&... nodes) {}
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   template <typename T1, typename... Tn>
-    requires is_node_v<T1> && (is_node_v<Tn> && ...)
+    requires is_node_v<std::remove_reference<T1>> && (is_node_v<std::remove_reference<Tn>> && ...)
   void Graph<Id, Size>::addNodes(T1&& node, Tn&&... nodes) {
     addNode(std::forward<T1>(node));
     addNodes(std::forward<Tn>(nodes)...);
@@ -243,7 +243,7 @@ namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   template <typename T1>
-    requires is_street_v<T1>
+    requires is_street_v<std::remove_reference_t<T1>>
   void Graph<Id, Size>::addStreets(T1&& street) {
     // insert street
     m_streets.insert(std::make_pair(street.id(), make_shared<Street<Id, Size>>(street)));
@@ -257,7 +257,7 @@ namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   template <typename T1, typename... Tn>
-    requires is_street_v<T1> && (is_street_v<Tn> && ...)
+    requires is_street_v<std::remove_reference<T1>> && (is_street_v<std::remove_reference<Tn>> && ...)
   void Graph<Id, Size>::addStreets(T1&& street, Tn&&... streets) {
     addStreet(std::forward<T1>(street));
     addStreets(std::forward<Tn>(streets)...);
