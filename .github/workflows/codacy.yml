@@ -53,6 +53,7 @@ jobs:
           # This will handover control about PR rejection to the GitHub side
           max-allowed-issues: 2147483647
           directory: src test
+          run-docker-tools: "false"
 
       # Upload the SARIF file generated in the previous step
       - name: Upload SARIF results file
