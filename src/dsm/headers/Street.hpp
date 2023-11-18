@@ -37,15 +37,11 @@ namespace dsm {
     Size m_capacity;
 
   public:
-    Street() = default;
+    Street() = delete;
     /// @brief Construct a new Street object
     /// @param index, The street's id
-    Street(Id index);
-    /// @brief Construct a new Street object
-    /// @param index, The street's id
-    /// @param capacity, The street's capacity
-    /// @param len, The street's length
-    Street(Id index, Size capacity, double len);
+    /// @param nodePair, The street's node pair
+    Street(Id index, std::pair<Id, Id> nodePair);
     /// @brief Construct a new Street object
     /// @param index, The street's id
     /// @param capacity, The street's capacity
