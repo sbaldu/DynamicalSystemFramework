@@ -8,5 +8,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_subdirectory(test)
+add_subdirectory(test/data)
 
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/src/ DESTINATION /usr/include)
