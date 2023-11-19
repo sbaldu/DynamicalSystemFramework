@@ -11,8 +11,8 @@ string(APPEND CMAKE_CXX_FLAGS "-Wall -Wextra -O3 -g")
 # Set the folder for the executable
 set(EXECUTABLE_OUTPUT_PATH ../../)
 
-include_directories(../../src/)
-include_directories(../../src/utility/)
+include_directories(../../src/dsm/headers)
+include_directories(../../src/dsm/utility/)
 
 # Compile
 add_executable(bench_street.out BenchStreet.cpp)
