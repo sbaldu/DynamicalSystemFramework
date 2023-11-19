@@ -27,11 +27,11 @@ jobs:
         run: cmake --build ${{github.workspace}}/build
 
       - name: run
-        working-directory: ${{github.workspace}}/build/test
+        working-directory: ${{github.workspace}}/build
         run: ./dsm_tests.out
 
       - name: create Report
-        working-directory: ${{github.workspace}}/build/test
+        working-directory: ${{github.workspace}}/build
         run: lcov --capture --directory .. --output-file coverage.info
 
       - uses: codecov/codecov-action@v3.1.4
