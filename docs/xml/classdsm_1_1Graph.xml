@@ -1,0 +1,541 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classdsm_1_1Graph" kind="class" language="C++" prot="public">
+    <compoundname>dsm::Graph</compoundname>
+    <includes local="no">Graph.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename Id</type>
+      </param>
+      <param>
+        <type>typename Size</type>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classdsm_1_1Graph_1a5cbe389bfbc37db4d61f8a7467bcc4f9" prot="private" static="no" mutable="no">
+        <type>std::unordered_set&lt; shared&lt; <ref refid="classdsm_1_1Node" kindref="compound">Node</ref>&lt; Id &gt; &gt;, <ref refid="structdsm_1_1nodeHash" kindref="compound">nodeHash</ref>&lt; Id &gt; &gt;</type>
+        <definition>std::unordered_set&lt;shared&lt;Node&lt;Id&gt; &gt;, nodeHash&lt;Id&gt; &gt; dsm::Graph&lt; Id, Size &gt;::m_nodes</definition>
+        <argsstring></argsstring>
+        <name>m_nodes</name>
+        <qualifiedname>dsm::Graph::m_nodes</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/dsm/headers/Graph.hpp" line="45" column="24" bodyfile="src/dsm/headers/Graph.hpp" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classdsm_1_1Graph_1a499a3a5fb6cb079010b508d10633a758" prot="private" static="no" mutable="no">
+        <type>std::unordered_set&lt; shared&lt; <ref refid="classdsm_1_1Street" kindref="compound">Street</ref>&lt; Id, Size &gt; &gt;, <ref refid="structdsm_1_1streetHash" kindref="compound">streetHash</ref>&lt; Id, Size &gt; &gt;</type>
+        <definition>std::unordered_set&lt;shared&lt;Street&lt;Id, Size&gt; &gt;, streetHash&lt;Id, Size&gt; &gt; dsm::Graph&lt; Id, Size &gt;::m_streets</definition>
+        <argsstring></argsstring>
+        <name>m_streets</name>
+        <qualifiedname>dsm::Graph::m_streets</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/dsm/headers/Graph.hpp" line="46" column="24" bodyfile="src/dsm/headers/Graph.hpp" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classdsm_1_1Graph_1aa0f10644c6e30df6880f0c8c26a111d6" prot="private" static="no" mutable="no">
+        <type>shared&lt; <ref refid="classdsm_1_1SparseMatrix" kindref="compound">SparseMatrix</ref>&lt; Id, bool &gt; &gt;</type>
+        <definition>shared&lt;SparseMatrix&lt;Id, bool&gt; &gt; dsm::Graph&lt; Id, Size &gt;::m_adjacency</definition>
+        <argsstring></argsstring>
+        <name>m_adjacency</name>
+        <qualifiedname>dsm::Graph::m_adjacency</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/dsm/headers/Graph.hpp" line="47" column="12" bodyfile="src/dsm/headers/Graph.hpp" bodystart="47" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classdsm_1_1Graph_1aa3737592e1af21a39cda4b2c45862ac5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>dsm::Graph&lt; Id, Size &gt;::Graph</definition>
+        <argsstring>()</argsstring>
+        <name>Graph</name>
+        <qualifiedname>dsm::Graph::Graph</qualifiedname>
+    <requiresclause>(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)    </requiresclause>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/dsm/headers/Graph.hpp" line="50" column="5" bodyfile="src/dsm/headers/Graph.hpp" bodystart="110" bodyend="110"/>
+      </memberdef>
+      <memberdef kind="function" id="classdsm_1_1Graph_1ae7b2423f9273b9ae65e431c4c8e0b102" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>dsm::Graph&lt; Id, Size &gt;::Graph</definition>
+        <argsstring>(const SparseMatrix&lt; Id, bool &gt; &amp;adj)</argsstring>
+        <name>Graph</name>
+        <qualifiedname>dsm::Graph::Graph</qualifiedname>
+        <param>
+          <type>const <ref refid="classdsm_1_1SparseMatrix" kindref="compound">SparseMatrix</ref>&lt; Id, bool &gt; &amp;</type>
+          <declname>adj</declname>
+        </param>
+    <requiresclause>(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)    </requiresclause>
+        <briefdescription>
+<para>Construct a new <ref refid="classdsm_1_1Graph" kindref="compound">Graph</ref> object. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>adj</parametername>
+<parametername>An</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>adjacency matrix made by a <ref refid="classdsm_1_1SparseMatrix" kindref="compound">SparseMatrix</ref> representing the graph&apos;s adjacency matrix </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/dsm/headers/Graph.hpp" line="53" column="5" bodyfile="src/dsm/headers/Graph.hpp" bodystart="114" bodyend="122"/>
+      </memberdef>
+      <memberdef kind="function" id="classdsm_1_1Graph_1af5d4c809ef004de2dfde03b3df92609e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>dsm::Graph&lt; Id, Size &gt;::Graph</definition>
+        <argsstring>(const std::unordered_set&lt; shared&lt; Street&lt; Id, Size &gt; &gt;, nodeHash&lt; Id &gt; &gt; &amp;streetSet)</argsstring>
+        <name>Graph</name>
+        <qualifiedname>dsm::Graph::Graph</qualifiedname>
+        <param>
+          <type>const std::unordered_set&lt; shared&lt; <ref refid="classdsm_1_1Street" kindref="compound">Street</ref>&lt; Id, Size &gt; &gt;, <ref refid="structdsm_1_1nodeHash" kindref="compound">nodeHash</ref>&lt; Id &gt; &gt; &amp;</type>
+          <declname>streetSet</declname>
+        </param>
+    <requiresclause>(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)    </requiresclause>
+        <briefdescription>
+<para>Construct a new <ref refid="classdsm_1_1Graph" kindref="compound">Graph</ref> object. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>streetSet</parametername>
+<parametername>A</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>set of streets representing the graph&apos;s streets </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/dsm/headers/Graph.hpp" line="56" column="5" bodyfile="src/dsm/headers/Graph.hpp" bodystart="126" bodyend="135"/>
+      </memberdef>
+      <memberdef kind="function" id="classdsm_1_1Graph_1a9597482c114e45c866c607ee958b5f38" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void dsm::Graph&lt; Id, Size &gt;::buildAdj</definition>
+        <argsstring>()</argsstring>
+        <name>buildAdj</name>
+        <qualifiedname>dsm::Graph::buildAdj</qualifiedname>
+    <requiresclause>(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)    </requiresclause>
+        <briefdescription>
+<para>Build the graph&apos;s adjacency matrix. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/dsm/headers/Graph.hpp" line="59" column="10" bodyfile="src/dsm/headers/Graph.hpp" bodystart="139" bodyend="155"/>
+      </memberdef>
+      <memberdef kind="function" id="classdsm_1_1Graph_1a6da4e69fa548c5d336171448e962e619" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void dsm::Graph&lt; Id, Size &gt;::importAdj</definition>
+        <argsstring>(const std::string &amp;fileName)</argsstring>
+        <name>importAdj</name>
+        <qualifiedname>dsm::Graph::importAdj</qualifiedname>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>fileName</declname>
+        </param>
+    <requiresclause>(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)    </requiresclause>
+        <briefdescription>
+<para>Import the graph&apos;s adjacency matrix from a file. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>fileName</parametername>
+<parametername>The</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>name of the file to import the adjacency matrix from. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::invalid_argument</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the file is not found or the format is not supported The matrix format is deduced from the file extension. Currently only .dsm files are supported. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/dsm/headers/Graph.hpp" line="65" column="10" bodyfile="src/dsm/headers/Graph.hpp" bodystart="159" bodyend="189"/>
+      </memberdef>
+      <memberdef kind="function" id="classdsm_1_1Graph_1a9ead5a1c3783d3b0a137c53eed619d54" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void dsm::Graph&lt; Id, Size &gt;::addNode</definition>
+        <argsstring>(shared&lt; Node&lt; Id &gt; &gt; node)</argsstring>
+        <name>addNode</name>
+        <qualifiedname>dsm::Graph::addNode</qualifiedname>
+        <param>
+          <type>shared&lt; <ref refid="classdsm_1_1Node" kindref="compound">Node</ref>&lt; Id &gt; &gt;</type>
+          <declname>node</declname>
+        </param>
+    <requiresclause>(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)    </requiresclause>
+        <briefdescription>
+<para>Add a node to the graph. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>node</parametername>
+<parametername>A</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>std::shared_ptr to the node to add </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/dsm/headers/Graph.hpp" line="69" column="10" bodyfile="src/dsm/headers/Graph.hpp" bodystart="193" bodyend="195"/>
+      </memberdef>
+      <memberdef kind="function" id="classdsm_1_1Graph_1a5f3955f7f30c7f73d74035656b3777c7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void dsm::Graph&lt; Id, Size &gt;::addNode</definition>
+        <argsstring>(const Node&lt; Id &gt; &amp;node)</argsstring>
+        <name>addNode</name>
+        <qualifiedname>dsm::Graph::addNode</qualifiedname>
+        <param>
+          <type>const <ref refid="classdsm_1_1Node" kindref="compound">Node</ref>&lt; Id &gt; &amp;</type>
+          <declname>node</declname>
+        </param>
+    <requiresclause>(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)    </requiresclause>
+        <briefdescription>
+<para>Add a node to the graph. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>node</parametername>
+<parametername>A</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>reference to the node to add </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/dsm/headers/Graph.hpp" line="72" column="10" bodyfile="src/dsm/headers/Graph.hpp" bodystart="199" bodyend="201"/>
+      </memberdef>
+      <memberdef kind="function" id="classdsm_1_1Graph_1acde71b4899f4a3c06c47cfb745bc8c3f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename...</type>
+            <declname>Tn</declname>
+            <defname>Tn</defname>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void dsm::Graph&lt; Id, Size &gt;::addNodes</definition>
+        <argsstring>(Tn &amp;&amp;... nodes)</argsstring>
+        <name>addNodes</name>
+        <qualifiedname>dsm::Graph::addNodes</qualifiedname>
+        <param>
+          <type>Tn &amp;&amp;...</type>
+          <declname>nodes</declname>
+        </param>
+    <requiresclause>(is_node_v&lt;Tn&gt; &amp;&amp; ...)    </requiresclause>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/dsm/headers/Graph.hpp" line="76" column="10" bodyfile="src/dsm/headers/Graph.hpp" bodystart="207" bodyend="207"/>
+      </memberdef>
+      <memberdef kind="function" id="classdsm_1_1Graph_1af93b0f06097ec0e1b85e9f6b0ab6bdf8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T1</type>
+          </param>
+          <param>
+            <type>typename...</type>
+            <declname>Tn</declname>
+            <defname>Tn</defname>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void dsm::Graph&lt; Id, Size &gt;::addNodes</definition>
+        <argsstring>(T1 &amp;&amp;node, Tn &amp;&amp;... nodes)</argsstring>
+        <name>addNodes</name>
+        <qualifiedname>dsm::Graph::addNodes</qualifiedname>
+        <param>
+          <type>T1 &amp;&amp;</type>
+          <declname>node</declname>
+        </param>
+        <param>
+          <type>Tn &amp;&amp;...</type>
+          <declname>nodes</declname>
+        </param>
+    <requiresclause>is_node_v&lt;T1&gt; &amp;&amp; (is_node_v&lt;Tn&gt; &amp;&amp; ...)    </requiresclause>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/dsm/headers/Graph.hpp" line="80" column="10" bodyfile="src/dsm/headers/Graph.hpp" bodystart="213" bodyend="216"/>
+      </memberdef>
+      <memberdef kind="function" id="classdsm_1_1Graph_1ab7afafad25382c2ea504db47dfe28aef" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void dsm::Graph&lt; Id, Size &gt;::addStreet</definition>
+        <argsstring>(shared&lt; Street&lt; Id, Size &gt; &gt; street)</argsstring>
+        <name>addStreet</name>
+        <qualifiedname>dsm::Graph::addStreet</qualifiedname>
+        <param>
+          <type>shared&lt; <ref refid="classdsm_1_1Street" kindref="compound">Street</ref>&lt; Id, Size &gt; &gt;</type>
+          <declname>street</declname>
+        </param>
+    <requiresclause>(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)    </requiresclause>
+        <briefdescription>
+<para>Add a street to the graph. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>street</parametername>
+<parametername>A</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>std::shared_ptr to the street to add </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/dsm/headers/Graph.hpp" line="84" column="10" bodyfile="src/dsm/headers/Graph.hpp" bodystart="220" bodyend="222"/>
+      </memberdef>
+      <memberdef kind="function" id="classdsm_1_1Graph_1ade2a7b8b165907086f87a6ebedcefb2f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void dsm::Graph&lt; Id, Size &gt;::addStreet</definition>
+        <argsstring>(const Street&lt; Id, Size &gt; &amp;street)</argsstring>
+        <name>addStreet</name>
+        <qualifiedname>dsm::Graph::addStreet</qualifiedname>
+        <param>
+          <type>const <ref refid="classdsm_1_1Street" kindref="compound">Street</ref>&lt; Id, Size &gt; &amp;</type>
+          <declname>street</declname>
+        </param>
+    <requiresclause>(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)    </requiresclause>
+        <briefdescription>
+<para>Add a street to the graph. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>street</parametername>
+<parametername>A</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>reference to the street to add </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/dsm/headers/Graph.hpp" line="87" column="10" bodyfile="src/dsm/headers/Graph.hpp" bodystart="226" bodyend="228"/>
+      </memberdef>
+      <memberdef kind="function" id="classdsm_1_1Graph_1af4c45a369ae9394f7acb2b045194ca6f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename...</type>
+            <declname>Tn</declname>
+            <defname>Tn</defname>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void dsm::Graph&lt; Id, Size &gt;::addStreets</definition>
+        <argsstring>(Tn &amp;&amp;... streets)</argsstring>
+        <name>addStreets</name>
+        <qualifiedname>dsm::Graph::addStreets</qualifiedname>
+        <param>
+          <type>Tn &amp;&amp;...</type>
+          <declname>streets</declname>
+        </param>
+    <requiresclause>(is_street_v&lt;Tn&gt; &amp;&amp; ...)    </requiresclause>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/dsm/headers/Graph.hpp" line="91" column="10" bodyfile="src/dsm/headers/Graph.hpp" bodystart="234" bodyend="234"/>
+      </memberdef>
+      <memberdef kind="function" id="classdsm_1_1Graph_1a4ed4bfad5369c6ba71adb529d2819112" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T1</type>
+          </param>
+          <param>
+            <type>typename...</type>
+            <declname>Tn</declname>
+            <defname>Tn</defname>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void dsm::Graph&lt; Id, Size &gt;::addStreets</definition>
+        <argsstring>(T1 &amp;&amp;street, Tn &amp;&amp;... streets)</argsstring>
+        <name>addStreets</name>
+        <qualifiedname>dsm::Graph::addStreets</qualifiedname>
+        <param>
+          <type>T1 &amp;&amp;</type>
+          <declname>street</declname>
+        </param>
+        <param>
+          <type>Tn &amp;&amp;...</type>
+          <declname>streets</declname>
+        </param>
+    <requiresclause>is_street_v&lt;T1&gt; &amp;&amp; (is_street_v&lt;Tn&gt; &amp;&amp; ...)    </requiresclause>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/dsm/headers/Graph.hpp" line="95" column="10" bodyfile="src/dsm/headers/Graph.hpp" bodystart="240" bodyend="243"/>
+      </memberdef>
+      <memberdef kind="function" id="classdsm_1_1Graph_1a8ccd4e35dc4063f423902c920bb0c723" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>shared&lt; <ref refid="classdsm_1_1SparseMatrix" kindref="compound">SparseMatrix</ref>&lt; Id, bool &gt; &gt;</type>
+        <definition>shared&lt; SparseMatrix&lt; Id, bool &gt; &gt; dsm::Graph&lt; Id, Size &gt;::adjMatrix</definition>
+        <argsstring>() const</argsstring>
+        <name>adjMatrix</name>
+        <qualifiedname>dsm::Graph::adjMatrix</qualifiedname>
+    <requiresclause>(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)    </requiresclause>
+        <briefdescription>
+<para>Get the graph&apos;s adjacency matrix. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>A std::shared_ptr to the graph&apos;s adjacency matrix </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/dsm/headers/Graph.hpp" line="99" column="12" bodyfile="src/dsm/headers/Graph.hpp" bodystart="247" bodyend="249"/>
+      </memberdef>
+      <memberdef kind="function" id="classdsm_1_1Graph_1aee0e338487f687cae252ee51a0f4c982" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>std::unordered_set&lt; shared&lt; <ref refid="classdsm_1_1Node" kindref="compound">Node</ref>&lt; Id &gt; &gt;, <ref refid="structdsm_1_1nodeHash" kindref="compound">nodeHash</ref>&lt; Id &gt; &gt;</type>
+        <definition>std::unordered_set&lt; shared&lt; Node&lt; Id &gt; &gt;, nodeHash&lt; Id &gt; &gt; dsm::Graph&lt; Id, Size &gt;::nodeSet</definition>
+        <argsstring>() const</argsstring>
+        <name>nodeSet</name>
+        <qualifiedname>dsm::Graph::nodeSet</qualifiedname>
+    <requiresclause>(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)    </requiresclause>
+        <briefdescription>
+<para>Get the graph&apos;s node set. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>A std::unordered_set containing the graph&apos;s nodes </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/dsm/headers/Graph.hpp" line="102" column="24" bodyfile="src/dsm/headers/Graph.hpp" bodystart="253" bodyend="255"/>
+      </memberdef>
+      <memberdef kind="function" id="classdsm_1_1Graph_1aff1ae77416eff8585c376192ed4fc595" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>std::unordered_set&lt; shared&lt; <ref refid="classdsm_1_1Street" kindref="compound">Street</ref>&lt; Id, Size &gt; &gt;, <ref refid="structdsm_1_1streetHash" kindref="compound">streetHash</ref>&lt; Id, Size &gt; &gt;</type>
+        <definition>std::unordered_set&lt; shared&lt; Street&lt; Id, Size &gt; &gt;, streetHash&lt; Id, Size &gt; &gt; dsm::Graph&lt; Id, Size &gt;::streetSet</definition>
+        <argsstring>() const</argsstring>
+        <name>streetSet</name>
+        <qualifiedname>dsm::Graph::streetSet</qualifiedname>
+    <requiresclause>(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)    </requiresclause>
+        <briefdescription>
+<para>Get the graph&apos;s street set. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>A std::unordered_set containing the graph&apos;s streets </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/dsm/headers/Graph.hpp" line="105" column="24" bodyfile="src/dsm/headers/Graph.hpp" bodystart="259" bodyend="261"/>
+      </memberdef>
+    </sectiondef>
+    <requiresclause>(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)    </requiresclause>
+    <briefdescription>
+<para>The <ref refid="classdsm_1_1Graph" kindref="compound">Graph</ref> class represents a graph in the network. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>Id</parametername>
+<parametername>The</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>type of the graph&apos;s id. It must be an unsigned integral type. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>Size</parametername>
+<parametername>The</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>type of the graph&apos;s capacity. It must be an unsigned integral type. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+    </detaileddescription>
+    <location file="src/dsm/headers/Graph.hpp" line="43" column="3" bodyfile="src/dsm/headers/Graph.hpp" bodystart="43" bodyend="106"/>
+    <listofallmembers>
+      <member refid="classdsm_1_1Graph_1a9ead5a1c3783d3b0a137c53eed619d54" prot="public" virt="non-virtual"><scope>dsm::Graph</scope><name>addNode</name></member>
+      <member refid="classdsm_1_1Graph_1a5f3955f7f30c7f73d74035656b3777c7" prot="public" virt="non-virtual"><scope>dsm::Graph</scope><name>addNode</name></member>
+      <member refid="classdsm_1_1Graph_1acde71b4899f4a3c06c47cfb745bc8c3f" prot="public" virt="non-virtual"><scope>dsm::Graph</scope><name>addNodes</name></member>
+      <member refid="classdsm_1_1Graph_1af93b0f06097ec0e1b85e9f6b0ab6bdf8" prot="public" virt="non-virtual"><scope>dsm::Graph</scope><name>addNodes</name></member>
+      <member refid="classdsm_1_1Graph_1ab7afafad25382c2ea504db47dfe28aef" prot="public" virt="non-virtual"><scope>dsm::Graph</scope><name>addStreet</name></member>
+      <member refid="classdsm_1_1Graph_1ade2a7b8b165907086f87a6ebedcefb2f" prot="public" virt="non-virtual"><scope>dsm::Graph</scope><name>addStreet</name></member>
+      <member refid="classdsm_1_1Graph_1af4c45a369ae9394f7acb2b045194ca6f" prot="public" virt="non-virtual"><scope>dsm::Graph</scope><name>addStreets</name></member>
+      <member refid="classdsm_1_1Graph_1a4ed4bfad5369c6ba71adb529d2819112" prot="public" virt="non-virtual"><scope>dsm::Graph</scope><name>addStreets</name></member>
+      <member refid="classdsm_1_1Graph_1a8ccd4e35dc4063f423902c920bb0c723" prot="public" virt="non-virtual"><scope>dsm::Graph</scope><name>adjMatrix</name></member>
+      <member refid="classdsm_1_1Graph_1a9597482c114e45c866c607ee958b5f38" prot="public" virt="non-virtual"><scope>dsm::Graph</scope><name>buildAdj</name></member>
+      <member refid="classdsm_1_1Graph_1aa3737592e1af21a39cda4b2c45862ac5" prot="public" virt="non-virtual"><scope>dsm::Graph</scope><name>Graph</name></member>
+      <member refid="classdsm_1_1Graph_1ae7b2423f9273b9ae65e431c4c8e0b102" prot="public" virt="non-virtual"><scope>dsm::Graph</scope><name>Graph</name></member>
+      <member refid="classdsm_1_1Graph_1af5d4c809ef004de2dfde03b3df92609e" prot="public" virt="non-virtual"><scope>dsm::Graph</scope><name>Graph</name></member>
+      <member refid="classdsm_1_1Graph_1a6da4e69fa548c5d336171448e962e619" prot="public" virt="non-virtual"><scope>dsm::Graph</scope><name>importAdj</name></member>
+      <member refid="classdsm_1_1Graph_1aa0f10644c6e30df6880f0c8c26a111d6" prot="private" virt="non-virtual"><scope>dsm::Graph</scope><name>m_adjacency</name></member>
+      <member refid="classdsm_1_1Graph_1a5cbe389bfbc37db4d61f8a7467bcc4f9" prot="private" virt="non-virtual"><scope>dsm::Graph</scope><name>m_nodes</name></member>
+      <member refid="classdsm_1_1Graph_1a499a3a5fb6cb079010b508d10633a758" prot="private" virt="non-virtual"><scope>dsm::Graph</scope><name>m_streets</name></member>
+      <member refid="classdsm_1_1Graph_1aee0e338487f687cae252ee51a0f4c982" prot="public" virt="non-virtual"><scope>dsm::Graph</scope><name>nodeSet</name></member>
+      <member refid="classdsm_1_1Graph_1aff1ae77416eff8585c376192ed4fc595" prot="public" virt="non-virtual"><scope>dsm::Graph</scope><name>streetSet</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="structdsm_1_1streetHash" kind="struct" language="C++" prot="public">
+    <compoundname>dsm::streetHash</compoundname>
+    <templateparamlist>
+      <param>
+        <type>typename Id</type>
+      </param>
+      <param>
+        <type>typename Size</type>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="structdsm_1_1streetHash_1afca2bc8b2b720cd857c38736d2836bf1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t dsm::streetHash&lt; Id, Size &gt;::operator()</definition>
+        <argsstring>(const shared&lt; const Street&lt; Id, Size &gt; &gt; &amp;street) const</argsstring>
+        <name>operator()</name>
+        <qualifiedname>dsm::streetHash::operator()</qualifiedname>
+        <param>
+          <type>const shared&lt; const <ref refid="classdsm_1_1Street" kindref="compound">Street</ref>&lt; Id, Size &gt; &gt; &amp;</type>
+          <declname>street</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/dsm/utility/HashFunctions.hpp" line="27" column="12" bodyfile="src/dsm/utility/HashFunctions.hpp" bodystart="27" bodyend="29"/>
+      </memberdef>
+      <memberdef kind="function" id="structdsm_1_1streetHash_1a1a5b678f8a5517373acd29a63d1cd332" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t dsm::streetHash&lt; Id, Size &gt;::operator()</definition>
+        <argsstring>(const shared&lt; Street&lt; Id, Size &gt; &gt; &amp;street) const</argsstring>
+        <name>operator()</name>
+        <qualifiedname>dsm::streetHash::operator()</qualifiedname>
+        <param>
+          <type>const shared&lt; <ref refid="classdsm_1_1Street" kindref="compound">Street</ref>&lt; Id, Size &gt; &gt; &amp;</type>
+          <declname>street</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/dsm/utility/HashFunctions.hpp" line="31" column="12" bodyfile="src/dsm/utility/HashFunctions.hpp" bodystart="31" bodyend="33"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="src/dsm/utility/HashFunctions.hpp" line="25" column="3" bodyfile="src/dsm/utility/HashFunctions.hpp" bodystart="25" bodyend="34"/>
+    <listofallmembers>
+      <member refid="structdsm_1_1streetHash_1afca2bc8b2b720cd857c38736d2836bf1" prot="public" virt="non-virtual"><scope>dsm::streetHash</scope><name>operator()</name></member>
+      <member refid="structdsm_1_1streetHash_1a1a5b678f8a5517373acd29a63d1cd332" prot="public" virt="non-virtual"><scope>dsm::streetHash</scope><name>operator()</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

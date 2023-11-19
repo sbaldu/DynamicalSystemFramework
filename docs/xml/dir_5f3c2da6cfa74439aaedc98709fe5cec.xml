@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="dir_5f3c2da6cfa74439aaedc98709fe5cec" kind="dir">
+    <compoundname>src/dsm/headers</compoundname>
+    <innerfile refid="Agent_8hpp">Agent.hpp</innerfile>
+    <innerfile refid="Graph_8hpp">Graph.hpp</innerfile>
+    <innerfile refid="Itinerary_8hpp">Itinerary.hpp</innerfile>
+    <innerfile refid="Node_8hpp">Node.hpp</innerfile>
+    <innerfile refid="SparseMatrix_8hpp">SparseMatrix.hpp</innerfile>
+    <innerfile refid="Street_8hpp">Street.hpp</innerfile>
+    <innerfile refid="test_8cpp">test.cpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="src/dsm/headers/"/>
+  </compounddef>
+</doxygen>
