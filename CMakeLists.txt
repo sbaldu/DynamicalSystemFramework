@@ -8,6 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_subdirectory(test)
-add_subdirectory(test/data)
+# copy test/data folder in order to make tests use it
+file(COPY ${PROJECT_SOURCE_DIR}/test/data DESTINATION ${PROJECT_BINARY_DIR}/test)
 
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/src/ DESTINATION /usr/include)
