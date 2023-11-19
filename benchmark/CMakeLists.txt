@@ -10,16 +10,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # Set the folder for the executable
 set(EXECUTABLE_OUTPUT_PATH ../)
 
-include(FetchContent)
-# Get bench
-FetchContent_Declare(bench
-  GIT_REPOSITORY https://github.com/sbaldu/benchmark
-  GIT_TAG 74faa8760ba92928e9cd9d8ee6a52da370dcd4aa
-)
-FetchContent_GetProperties(bench)
-if(NOT bench_POPULATED)
-  FetchContent_Populate(bench)
-endif()
+include_directories(../extern/benchmark/)
 
 # add as executable all cpp files into '.' folder
 file(GLOB SOURCES "*.cpp")
