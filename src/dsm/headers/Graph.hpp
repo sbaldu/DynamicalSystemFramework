@@ -198,13 +198,13 @@ namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Graph<Id, Size>::addNode(shared<Node<Id>> node) {
-    m_nodes.insert(node);
+    m_nodes.insert(std::make_pair(node->id(), node));
   }
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Graph<Id, Size>::addNode(const Node<Id>& node) {
-    m_nodes.insert(make_shared<Node<Id>>(node));
+    m_nodes.insert(std::make_pair(node.id(), make_shared<Node<Id>>(node)));
   }
 
   template <typename Id, typename Size>
