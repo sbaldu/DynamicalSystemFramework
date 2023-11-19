@@ -28,7 +28,7 @@ jobs:
 
       - name: run
         working-directory: ${{github.workspace}}/build/test
-        run: ./test_exe
+        run: ./dsm_tests.out
 
       - name: create Report
         working-directory: ${{github.workspace}}/build/test
