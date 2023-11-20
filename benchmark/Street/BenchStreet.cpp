@@ -14,7 +14,7 @@ using SparseMatrix = dsm::SparseMatrix<uint32_t, bool>;
 using Bench = sb::Bench<long long int>;
 
 int main() {
-  Street street(0, 1000, 10.);
+  Street street(0, 1000, 10., std::make_pair(0, 1));
   Agent agent(0, 0);
   Bench b(1000);
 

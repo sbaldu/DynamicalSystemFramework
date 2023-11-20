@@ -85,9 +85,9 @@ namespace dsm {
     /// @param street, A reference to the street to add
     void addStreet(const Street<Id, Size>& street);
 
-    template <typename... Tn>
-      requires(is_street_v<Tn> && ...)
-    void addStreets(Tn&&... streets);
+    template <typename T1>
+      requires is_street_v<T1>
+    void addStreets(T1&& street);
 
     template <typename T1, typename... Tn>
       requires is_street_v<T1> && (is_street_v<Tn> && ...)
@@ -116,8 +116,9 @@ namespace dsm {
       m_nodes.insert(std::make_pair(i, make_shared<Node<Id>>(i)));
     });
 
-    std::ranges::for_each(std::views::iota(0, (int)adj.size()), [this](auto i) -> void {
-      this->m_streets.insert(std::make_pair(i, make_shared<Street<Id, Size>>(i)));
+    std::ranges::for_each(std::views::iota(0, (int)adj.size()), [this, adj](auto i) -> void {
+      this->m_streets.insert(std::make_pair(
+          i, make_shared<Street<Id, Size>>(i, std::make_pair(i / adj.getColDim(), i % adj.getColDim()))));
     });
   }
 
@@ -141,19 +142,10 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Graph<Id, Size>::buildAdj() {
     // find max values in streets node pairs
-    Id maxNode = 0;
-    for (const auto& street : m_streets) {
-      if (street.second->nodePair().first > maxNode) {
-        maxNode = street.second->nodePair().first;
-      }
-      if (street.second->nodePair().second > maxNode) {
-        maxNode = street.second->nodePair().second;
-      }
-    }
-    m_adjacency->reshape(maxNode + 1);
+    const size_t maxNode{m_nodes.size()};
+    m_adjacency->reshape(maxNode);
     for (const auto& street : m_streets) {
       m_adjacency->insert(street.second->nodePair().first, street.second->nodePair().second, true);
-      m_adjacency->insert(street.second->nodePair().second, street.second->nodePair().first, true);
     }
   }
 
@@ -183,10 +175,12 @@ namespace dsm {
         bool val;
         file >> index >> val;
         m_adjacency->insert(index, val);
-        m_nodes.insert_or_assign(index / rows, make_shared<Node<Id>>(index / rows));
-        m_nodes.insert_or_assign(index % rows, make_shared<Node<Id>>(index % rows));
-        m_streets.insert_or_assign(index, make_shared<Street<Id, Size>>(index));
-        m_streets[index]->setNodePair(index / rows, index % rows);
+        const Id node1{static_cast<Id>(index / rows)};
+        const Id node2{static_cast<Id>(index % cols)};
+        m_nodes.insert_or_assign(node1, make_shared<Node<Id>>(node1));
+        m_nodes.insert_or_assign(node2, make_shared<Node<Id>>(node2));
+        m_streets.insert_or_assign(index,
+                                   make_shared<Street<Id, Size>>(index, std::make_pair(node1, node2)));
       }
     } else {
       std::string errrorMsg = "Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
@@ -225,20 +219,40 @@ namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Graph<Id, Size>::addStreet(shared<Street<Id, Size>> street) {
+    // insert street
     m_streets.insert(std::make_pair(street->id(), street));
+    // insert nodes
+    const Id node1{street.nodePair().first};
+    const Id node2{street.nodePair().second};
+    m_nodes.insert_or_assign(node1);
+    m_nodes.insert_or_assign(node2);
   }
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Graph<Id, Size>::addStreet(const Street<Id, Size>& street) {
+    // insert street
     m_streets.insert(std::make_pair(street.id(), make_shared<Street<Id, Size>>(street)));
+    // insert nodes
+    const Id node1{street.nodePair().first};
+    const Id node2{street.nodePair().second};
+    m_nodes.insert_or_assign(node1, make_shared<Node<Id>>(node1));
+    m_nodes.insert_or_assign(node2, make_shared<Node<Id>>(node2));
   }
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  template <typename... Tn>
-    requires(is_street_v<Tn> && ...)
-  void Graph<Id, Size>::addStreets(Tn&&... edges) {}
+  template <typename T1>
+    requires is_street_v<T1>
+  void Graph<Id, Size>::addStreets(T1&& street) {
+    // insert street
+    m_streets.insert(std::make_pair(street.id(), make_shared<Street<Id, Size>>(street)));
+    // insert nodes
+    const Id node1{street.nodePair().first};
+    const Id node2{street.nodePair().second};
+    m_nodes.insert_or_assign(node1, make_shared<Node<Id>>(node1));
+    m_nodes.insert_or_assign(node2, make_shared<Node<Id>>(node2));
+  }
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
