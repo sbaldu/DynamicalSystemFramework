@@ -15,6 +15,7 @@
 #include <memory>
 #include <ranges>
 #include <unordered_map>
+#include <unordered_set>
 #include <queue>
 #include <type_traits>
 #include <utility>
@@ -25,7 +26,6 @@
 #include "SparseMatrix.hpp"
 #include "Street.hpp"
 #include "../utility/DijkstraResult.hpp"
-#include "../utility/HashFunctions.hpp"
 #include "../utility/TypeTraits/is_node.hpp"
 #include "../utility/TypeTraits/is_street.hpp"
 
@@ -296,45 +296,50 @@ namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   std::optional<DijkstraResult<Id>> Graph<Id, Size>::dijkstra(Id source, Id destination) const {
-    const Id n_nodes{m_nodes.size()};
+    const size_t n_nodes{m_nodes.size()};
 
-    std::unordered_set<shared<Node<Id>>, nodeHash<Id>> unvisitedNodes{m_nodes};
+    std::unordered_map<Id, shared<Node<Id>>> unvisitedNodes{m_nodes};
     std::unordered_set<Id> visitedNodes;
-    /* std::vector<std::pair<Id, double>> dist(n_nodes, std::numeric_limits<double>::max()); */
     std::vector<std::pair<Id, double>> dist(n_nodes);
-	std::for_each(dist.begin(), dist.end(), [count=0](auto& element) mutable -> void {
-		  element.first = count;
-		  element.second = std::numeric_limits<double>::max();
-		  ++count;
-		});
-    dist[source] = std::make_pair(source, 0);
+    std::for_each(dist.begin(), dist.end(), [count = 0](auto& element) mutable -> void {
+      element.first = count;
+      element.second = std::numeric_limits<double>::max();
+      ++count;
+    });
+    dist[source] = std::make_pair(source, 0.);
 
-    std::vector<Id> path{source};
+    std::vector<Id> path;
     double distance{};
     while (unvisitedNodes.size() != 0) {
-	  source = std::min_element(dist.begin(), dist.end(), [](const auto& a, const auto& b) -> bool {
-		  return a.second < b.second;
-		})->first;
-	  distance += dist[source].second;
-	  unvisitedNodes.erase(source);
+      source = std::min_element(
+                   unvisitedNodes.begin(),
+                   unvisitedNodes.end(),
+                   [&dist](const auto& a, const auto& b) -> bool { return dist[a.first] < dist[b.first]; })
+                   ->first;
+      distance = dist[source].second;
+      unvisitedNodes.erase(source);
       visitedNodes.insert(source);
-	  path.push_back(source);
+      path.push_back(source);
 
-      for (const auto& neighbour : m_adjacency[source].getCol(source)) {
-        // If the destination is reached, return the path
-        if (neighbour.first == destination) {
-          path.push_back(neighbour.first);
-          return DijkstraResult<Id>(path, distance);
-        }
+      // If the destination is reached, return the path
+      if (source == destination) {
+        return DijkstraResult<Id>(path, distance);
+      }
+
+      for (const auto& neighbour : m_adjacency->getRow(source)) {
         // If the node has already been visited, skip it
         if (visitedNodes.find(neighbour.first) != visitedNodes.end()) {
           continue;
         }
 
-        double distance{m_streets[source]->length()};
+        double streetLength{
+            std::find_if(m_streets.cbegin(), m_streets.cend(), [source, &neighbour](const auto& street) -> bool {
+              return street.second->nodePair().first == source &&
+                     street.second->nodePair().second == neighbour.first;
+            })->second->length()};
         // If current path is shorter than the previous one, update the distance
-        if (distance + dist[source].second < dist[neighbour.first]) {
-          dist[neighbour.first].second = distance + dist[source].second;
+        if (streetLength + dist[source].second < dist[neighbour.first].second) {
+          dist[neighbour.first].second = streetLength + dist[source].second;
         }
       }
     }
