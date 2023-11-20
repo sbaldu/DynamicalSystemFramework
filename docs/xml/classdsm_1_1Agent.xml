@@ -108,9 +108,9 @@
         </inbodydescription>
         <location file="src/dsm/headers/Agent.hpp" line="40" column="5"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1Agent_1a2e3f2457fd359d7dc0c2e28b60c99259" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1Agent_1ae339680c2d78e9300cf5b971d3e93d36" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
-        <definition>dsm::Agent&lt; Id, Size, Delay &gt;::Agent</definition>
+        <definition>requires std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; &amp;&amp;is_numeric_v&lt; Delay &gt; dsm::Agent&lt; Id, Size, Delay &gt;::Agent</definition>
         <argsstring>(Id index, Id streetId)</argsstring>
         <name>Agent</name>
         <param>
@@ -146,11 +146,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Agent.hpp" line="44" column="5"/>
+        <location file="src/dsm/headers/Agent.hpp" line="44" column="5" bodyfile="src/dsm/headers/Agent.hpp" bodystart="96" bodyend="97"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1Agent_1a864dd6524080acf49933b4ac74f4895a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1Agent_1a60c7d953a1620ca1f36fb3c521a77f31" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
-        <definition>dsm::Agent&lt; Id, Size, Delay &gt;::Agent</definition>
+        <definition>requires std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; &amp;&amp;is_numeric_v&lt; Delay &gt; dsm::Agent&lt; Id, Size, Delay &gt;::Agent</definition>
         <argsstring>(Id index, Id streetId, Itinerary&lt; Id &gt; itinerary)</argsstring>
         <name>Agent</name>
         <param>
@@ -198,11 +198,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Agent.hpp" line="49" column="5"/>
+        <location file="src/dsm/headers/Agent.hpp" line="49" column="5" bodyfile="src/dsm/headers/Agent.hpp" bodystart="101" bodyend="102"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1Agent_1aaba67776effa18a8cf83256b7a0f8177" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1Agent_1a5f70a106f0cd0dbe22fe93a9bb774967" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void dsm::Agent&lt; Id, Size, Delay &gt;::setStreetId</definition>
+        <definition>requires std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; &amp;&amp;is_numeric_v&lt; Delay &gt; void dsm::Agent&lt; Id, Size, Delay &gt;::setStreetId</definition>
         <argsstring>(Id streetId)</argsstring>
         <name>setStreetId</name>
         <param>
@@ -226,11 +226,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Agent.hpp" line="53" column="10"/>
+        <location file="src/dsm/headers/Agent.hpp" line="53" column="10" bodyfile="src/dsm/headers/Agent.hpp" bodystart="106" bodyend="108"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1Agent_1aa93ce3ae6fbec47fffd43200b86110f9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1Agent_1a89092045e8a24a2a8cc3947d409aca8b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void dsm::Agent&lt; Id, Size, Delay &gt;::setItinerary</definition>
+        <definition>requires std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; &amp;&amp;is_numeric_v&lt; Delay &gt; void dsm::Agent&lt; Id, Size, Delay &gt;::setItinerary</definition>
         <argsstring>(Itinerary&lt; Id &gt; itinerary)</argsstring>
         <name>setItinerary</name>
         <param>
@@ -254,11 +254,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Agent.hpp" line="56" column="10"/>
+        <location file="src/dsm/headers/Agent.hpp" line="56" column="10" bodyfile="src/dsm/headers/Agent.hpp" bodystart="112" bodyend="114"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1Agent_1a249fa1e43040f68ef09a0e1d60a79f96" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1Agent_1a58c45d66c9c10bf4341a03da68602b76" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void dsm::Agent&lt; Id, Size, Delay &gt;::setSpeed</definition>
+        <definition>requires std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; &amp;&amp;is_numeric_v&lt; Delay &gt; void dsm::Agent&lt; Id, Size, Delay &gt;::setSpeed</definition>
         <argsstring>(double speed)</argsstring>
         <name>setSpeed</name>
         <param>
@@ -292,11 +292,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Agent.hpp" line="60" column="10"/>
+        <location file="src/dsm/headers/Agent.hpp" line="60" column="10" bodyfile="src/dsm/headers/Agent.hpp" bodystart="118" bodyend="125"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1Agent_1a2809ae1bbcbe77633913d43982ea823c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1Agent_1a79899d539fb0778bf0f9bc4099f2e6ae" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void dsm::Agent&lt; Id, Size, Delay &gt;::setDelay</definition>
+        <definition>requires std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; &amp;&amp;is_numeric_v&lt; Delay &gt; void dsm::Agent&lt; Id, Size, Delay &gt;::setDelay</definition>
         <argsstring>(Delay delay)</argsstring>
         <name>setDelay</name>
         <param>
@@ -320,11 +320,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Agent.hpp" line="63" column="10"/>
+        <location file="src/dsm/headers/Agent.hpp" line="63" column="10" bodyfile="src/dsm/headers/Agent.hpp" bodystart="129" bodyend="131"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1Agent_1a13d0562e6acafb866960d717cc4fb670" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1Agent_1a3e14cfc4c8211a3c85d17c406423eb1d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void dsm::Agent&lt; Id, Size, Delay &gt;::incrementTime</definition>
+        <definition>requires std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; &amp;&amp;is_numeric_v&lt; Delay &gt; void dsm::Agent&lt; Id, Size, Delay &gt;::incrementTime</definition>
         <argsstring>()</argsstring>
         <name>incrementTime</name>
         <briefdescription>
@@ -345,11 +345,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Agent.hpp" line="66" column="10"/>
+        <location file="src/dsm/headers/Agent.hpp" line="66" column="10" bodyfile="src/dsm/headers/Agent.hpp" bodystart="135" bodyend="142"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1Agent_1acb90b61b31ae05b50b76de47e20c7bd6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1Agent_1a11017d8035351a0286df2438b6dae7fa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void dsm::Agent&lt; Id, Size, Delay &gt;::incrementTime</definition>
+        <definition>requires std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; &amp;&amp;is_numeric_v&lt; Delay &gt; void dsm::Agent&lt; Id, Size, Delay &gt;::incrementTime</definition>
         <argsstring>(unsigned int time)</argsstring>
         <name>incrementTime</name>
         <param>
@@ -383,7 +383,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Agent.hpp" line="70" column="10"/>
+        <location file="src/dsm/headers/Agent.hpp" line="70" column="10" bodyfile="src/dsm/headers/Agent.hpp" bodystart="146" bodyend="153"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1Agent_1acc15634eeaea621bf407f77cc30ac87a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -399,9 +399,9 @@
         </inbodydescription>
         <location file="src/dsm/headers/Agent.hpp" line="72" column="10"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1Agent_1ac4658d146f4c3ff7cc9f4a0c9a70078d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1Agent_1ab4362c6bbf383a8fb6e79829a80491de" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>Id</type>
-        <definition>Id dsm::Agent&lt; Id, Size, Delay &gt;::index</definition>
+        <definition>requires std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; &amp;&amp;is_numeric_v&lt; Delay &gt; Id dsm::Agent&lt; Id, Size, Delay &gt;::index</definition>
         <argsstring>() const</argsstring>
         <name>index</name>
         <briefdescription>
@@ -414,11 +414,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Agent.hpp" line="76" column="8"/>
+        <location file="src/dsm/headers/Agent.hpp" line="76" column="8" bodyfile="src/dsm/headers/Agent.hpp" bodystart="157" bodyend="159"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1Agent_1a3a15a471d6dd1148c8ad494bfd67ca96" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1Agent_1a4884d80484eb743c093cdc6dfab95ce2" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>Id</type>
-        <definition>Id dsm::Agent&lt; Id, Size, Delay &gt;::streetId</definition>
+        <definition>requires std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; &amp;&amp;is_numeric_v&lt; Delay &gt; Id dsm::Agent&lt; Id, Size, Delay &gt;::streetId</definition>
         <argsstring>() const</argsstring>
         <name>streetId</name>
         <briefdescription>
@@ -431,11 +431,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Agent.hpp" line="79" column="8"/>
+        <location file="src/dsm/headers/Agent.hpp" line="79" column="8" bodyfile="src/dsm/headers/Agent.hpp" bodystart="163" bodyend="165"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1Agent_1a830a79ba200b23ba23774f889c673bb0" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1Agent_1aa3d8436b655f52f57759834fd538162d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>const <ref refid="classdsm_1_1Itinerary" kindref="compound">Itinerary</ref>&lt; Id &gt; &amp;</type>
-        <definition>const Itinerary&lt;Id&gt;&amp; dsm::Agent&lt; Id, Size, Delay &gt;::itinerary</definition>
+        <definition>requires std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; &amp;&amp;is_numeric_v&lt; Delay &gt; const Itinerary&lt; Id &gt; &amp; dsm::Agent&lt; Id, Size, Delay &gt;::itinerary</definition>
         <argsstring>() const</argsstring>
         <name>itinerary</name>
         <briefdescription>
@@ -448,11 +448,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Agent.hpp" line="82" column="21"/>
+        <location file="src/dsm/headers/Agent.hpp" line="82" column="21" bodyfile="src/dsm/headers/Agent.hpp" bodystart="187" bodyend="189"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1Agent_1abcf59bb67437986459517ae2bd69f7c1" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1Agent_1aa52267ce4c1e4bb7249c8ef8da769f1b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
-        <definition>double dsm::Agent&lt; Id, Size, Delay &gt;::speed</definition>
+        <definition>requires std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; &amp;&amp;is_numeric_v&lt; Delay &gt; double dsm::Agent&lt; Id, Size, Delay &gt;::speed</definition>
         <argsstring>() const</argsstring>
         <name>speed</name>
         <briefdescription>
@@ -465,11 +465,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Agent.hpp" line="85" column="12"/>
+        <location file="src/dsm/headers/Agent.hpp" line="85" column="12" bodyfile="src/dsm/headers/Agent.hpp" bodystart="169" bodyend="171"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1Agent_1a8109cb7b2f8947f54625a282dee0dc92" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1Agent_1a34bbd676e3cb804daf4a28eb421f692c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>Delay</type>
-        <definition>Delay dsm::Agent&lt; Id, Size, Delay &gt;::delay</definition>
+        <definition>requires std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; &amp;&amp;is_numeric_v&lt; Delay &gt; Delay dsm::Agent&lt; Id, Size, Delay &gt;::delay</definition>
         <argsstring>() const</argsstring>
         <name>delay</name>
         <briefdescription>
@@ -482,11 +482,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Agent.hpp" line="88" column="11"/>
+        <location file="src/dsm/headers/Agent.hpp" line="88" column="11" bodyfile="src/dsm/headers/Agent.hpp" bodystart="175" bodyend="177"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1Agent_1a36e15a53b1fc48d7a2f2e080baa84ee0" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1Agent_1a4c2d806909fdd49f4f1ae8ae8a847647" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>unsigned int</type>
-        <definition>unsigned int dsm::Agent&lt; Id, Size, Delay &gt;::time</definition>
+        <definition>requires std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; &amp;&amp;is_numeric_v&lt; Delay &gt; unsigned int dsm::Agent&lt; Id, Size, Delay &gt;::time</definition>
         <argsstring>() const</argsstring>
         <name>time</name>
         <briefdescription>
@@ -499,7 +499,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Agent.hpp" line="91" column="18"/>
+        <location file="src/dsm/headers/Agent.hpp" line="91" column="18" bodyfile="src/dsm/headers/Agent.hpp" bodystart="181" bodyend="183"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -536,13 +536,13 @@
     <location file="src/dsm/headers/Agent.hpp" line="30" column="3" bodyfile="src/dsm/headers/Agent.hpp" bodystart="30" bodyend="92"/>
     <listofallmembers>
       <member refid="classdsm_1_1Agent_1af0c7799d27104d01a60b03a1e159835d" prot="public" virt="non-virtual"><scope>dsm::Agent</scope><name>Agent</name></member>
-      <member refid="classdsm_1_1Agent_1a2e3f2457fd359d7dc0c2e28b60c99259" prot="public" virt="non-virtual"><scope>dsm::Agent</scope><name>Agent</name></member>
-      <member refid="classdsm_1_1Agent_1a864dd6524080acf49933b4ac74f4895a" prot="public" virt="non-virtual"><scope>dsm::Agent</scope><name>Agent</name></member>
-      <member refid="classdsm_1_1Agent_1a8109cb7b2f8947f54625a282dee0dc92" prot="public" virt="non-virtual"><scope>dsm::Agent</scope><name>delay</name></member>
-      <member refid="classdsm_1_1Agent_1a13d0562e6acafb866960d717cc4fb670" prot="public" virt="non-virtual"><scope>dsm::Agent</scope><name>incrementTime</name></member>
-      <member refid="classdsm_1_1Agent_1acb90b61b31ae05b50b76de47e20c7bd6" prot="public" virt="non-virtual"><scope>dsm::Agent</scope><name>incrementTime</name></member>
-      <member refid="classdsm_1_1Agent_1ac4658d146f4c3ff7cc9f4a0c9a70078d" prot="public" virt="non-virtual"><scope>dsm::Agent</scope><name>index</name></member>
-      <member refid="classdsm_1_1Agent_1a830a79ba200b23ba23774f889c673bb0" prot="public" virt="non-virtual"><scope>dsm::Agent</scope><name>itinerary</name></member>
+      <member refid="classdsm_1_1Agent_1ae339680c2d78e9300cf5b971d3e93d36" prot="public" virt="non-virtual"><scope>dsm::Agent</scope><name>Agent</name></member>
+      <member refid="classdsm_1_1Agent_1a60c7d953a1620ca1f36fb3c521a77f31" prot="public" virt="non-virtual"><scope>dsm::Agent</scope><name>Agent</name></member>
+      <member refid="classdsm_1_1Agent_1a34bbd676e3cb804daf4a28eb421f692c" prot="public" virt="non-virtual"><scope>dsm::Agent</scope><name>delay</name></member>
+      <member refid="classdsm_1_1Agent_1a3e14cfc4c8211a3c85d17c406423eb1d" prot="public" virt="non-virtual"><scope>dsm::Agent</scope><name>incrementTime</name></member>
+      <member refid="classdsm_1_1Agent_1a11017d8035351a0286df2438b6dae7fa" prot="public" virt="non-virtual"><scope>dsm::Agent</scope><name>incrementTime</name></member>
+      <member refid="classdsm_1_1Agent_1ab4362c6bbf383a8fb6e79829a80491de" prot="public" virt="non-virtual"><scope>dsm::Agent</scope><name>index</name></member>
+      <member refid="classdsm_1_1Agent_1aa3d8436b655f52f57759834fd538162d" prot="public" virt="non-virtual"><scope>dsm::Agent</scope><name>itinerary</name></member>
       <member refid="classdsm_1_1Agent_1ae4179c0476ac1f5968d5442125f46315" prot="private" virt="non-virtual"><scope>dsm::Agent</scope><name>m_delay</name></member>
       <member refid="classdsm_1_1Agent_1ae0201e983152e87df62487ee807b9270" prot="private" virt="non-virtual"><scope>dsm::Agent</scope><name>m_index</name></member>
       <member refid="classdsm_1_1Agent_1aabe336e28193f6cf7f104091d69692eb" prot="private" virt="non-virtual"><scope>dsm::Agent</scope><name>m_itinerary</name></member>
@@ -550,13 +550,13 @@
       <member refid="classdsm_1_1Agent_1a6f5b623d7204fef47cb2fdbed3a1f3d4" prot="private" virt="non-virtual"><scope>dsm::Agent</scope><name>m_streetId</name></member>
       <member refid="classdsm_1_1Agent_1a23181f51c22c3c8a7ec080c2e3e27ffe" prot="private" virt="non-virtual"><scope>dsm::Agent</scope><name>m_time</name></member>
       <member refid="classdsm_1_1Agent_1acc15634eeaea621bf407f77cc30ac87a" prot="public" virt="non-virtual"><scope>dsm::Agent</scope><name>resetTime</name></member>
-      <member refid="classdsm_1_1Agent_1a2809ae1bbcbe77633913d43982ea823c" prot="public" virt="non-virtual"><scope>dsm::Agent</scope><name>setDelay</name></member>
-      <member refid="classdsm_1_1Agent_1aa93ce3ae6fbec47fffd43200b86110f9" prot="public" virt="non-virtual"><scope>dsm::Agent</scope><name>setItinerary</name></member>
-      <member refid="classdsm_1_1Agent_1a249fa1e43040f68ef09a0e1d60a79f96" prot="public" virt="non-virtual"><scope>dsm::Agent</scope><name>setSpeed</name></member>
-      <member refid="classdsm_1_1Agent_1aaba67776effa18a8cf83256b7a0f8177" prot="public" virt="non-virtual"><scope>dsm::Agent</scope><name>setStreetId</name></member>
-      <member refid="classdsm_1_1Agent_1abcf59bb67437986459517ae2bd69f7c1" prot="public" virt="non-virtual"><scope>dsm::Agent</scope><name>speed</name></member>
-      <member refid="classdsm_1_1Agent_1a3a15a471d6dd1148c8ad494bfd67ca96" prot="public" virt="non-virtual"><scope>dsm::Agent</scope><name>streetId</name></member>
-      <member refid="classdsm_1_1Agent_1a36e15a53b1fc48d7a2f2e080baa84ee0" prot="public" virt="non-virtual"><scope>dsm::Agent</scope><name>time</name></member>
+      <member refid="classdsm_1_1Agent_1a79899d539fb0778bf0f9bc4099f2e6ae" prot="public" virt="non-virtual"><scope>dsm::Agent</scope><name>setDelay</name></member>
+      <member refid="classdsm_1_1Agent_1a89092045e8a24a2a8cc3947d409aca8b" prot="public" virt="non-virtual"><scope>dsm::Agent</scope><name>setItinerary</name></member>
+      <member refid="classdsm_1_1Agent_1a58c45d66c9c10bf4341a03da68602b76" prot="public" virt="non-virtual"><scope>dsm::Agent</scope><name>setSpeed</name></member>
+      <member refid="classdsm_1_1Agent_1a5f70a106f0cd0dbe22fe93a9bb774967" prot="public" virt="non-virtual"><scope>dsm::Agent</scope><name>setStreetId</name></member>
+      <member refid="classdsm_1_1Agent_1aa52267ce4c1e4bb7249c8ef8da769f1b" prot="public" virt="non-virtual"><scope>dsm::Agent</scope><name>speed</name></member>
+      <member refid="classdsm_1_1Agent_1a4884d80484eb743c093cdc6dfab95ce2" prot="public" virt="non-virtual"><scope>dsm::Agent</scope><name>streetId</name></member>
+      <member refid="classdsm_1_1Agent_1a4c2d806909fdd49f4f1ae8ae8a847647" prot="public" virt="non-virtual"><scope>dsm::Agent</scope><name>time</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

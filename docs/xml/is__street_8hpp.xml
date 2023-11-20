@@ -28,6 +28,18 @@
         <label>memory</label>
       </node>
     </incdepgraph>
+    <invincdepgraph>
+      <node id="1">
+        <label>src/dsm/utility/TypeTraits/is_street.hpp</label>
+        <link refid="is__street_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>src/dsm/headers/Graph.hpp</label>
+        <link refid="Graph_8hpp"/>
+      </node>
+    </invincdepgraph>
     <innerclass refid="structdsm_1_1is__street" prot="public">dsm::is_street</innerclass>
     <innerclass refid="structdsm_1_1is__street_3_01Street_3_01Id_00_01Size_01_4_01_4" prot="public">dsm::is_street&lt; Street&lt; Id, Size &gt; &gt;</innerclass>
     <innerclass refid="structdsm_1_1is__street_3_01const_01Street_3_01Id_00_01Size_01_4_01_6_01_4" prot="public">dsm::is_street&lt; const Street&lt; Id, Size &gt; &amp; &gt;</innerclass>

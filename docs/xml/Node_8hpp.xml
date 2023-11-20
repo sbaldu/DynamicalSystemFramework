@@ -29,11 +29,33 @@
         </childnode>
       </node>
     </incdepgraph>
+    <invincdepgraph>
+      <node id="3">
+        <label>src/dsm/headers/Street.hpp</label>
+        <link refid="Street_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>src/dsm/headers/Graph.hpp</label>
+        <link refid="Graph_8hpp"/>
+      </node>
+      <node id="1">
+        <label>src/dsm/headers/Node.hpp</label>
+        <link refid="Node_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
     <innerclass refid="classdsm_1_1Node" prot="public">dsm::Node</innerclass>
     <innernamespace refid="namespacedsm">dsm</innernamespace>
     <briefdescription>
+<para>Defines the Node class. </para>
     </briefdescription>
     <detaileddescription>
+<para>This file contains the definition of the Node class. The Node class represents a node in the network. It is templated by the type of the node&apos;s id, which must be an unsigned integral type. </para>
     </detaileddescription>
     <programlisting>
 <codeline lineno="1"><highlight class="normal"></highlight></codeline>

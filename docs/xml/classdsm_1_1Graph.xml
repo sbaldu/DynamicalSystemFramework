@@ -23,7 +23,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Graph.hpp" line="44" column="24" bodyfile="src/dsm/headers/Graph.hpp" bodystart="44" bodyend="-1"/>
+        <location file="src/dsm/headers/Graph.hpp" line="43" column="24" bodyfile="src/dsm/headers/Graph.hpp" bodystart="43" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classdsm_1_1Graph_1a82ddbe1275584645f173db51828d202f" prot="private" static="no" mutable="no">
         <type>std::unordered_map&lt; Id, shared&lt; <ref refid="classdsm_1_1Street" kindref="compound">Street</ref>&lt; Id, Size &gt; &gt; &gt;</type>
@@ -36,7 +36,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Graph.hpp" line="45" column="24" bodyfile="src/dsm/headers/Graph.hpp" bodystart="45" bodyend="-1"/>
+        <location file="src/dsm/headers/Graph.hpp" line="44" column="24" bodyfile="src/dsm/headers/Graph.hpp" bodystart="44" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classdsm_1_1Graph_1aa0f10644c6e30df6880f0c8c26a111d6" prot="private" static="no" mutable="no">
         <type>shared&lt; <ref refid="classdsm_1_1SparseMatrix" kindref="compound">SparseMatrix</ref>&lt; Id, bool &gt; &gt;</type>
@@ -49,7 +49,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Graph.hpp" line="46" column="12" bodyfile="src/dsm/headers/Graph.hpp" bodystart="46" bodyend="-1"/>
+        <location file="src/dsm/headers/Graph.hpp" line="45" column="12" bodyfile="src/dsm/headers/Graph.hpp" bodystart="45" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -64,7 +64,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Graph.hpp" line="49" column="5" bodyfile="src/dsm/headers/Graph.hpp" bodystart="109" bodyend="109"/>
+        <location file="src/dsm/headers/Graph.hpp" line="48" column="5" bodyfile="src/dsm/headers/Graph.hpp" bodystart="108" bodyend="108"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1Graph_1a45b7fe1d389f2f67981d1ce46be20128" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
@@ -92,7 +92,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Graph.hpp" line="52" column="5" bodyfile="src/dsm/headers/Graph.hpp" bodystart="113" bodyend="122"/>
+        <location file="src/dsm/headers/Graph.hpp" line="51" column="5" bodyfile="src/dsm/headers/Graph.hpp" bodystart="112" bodyend="121"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1Graph_1a87e97609bcc593f80a7e568320b1a7d1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
@@ -120,7 +120,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Graph.hpp" line="55" column="5" bodyfile="src/dsm/headers/Graph.hpp" bodystart="126" bodyend="138"/>
+        <location file="src/dsm/headers/Graph.hpp" line="54" column="5" bodyfile="src/dsm/headers/Graph.hpp" bodystart="125" bodyend="137"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1Graph_1a379d1051a9596957286543e262b4514c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -134,7 +134,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Graph.hpp" line="58" column="10" bodyfile="src/dsm/headers/Graph.hpp" bodystart="142" bodyend="158"/>
+        <location file="src/dsm/headers/Graph.hpp" line="57" column="10" bodyfile="src/dsm/headers/Graph.hpp" bodystart="141" bodyend="157"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1Graph_1a12485e07ca4397cdc21cc75e26fdd89f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -171,7 +171,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Graph.hpp" line="64" column="10" bodyfile="src/dsm/headers/Graph.hpp" bodystart="162" bodyend="196"/>
+        <location file="src/dsm/headers/Graph.hpp" line="63" column="10" bodyfile="src/dsm/headers/Graph.hpp" bodystart="161" bodyend="195"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1Graph_1a856d0f814897cd45d3a111fbdba6ddc3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -199,7 +199,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Graph.hpp" line="68" column="10" bodyfile="src/dsm/headers/Graph.hpp" bodystart="200" bodyend="202"/>
+        <location file="src/dsm/headers/Graph.hpp" line="67" column="10" bodyfile="src/dsm/headers/Graph.hpp" bodystart="199" bodyend="201"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1Graph_1a797d512830effa735a4dad12292bb9be" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -227,7 +227,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Graph.hpp" line="71" column="10" bodyfile="src/dsm/headers/Graph.hpp" bodystart="206" bodyend="208"/>
+        <location file="src/dsm/headers/Graph.hpp" line="70" column="10" bodyfile="src/dsm/headers/Graph.hpp" bodystart="205" bodyend="207"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1Graph_1a9e92893bc7e521463ea8cf29ec2f1ed8" prot="public" static="no" const="no" explicit="no" inline="no" refqual="rvalue" virt="non-virtual">
         <templateparamlist>
@@ -251,7 +251,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Graph.hpp" line="74" column="7"/>
+        <location file="src/dsm/headers/Graph.hpp" line="73" column="7"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1Graph_1a997d6dd63bbf73cf334904e10f7a7fb1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -282,7 +282,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Graph.hpp" line="79" column="10"/>
+        <location file="src/dsm/headers/Graph.hpp" line="78" column="10"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1Graph_1accc4186d12b8d08582036834b564a6ad" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -310,7 +310,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Graph.hpp" line="83" column="10" bodyfile="src/dsm/headers/Graph.hpp" bodystart="227" bodyend="229"/>
+        <location file="src/dsm/headers/Graph.hpp" line="82" column="10" bodyfile="src/dsm/headers/Graph.hpp" bodystart="226" bodyend="228"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1Graph_1a30c764118503fe2a279e263cd943c791" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -338,7 +338,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Graph.hpp" line="86" column="10" bodyfile="src/dsm/headers/Graph.hpp" bodystart="233" bodyend="235"/>
+        <location file="src/dsm/headers/Graph.hpp" line="85" column="10" bodyfile="src/dsm/headers/Graph.hpp" bodystart="232" bodyend="234"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1Graph_1a50b4842d5f8eab859141f56bf61aa986" prot="public" static="no" const="no" explicit="no" inline="no" refqual="rvalue" virt="non-virtual">
         <templateparamlist>
@@ -362,7 +362,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Graph.hpp" line="89" column="7"/>
+        <location file="src/dsm/headers/Graph.hpp" line="88" column="7"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1Graph_1a7e7d4b3fef65256c064bdec785b22a4f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -393,7 +393,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Graph.hpp" line="94" column="10"/>
+        <location file="src/dsm/headers/Graph.hpp" line="93" column="10"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1Graph_1a93f4a6ca599ac9cb2de508eb100c9052" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>shared&lt; <ref refid="classdsm_1_1SparseMatrix" kindref="compound">SparseMatrix</ref>&lt; Id, bool &gt; &gt;</type>
@@ -410,7 +410,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Graph.hpp" line="98" column="12" bodyfile="src/dsm/headers/Graph.hpp" bodystart="254" bodyend="256"/>
+        <location file="src/dsm/headers/Graph.hpp" line="97" column="12" bodyfile="src/dsm/headers/Graph.hpp" bodystart="253" bodyend="255"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1Graph_1a00fd4b0f7e95c0cd6564a30819654178" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>std::unordered_map&lt; Id, shared&lt; <ref refid="classdsm_1_1Node" kindref="compound">Node</ref>&lt; Id &gt; &gt; &gt;</type>
@@ -427,7 +427,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Graph.hpp" line="101" column="24" bodyfile="src/dsm/headers/Graph.hpp" bodystart="260" bodyend="262"/>
+        <location file="src/dsm/headers/Graph.hpp" line="100" column="24" bodyfile="src/dsm/headers/Graph.hpp" bodystart="259" bodyend="261"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1Graph_1ac15a4597ad8f61365b2ecc7ef40a4b82" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>std::unordered_map&lt; Id, shared&lt; <ref refid="classdsm_1_1Street" kindref="compound">Street</ref>&lt; Id, Size &gt; &gt; &gt;</type>
@@ -444,7 +444,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Graph.hpp" line="104" column="24" bodyfile="src/dsm/headers/Graph.hpp" bodystart="266" bodyend="268"/>
+        <location file="src/dsm/headers/Graph.hpp" line="103" column="24" bodyfile="src/dsm/headers/Graph.hpp" bodystart="265" bodyend="267"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1Graph_1ab3bbe774910d3d516b3de6036c54a59c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -475,7 +475,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Graph.hpp" line="220" column="14" bodyfile="src/dsm/headers/Graph.hpp" bodystart="220" bodyend="223"/>
+        <location file="src/dsm/headers/Graph.hpp" line="219" column="14" bodyfile="src/dsm/headers/Graph.hpp" bodystart="219" bodyend="222"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1Graph_1ad80a0a365a58c7a8b7741eaf20b72692" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -506,7 +506,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Graph.hpp" line="247" column="14" bodyfile="src/dsm/headers/Graph.hpp" bodystart="247" bodyend="250"/>
+        <location file="src/dsm/headers/Graph.hpp" line="246" column="14" bodyfile="src/dsm/headers/Graph.hpp" bodystart="246" bodyend="249"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -532,7 +532,7 @@
 </parameterlist>
 </para>
     </detaileddescription>
-    <location file="src/dsm/headers/Graph.hpp" line="42" column="3" bodyfile="src/dsm/headers/Graph.hpp" bodystart="42" bodyend="105"/>
+    <location file="src/dsm/headers/Graph.hpp" line="41" column="3" bodyfile="src/dsm/headers/Graph.hpp" bodystart="41" bodyend="104"/>
     <listofallmembers>
       <member refid="classdsm_1_1Graph_1a856d0f814897cd45d3a111fbdba6ddc3" prot="public" virt="non-virtual"><scope>dsm::Graph</scope><name>addNode</name></member>
       <member refid="classdsm_1_1Graph_1a797d512830effa735a4dad12292bb9be" prot="public" virt="non-virtual"><scope>dsm::Graph</scope><name>addNode</name></member>

@@ -92,29 +92,29 @@ namespace dsm {
   };
 
   template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
   Agent<Id, Size, Delay>::Agent(Id index, Id streetId)
       : m_speed{0.}, m_index{index}, m_streetId{streetId}, m_time{0} {}
 
   template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
   Agent<Id, Size, Delay>::Agent(Id index, Id streetId, Itinerary<Id> itinerary)
       : m_itinerary{std::move(itinerary)}, m_speed{0.}, m_index{index}, m_streetId{streetId}, m_time{0} {}
 
   template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
   void Agent<Id, Size, Delay>::setStreetId(Id streetId) {
     m_streetId = streetId;
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
   void Agent<Id, Size, Delay>::setItinerary(Itinerary<Id> itinerary) {
     m_itinerary = std::move(itinerary);
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
   void Agent<Id, Size, Delay>::setSpeed(double speed) {
     if (speed < 0) {
       std::string errorMsg = "Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
@@ -125,13 +125,13 @@ namespace dsm {
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
   void Agent<Id, Size, Delay>::setDelay(Delay delay) {
     m_delay = delay;
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
   void Agent<Id, Size, Delay>::incrementTime() {
     if (m_time == std::numeric_limits<unsigned int>::max()) {
       std::string errorMsg = "Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
@@ -142,7 +142,7 @@ namespace dsm {
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
   void Agent<Id, Size, Delay>::incrementTime(unsigned int time) {
     if (m_time + time < m_time) {
       std::string errorMsg = "Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
@@ -153,37 +153,37 @@ namespace dsm {
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
   Id Agent<Id, Size, Delay>::index() const {
     return m_index;
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
   Id Agent<Id, Size, Delay>::streetId() const {
     return m_streetId;
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
   double Agent<Id, Size, Delay>::speed() const {
     return m_speed;
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
   Delay Agent<Id, Size, Delay>::delay() const {
     return m_delay;
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
   unsigned int Agent<Id, Size, Delay>::time() const {
     return m_time;
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
   const Itinerary<Id>& Agent<Id, Size, Delay>::itinerary() const {
     return m_itinerary;
   }

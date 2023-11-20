@@ -28,6 +28,18 @@
         <label>memory</label>
       </node>
     </incdepgraph>
+    <invincdepgraph>
+      <node id="1">
+        <label>src/dsm/utility/TypeTraits/is_node.hpp</label>
+        <link refid="is__node_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>src/dsm/headers/Graph.hpp</label>
+        <link refid="Graph_8hpp"/>
+      </node>
+    </invincdepgraph>
     <innerclass refid="structdsm_1_1is__node" prot="public">dsm::is_node</innerclass>
     <innerclass refid="structdsm_1_1is__node_3_01Node_3_01Id_01_4_01_4" prot="public">dsm::is_node&lt; Node&lt; Id &gt; &gt;</innerclass>
     <innerclass refid="structdsm_1_1is__node_3_01const_01Node_3_01Id_01_4_01_6_01_4" prot="public">dsm::is_node&lt; const Node&lt; Id &gt; &amp; &gt;</innerclass>

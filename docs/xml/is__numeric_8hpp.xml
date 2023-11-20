@@ -35,6 +35,32 @@
         <label>memory</label>
       </node>
     </incdepgraph>
+    <invincdepgraph>
+      <node id="3">
+        <label>src/dsm/headers/Street.hpp</label>
+        <link refid="Street_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>src/dsm/headers/Graph.hpp</label>
+        <link refid="Graph_8hpp"/>
+      </node>
+      <node id="1">
+        <label>src/dsm/utility/TypeTraits/is_numeric.hpp</label>
+        <link refid="is__numeric_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>src/dsm/headers/Agent.hpp</label>
+        <link refid="Agent_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
     <innerclass refid="structdsm_1_1is__numeric" prot="public">dsm::is_numeric</innerclass>
     <innerclass refid="structdsm_1_1is__numeric_3_01bool_01_4" prot="public">dsm::is_numeric&lt; bool &gt;</innerclass>
     <innerclass refid="structdsm_1_1is__numeric_3_01char_01_4" prot="public">dsm::is_numeric&lt; char &gt;</innerclass>

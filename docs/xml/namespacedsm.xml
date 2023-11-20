@@ -20,7 +20,7 @@
     <innerclass refid="structdsm_1_1is__street_3_01const_01Street_3_01Id_00_01Size_01_4_01_6_01_4" prot="public">dsm::is_street&lt; const Street&lt; Id, Size &gt; &amp; &gt;</innerclass>
     <innerclass refid="structdsm_1_1is__street_3_01shared_3_01Street_3_01Id_00_01Size_01_4_01_4_01_4" prot="public">dsm::is_street&lt; shared&lt; Street&lt; Id, Size &gt; &gt; &gt;</innerclass>
       <sectiondef kind="typedef">
-      <memberdef kind="typedef" id="Graph_8hpp_1a9d6cb8869a2aa84ad1c1ac8f86d0b947" prot="public" static="no">
+      <memberdef kind="typedef" id="is__node_8hpp_1a9d6cb8869a2aa84ad1c1ac8f86d0b947" prot="public" static="no">
         <templateparamlist>
           <param>
             <type>typename T</type>
@@ -36,23 +36,10 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Graph.hpp" line="34" column="3" bodyfile="src/dsm/headers/Graph.hpp" bodystart="34" bodyend="-1"/>
+        <location file="src/dsm/utility/TypeTraits/is_node.hpp" line="15" column="3" bodyfile="src/dsm/utility/TypeTraits/is_node.hpp" bodystart="15" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="var">
-      <memberdef kind="variable" id="Agent_8hpp_1a5fa86e1f15bf514e92a83e9d2060f9b6" prot="public" static="no" mutable="no">
-        <type></type>
-        <definition>dsm::Size</definition>
-        <argsstring></argsstring>
-        <name>Size</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="src/dsm/headers/Agent.hpp" line="96" column="4" bodyfile="src/dsm/headers/Agent.hpp" bodystart="96" bodyend="-1"/>
-      </memberdef>
       <memberdef kind="variable" id="is__node_8hpp_1a2ae76a18f0b5f6da24d140c09c084533" prot="public" static="no" constexpr="yes" mutable="no">
         <templateparamlist>
           <param>
@@ -112,60 +99,6 @@
       </memberdef>
       </sectiondef>
       <sectiondef kind="func">
-      <memberdef kind="function" id="Agent_8hpp_1a76566af5379cba731a8b2ab784c1fec5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <templateparamlist>
-          <param>
-            <type>typename Id</type>
-          </param>
-          <param>
-            <type>typename Size</type>
-          </param>
-          <param>
-            <type>typename Delay</type>
-          </param>
-        </templateparamlist>
-        <type></type>
-        <definition>dsm::requires</definition>
-        <argsstring>(std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; &amp;&amp;is_numeric_v&lt; Delay &gt;) Agent&lt; Id</argsstring>
-        <name>requires</name>
-        <param>
-          <type>std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; &amp;&amp;is_numeric_v&lt; Delay &gt;</type>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="src/dsm/headers/Agent.hpp" line="95" column="5"/>
-      </memberdef>
-      <memberdef kind="function" id="Agent_8hpp_1a401ed49f59be4b33b75bfdaf90bad862" prot="public" static="no" const="yes" explicit="no" inline="no" refqual="lvalue" virt="non-virtual">
-        <templateparamlist>
-          <param>
-            <type>typename Id</type>
-          </param>
-          <param>
-            <type>typename Size</type>
-          </param>
-          <param>
-            <type>typename Delay</type>
-          </param>
-        </templateparamlist>
-        <type></type>
-        <definition>dsm::requires</definition>
-        <argsstring>(std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; &amp;&amp;is_numeric_v&lt; Delay &gt;) const Itinerary&lt; Id &gt; &amp;Agent&lt; Id</argsstring>
-        <name>requires</name>
-        <param>
-          <type>std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; &amp;&amp;is_numeric_v&lt; Delay &gt;</type>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="src/dsm/headers/Agent.hpp" line="186" column="5"/>
-      </memberdef>
       <memberdef kind="function" id="Graph_8hpp_1aaf581a8ff140e4692f60fa41880ce28e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
@@ -188,7 +121,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Graph.hpp" line="213" column="5"/>
+        <location file="src/dsm/headers/Graph.hpp" line="212" column="5"/>
       </memberdef>
       <memberdef kind="function" id="Graph_8hpp_1aadbeb98dceba88dcb765b04972ce4648" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -212,7 +145,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Graph.hpp" line="240" column="5"/>
+        <location file="src/dsm/headers/Graph.hpp" line="239" column="5"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
