@@ -27,8 +27,4 @@ jobs:
 
     - name: Run tests
       working-directory: ${{github.workspace}}/test
-      run: |
-        for f in ./*.out
-        do
-          ./$f
-        done
+      run: ./dsm_tests.out

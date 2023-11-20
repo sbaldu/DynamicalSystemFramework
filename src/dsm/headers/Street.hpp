@@ -37,15 +37,11 @@ namespace dsm {
     Size m_capacity;
 
   public:
-    Street() = default;
+    Street() = delete;
     /// @brief Construct a new Street object
     /// @param index, The street's id
-    Street(Id index);
-    /// @brief Construct a new Street object
-    /// @param index, The street's id
-    /// @param capacity, The street's capacity
-    /// @param len, The street's length
-    Street(Id index, Size capacity, double len);
+    /// @param nodePair, The street's node pair
+    Street(Id index, std::pair<Id, Id> nodePair);
     /// @brief Construct a new Street object
     /// @param index, The street's id
     /// @param capacity, The street's capacity
@@ -122,12 +118,8 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  Street<Id, Size>::Street(Id index) : m_id{index}, m_size{0} {}
-
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  Street<Id, Size>::Street(Id index, Size capacity, double len)
-      : m_len{len}, m_maxSpeed{30.}, m_id{index}, m_size{0}, m_capacity{capacity} {}
+  Street<Id, Size>::Street(Id index, std::pair<Id, Id> pair)
+      : m_nodePair{std::move(pair)}, m_maxSpeed{30.}, m_id{index}, m_size{0} {}
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)

@@ -9,3 +9,6 @@
 
 # VS Code folder
 .vscode
+
+# valgrind generated files
+*vgcore.*
