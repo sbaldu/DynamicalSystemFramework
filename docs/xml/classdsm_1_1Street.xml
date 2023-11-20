@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="classdsm_1_1Street" kind="class" language="C++" prot="public">
     <compoundname>dsm::Street</compoundname>
     <includes local="no">Street.hpp</includes>
@@ -11,13 +11,12 @@
         <type>typename Size</type>
       </param>
     </templateparamlist>
-    <sectiondef kind="private-attrib">
+      <sectiondef kind="private-attrib">
       <memberdef kind="variable" id="classdsm_1_1Street_1a65440345861cd64e77fcf2eaa2abba77" prot="private" static="no" mutable="no">
         <type>std::queue&lt; Size &gt;</type>
         <definition>std::queue&lt;Size&gt; dsm::Street&lt; Id, Size &gt;::m_queue</definition>
         <argsstring></argsstring>
         <name>m_queue</name>
-        <qualifiedname>dsm::Street::m_queue</qualifiedname>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
@@ -31,7 +30,6 @@
         <definition>std::pair&lt;Id, Id&gt; dsm::Street&lt; Id, Size &gt;::m_nodePair</definition>
         <argsstring></argsstring>
         <name>m_nodePair</name>
-        <qualifiedname>dsm::Street::m_nodePair</qualifiedname>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
@@ -45,7 +43,6 @@
         <definition>double dsm::Street&lt; Id, Size &gt;::m_len</definition>
         <argsstring></argsstring>
         <name>m_len</name>
-        <qualifiedname>dsm::Street::m_len</qualifiedname>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
@@ -59,7 +56,6 @@
         <definition>double dsm::Street&lt; Id, Size &gt;::m_maxSpeed</definition>
         <argsstring></argsstring>
         <name>m_maxSpeed</name>
-        <qualifiedname>dsm::Street::m_maxSpeed</qualifiedname>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
@@ -73,7 +69,6 @@
         <definition>Id dsm::Street&lt; Id, Size &gt;::m_id</definition>
         <argsstring></argsstring>
         <name>m_id</name>
-        <qualifiedname>dsm::Street::m_id</qualifiedname>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
@@ -87,7 +82,6 @@
         <definition>Size dsm::Street&lt; Id, Size &gt;::m_size</definition>
         <argsstring></argsstring>
         <name>m_size</name>
-        <qualifiedname>dsm::Street::m_size</qualifiedname>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
@@ -101,7 +95,6 @@
         <definition>Size dsm::Street&lt; Id, Size &gt;::m_capacity</definition>
         <argsstring></argsstring>
         <name>m_capacity</name>
-        <qualifiedname>dsm::Street::m_capacity</qualifiedname>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
@@ -110,14 +103,13 @@
         </inbodydescription>
         <location file="src/dsm/headers/Street.hpp" line="37" column="10" bodyfile="src/dsm/headers/Street.hpp" bodystart="37" bodyend="-1"/>
       </memberdef>
-    </sectiondef>
-    <sectiondef kind="public-func">
+      </sectiondef>
+      <sectiondef kind="public-func">
       <memberdef kind="function" id="classdsm_1_1Street_1a1002585429a3a23e1f3c58b53f24346b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
         <definition>dsm::Street&lt; Id, Size &gt;::Street</definition>
         <argsstring>()=default</argsstring>
         <name>Street</name>
-        <qualifiedname>dsm::Street::Street</qualifiedname>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
@@ -126,17 +118,15 @@
         </inbodydescription>
         <location file="src/dsm/headers/Street.hpp" line="40" column="5"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1Street_1afe71e982cae1f045e0133696a3191854" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1Street_1a77acd8f3557cb9eb855ab72f99b67c6f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
-        <definition>dsm::Street&lt; Id, Size &gt;::Street</definition>
+        <definition>requires std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; dsm::Street&lt; Id, Size &gt;::Street</definition>
         <argsstring>(Id index)</argsstring>
         <name>Street</name>
-        <qualifiedname>dsm::Street::Street</qualifiedname>
         <param>
           <type>Id</type>
           <declname>index</declname>
         </param>
-    <requiresclause>(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)    </requiresclause>
         <briefdescription>
 <para>Construct a new <ref refid="classdsm_1_1Street" kindref="compound">Street</ref> object. </para>
         </briefdescription>
@@ -144,10 +134,9 @@
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername>index</parametername>
-<parametername>The</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>street&apos;s id </para>
+<para>The street&apos;s id </para>
 </parameterdescription>
 </parameteritem>
 </parameterlist>
@@ -155,14 +144,13 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Street.hpp" line="43" column="5" bodyfile="src/dsm/headers/Street.hpp" bodystart="124" bodyend="124"/>
+        <location file="src/dsm/headers/Street.hpp" line="43" column="5" bodyfile="src/dsm/headers/Street.hpp" bodystart="126" bodyend="126"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1Street_1a31ad3cfa5833a0367bb35ac4f5fe8d81" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1Street_1a262b4243ec55001ce00233d24ac0a9a1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
-        <definition>dsm::Street&lt; Id, Size &gt;::Street</definition>
+        <definition>requires std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; dsm::Street&lt; Id, Size &gt;::Street</definition>
         <argsstring>(Id index, Size capacity, double len)</argsstring>
         <name>Street</name>
-        <qualifiedname>dsm::Street::Street</qualifiedname>
         <param>
           <type>Id</type>
           <declname>index</declname>
@@ -175,7 +163,6 @@
           <type>double</type>
           <declname>len</declname>
         </param>
-    <requiresclause>(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)    </requiresclause>
         <briefdescription>
 <para>Construct a new <ref refid="classdsm_1_1Street" kindref="compound">Street</ref> object. </para>
         </briefdescription>
@@ -183,28 +170,25 @@
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername>index</parametername>
-<parametername>The</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>street&apos;s id </para>
+<para>The street&apos;s id </para>
 </parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
 <parametername>capacity</parametername>
-<parametername>The</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>street&apos;s capacity </para>
+<para>The street&apos;s capacity </para>
 </parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
 <parametername>len</parametername>
-<parametername>The</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>street&apos;s length </para>
+<para>The street&apos;s length </para>
 </parameterdescription>
 </parameteritem>
 </parameterlist>
@@ -212,14 +196,13 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Street.hpp" line="48" column="5" bodyfile="src/dsm/headers/Street.hpp" bodystart="128" bodyend="129"/>
+        <location file="src/dsm/headers/Street.hpp" line="48" column="5" bodyfile="src/dsm/headers/Street.hpp" bodystart="130" bodyend="131"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1Street_1afd4e2460e804f9b2806a52b571cc18bf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1Street_1ada830ed31c1d483d221643af9f933029" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
-        <definition>dsm::Street&lt; Id, Size &gt;::Street</definition>
+        <definition>requires std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; dsm::Street&lt; Id, Size &gt;::Street</definition>
         <argsstring>(Id index, Size capacity, double len, std::pair&lt; Id, Id &gt; nodePair)</argsstring>
         <name>Street</name>
-        <qualifiedname>dsm::Street::Street</qualifiedname>
         <param>
           <type>Id</type>
           <declname>index</declname>
@@ -236,7 +219,6 @@
           <type>std::pair&lt; Id, Id &gt;</type>
           <declname>nodePair</declname>
         </param>
-    <requiresclause>(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)    </requiresclause>
         <briefdescription>
 <para>Construct a new <ref refid="classdsm_1_1Street" kindref="compound">Street</ref> object. </para>
         </briefdescription>
@@ -244,37 +226,33 @@
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername>index</parametername>
-<parametername>The</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>street&apos;s id </para>
+<para>The street&apos;s id </para>
 </parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
 <parametername>capacity</parametername>
-<parametername>The</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>street&apos;s capacity </para>
+<para>The street&apos;s capacity </para>
 </parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
 <parametername>len</parametername>
-<parametername>The</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>street&apos;s length </para>
+<para>The street&apos;s length </para>
 </parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
 <parametername>nodePair</parametername>
-<parametername>The</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>street&apos;s node pair </para>
+<para>The street&apos;s node pair </para>
 </parameterdescription>
 </parameteritem>
 </parameterlist>
@@ -282,14 +260,13 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Street.hpp" line="54" column="5" bodyfile="src/dsm/headers/Street.hpp" bodystart="133" bodyend="139"/>
+        <location file="src/dsm/headers/Street.hpp" line="54" column="5" bodyfile="src/dsm/headers/Street.hpp" bodystart="135" bodyend="141"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1Street_1aaa00040f1a658da889fab600ce61e5f1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1Street_1a21990e15f83949ee0b15b9d1e5fced60" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
-        <definition>dsm::Street&lt; Id, Size &gt;::Street</definition>
+        <definition>requires std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; dsm::Street&lt; Id, Size &gt;::Street</definition>
         <argsstring>(Id index, Size capacity, double len, double maxSpeed, std::pair&lt; Id, Id &gt; nodePair)</argsstring>
         <name>Street</name>
-        <qualifiedname>dsm::Street::Street</qualifiedname>
         <param>
           <type>Id</type>
           <declname>index</declname>
@@ -310,7 +287,6 @@
           <type>std::pair&lt; Id, Id &gt;</type>
           <declname>nodePair</declname>
         </param>
-    <requiresclause>(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)    </requiresclause>
         <briefdescription>
 <para>Construct a new <ref refid="classdsm_1_1Street" kindref="compound">Street</ref> object. </para>
         </briefdescription>
@@ -318,46 +294,41 @@
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername>index</parametername>
-<parametername>The</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>street&apos;s id </para>
+<para>The street&apos;s id </para>
 </parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
 <parametername>capacity</parametername>
-<parametername>The</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>street&apos;s capacity </para>
+<para>The street&apos;s capacity </para>
 </parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
 <parametername>len</parametername>
-<parametername>The</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>street&apos;s length </para>
+<para>The street&apos;s length </para>
 </parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
 <parametername>maxSpeed</parametername>
-<parametername>The</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>street&apos;s speed limit </para>
+<para>The street&apos;s speed limit </para>
 </parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
 <parametername>nodePair</parametername>
-<parametername>The</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>street&apos;s node pair </para>
+<para>The street&apos;s node pair </para>
 </parameterdescription>
 </parameteritem>
 </parameterlist>
@@ -365,19 +336,17 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Street.hpp" line="61" column="5" bodyfile="src/dsm/headers/Street.hpp" bodystart="143" bodyend="146"/>
+        <location file="src/dsm/headers/Street.hpp" line="61" column="5" bodyfile="src/dsm/headers/Street.hpp" bodystart="145" bodyend="148"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1Street_1ada18829381e12f2bd0ccc29867b2cdb7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1Street_1a1864aa8dfa760187943eef2586685a79" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void dsm::Street&lt; Id, Size &gt;::setId</definition>
+        <definition>requires std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; void dsm::Street&lt; Id, Size &gt;::setId</definition>
         <argsstring>(Id id)</argsstring>
         <name>setId</name>
-        <qualifiedname>dsm::Street::setId</qualifiedname>
         <param>
           <type>Id</type>
           <declname>id</declname>
         </param>
-    <requiresclause>(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)    </requiresclause>
         <briefdescription>
 <para>Set the street&apos;s id. </para>
         </briefdescription>
@@ -385,10 +354,9 @@
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername>id</parametername>
-<parametername>The</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>street&apos;s id </para>
+<para>The street&apos;s id </para>
 </parameterdescription>
 </parameteritem>
 </parameterlist>
@@ -396,19 +364,17 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Street.hpp" line="65" column="10" bodyfile="src/dsm/headers/Street.hpp" bodystart="150" bodyend="152"/>
+        <location file="src/dsm/headers/Street.hpp" line="65" column="10" bodyfile="src/dsm/headers/Street.hpp" bodystart="152" bodyend="154"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1Street_1a7022595cc57600fb0b531acea0f49456" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1Street_1a55cfbf1ea269b38411310083487d96e5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void dsm::Street&lt; Id, Size &gt;::setCapacity</definition>
+        <definition>requires std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; void dsm::Street&lt; Id, Size &gt;::setCapacity</definition>
         <argsstring>(Size capacity)</argsstring>
         <name>setCapacity</name>
-        <qualifiedname>dsm::Street::setCapacity</qualifiedname>
         <param>
           <type>Size</type>
           <declname>capacity</declname>
         </param>
-    <requiresclause>(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)    </requiresclause>
         <briefdescription>
 <para>Set the street&apos;s capacity. </para>
         </briefdescription>
@@ -416,10 +382,9 @@
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername>capacity</parametername>
-<parametername>The</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>street&apos;s capacity </para>
+<para>The street&apos;s capacity </para>
 </parameterdescription>
 </parameteritem>
 </parameterlist>
@@ -427,19 +392,17 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Street.hpp" line="68" column="10" bodyfile="src/dsm/headers/Street.hpp" bodystart="155" bodyend="157"/>
+        <location file="src/dsm/headers/Street.hpp" line="68" column="10" bodyfile="src/dsm/headers/Street.hpp" bodystart="157" bodyend="159"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1Street_1adbb6ac57d1ae1cc3cb442f5943ce9254" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1Street_1acb9278c14820710ac075c7c07380814b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void dsm::Street&lt; Id, Size &gt;::setLength</definition>
+        <definition>requires std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; void dsm::Street&lt; Id, Size &gt;::setLength</definition>
         <argsstring>(double len)</argsstring>
         <name>setLength</name>
-        <qualifiedname>dsm::Street::setLength</qualifiedname>
         <param>
           <type>double</type>
           <declname>len</declname>
         </param>
-    <requiresclause>(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)    </requiresclause>
         <briefdescription>
 <para>Set the street&apos;s length. </para>
         </briefdescription>
@@ -447,10 +410,9 @@
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername>len</parametername>
-<parametername>The</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>street&apos;s length </para>
+<para>The street&apos;s length </para>
 </parameterdescription>
 </parameteritem>
 </parameterlist>
@@ -458,19 +420,17 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Street.hpp" line="71" column="10" bodyfile="src/dsm/headers/Street.hpp" bodystart="160" bodyend="162"/>
+        <location file="src/dsm/headers/Street.hpp" line="71" column="10" bodyfile="src/dsm/headers/Street.hpp" bodystart="162" bodyend="164"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1Street_1ae4616f31df5ec83ba679701d00d8d3eb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1Street_1ad6b99ebe61048f001caadd9f303ae216" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void dsm::Street&lt; Id, Size &gt;::setQueue</definition>
+        <definition>requires std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; void dsm::Street&lt; Id, Size &gt;::setQueue</definition>
         <argsstring>(std::queue&lt; Size &gt; queue)</argsstring>
         <name>setQueue</name>
-        <qualifiedname>dsm::Street::setQueue</qualifiedname>
         <param>
           <type>std::queue&lt; Size &gt;</type>
           <declname>queue</declname>
         </param>
-    <requiresclause>(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)    </requiresclause>
         <briefdescription>
 <para>Set the street&apos;s queue. </para>
         </briefdescription>
@@ -478,10 +438,9 @@
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername>queue</parametername>
-<parametername>The</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>street&apos;s queue </para>
+<para>The street&apos;s queue </para>
 </parameterdescription>
 </parameteritem>
 </parameterlist>
@@ -489,14 +448,13 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Street.hpp" line="74" column="10" bodyfile="src/dsm/headers/Street.hpp" bodystart="165" bodyend="167"/>
+        <location file="src/dsm/headers/Street.hpp" line="74" column="10" bodyfile="src/dsm/headers/Street.hpp" bodystart="167" bodyend="169"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1Street_1a36ad992896e28b3ec09d829812aa808d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1Street_1a83a15b9a380d846584f3275a54890018" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void dsm::Street&lt; Id, Size &gt;::setNodePair</definition>
+        <definition>requires std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; void dsm::Street&lt; Id, Size &gt;::setNodePair</definition>
         <argsstring>(Id node1, Id node2)</argsstring>
         <name>setNodePair</name>
-        <qualifiedname>dsm::Street::setNodePair</qualifiedname>
         <param>
           <type>Id</type>
           <declname>node1</declname>
@@ -505,7 +463,6 @@
           <type>Id</type>
           <declname>node2</declname>
         </param>
-    <requiresclause>(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)    </requiresclause>
         <briefdescription>
 <para>Set the street&apos;s node pair. </para>
         </briefdescription>
@@ -513,19 +470,17 @@
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername>node1</parametername>
-<parametername>The</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>source node of the street </para>
+<para>The source node of the street </para>
 </parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
 <parametername>node2</parametername>
-<parametername>The</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>destination node of the street </para>
+<para>The destination node of the street </para>
 </parameterdescription>
 </parameteritem>
 </parameterlist>
@@ -533,14 +488,13 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Street.hpp" line="78" column="10" bodyfile="src/dsm/headers/Street.hpp" bodystart="170" bodyend="172"/>
+        <location file="src/dsm/headers/Street.hpp" line="78" column="10" bodyfile="src/dsm/headers/Street.hpp" bodystart="172" bodyend="174"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1Street_1a4566f82e77e4f1324e0a093c99651043" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1Street_1a88542a7145d33e2e1c855f13c240e7e2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void dsm::Street&lt; Id, Size &gt;::setNodePair</definition>
+        <definition>requires std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; void dsm::Street&lt; Id, Size &gt;::setNodePair</definition>
         <argsstring>(const Node&lt; Id &gt; &amp;node1, const Node&lt; Id &gt; &amp;node2)</argsstring>
         <name>setNodePair</name>
-        <qualifiedname>dsm::Street::setNodePair</qualifiedname>
         <param>
           <type>const <ref refid="classdsm_1_1Node" kindref="compound">Node</ref>&lt; Id &gt; &amp;</type>
           <declname>node1</declname>
@@ -549,7 +503,6 @@
           <type>const <ref refid="classdsm_1_1Node" kindref="compound">Node</ref>&lt; Id &gt; &amp;</type>
           <declname>node2</declname>
         </param>
-    <requiresclause>(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)    </requiresclause>
         <briefdescription>
 <para>Set the street&apos;s node pair. </para>
         </briefdescription>
@@ -557,19 +510,17 @@
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername>node1</parametername>
-<parametername>The</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>source node of the street </para>
+<para>The source node of the street </para>
 </parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
 <parametername>node2</parametername>
-<parametername>The</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>destination node of the street </para>
+<para>The destination node of the street </para>
 </parameterdescription>
 </parameteritem>
 </parameterlist>
@@ -577,19 +528,17 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Street.hpp" line="82" column="10" bodyfile="src/dsm/headers/Street.hpp" bodystart="175" bodyend="177"/>
+        <location file="src/dsm/headers/Street.hpp" line="82" column="10" bodyfile="src/dsm/headers/Street.hpp" bodystart="177" bodyend="179"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1Street_1a33a82dcd55a4fb58e2fbdd8447bfa78e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1Street_1a7364b43eefd6cbbcec5842131aca50fc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void dsm::Street&lt; Id, Size &gt;::setNodePair</definition>
+        <definition>requires std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; void dsm::Street&lt; Id, Size &gt;::setNodePair</definition>
         <argsstring>(std::pair&lt; Id, Id &gt; pair)</argsstring>
         <name>setNodePair</name>
-        <qualifiedname>dsm::Street::setNodePair</qualifiedname>
         <param>
           <type>std::pair&lt; Id, Id &gt;</type>
           <declname>pair</declname>
         </param>
-    <requiresclause>(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)    </requiresclause>
         <briefdescription>
 <para>Set the street&apos;s node pair. </para>
         </briefdescription>
@@ -597,10 +546,9 @@
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername>pair</parametername>
-<parametername>The</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>street&apos;s node pair </para>
+<para>The street&apos;s node pair </para>
 </parameterdescription>
 </parameteritem>
 </parameterlist>
@@ -608,19 +556,17 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Street.hpp" line="85" column="10" bodyfile="src/dsm/headers/Street.hpp" bodystart="180" bodyend="182"/>
+        <location file="src/dsm/headers/Street.hpp" line="85" column="10" bodyfile="src/dsm/headers/Street.hpp" bodystart="182" bodyend="184"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1Street_1a5a9612b03ebc5a83ce39986d2de16c7b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1Street_1ac00431c1c416c161c8607d7f36011863" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void dsm::Street&lt; Id, Size &gt;::setMaxSpeed</definition>
+        <definition>requires std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; void dsm::Street&lt; Id, Size &gt;::setMaxSpeed</definition>
         <argsstring>(double speed)</argsstring>
         <name>setMaxSpeed</name>
-        <qualifiedname>dsm::Street::setMaxSpeed</qualifiedname>
         <param>
           <type>double</type>
           <declname>speed</declname>
         </param>
-    <requiresclause>(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)    </requiresclause>
         <briefdescription>
 <para>Set the street&apos;s speed limit. </para>
         </briefdescription>
@@ -628,10 +574,9 @@
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername>speed</parametername>
-<parametername>The</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>street&apos;s speed limit </para>
+<para>The street&apos;s speed limit </para>
 </parameterdescription>
 </parameteritem>
 </parameterlist>
@@ -649,182 +594,177 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Street.hpp" line="89" column="10" bodyfile="src/dsm/headers/Street.hpp" bodystart="185" bodyend="192"/>
+        <location file="src/dsm/headers/Street.hpp" line="89" column="10" bodyfile="src/dsm/headers/Street.hpp" bodystart="187" bodyend="194"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1Street_1ad118a6df7683912211201accc57834f5" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1Street_1a6a1959d02cf46308faeeac4875fd37fd" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>Id</type>
-        <definition>Id dsm::Street&lt; Id, Size &gt;::id</definition>
+        <definition>requires std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; Id dsm::Street&lt; Id, Size &gt;::id</definition>
         <argsstring>() const</argsstring>
         <name>id</name>
-        <qualifiedname>dsm::Street::id</qualifiedname>
-    <requiresclause>(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)    </requiresclause>
         <briefdescription>
 <para>Get the street&apos;s id. </para>
         </briefdescription>
         <detaileddescription>
-<para><simplesect kind="return"><para>Id, The street&apos;s id </para>
+<para><simplesect kind="return"><para>Id The street&apos;s id </para>
 </simplesect>
 </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Street.hpp" line="93" column="8" bodyfile="src/dsm/headers/Street.hpp" bodystart="196" bodyend="198"/>
+        <location file="src/dsm/headers/Street.hpp" line="93" column="8" bodyfile="src/dsm/headers/Street.hpp" bodystart="198" bodyend="200"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1Street_1a3f58c8387de1bc3ebdf10dc6f953e823" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1Street_1a3a325887bbbb09935d4f7d2925342669" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>Size</type>
-        <definition>Size dsm::Street&lt; Id, Size &gt;::size</definition>
+        <definition>requires std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; Size dsm::Street&lt; Id, Size &gt;::size</definition>
         <argsstring>() const</argsstring>
         <name>size</name>
-        <qualifiedname>dsm::Street::size</qualifiedname>
-    <requiresclause>(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)    </requiresclause>
         <briefdescription>
 <para>Get the street&apos;s size. </para>
         </briefdescription>
         <detaileddescription>
-<para><simplesect kind="return"><para>Size, The street&apos;s size </para>
+<para><simplesect kind="return"><para>Size The street&apos;s size </para>
 </simplesect>
 </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Street.hpp" line="96" column="10" bodyfile="src/dsm/headers/Street.hpp" bodystart="201" bodyend="203"/>
+        <location file="src/dsm/headers/Street.hpp" line="96" column="10" bodyfile="src/dsm/headers/Street.hpp" bodystart="203" bodyend="205"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1Street_1a4bd2d6ef044dcdbc49c48ea1b7fab5f7" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1Street_1aa2e415dfb4cf07ec57bcada69c3136b5" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>Size</type>
-        <definition>Size dsm::Street&lt; Id, Size &gt;::capacity</definition>
+        <definition>requires std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; Size dsm::Street&lt; Id, Size &gt;::capacity</definition>
         <argsstring>() const</argsstring>
         <name>capacity</name>
-        <qualifiedname>dsm::Street::capacity</qualifiedname>
-    <requiresclause>(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)    </requiresclause>
         <briefdescription>
 <para>Get the street&apos;s capacity. </para>
         </briefdescription>
         <detaileddescription>
-<para><simplesect kind="return"><para>Size, The street&apos;s capacity </para>
+<para><simplesect kind="return"><para>Size The street&apos;s capacity </para>
 </simplesect>
 </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Street.hpp" line="99" column="10" bodyfile="src/dsm/headers/Street.hpp" bodystart="206" bodyend="208"/>
+        <location file="src/dsm/headers/Street.hpp" line="99" column="10" bodyfile="src/dsm/headers/Street.hpp" bodystart="208" bodyend="210"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1Street_1a8fcaf6c6e3a5eacc195abcb11499e288" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1Street_1aa1066debd2c50b13885b9d69930e611a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
-        <definition>double dsm::Street&lt; Id, Size &gt;::length</definition>
+        <definition>requires std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; double dsm::Street&lt; Id, Size &gt;::length</definition>
         <argsstring>() const</argsstring>
         <name>length</name>
-        <qualifiedname>dsm::Street::length</qualifiedname>
-    <requiresclause>(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)    </requiresclause>
         <briefdescription>
 <para>Get the street&apos;s length. </para>
         </briefdescription>
         <detaileddescription>
-<para><simplesect kind="return"><para>double, The street&apos;s length </para>
+<para><simplesect kind="return"><para>double The street&apos;s length </para>
 </simplesect>
 </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Street.hpp" line="102" column="12" bodyfile="src/dsm/headers/Street.hpp" bodystart="211" bodyend="213"/>
+        <location file="src/dsm/headers/Street.hpp" line="102" column="12" bodyfile="src/dsm/headers/Street.hpp" bodystart="213" bodyend="215"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1Street_1afb41a6b8ef3cf1bd247a726672506d7f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1Street_1ab4e55f7421f405ec26e1b5c682ad20de" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>const std::queue&lt; Size &gt; &amp;</type>
-        <definition>const std::queue&lt; Size &gt; &amp; dsm::Street&lt; Id, Size &gt;::queue</definition>
+        <definition>requires std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; const std::queue&lt; Size &gt; &amp; dsm::Street&lt; Id, Size &gt;::queue</definition>
         <argsstring>() const</argsstring>
         <name>queue</name>
-        <qualifiedname>dsm::Street::queue</qualifiedname>
-    <requiresclause>(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)    </requiresclause>
         <briefdescription>
 <para>Get the street&apos;s queue. </para>
         </briefdescription>
         <detaileddescription>
-<para><simplesect kind="return"><para>std::queue&lt;Size&gt;, The street&apos;s queue </para>
+<para><simplesect kind="return"><para>std::queue&lt;Size&gt; The street&apos;s queue </para>
 </simplesect>
 </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Street.hpp" line="105" column="22" bodyfile="src/dsm/headers/Street.hpp" bodystart="216" bodyend="218"/>
+        <location file="src/dsm/headers/Street.hpp" line="105" column="22" bodyfile="src/dsm/headers/Street.hpp" bodystart="218" bodyend="220"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1Street_1afb91d15f9d075abff5e003b65c66993d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1Street_1acf05ca953f7aa5b3d7debcd499950d75" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>const std::pair&lt; Id, Id &gt; &amp;</type>
-        <definition>const std::pair&lt; Id, Id &gt; &amp; dsm::Street&lt; Id, Size &gt;::nodePair</definition>
+        <definition>requires std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; const std::pair&lt; Id, Id &gt; &amp; dsm::Street&lt; Id, Size &gt;::nodePair</definition>
         <argsstring>() const</argsstring>
         <name>nodePair</name>
-        <qualifiedname>dsm::Street::nodePair</qualifiedname>
-    <requiresclause>(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)    </requiresclause>
         <briefdescription>
 <para>Get the street&apos;s node pair. </para>
         </briefdescription>
         <detaileddescription>
-<para><simplesect kind="return"><para>std::pair&lt;Id, Id&gt;, The street&apos;s node pair </para>
+<para><simplesect kind="return"><para>std::pair&lt;Id, Id&gt; The street&apos;s node pair </para>
 </simplesect>
 </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Street.hpp" line="108" column="21" bodyfile="src/dsm/headers/Street.hpp" bodystart="221" bodyend="223"/>
+        <location file="src/dsm/headers/Street.hpp" line="108" column="21" bodyfile="src/dsm/headers/Street.hpp" bodystart="223" bodyend="225"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1Street_1a41e03a008759849a9cbbfab32f828471" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1Street_1a81e971d718d4f5cae839ebeaada05a0b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
-        <definition>double dsm::Street&lt; Id, Size &gt;::density</definition>
+        <definition>requires std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; double dsm::Street&lt; Id, Size &gt;::density</definition>
         <argsstring>() const</argsstring>
         <name>density</name>
-        <qualifiedname>dsm::Street::density</qualifiedname>
-    <requiresclause>(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)    </requiresclause>
         <briefdescription>
 <para>Get the street&apos;s density. </para>
         </briefdescription>
         <detaileddescription>
-<para><simplesect kind="return"><para>double, The street&apos;s density </para>
+<para><simplesect kind="return"><para>double The street&apos;s density </para>
 </simplesect>
 </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Street.hpp" line="111" column="12" bodyfile="src/dsm/headers/Street.hpp" bodystart="226" bodyend="228"/>
+        <location file="src/dsm/headers/Street.hpp" line="111" column="12" bodyfile="src/dsm/headers/Street.hpp" bodystart="228" bodyend="230"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1Street_1ac4e212a4d223925f5d3138a7a86b753b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1Street_1aa5384728acf2cb3908bd952c41803011" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
-        <definition>double dsm::Street&lt; Id, Size &gt;::maxSpeed</definition>
+        <definition>requires std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; double dsm::Street&lt; Id, Size &gt;::maxSpeed</definition>
         <argsstring>() const</argsstring>
         <name>maxSpeed</name>
-        <qualifiedname>dsm::Street::maxSpeed</qualifiedname>
-    <requiresclause>(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)    </requiresclause>
         <briefdescription>
 <para>Get the street&apos;s speed limit. </para>
         </briefdescription>
         <detaileddescription>
-<para><simplesect kind="return"><para>double, The street&apos;s speed limit </para>
+<para><simplesect kind="return"><para>double The street&apos;s speed limit </para>
 </simplesect>
 </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Street.hpp" line="114" column="12" bodyfile="src/dsm/headers/Street.hpp" bodystart="231" bodyend="233"/>
+        <location file="src/dsm/headers/Street.hpp" line="114" column="12" bodyfile="src/dsm/headers/Street.hpp" bodystart="233" bodyend="235"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1Street_1a838f1a6ceb2f32e12e063707ac65e446" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1Street_1abc62ec10e3b85d88508c036f60930785" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Delay</type>
+          </param>
+        </templateparamlist>
         <type>void</type>
         <definition>void dsm::Street&lt; Id, Size &gt;::enqueue</definition>
-        <argsstring>(const Agent&lt; Id &gt; &amp;agent)</argsstring>
+        <argsstring>(const Agent&lt; Id, Size, Delay &gt; &amp;agent)</argsstring>
         <name>enqueue</name>
-        <qualifiedname>dsm::Street::enqueue</qualifiedname>
         <param>
-          <type>const <ref refid="classdsm_1_1Agent" kindref="compound">Agent</ref>&lt; Id &gt; &amp;</type>
+          <type>const <ref refid="classdsm_1_1Agent" kindref="compound">Agent</ref>&lt; Id, Size, Delay &gt; &amp;</type>
           <declname>agent</declname>
         </param>
-    <requiresclause>(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)    </requiresclause>
         <briefdescription>
 <para>Add an agent to the street&apos;s queue. </para>
         </briefdescription>
         <detaileddescription>
-<para><parameterlist kind="param"><parameteritem>
+<para><parameterlist kind="templateparam"><parameteritem>
 <parameternamelist>
-<parametername>agent</parametername>
-<parametername>The</parametername>
+<parametername>Delay</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>agent to add </para>
+<para>The type of the agent&apos;s delay </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>agent</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The agent to add </para>
 </parameterdescription>
 </parameteritem>
 </parameterlist>
@@ -832,15 +772,13 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Street.hpp" line="117" column="10" bodyfile="src/dsm/headers/Street.hpp" bodystart="237" bodyend="242"/>
+        <location file="src/dsm/headers/Street.hpp" line="119" column="10"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1Street_1a888ba3292e7d524d4f014e1e11fe0488" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1Street_1ad96a2ad5f6ecd00cf40094ba405f6090" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>std::optional&lt; Id &gt;</type>
-        <definition>std::optional&lt; Id &gt; dsm::Street&lt; Id, Size &gt;::dequeue</definition>
+        <definition>requires std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; std::optional&lt; Id &gt; dsm::Street&lt; Id, Size &gt;::dequeue</definition>
         <argsstring>()</argsstring>
         <name>dequeue</name>
-        <qualifiedname>dsm::Street::dequeue</qualifiedname>
-    <requiresclause>(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)    </requiresclause>
         <briefdescription>
 <para>Remove an agent from the street&apos;s queue. </para>
         </briefdescription>
@@ -848,10 +786,31 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Street.hpp" line="119" column="19" bodyfile="src/dsm/headers/Street.hpp" bodystart="246" bodyend="256"/>
+        <location file="src/dsm/headers/Street.hpp" line="121" column="19" bodyfile="src/dsm/headers/Street.hpp" bodystart="249" bodyend="259"/>
       </memberdef>
-    </sectiondef>
-    <requiresclause>(std::unsigned_integral&lt;Id&gt; &amp;&amp; std::unsigned_integral&lt;Size&gt;)    </requiresclause>
+      <memberdef kind="function" id="classdsm_1_1Street_1a24078dff7ca73041ae8a61d7af368900" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Delay</type>
+          </param>
+        </templateparamlist>
+        <type>requires std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; void</type>
+        <definition>requires std::unsigned_integral&lt;Id&gt;&amp;&amp; std::unsigned_integral&lt;Size&gt; void dsm::Street&lt; Id, Size &gt;::enqueue</definition>
+        <argsstring>(const Agent&lt; Id, Size, Delay &gt; &amp;agent)</argsstring>
+        <name>enqueue</name>
+        <param>
+          <type>const <ref refid="classdsm_1_1Agent" kindref="compound">Agent</ref>&lt; Id, Size, Delay &gt; &amp;</type>
+          <declname>agent</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/dsm/headers/Street.hpp" line="240" column="15" bodyfile="src/dsm/headers/Street.hpp" bodystart="240" bodyend="245"/>
+      </memberdef>
+      </sectiondef>
     <briefdescription>
 <para>The <ref refid="classdsm_1_1Street" kindref="compound">Street</ref> class represents a street in the network. </para>
     </briefdescription>
@@ -859,32 +818,31 @@
 <para><parameterlist kind="templateparam"><parameteritem>
 <parameternamelist>
 <parametername>Id</parametername>
-<parametername>The</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>type of the street&apos;s id. It must be an unsigned integral type. </para>
+<para>The type of the street&apos;s id. It must be an unsigned integral type. </para>
 </parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
 <parametername>Size</parametername>
-<parametername>The</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>type of the street&apos;s capacity. It must be an unsigned integral type. </para>
+<para>The type of the street&apos;s capacity. It must be an unsigned integral type. </para>
 </parameterdescription>
 </parameteritem>
 </parameterlist>
 </para>
     </detaileddescription>
-    <location file="src/dsm/headers/Street.hpp" line="29" column="3" bodyfile="src/dsm/headers/Street.hpp" bodystart="29" bodyend="120"/>
+    <location file="src/dsm/headers/Street.hpp" line="29" column="3" bodyfile="src/dsm/headers/Street.hpp" bodystart="29" bodyend="122"/>
     <listofallmembers>
-      <member refid="classdsm_1_1Street_1a4bd2d6ef044dcdbc49c48ea1b7fab5f7" prot="public" virt="non-virtual"><scope>dsm::Street</scope><name>capacity</name></member>
-      <member refid="classdsm_1_1Street_1a41e03a008759849a9cbbfab32f828471" prot="public" virt="non-virtual"><scope>dsm::Street</scope><name>density</name></member>
-      <member refid="classdsm_1_1Street_1a888ba3292e7d524d4f014e1e11fe0488" prot="public" virt="non-virtual"><scope>dsm::Street</scope><name>dequeue</name></member>
-      <member refid="classdsm_1_1Street_1a838f1a6ceb2f32e12e063707ac65e446" prot="public" virt="non-virtual"><scope>dsm::Street</scope><name>enqueue</name></member>
-      <member refid="classdsm_1_1Street_1ad118a6df7683912211201accc57834f5" prot="public" virt="non-virtual"><scope>dsm::Street</scope><name>id</name></member>
-      <member refid="classdsm_1_1Street_1a8fcaf6c6e3a5eacc195abcb11499e288" prot="public" virt="non-virtual"><scope>dsm::Street</scope><name>length</name></member>
+      <member refid="classdsm_1_1Street_1aa2e415dfb4cf07ec57bcada69c3136b5" prot="public" virt="non-virtual"><scope>dsm::Street</scope><name>capacity</name></member>
+      <member refid="classdsm_1_1Street_1a81e971d718d4f5cae839ebeaada05a0b" prot="public" virt="non-virtual"><scope>dsm::Street</scope><name>density</name></member>
+      <member refid="classdsm_1_1Street_1ad96a2ad5f6ecd00cf40094ba405f6090" prot="public" virt="non-virtual"><scope>dsm::Street</scope><name>dequeue</name></member>
+      <member refid="classdsm_1_1Street_1abc62ec10e3b85d88508c036f60930785" prot="public" virt="non-virtual"><scope>dsm::Street</scope><name>enqueue</name></member>
+      <member refid="classdsm_1_1Street_1a24078dff7ca73041ae8a61d7af368900" prot="public" virt="non-virtual"><scope>dsm::Street</scope><name>enqueue</name></member>
+      <member refid="classdsm_1_1Street_1a6a1959d02cf46308faeeac4875fd37fd" prot="public" virt="non-virtual"><scope>dsm::Street</scope><name>id</name></member>
+      <member refid="classdsm_1_1Street_1aa1066debd2c50b13885b9d69930e611a" prot="public" virt="non-virtual"><scope>dsm::Street</scope><name>length</name></member>
       <member refid="classdsm_1_1Street_1a2d1ab859347c98ce129d9ac9e5bf7a9a" prot="private" virt="non-virtual"><scope>dsm::Street</scope><name>m_capacity</name></member>
       <member refid="classdsm_1_1Street_1abb10ab6ed171be672181caf05b2b6af7" prot="private" virt="non-virtual"><scope>dsm::Street</scope><name>m_id</name></member>
       <member refid="classdsm_1_1Street_1a6cdc2160bf02ac9f27e8cadc26f8432c" prot="private" virt="non-virtual"><scope>dsm::Street</scope><name>m_len</name></member>
@@ -892,23 +850,23 @@
       <member refid="classdsm_1_1Street_1a6b4b71fa7703aa69a106cf75c2d10771" prot="private" virt="non-virtual"><scope>dsm::Street</scope><name>m_nodePair</name></member>
       <member refid="classdsm_1_1Street_1a65440345861cd64e77fcf2eaa2abba77" prot="private" virt="non-virtual"><scope>dsm::Street</scope><name>m_queue</name></member>
       <member refid="classdsm_1_1Street_1a61b00bbb44683c0b0bbb8f8ad7377dd0" prot="private" virt="non-virtual"><scope>dsm::Street</scope><name>m_size</name></member>
-      <member refid="classdsm_1_1Street_1ac4e212a4d223925f5d3138a7a86b753b" prot="public" virt="non-virtual"><scope>dsm::Street</scope><name>maxSpeed</name></member>
-      <member refid="classdsm_1_1Street_1afb91d15f9d075abff5e003b65c66993d" prot="public" virt="non-virtual"><scope>dsm::Street</scope><name>nodePair</name></member>
-      <member refid="classdsm_1_1Street_1afb41a6b8ef3cf1bd247a726672506d7f" prot="public" virt="non-virtual"><scope>dsm::Street</scope><name>queue</name></member>
-      <member refid="classdsm_1_1Street_1a7022595cc57600fb0b531acea0f49456" prot="public" virt="non-virtual"><scope>dsm::Street</scope><name>setCapacity</name></member>
-      <member refid="classdsm_1_1Street_1ada18829381e12f2bd0ccc29867b2cdb7" prot="public" virt="non-virtual"><scope>dsm::Street</scope><name>setId</name></member>
-      <member refid="classdsm_1_1Street_1adbb6ac57d1ae1cc3cb442f5943ce9254" prot="public" virt="non-virtual"><scope>dsm::Street</scope><name>setLength</name></member>
-      <member refid="classdsm_1_1Street_1a5a9612b03ebc5a83ce39986d2de16c7b" prot="public" virt="non-virtual"><scope>dsm::Street</scope><name>setMaxSpeed</name></member>
-      <member refid="classdsm_1_1Street_1a36ad992896e28b3ec09d829812aa808d" prot="public" virt="non-virtual"><scope>dsm::Street</scope><name>setNodePair</name></member>
-      <member refid="classdsm_1_1Street_1a4566f82e77e4f1324e0a093c99651043" prot="public" virt="non-virtual"><scope>dsm::Street</scope><name>setNodePair</name></member>
-      <member refid="classdsm_1_1Street_1a33a82dcd55a4fb58e2fbdd8447bfa78e" prot="public" virt="non-virtual"><scope>dsm::Street</scope><name>setNodePair</name></member>
-      <member refid="classdsm_1_1Street_1ae4616f31df5ec83ba679701d00d8d3eb" prot="public" virt="non-virtual"><scope>dsm::Street</scope><name>setQueue</name></member>
-      <member refid="classdsm_1_1Street_1a3f58c8387de1bc3ebdf10dc6f953e823" prot="public" virt="non-virtual"><scope>dsm::Street</scope><name>size</name></member>
+      <member refid="classdsm_1_1Street_1aa5384728acf2cb3908bd952c41803011" prot="public" virt="non-virtual"><scope>dsm::Street</scope><name>maxSpeed</name></member>
+      <member refid="classdsm_1_1Street_1acf05ca953f7aa5b3d7debcd499950d75" prot="public" virt="non-virtual"><scope>dsm::Street</scope><name>nodePair</name></member>
+      <member refid="classdsm_1_1Street_1ab4e55f7421f405ec26e1b5c682ad20de" prot="public" virt="non-virtual"><scope>dsm::Street</scope><name>queue</name></member>
+      <member refid="classdsm_1_1Street_1a55cfbf1ea269b38411310083487d96e5" prot="public" virt="non-virtual"><scope>dsm::Street</scope><name>setCapacity</name></member>
+      <member refid="classdsm_1_1Street_1a1864aa8dfa760187943eef2586685a79" prot="public" virt="non-virtual"><scope>dsm::Street</scope><name>setId</name></member>
+      <member refid="classdsm_1_1Street_1acb9278c14820710ac075c7c07380814b" prot="public" virt="non-virtual"><scope>dsm::Street</scope><name>setLength</name></member>
+      <member refid="classdsm_1_1Street_1ac00431c1c416c161c8607d7f36011863" prot="public" virt="non-virtual"><scope>dsm::Street</scope><name>setMaxSpeed</name></member>
+      <member refid="classdsm_1_1Street_1a83a15b9a380d846584f3275a54890018" prot="public" virt="non-virtual"><scope>dsm::Street</scope><name>setNodePair</name></member>
+      <member refid="classdsm_1_1Street_1a88542a7145d33e2e1c855f13c240e7e2" prot="public" virt="non-virtual"><scope>dsm::Street</scope><name>setNodePair</name></member>
+      <member refid="classdsm_1_1Street_1a7364b43eefd6cbbcec5842131aca50fc" prot="public" virt="non-virtual"><scope>dsm::Street</scope><name>setNodePair</name></member>
+      <member refid="classdsm_1_1Street_1ad6b99ebe61048f001caadd9f303ae216" prot="public" virt="non-virtual"><scope>dsm::Street</scope><name>setQueue</name></member>
+      <member refid="classdsm_1_1Street_1a3a325887bbbb09935d4f7d2925342669" prot="public" virt="non-virtual"><scope>dsm::Street</scope><name>size</name></member>
       <member refid="classdsm_1_1Street_1a1002585429a3a23e1f3c58b53f24346b" prot="public" virt="non-virtual"><scope>dsm::Street</scope><name>Street</name></member>
-      <member refid="classdsm_1_1Street_1afe71e982cae1f045e0133696a3191854" prot="public" virt="non-virtual"><scope>dsm::Street</scope><name>Street</name></member>
-      <member refid="classdsm_1_1Street_1a31ad3cfa5833a0367bb35ac4f5fe8d81" prot="public" virt="non-virtual"><scope>dsm::Street</scope><name>Street</name></member>
-      <member refid="classdsm_1_1Street_1afd4e2460e804f9b2806a52b571cc18bf" prot="public" virt="non-virtual"><scope>dsm::Street</scope><name>Street</name></member>
-      <member refid="classdsm_1_1Street_1aaa00040f1a658da889fab600ce61e5f1" prot="public" virt="non-virtual"><scope>dsm::Street</scope><name>Street</name></member>
+      <member refid="classdsm_1_1Street_1a77acd8f3557cb9eb855ab72f99b67c6f" prot="public" virt="non-virtual"><scope>dsm::Street</scope><name>Street</name></member>
+      <member refid="classdsm_1_1Street_1a262b4243ec55001ce00233d24ac0a9a1" prot="public" virt="non-virtual"><scope>dsm::Street</scope><name>Street</name></member>
+      <member refid="classdsm_1_1Street_1ada830ed31c1d483d221643af9f933029" prot="public" virt="non-virtual"><scope>dsm::Street</scope><name>Street</name></member>
+      <member refid="classdsm_1_1Street_1a21990e15f83949ee0b15b9d1e5fced60" prot="public" virt="non-virtual"><scope>dsm::Street</scope><name>Street</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

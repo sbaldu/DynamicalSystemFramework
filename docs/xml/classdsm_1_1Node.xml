@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="classdsm_1_1Node" kind="class" language="C++" prot="public">
     <compoundname>dsm::Node</compoundname>
     <includes local="no">Node.hpp</includes>
@@ -8,13 +8,12 @@
         <type>typename Id</type>
       </param>
     </templateparamlist>
-    <sectiondef kind="private-attrib">
+      <sectiondef kind="private-attrib">
       <memberdef kind="variable" id="classdsm_1_1Node_1a0e4af4b2760e13608a0a4ae313b98fd7" prot="private" static="no" mutable="no">
         <type>std::queue&lt; Id &gt;</type>
         <definition>std::queue&lt;Id&gt; dsm::Node&lt; Id &gt;::m_queue</definition>
         <argsstring></argsstring>
         <name>m_queue</name>
-        <qualifiedname>dsm::Node::m_queue</qualifiedname>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
@@ -28,7 +27,6 @@
         <definition>std::pair&lt;double, double&gt; dsm::Node&lt; Id &gt;::m_coords</definition>
         <argsstring></argsstring>
         <name>m_coords</name>
-        <qualifiedname>dsm::Node::m_coords</qualifiedname>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
@@ -42,7 +40,6 @@
         <definition>Id dsm::Node&lt; Id &gt;::m_id</definition>
         <argsstring></argsstring>
         <name>m_id</name>
-        <qualifiedname>dsm::Node::m_id</qualifiedname>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
@@ -51,14 +48,13 @@
         </inbodydescription>
         <location file="src/dsm/headers/Node.hpp" line="24" column="8" bodyfile="src/dsm/headers/Node.hpp" bodystart="24" bodyend="-1"/>
       </memberdef>
-    </sectiondef>
-    <sectiondef kind="public-func">
+      </sectiondef>
+      <sectiondef kind="public-func">
       <memberdef kind="function" id="classdsm_1_1Node_1a75d2959b0ca30715dc3086b68aaa6b61" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
         <definition>dsm::Node&lt; Id &gt;::Node</definition>
         <argsstring>()=default</argsstring>
         <name>Node</name>
-        <qualifiedname>dsm::Node::Node</qualifiedname>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
@@ -67,17 +63,15 @@
         </inbodydescription>
         <location file="src/dsm/headers/Node.hpp" line="27" column="5"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1Node_1a77816db7c053668e21fc29778862ead5" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1Node_1a892ce1333095c40e25e5018f33514ae6" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
         <type></type>
-        <definition>dsm::Node&lt; Id &gt;::Node</definition>
+        <definition>requires std::unsigned_integral&lt; Id &gt; dsm::Node&lt; Id &gt;::Node</definition>
         <argsstring>(Id id)</argsstring>
         <name>Node</name>
-        <qualifiedname>dsm::Node::Node</qualifiedname>
         <param>
           <type>Id</type>
           <declname>id</declname>
         </param>
-    <requiresclause>std::unsigned_integral&lt;Id&gt;    </requiresclause>
         <briefdescription>
 <para>Construct a new <ref refid="classdsm_1_1Node" kindref="compound">Node</ref> object. </para>
         </briefdescription>
@@ -85,10 +79,9 @@
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername>id</parametername>
-<parametername>The</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>node&apos;s id </para>
+<para>The node&apos;s id </para>
 </parameterdescription>
 </parameteritem>
 </parameterlist>
@@ -98,12 +91,11 @@
         </inbodydescription>
         <location file="src/dsm/headers/Node.hpp" line="30" column="14" bodyfile="src/dsm/headers/Node.hpp" bodystart="61" bodyend="61"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1Node_1af34885977123568417fa9bff1c683a72" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1Node_1adb1781f3464d8ac34c5f52c90858459c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
-        <definition>dsm::Node&lt; Id &gt;::Node</definition>
+        <definition>requires std::unsigned_integral&lt; Id &gt; dsm::Node&lt; Id &gt;::Node</definition>
         <argsstring>(Id id, std::pair&lt; double, double &gt; coords)</argsstring>
         <name>Node</name>
-        <qualifiedname>dsm::Node::Node</qualifiedname>
         <param>
           <type>Id</type>
           <declname>id</declname>
@@ -112,7 +104,6 @@
           <type>std::pair&lt; double, double &gt;</type>
           <declname>coords</declname>
         </param>
-    <requiresclause>std::unsigned_integral&lt;Id&gt;    </requiresclause>
         <briefdescription>
 <para>Construct a new <ref refid="classdsm_1_1Node" kindref="compound">Node</ref> object. </para>
         </briefdescription>
@@ -120,19 +111,17 @@
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername>id</parametername>
-<parametername>The</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>node&apos;s id </para>
+<para>The node&apos;s id </para>
 </parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
 <parametername>coords</parametername>
-<parametername>A</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>std::pair containing the node&apos;s coordinates </para>
+<para>A std::pair containing the node&apos;s coordinates </para>
 </parameterdescription>
 </parameteritem>
 </parameterlist>
@@ -142,12 +131,11 @@
         </inbodydescription>
         <location file="src/dsm/headers/Node.hpp" line="34" column="5" bodyfile="src/dsm/headers/Node.hpp" bodystart="65" bodyend="65"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1Node_1a7280a4a30847faf7abf54e4dcd309a5f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1Node_1a92106f14d03da91df50ab229733f59a5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
-        <definition>dsm::Node&lt; Id &gt;::Node</definition>
+        <definition>requires std::unsigned_integral&lt; Id &gt; dsm::Node&lt; Id &gt;::Node</definition>
         <argsstring>(Id id, std::pair&lt; double, double &gt; coords, std::queue&lt; Id &gt; queue)</argsstring>
         <name>Node</name>
-        <qualifiedname>dsm::Node::Node</qualifiedname>
         <param>
           <type>Id</type>
           <declname>id</declname>
@@ -160,7 +148,6 @@
           <type>std::queue&lt; Id &gt;</type>
           <declname>queue</declname>
         </param>
-    <requiresclause>std::unsigned_integral&lt;Id&gt;    </requiresclause>
         <briefdescription>
 <para>Construct a new <ref refid="classdsm_1_1Node" kindref="compound">Node</ref> object. </para>
         </briefdescription>
@@ -168,28 +155,25 @@
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername>id</parametername>
-<parametername>The</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>node&apos;s id </para>
+<para>The node&apos;s id </para>
 </parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
 <parametername>coords</parametername>
-<parametername>A</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>std::pair containing the node&apos;s coordinates </para>
+<para>A std::pair containing the node&apos;s coordinates </para>
 </parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
 <parametername>queue</parametername>
-<parametername>A</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>std::queue containing the node&apos;s queue </para>
+<para>A std::queue containing the node&apos;s queue </para>
 </parameterdescription>
 </parameteritem>
 </parameterlist>
@@ -199,17 +183,15 @@
         </inbodydescription>
         <location file="src/dsm/headers/Node.hpp" line="39" column="5" bodyfile="src/dsm/headers/Node.hpp" bodystart="69" bodyend="70"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1Node_1a1e66e41903d9ed19c20de4b5669186af" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1Node_1acdec7de88a46ad7edc2e561b8e2014a6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void dsm::Node&lt; Id &gt;::setCoords</definition>
+        <definition>requires std::unsigned_integral&lt; Id &gt; void dsm::Node&lt; Id &gt;::setCoords</definition>
         <argsstring>(std::pair&lt; double, double &gt; coords)</argsstring>
         <name>setCoords</name>
-        <qualifiedname>dsm::Node::setCoords</qualifiedname>
         <param>
           <type>std::pair&lt; double, double &gt;</type>
           <declname>coords</declname>
         </param>
-    <requiresclause>std::unsigned_integral&lt;Id&gt;    </requiresclause>
         <briefdescription>
 <para>Set the node&apos;s coordinates. </para>
         </briefdescription>
@@ -217,10 +199,9 @@
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername>coords</parametername>
-<parametername>A</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>std::pair containing the node&apos;s coordinates </para>
+<para>A std::pair containing the node&apos;s coordinates </para>
 </parameterdescription>
 </parameteritem>
 </parameterlist>
@@ -230,17 +211,15 @@
         </inbodydescription>
         <location file="src/dsm/headers/Node.hpp" line="43" column="10" bodyfile="src/dsm/headers/Node.hpp" bodystart="80" bodyend="82"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1Node_1a299b2503986e933d4dfd3db02cd65b31" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1Node_1a6337227506949168f1cb561175effa21" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void dsm::Node&lt; Id &gt;::setQueue</definition>
+        <definition>requires std::unsigned_integral&lt; Id &gt; void dsm::Node&lt; Id &gt;::setQueue</definition>
         <argsstring>(std::queue&lt; Id &gt; queue)</argsstring>
         <name>setQueue</name>
-        <qualifiedname>dsm::Node::setQueue</qualifiedname>
         <param>
           <type>std::queue&lt; Id &gt;</type>
           <declname>queue</declname>
         </param>
-    <requiresclause>std::unsigned_integral&lt;Id&gt;    </requiresclause>
         <briefdescription>
 <para>Set the node&apos;s queue. </para>
         </briefdescription>
@@ -248,10 +227,9 @@
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername>queue</parametername>
-<parametername>A</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>std::queue containing the node&apos;s queue </para>
+<para>A std::queue containing the node&apos;s queue </para>
 </parameterdescription>
 </parameteritem>
 </parameterlist>
@@ -261,18 +239,16 @@
         </inbodydescription>
         <location file="src/dsm/headers/Node.hpp" line="46" column="10" bodyfile="src/dsm/headers/Node.hpp" bodystart="86" bodyend="88"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1Node_1a47d352ec6008a49e73fcacb308762bb5" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1Node_1af11c9fd77141a161613842965c62e273" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>Id</type>
-        <definition>Id dsm::Node&lt; Id &gt;::id</definition>
+        <definition>requires std::unsigned_integral&lt; Id &gt; Id dsm::Node&lt; Id &gt;::id</definition>
         <argsstring>() const</argsstring>
         <name>id</name>
-        <qualifiedname>dsm::Node::id</qualifiedname>
-    <requiresclause>std::unsigned_integral&lt;Id&gt;    </requiresclause>
         <briefdescription>
 <para>Get the node&apos;s id. </para>
         </briefdescription>
         <detaileddescription>
-<para><simplesect kind="return"><para>Id, The node&apos;s id </para>
+<para><simplesect kind="return"><para>Id The node&apos;s id </para>
 </simplesect>
 </para>
         </detaileddescription>
@@ -280,13 +256,11 @@
         </inbodydescription>
         <location file="src/dsm/headers/Node.hpp" line="50" column="8" bodyfile="src/dsm/headers/Node.hpp" bodystart="74" bodyend="76"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1Node_1a155a31e830a3f25d93f4191289e671b0" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1Node_1a95872f94b4428c666566b9dd2855f4e9" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>const std::pair&lt; double, double &gt; &amp;</type>
-        <definition>const std::pair&lt; double, double &gt; &amp; dsm::Node&lt; Id &gt;::coords</definition>
+        <definition>requires std::unsigned_integral&lt; Id &gt; const std::pair&lt; double, double &gt; &amp; dsm::Node&lt; Id &gt;::coords</definition>
         <argsstring>() const</argsstring>
         <name>coords</name>
-        <qualifiedname>dsm::Node::coords</qualifiedname>
-    <requiresclause>std::unsigned_integral&lt;Id&gt;    </requiresclause>
         <briefdescription>
 <para>Get the node&apos;s coordinates. </para>
         </briefdescription>
@@ -299,18 +273,16 @@
         </inbodydescription>
         <location file="src/dsm/headers/Node.hpp" line="53" column="21" bodyfile="src/dsm/headers/Node.hpp" bodystart="92" bodyend="94"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1Node_1a57a37129a23899424df886dc3beb75a1" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1Node_1a99f5fd6d030ac5823e00c5b8c8aff704" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>const std::queue&lt; Id &gt; &amp;</type>
-        <definition>const std::queue&lt; Id &gt; &amp; dsm::Node&lt; Id &gt;::queue</definition>
+        <definition>requires std::unsigned_integral&lt; Id &gt; const std::queue&lt; Id &gt; &amp; dsm::Node&lt; Id &gt;::queue</definition>
         <argsstring>() const</argsstring>
         <name>queue</name>
-        <qualifiedname>dsm::Node::queue</qualifiedname>
-    <requiresclause>std::unsigned_integral&lt;Id&gt;    </requiresclause>
         <briefdescription>
 <para>Get the node&apos;s queue. </para>
         </briefdescription>
         <detaileddescription>
-<para><simplesect kind="return"><para>std::queue&lt;Id&gt;, A std::queue containing the node&apos;s queue </para>
+<para><simplesect kind="return"><para>std::queue&lt;Id&gt; A std::queue containing the node&apos;s queue </para>
 </simplesect>
 </para>
         </detaileddescription>
@@ -318,8 +290,7 @@
         </inbodydescription>
         <location file="src/dsm/headers/Node.hpp" line="56" column="22" bodyfile="src/dsm/headers/Node.hpp" bodystart="98" bodyend="100"/>
       </memberdef>
-    </sectiondef>
-    <requiresclause>std::unsigned_integral&lt;Id&gt;    </requiresclause>
+      </sectiondef>
     <briefdescription>
 <para>The <ref refid="classdsm_1_1Node" kindref="compound">Node</ref> class represents a node in the network. </para>
     </briefdescription>
@@ -337,18 +308,18 @@
     </detaileddescription>
     <location file="src/dsm/headers/Node.hpp" line="20" column="3" bodyfile="src/dsm/headers/Node.hpp" bodystart="20" bodyend="57"/>
     <listofallmembers>
-      <member refid="classdsm_1_1Node_1a155a31e830a3f25d93f4191289e671b0" prot="public" virt="non-virtual"><scope>dsm::Node</scope><name>coords</name></member>
-      <member refid="classdsm_1_1Node_1a47d352ec6008a49e73fcacb308762bb5" prot="public" virt="non-virtual"><scope>dsm::Node</scope><name>id</name></member>
+      <member refid="classdsm_1_1Node_1a95872f94b4428c666566b9dd2855f4e9" prot="public" virt="non-virtual"><scope>dsm::Node</scope><name>coords</name></member>
+      <member refid="classdsm_1_1Node_1af11c9fd77141a161613842965c62e273" prot="public" virt="non-virtual"><scope>dsm::Node</scope><name>id</name></member>
       <member refid="classdsm_1_1Node_1a22eda670f2cc65f7ec08d2916de33d35" prot="private" virt="non-virtual"><scope>dsm::Node</scope><name>m_coords</name></member>
       <member refid="classdsm_1_1Node_1a65e7816217a27bfedbe91e0f866b2c10" prot="private" virt="non-virtual"><scope>dsm::Node</scope><name>m_id</name></member>
       <member refid="classdsm_1_1Node_1a0e4af4b2760e13608a0a4ae313b98fd7" prot="private" virt="non-virtual"><scope>dsm::Node</scope><name>m_queue</name></member>
       <member refid="classdsm_1_1Node_1a75d2959b0ca30715dc3086b68aaa6b61" prot="public" virt="non-virtual"><scope>dsm::Node</scope><name>Node</name></member>
-      <member refid="classdsm_1_1Node_1a77816db7c053668e21fc29778862ead5" prot="public" virt="non-virtual"><scope>dsm::Node</scope><name>Node</name></member>
-      <member refid="classdsm_1_1Node_1af34885977123568417fa9bff1c683a72" prot="public" virt="non-virtual"><scope>dsm::Node</scope><name>Node</name></member>
-      <member refid="classdsm_1_1Node_1a7280a4a30847faf7abf54e4dcd309a5f" prot="public" virt="non-virtual"><scope>dsm::Node</scope><name>Node</name></member>
-      <member refid="classdsm_1_1Node_1a57a37129a23899424df886dc3beb75a1" prot="public" virt="non-virtual"><scope>dsm::Node</scope><name>queue</name></member>
-      <member refid="classdsm_1_1Node_1a1e66e41903d9ed19c20de4b5669186af" prot="public" virt="non-virtual"><scope>dsm::Node</scope><name>setCoords</name></member>
-      <member refid="classdsm_1_1Node_1a299b2503986e933d4dfd3db02cd65b31" prot="public" virt="non-virtual"><scope>dsm::Node</scope><name>setQueue</name></member>
+      <member refid="classdsm_1_1Node_1a892ce1333095c40e25e5018f33514ae6" prot="public" virt="non-virtual"><scope>dsm::Node</scope><name>Node</name></member>
+      <member refid="classdsm_1_1Node_1adb1781f3464d8ac34c5f52c90858459c" prot="public" virt="non-virtual"><scope>dsm::Node</scope><name>Node</name></member>
+      <member refid="classdsm_1_1Node_1a92106f14d03da91df50ab229733f59a5" prot="public" virt="non-virtual"><scope>dsm::Node</scope><name>Node</name></member>
+      <member refid="classdsm_1_1Node_1a99f5fd6d030ac5823e00c5b8c8aff704" prot="public" virt="non-virtual"><scope>dsm::Node</scope><name>queue</name></member>
+      <member refid="classdsm_1_1Node_1acdec7de88a46ad7edc2e561b8e2014a6" prot="public" virt="non-virtual"><scope>dsm::Node</scope><name>setCoords</name></member>
+      <member refid="classdsm_1_1Node_1a6337227506949168f1cb561175effa21" prot="public" virt="non-virtual"><scope>dsm::Node</scope><name>setQueue</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

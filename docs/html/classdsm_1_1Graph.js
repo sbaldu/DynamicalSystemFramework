@@ -1,14 +1,21 @@
 var classdsm_1_1Graph =
 [
-    [ "Graph", "classdsm_1_1Graph.html#ae7b2423f9273b9ae65e431c4c8e0b102", null ],
-    [ "Graph", "classdsm_1_1Graph.html#af5d4c809ef004de2dfde03b3df92609e", null ],
-    [ "addNode", "classdsm_1_1Graph.html#a5f3955f7f30c7f73d74035656b3777c7", null ],
-    [ "addNode", "classdsm_1_1Graph.html#a9ead5a1c3783d3b0a137c53eed619d54", null ],
-    [ "addStreet", "classdsm_1_1Graph.html#ade2a7b8b165907086f87a6ebedcefb2f", null ],
-    [ "addStreet", "classdsm_1_1Graph.html#ab7afafad25382c2ea504db47dfe28aef", null ],
-    [ "adjMatrix", "classdsm_1_1Graph.html#a8ccd4e35dc4063f423902c920bb0c723", null ],
-    [ "buildAdj", "classdsm_1_1Graph.html#a9597482c114e45c866c607ee958b5f38", null ],
-    [ "importAdj", "classdsm_1_1Graph.html#a6da4e69fa548c5d336171448e962e619", null ],
-    [ "nodeSet", "classdsm_1_1Graph.html#aee0e338487f687cae252ee51a0f4c982", null ],
-    [ "streetSet", "classdsm_1_1Graph.html#aff1ae77416eff8585c376192ed4fc595", null ]
+    [ "Graph", "classdsm_1_1Graph.html#ae515dc05e641ae032f51ee1332831b98", null ],
+    [ "Graph", "classdsm_1_1Graph.html#a45b7fe1d389f2f67981d1ce46be20128", null ],
+    [ "Graph", "classdsm_1_1Graph.html#a87e97609bcc593f80a7e568320b1a7d1", null ],
+    [ "addNode", "classdsm_1_1Graph.html#a797d512830effa735a4dad12292bb9be", null ],
+    [ "addNode", "classdsm_1_1Graph.html#a856d0f814897cd45d3a111fbdba6ddc3", null ],
+    [ "addNodes", "classdsm_1_1Graph.html#a997d6dd63bbf73cf334904e10f7a7fb1", null ],
+    [ "addNodes", "classdsm_1_1Graph.html#ab3bbe774910d3d516b3de6036c54a59c", null ],
+    [ "addStreet", "classdsm_1_1Graph.html#a30c764118503fe2a279e263cd943c791", null ],
+    [ "addStreet", "classdsm_1_1Graph.html#accc4186d12b8d08582036834b564a6ad", null ],
+    [ "addStreets", "classdsm_1_1Graph.html#a7e7d4b3fef65256c064bdec785b22a4f", null ],
+    [ "addStreets", "classdsm_1_1Graph.html#ad80a0a365a58c7a8b7741eaf20b72692", null ],
+    [ "adjMatrix", "classdsm_1_1Graph.html#a93f4a6ca599ac9cb2de508eb100c9052", null ],
+    [ "buildAdj", "classdsm_1_1Graph.html#a379d1051a9596957286543e262b4514c", null ],
+    [ "importAdj", "classdsm_1_1Graph.html#a12485e07ca4397cdc21cc75e26fdd89f", null ],
+    [ "nodeSet", "classdsm_1_1Graph.html#a00fd4b0f7e95c0cd6564a30819654178", null ],
+    [ "requires", "classdsm_1_1Graph.html#a9e92893bc7e521463ea8cf29ec2f1ed8", null ],
+    [ "requires", "classdsm_1_1Graph.html#a50b4842d5f8eab859141f56bf61aa986", null ],
+    [ "streetSet", "classdsm_1_1Graph.html#ac15a4597ad8f61365b2ecc7ef40a4b82", null ]
 ];

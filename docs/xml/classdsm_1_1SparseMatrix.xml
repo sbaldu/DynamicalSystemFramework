@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="classdsm_1_1SparseMatrix" kind="class" language="C++" prot="public">
     <compoundname>dsm::SparseMatrix</compoundname>
     <includes local="no">SparseMatrix.hpp</includes>
@@ -11,13 +11,12 @@
         <type>typename T</type>
       </param>
     </templateparamlist>
-    <sectiondef kind="private-attrib">
+      <sectiondef kind="private-attrib">
       <memberdef kind="variable" id="classdsm_1_1SparseMatrix_1a30d57be7953a27be5644ea4268a9637f" prot="private" static="no" mutable="no">
         <type>std::unordered_map&lt; Index, T &gt;</type>
         <definition>std::unordered_map&lt;Index, T&gt; dsm::SparseMatrix&lt; Index, T &gt;::_matrix</definition>
         <argsstring></argsstring>
         <name>_matrix</name>
-        <qualifiedname>dsm::SparseMatrix::_matrix</qualifiedname>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
@@ -31,7 +30,6 @@
         <definition>Index dsm::SparseMatrix&lt; Index, T &gt;::_rows</definition>
         <argsstring></argsstring>
         <name>_rows</name>
-        <qualifiedname>dsm::SparseMatrix::_rows</qualifiedname>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
@@ -45,7 +43,6 @@
         <definition>Index dsm::SparseMatrix&lt; Index, T &gt;::_cols</definition>
         <argsstring></argsstring>
         <name>_cols</name>
-        <qualifiedname>dsm::SparseMatrix::_cols</qualifiedname>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
@@ -59,7 +56,6 @@
         <definition>T dsm::SparseMatrix&lt; Index, T &gt;::_defaultReturn</definition>
         <argsstring></argsstring>
         <name>_defaultReturn</name>
-        <qualifiedname>dsm::SparseMatrix::_defaultReturn</qualifiedname>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
@@ -68,15 +64,13 @@
         </inbodydescription>
         <location file="src/dsm/headers/SparseMatrix.hpp" line="30" column="7" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="30" bodyend="-1"/>
       </memberdef>
-    </sectiondef>
-    <sectiondef kind="public-func">
-      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a76bbd78270509ea42c3194f263293abf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a50b55ef6d77f882ed7064ea7d06cfe54" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
-        <definition>dsm::SparseMatrix&lt; Index, T &gt;::SparseMatrix</definition>
+        <definition>requires std::unsigned_integral&lt; Index &gt; dsm::SparseMatrix&lt; Index, T &gt;::SparseMatrix</definition>
         <argsstring>()</argsstring>
         <name>SparseMatrix</name>
-        <qualifiedname>dsm::SparseMatrix::SparseMatrix</qualifiedname>
-    <requiresclause>std::unsigned_integral&lt;Index&gt;    </requiresclause>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
@@ -85,12 +79,11 @@
         </inbodydescription>
         <location file="src/dsm/headers/SparseMatrix.hpp" line="33" column="5" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="272" bodyend="273"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1aff59e8b11d2642db4703b9d97d0b1e89" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a4a1ad35ac8a796355028883826a44f1a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
-        <definition>dsm::SparseMatrix&lt; Index, T &gt;::SparseMatrix</definition>
+        <definition>requires std::unsigned_integral&lt; Index &gt; dsm::SparseMatrix&lt; Index, T &gt;::SparseMatrix</definition>
         <argsstring>(Index rows, Index cols)</argsstring>
         <name>SparseMatrix</name>
-        <qualifiedname>dsm::SparseMatrix::SparseMatrix</qualifiedname>
         <param>
           <type>Index</type>
           <declname>rows</declname>
@@ -99,7 +92,6 @@
           <type>Index</type>
           <declname>cols</declname>
         </param>
-    <requiresclause>std::unsigned_integral&lt;Index&gt;    </requiresclause>
         <briefdescription>
 <para><ref refid="classdsm_1_1SparseMatrix" kindref="compound">SparseMatrix</ref> constructor. </para>
         </briefdescription>
@@ -136,17 +128,15 @@
         </inbodydescription>
         <location file="src/dsm/headers/SparseMatrix.hpp" line="39" column="5" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="277" bodyend="278"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a44f088f9960540ca7f221531e8a97ec2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a0d36e25ae348dc66c6e90e80ecc41c55" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
-        <definition>dsm::SparseMatrix&lt; Index, T &gt;::SparseMatrix</definition>
+        <definition>requires std::unsigned_integral&lt; Index &gt; dsm::SparseMatrix&lt; Index, T &gt;::SparseMatrix</definition>
         <argsstring>(Index index)</argsstring>
         <name>SparseMatrix</name>
-        <qualifiedname>dsm::SparseMatrix::SparseMatrix</qualifiedname>
         <param>
           <type>Index</type>
           <declname>index</declname>
         </param>
-    <requiresclause>std::unsigned_integral&lt;Index&gt;    </requiresclause>
         <briefdescription>
 <para><ref refid="classdsm_1_1SparseMatrix" kindref="compound">SparseMatrix</ref> constructor - colum. </para>
         </briefdescription>
@@ -175,12 +165,11 @@
         </inbodydescription>
         <location file="src/dsm/headers/SparseMatrix.hpp" line="44" column="5" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="282" bodyend="283"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1ab6b3473077ffbfbe137212698fdb5f34" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a492040f03e7ca8642aa2fde70cd42c73" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void dsm::SparseMatrix&lt; Index, T &gt;::insert</definition>
+        <definition>requires std::unsigned_integral&lt; Index &gt; void dsm::SparseMatrix&lt; Index, T &gt;::insert</definition>
         <argsstring>(Index i, Index j, T value)</argsstring>
         <name>insert</name>
-        <qualifiedname>dsm::SparseMatrix::insert</qualifiedname>
         <param>
           <type>Index</type>
           <declname>i</declname>
@@ -193,7 +182,6 @@
           <type>T</type>
           <declname>value</declname>
         </param>
-    <requiresclause>std::unsigned_integral&lt;Index&gt;    </requiresclause>
         <briefdescription>
 <para>insert a value in the matrix </para>
         </briefdescription>
@@ -238,12 +226,11 @@
         </inbodydescription>
         <location file="src/dsm/headers/SparseMatrix.hpp" line="51" column="10" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="287" bodyend="292"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a92fac1217639758e933fd0689729712e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a3efa1838bd32378023f615302bdcd686" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void dsm::SparseMatrix&lt; Index, T &gt;::insert</definition>
+        <definition>requires std::unsigned_integral&lt; Index &gt; void dsm::SparseMatrix&lt; Index, T &gt;::insert</definition>
         <argsstring>(Index i, T value)</argsstring>
         <name>insert</name>
-        <qualifiedname>dsm::SparseMatrix::insert</qualifiedname>
         <param>
           <type>Index</type>
           <declname>i</declname>
@@ -252,7 +239,6 @@
           <type>T</type>
           <declname>value</declname>
         </param>
-    <requiresclause>std::unsigned_integral&lt;Index&gt;    </requiresclause>
         <briefdescription>
 <para>insert a value in the matrix </para>
         </briefdescription>
@@ -289,12 +275,11 @@
         </inbodydescription>
         <location file="src/dsm/headers/SparseMatrix.hpp" line="57" column="10" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="296" bodyend="301"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a591d522596eabd972bc440e90863e850" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1abb586ab0a9fbc5f2b035af3b6313a019" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void dsm::SparseMatrix&lt; Index, T &gt;::insert_or_assign</definition>
+        <definition>requires std::unsigned_integral&lt; Index &gt; void dsm::SparseMatrix&lt; Index, T &gt;::insert_or_assign</definition>
         <argsstring>(Index i, Index j, T value)</argsstring>
         <name>insert_or_assign</name>
-        <qualifiedname>dsm::SparseMatrix::insert_or_assign</qualifiedname>
         <param>
           <type>Index</type>
           <declname>i</declname>
@@ -307,7 +292,6 @@
           <type>T</type>
           <declname>value</declname>
         </param>
-    <requiresclause>std::unsigned_integral&lt;Index&gt;    </requiresclause>
         <briefdescription>
 <para>insert a value in the matrix. If the element already exist, it overwrites it </para>
         </briefdescription>
@@ -352,12 +336,11 @@
         </inbodydescription>
         <location file="src/dsm/headers/SparseMatrix.hpp" line="65" column="10" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="305" bodyend="310"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a67230fe263de59bd21646314277e8536" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a655c2acdb2c8b3731719fdd7a0dccb1c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void dsm::SparseMatrix&lt; Index, T &gt;::insert_or_assign</definition>
+        <definition>requires std::unsigned_integral&lt; Index &gt; void dsm::SparseMatrix&lt; Index, T &gt;::insert_or_assign</definition>
         <argsstring>(Index index, T value)</argsstring>
         <name>insert_or_assign</name>
-        <qualifiedname>dsm::SparseMatrix::insert_or_assign</qualifiedname>
         <param>
           <type>Index</type>
           <declname>index</declname>
@@ -366,7 +349,6 @@
           <type>T</type>
           <declname>value</declname>
         </param>
-    <requiresclause>std::unsigned_integral&lt;Index&gt;    </requiresclause>
         <briefdescription>
 <para>insert a value in the matrix. If the element already exist, it overwrites it </para>
         </briefdescription>
@@ -403,12 +385,11 @@
         </inbodydescription>
         <location file="src/dsm/headers/SparseMatrix.hpp" line="72" column="10" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="314" bodyend="319"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1ad8c9da7dc8cb3c5d20555b77d371102c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1aa6fa072085421ac384ccc51643a5ad71" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void dsm::SparseMatrix&lt; Index, T &gt;::erase</definition>
+        <definition>requires std::unsigned_integral&lt; Index &gt; void dsm::SparseMatrix&lt; Index, T &gt;::erase</definition>
         <argsstring>(Index i, Index j)</argsstring>
         <name>erase</name>
-        <qualifiedname>dsm::SparseMatrix::erase</qualifiedname>
         <param>
           <type>Index</type>
           <declname>i</declname>
@@ -417,7 +398,6 @@
           <type>Index</type>
           <declname>j</declname>
         </param>
-    <requiresclause>std::unsigned_integral&lt;Index&gt;    </requiresclause>
         <briefdescription>
 <para>remove a value from the matrix </para>
         </briefdescription>
@@ -462,17 +442,15 @@
         </inbodydescription>
         <location file="src/dsm/headers/SparseMatrix.hpp" line="79" column="10" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="323" bodyend="330"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a8f46edacde72b5536601aa34afdf6c9c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1ab90fbdc9bef8a76372794f6c5663e379" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void dsm::SparseMatrix&lt; Index, T &gt;::eraseRow</definition>
+        <definition>requires std::unsigned_integral&lt; Index &gt; void dsm::SparseMatrix&lt; Index, T &gt;::eraseRow</definition>
         <argsstring>(Index index)</argsstring>
         <name>eraseRow</name>
-        <qualifiedname>dsm::SparseMatrix::eraseRow</qualifiedname>
         <param>
           <type>Index</type>
           <declname>index</declname>
         </param>
-    <requiresclause>std::unsigned_integral&lt;Index&gt;    </requiresclause>
         <briefdescription>
 <para>remove a row from the matrix </para>
         </briefdescription>
@@ -501,17 +479,15 @@
         </inbodydescription>
         <location file="src/dsm/headers/SparseMatrix.hpp" line="84" column="10" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="334" bodyend="351"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a79b1b4382f46151b2d041323f4f0cd87" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a1c2500e9a378261858f9080168cd8a70" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void dsm::SparseMatrix&lt; Index, T &gt;::eraseColumn</definition>
+        <definition>requires std::unsigned_integral&lt; Index &gt; void dsm::SparseMatrix&lt; Index, T &gt;::eraseColumn</definition>
         <argsstring>(Index index)</argsstring>
         <name>eraseColumn</name>
-        <qualifiedname>dsm::SparseMatrix::eraseColumn</qualifiedname>
         <param>
           <type>Index</type>
           <declname>index</declname>
         </param>
-    <requiresclause>std::unsigned_integral&lt;Index&gt;    </requiresclause>
         <briefdescription>
 <para>remove a column from the matrix </para>
         </briefdescription>
@@ -540,13 +516,11 @@
         </inbodydescription>
         <location file="src/dsm/headers/SparseMatrix.hpp" line="89" column="10" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="355" bodyend="372"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1ad70bb2e39855717832d70ddf3f5fbc40" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a48287852ed2a75ec39a20ba62603965f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void dsm::SparseMatrix&lt; Index, T &gt;::clear</definition>
+        <definition>requires std::unsigned_integral&lt; Index &gt; void dsm::SparseMatrix&lt; Index, T &gt;::clear</definition>
         <argsstring>()</argsstring>
         <name>clear</name>
-        <qualifiedname>dsm::SparseMatrix::clear</qualifiedname>
-    <requiresclause>std::unsigned_integral&lt;Index&gt;    </requiresclause>
         <briefdescription>
 <para>empty the matrix and set the dimensions to zero </para>
         </briefdescription>
@@ -556,12 +530,11 @@
         </inbodydescription>
         <location file="src/dsm/headers/SparseMatrix.hpp" line="92" column="10" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="376" bodyend="380"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1abc2c366b7df2603f5b7ea76fcc502326" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a57384e33f75162bf97d464f1a73b7275" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
-        <definition>bool dsm::SparseMatrix&lt; Index, T &gt;::contains</definition>
+        <definition>requires std::unsigned_integral&lt; Index &gt; bool dsm::SparseMatrix&lt; Index, T &gt;::contains</definition>
         <argsstring>(Index i, Index j) const</argsstring>
         <name>contains</name>
-        <qualifiedname>dsm::SparseMatrix::contains</qualifiedname>
         <param>
           <type>Index</type>
           <declname>i</declname>
@@ -570,7 +543,6 @@
           <type>Index</type>
           <declname>j</declname>
         </param>
-    <requiresclause>std::unsigned_integral&lt;Index&gt;    </requiresclause>
         <briefdescription>
 <para>check if the element is non zero </para>
         </briefdescription>
@@ -609,17 +581,15 @@
         </inbodydescription>
         <location file="src/dsm/headers/SparseMatrix.hpp" line="99" column="10" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="384" bodyend="389"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a056ccf45ad47093b0ceaa9a277c2c23c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1ab553af75991a9a071706d9c7442bee42" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
-        <definition>bool dsm::SparseMatrix&lt; Index, T &gt;::contains</definition>
+        <definition>requires std::unsigned_integral&lt; Index &gt; bool dsm::SparseMatrix&lt; Index, T &gt;::contains</definition>
         <argsstring>(Index const index) const</argsstring>
         <name>contains</name>
-        <qualifiedname>dsm::SparseMatrix::contains</qualifiedname>
         <param>
           <type>Index const</type>
           <declname>index</declname>
         </param>
-    <requiresclause>std::unsigned_integral&lt;Index&gt;    </requiresclause>
         <briefdescription>
 <para>check if the element is non zero </para>
         </briefdescription>
@@ -650,13 +620,11 @@
         </inbodydescription>
         <location file="src/dsm/headers/SparseMatrix.hpp" line="105" column="10" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="393" bodyend="398"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1ae0f8a3682264568f0637b181f39e29f3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a9678cdb744ee265b8287384381bc970d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="classdsm_1_1SparseMatrix" kindref="compound">SparseMatrix</ref>&lt; Index, int &gt;</type>
-        <definition>SparseMatrix&lt; Index, int &gt; dsm::SparseMatrix&lt; Index, T &gt;::getDegreeVector</definition>
+        <definition>requires std::unsigned_integral&lt; Index &gt; SparseMatrix&lt; Index, int &gt; dsm::SparseMatrix&lt; Index, T &gt;::getDegreeVector</definition>
         <argsstring>()</argsstring>
         <name>getDegreeVector</name>
-        <qualifiedname>dsm::SparseMatrix::getDegreeVector</qualifiedname>
-    <requiresclause>std::unsigned_integral&lt;Index&gt;    </requiresclause>
         <briefdescription>
 <para>get the input degree of all nodes </para>
         </briefdescription>
@@ -678,13 +646,11 @@
         </inbodydescription>
         <location file="src/dsm/headers/SparseMatrix.hpp" line="110" column="18" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="402" bodyend="411"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1ae58a3ca0ad970f7c3e7466a45ea25591" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a481674fb8b567fe33c53eeb969fe8bd6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="classdsm_1_1SparseMatrix" kindref="compound">SparseMatrix</ref>&lt; Index, double &gt;</type>
-        <definition>SparseMatrix&lt; Index, double &gt; dsm::SparseMatrix&lt; Index, T &gt;::getStrengthVector</definition>
+        <definition>requires std::unsigned_integral&lt; Index &gt; SparseMatrix&lt; Index, double &gt; dsm::SparseMatrix&lt; Index, T &gt;::getStrengthVector</definition>
         <argsstring>()</argsstring>
         <name>getStrengthVector</name>
-        <qualifiedname>dsm::SparseMatrix::getStrengthVector</qualifiedname>
-    <requiresclause>std::unsigned_integral&lt;Index&gt;    </requiresclause>
         <briefdescription>
 <para>get the strength of all nodes </para>
         </briefdescription>
@@ -706,13 +672,11 @@
         </inbodydescription>
         <location file="src/dsm/headers/SparseMatrix.hpp" line="115" column="18" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="415" bodyend="424"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a762f5c6e5c53aca71b6c4ff4268d1f06" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1aeaa3dc462bf0c6786b067ff27be7c837" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="classdsm_1_1SparseMatrix" kindref="compound">SparseMatrix</ref>&lt; Index, int &gt;</type>
-        <definition>SparseMatrix&lt; Index, int &gt; dsm::SparseMatrix&lt; Index, T &gt;::getLaplacian</definition>
+        <definition>requires std::unsigned_integral&lt; Index &gt; SparseMatrix&lt; Index, int &gt; dsm::SparseMatrix&lt; Index, T &gt;::getLaplacian</definition>
         <argsstring>()</argsstring>
         <name>getLaplacian</name>
-        <qualifiedname>dsm::SparseMatrix::getLaplacian</qualifiedname>
-    <requiresclause>std::unsigned_integral&lt;Index&gt;    </requiresclause>
         <briefdescription>
 <para>get the laplacian matrix </para>
         </briefdescription>
@@ -734,17 +698,15 @@
         </inbodydescription>
         <location file="src/dsm/headers/SparseMatrix.hpp" line="120" column="18" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="428" bodyend="441"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a38beec1dc82c27fb3d20adf5f0f35c20" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a2db82a51ef907957266444c5ca561eaa" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="classdsm_1_1SparseMatrix" kindref="compound">SparseMatrix</ref></type>
-        <definition>SparseMatrix&lt; Index, T &gt; dsm::SparseMatrix&lt; Index, T &gt;::getRow</definition>
+        <definition>requires std::unsigned_integral&lt; Index &gt; SparseMatrix&lt; Index, T &gt; dsm::SparseMatrix&lt; Index, T &gt;::getRow</definition>
         <argsstring>(Index index) const</argsstring>
         <name>getRow</name>
-        <qualifiedname>dsm::SparseMatrix::getRow</qualifiedname>
         <param>
           <type>Index</type>
           <declname>index</declname>
         </param>
-    <requiresclause>std::unsigned_integral&lt;Index&gt;    </requiresclause>
         <briefdescription>
 <para>get a row as a row vector </para>
         </briefdescription>
@@ -775,17 +737,15 @@
         </inbodydescription>
         <location file="src/dsm/headers/SparseMatrix.hpp" line="126" column="18" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="445" bodyend="456"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a74f5db866384afbc89a25946c041cf75" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a8b8775939be49a5ccf8cfc3346e3c051" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="classdsm_1_1SparseMatrix" kindref="compound">SparseMatrix</ref></type>
-        <definition>SparseMatrix&lt; Index, T &gt; dsm::SparseMatrix&lt; Index, T &gt;::getCol</definition>
+        <definition>requires std::unsigned_integral&lt; Index &gt; SparseMatrix&lt; Index, T &gt; dsm::SparseMatrix&lt; Index, T &gt;::getCol</definition>
         <argsstring>(Index index) const</argsstring>
         <name>getCol</name>
-        <qualifiedname>dsm::SparseMatrix::getCol</qualifiedname>
         <param>
           <type>Index</type>
           <declname>index</declname>
         </param>
-    <requiresclause>std::unsigned_integral&lt;Index&gt;    </requiresclause>
         <briefdescription>
 <para>get a column as a column vector </para>
         </briefdescription>
@@ -816,13 +776,11 @@
         </inbodydescription>
         <location file="src/dsm/headers/SparseMatrix.hpp" line="132" column="18" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="460" bodyend="471"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1ad6ddec658daf21afae7f3f45a9e9c771" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a7c22bd85d2453b5e750ca3cad4fe0e95" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="classdsm_1_1SparseMatrix" kindref="compound">SparseMatrix</ref>&lt; Index, double &gt;</type>
-        <definition>SparseMatrix&lt; Index, double &gt; dsm::SparseMatrix&lt; Index, T &gt;::getNormRows</definition>
+        <definition>requires std::unsigned_integral&lt; Index &gt; SparseMatrix&lt; Index, double &gt; dsm::SparseMatrix&lt; Index, T &gt;::getNormRows</definition>
         <argsstring>() const</argsstring>
         <name>getNormRows</name>
-        <qualifiedname>dsm::SparseMatrix::getNormRows</qualifiedname>
-    <requiresclause>std::unsigned_integral&lt;Index&gt;    </requiresclause>
         <briefdescription>
 <para>get a matrix of double with every row normalized to 1 </para>
         </briefdescription>
@@ -835,13 +793,11 @@
         </inbodydescription>
         <location file="src/dsm/headers/SparseMatrix.hpp" line="136" column="18" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="475" bodyend="489"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a2e50f75dd63f015a8b6d67a303a01339" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1ab4594b100f9f4c3306e04cccff7e1b00" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="classdsm_1_1SparseMatrix" kindref="compound">SparseMatrix</ref>&lt; Index, double &gt;</type>
-        <definition>SparseMatrix&lt; Index, double &gt; dsm::SparseMatrix&lt; Index, T &gt;::getNormCols</definition>
+        <definition>requires std::unsigned_integral&lt; Index &gt; SparseMatrix&lt; Index, double &gt; dsm::SparseMatrix&lt; Index, T &gt;::getNormCols</definition>
         <argsstring>() const</argsstring>
         <name>getNormCols</name>
-        <qualifiedname>dsm::SparseMatrix::getNormCols</qualifiedname>
-    <requiresclause>std::unsigned_integral&lt;Index&gt;    </requiresclause>
         <briefdescription>
 <para>get a matrix of double with every column normalized to 1 </para>
         </briefdescription>
@@ -854,13 +810,11 @@
         </inbodydescription>
         <location file="src/dsm/headers/SparseMatrix.hpp" line="140" column="18" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="493" bodyend="507"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1ac8866f3f41f20a84dcc476da3633d1cd" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1ad11afd5ce431d2b966ce8a6dd43fb010" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>Index</type>
-        <definition>Index dsm::SparseMatrix&lt; Index, T &gt;::getRowDim</definition>
+        <definition>requires std::unsigned_integral&lt; Index &gt; Index dsm::SparseMatrix&lt; Index, T &gt;::getRowDim</definition>
         <argsstring>() const</argsstring>
         <name>getRowDim</name>
-        <qualifiedname>dsm::SparseMatrix::getRowDim</qualifiedname>
-    <requiresclause>std::unsigned_integral&lt;Index&gt;    </requiresclause>
         <briefdescription>
 <para>get the number of rows </para>
         </briefdescription>
@@ -873,13 +827,11 @@
         </inbodydescription>
         <location file="src/dsm/headers/SparseMatrix.hpp" line="144" column="11" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="511" bodyend="513"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a324fef44afb80419ddadf75c07aa5baa" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a7a26cbcb48add01159687a2dce0af1fb" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>Index</type>
-        <definition>Index dsm::SparseMatrix&lt; Index, T &gt;::getColDim</definition>
+        <definition>requires std::unsigned_integral&lt; Index &gt; Index dsm::SparseMatrix&lt; Index, T &gt;::getColDim</definition>
         <argsstring>() const</argsstring>
         <name>getColDim</name>
-        <qualifiedname>dsm::SparseMatrix::getColDim</qualifiedname>
-    <requiresclause>std::unsigned_integral&lt;Index&gt;    </requiresclause>
         <briefdescription>
 <para>get the number of columns </para>
         </briefdescription>
@@ -892,13 +844,11 @@
         </inbodydescription>
         <location file="src/dsm/headers/SparseMatrix.hpp" line="148" column="11" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="517" bodyend="519"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1abdc6b47c390b02810982fc2025fe25b6" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a31c1ecaf62652757d8e02527a5f25a80" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>Index</type>
-        <definition>Index dsm::SparseMatrix&lt; Index, T &gt;::size</definition>
+        <definition>requires std::unsigned_integral&lt; Index &gt; Index dsm::SparseMatrix&lt; Index, T &gt;::size</definition>
         <argsstring>() const</argsstring>
         <name>size</name>
-        <qualifiedname>dsm::SparseMatrix::size</qualifiedname>
-    <requiresclause>std::unsigned_integral&lt;Index&gt;    </requiresclause>
         <briefdescription>
 <para>get the number of non zero elements in the matrix </para>
         </briefdescription>
@@ -911,13 +861,11 @@
         </inbodydescription>
         <location file="src/dsm/headers/SparseMatrix.hpp" line="152" column="11" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="523" bodyend="525"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a01ba0d4bb2c3b39bcf1baa39a565d381" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1ad89567696887d9dfbee87795c0c6285d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>Index</type>
-        <definition>Index dsm::SparseMatrix&lt; Index, T &gt;::max_size</definition>
+        <definition>requires std::unsigned_integral&lt; Index &gt; Index dsm::SparseMatrix&lt; Index, T &gt;::max_size</definition>
         <argsstring>() const</argsstring>
         <name>max_size</name>
-        <qualifiedname>dsm::SparseMatrix::max_size</qualifiedname>
-    <requiresclause>std::unsigned_integral&lt;Index&gt;    </requiresclause>
         <briefdescription>
 <para>get the maximum number of elements in the matrix </para>
         </briefdescription>
@@ -930,13 +878,11 @@
         </inbodydescription>
         <location file="src/dsm/headers/SparseMatrix.hpp" line="156" column="11" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="529" bodyend="531"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1ac514a1ba68b6b76ab41c04a63a182533" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1aa726011b476e3da1b31bfb20a0ff7174" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void dsm::SparseMatrix&lt; Index, T &gt;::symmetrize</definition>
+        <definition>requires std::unsigned_integral&lt; Index &gt; void dsm::SparseMatrix&lt; Index, T &gt;::symmetrize</definition>
         <argsstring>()</argsstring>
         <name>symmetrize</name>
-        <qualifiedname>dsm::SparseMatrix::symmetrize</qualifiedname>
-    <requiresclause>std::unsigned_integral&lt;Index&gt;    </requiresclause>
         <briefdescription>
 <para>symmetrize the matrix </para>
         </briefdescription>
@@ -946,12 +892,11 @@
         </inbodydescription>
         <location file="src/dsm/headers/SparseMatrix.hpp" line="159" column="10" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="535" bodyend="537"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a5ca3ccd61b5f0909edccc4b717468c79" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a51334882e61e39a865b22cc157168647" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void dsm::SparseMatrix&lt; Index, T &gt;::reshape</definition>
+        <definition>requires std::unsigned_integral&lt; Index &gt; void dsm::SparseMatrix&lt; Index, T &gt;::reshape</definition>
         <argsstring>(Index rows, Index cols)</argsstring>
         <name>reshape</name>
-        <qualifiedname>dsm::SparseMatrix::reshape</qualifiedname>
         <param>
           <type>Index</type>
           <declname>rows</declname>
@@ -960,7 +905,6 @@
           <type>Index</type>
           <declname>cols</declname>
         </param>
-    <requiresclause>std::unsigned_integral&lt;Index&gt;    </requiresclause>
         <briefdescription>
 <para>reshape the matrix </para>
         </briefdescription>
@@ -970,17 +914,15 @@
         </inbodydescription>
         <location file="src/dsm/headers/SparseMatrix.hpp" line="162" column="10" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="541" bodyend="550"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1af61a9b16d9f534fd31e1f1482763cd2e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a63f514cfb61078375437e060e338de7c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void dsm::SparseMatrix&lt; Index, T &gt;::reshape</definition>
+        <definition>requires std::unsigned_integral&lt; Index &gt; void dsm::SparseMatrix&lt; Index, T &gt;::reshape</definition>
         <argsstring>(Index dim)</argsstring>
         <name>reshape</name>
-        <qualifiedname>dsm::SparseMatrix::reshape</qualifiedname>
         <param>
           <type>Index</type>
           <declname>dim</declname>
         </param>
-    <requiresclause>std::unsigned_integral&lt;Index&gt;    </requiresclause>
         <briefdescription>
 <para>reshape the matrix </para>
         </briefdescription>
@@ -990,13 +932,11 @@
         </inbodydescription>
         <location file="src/dsm/headers/SparseMatrix.hpp" line="165" column="10" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="554" bodyend="563"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a892a480a2b01a235761febce912ed931" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1ad7e1eaa769a97ef872b41f6e6470400d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>std::unordered_map&lt; Index, T &gt;::const_iterator</type>
-        <definition>std::unordered_map&lt; Index, T &gt;::const_iterator dsm::SparseMatrix&lt; Index, T &gt;::begin</definition>
+        <definition>requires std::unsigned_integral&lt; Index &gt; std::unordered_map&lt; Index, T &gt;::const_iterator dsm::SparseMatrix&lt; Index, T &gt;::begin</definition>
         <argsstring>() const</argsstring>
         <name>begin</name>
-        <qualifiedname>dsm::SparseMatrix::begin</qualifiedname>
-    <requiresclause>std::unsigned_integral&lt;Index&gt;    </requiresclause>
         <briefdescription>
 <para>return the begin iterator of the matrix </para>
         </briefdescription>
@@ -1009,13 +949,11 @@
         </inbodydescription>
         <location file="src/dsm/headers/SparseMatrix.hpp" line="169" column="50" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="567" bodyend="569"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1ad79de75b148c1efac96c15e7739ed147" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a2bef1265fcc398018886e922e9dc8a32" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>std::unordered_map&lt; Index, T &gt;::const_iterator</type>
-        <definition>std::unordered_map&lt; Index, T &gt;::const_iterator dsm::SparseMatrix&lt; Index, T &gt;::end</definition>
+        <definition>requires std::unsigned_integral&lt; Index &gt; std::unordered_map&lt; Index, T &gt;::const_iterator dsm::SparseMatrix&lt; Index, T &gt;::end</definition>
         <argsstring>() const</argsstring>
         <name>end</name>
-        <qualifiedname>dsm::SparseMatrix::end</qualifiedname>
-    <requiresclause>std::unsigned_integral&lt;Index&gt;    </requiresclause>
         <briefdescription>
 <para>return the end iterator of the matrix </para>
         </briefdescription>
@@ -1028,12 +966,11 @@
         </inbodydescription>
         <location file="src/dsm/headers/SparseMatrix.hpp" line="173" column="50" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="573" bodyend="575"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a6860c09d6293e53ed9633f5943b86075" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1ac03d4bdbd9b86a1b6cc195b26517e5a9" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>const T &amp;</type>
-        <definition>const T &amp; dsm::SparseMatrix&lt; Index, T &gt;::operator()</definition>
+        <definition>requires std::unsigned_integral&lt; Index &gt; const T &amp; dsm::SparseMatrix&lt; Index, T &gt;::operator()</definition>
         <argsstring>(Index i, Index j) const</argsstring>
         <name>operator()</name>
-        <qualifiedname>dsm::SparseMatrix::operator()</qualifiedname>
         <param>
           <type>Index</type>
           <declname>i</declname>
@@ -1042,7 +979,6 @@
           <type>Index</type>
           <declname>j</declname>
         </param>
-    <requiresclause>std::unsigned_integral&lt;Index&gt;    </requiresclause>
         <briefdescription>
 <para>access an element of the matrix </para>
         </briefdescription>
@@ -1081,12 +1017,11 @@
         </inbodydescription>
         <location file="src/dsm/headers/SparseMatrix.hpp" line="180" column="13" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="579" bodyend="585"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a0263a77fef7e41d26d7dec1708d574dc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a1c7de44b13b5549ed9b9e2da9412ea64" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>T &amp;</type>
-        <definition>T &amp; dsm::SparseMatrix&lt; Index, T &gt;::operator()</definition>
+        <definition>requires std::unsigned_integral&lt; Index &gt; T &amp; dsm::SparseMatrix&lt; Index, T &gt;::operator()</definition>
         <argsstring>(Index i, Index j)</argsstring>
         <name>operator()</name>
-        <qualifiedname>dsm::SparseMatrix::operator()</qualifiedname>
         <param>
           <type>Index</type>
           <declname>i</declname>
@@ -1095,7 +1030,6 @@
           <type>Index</type>
           <declname>j</declname>
         </param>
-    <requiresclause>std::unsigned_integral&lt;Index&gt;    </requiresclause>
         <briefdescription>
 <para>access an element of the matrix </para>
         </briefdescription>
@@ -1134,17 +1068,15 @@
         </inbodydescription>
         <location file="src/dsm/headers/SparseMatrix.hpp" line="187" column="7" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="589" bodyend="595"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a9ba5d323b069a446f14f8d0a912e8666" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1ad379e300d6b825983ace5fbad5332ca3" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>const T &amp;</type>
-        <definition>const T &amp; dsm::SparseMatrix&lt; Index, T &gt;::operator()</definition>
+        <definition>requires std::unsigned_integral&lt; Index &gt; const T &amp; dsm::SparseMatrix&lt; Index, T &gt;::operator()</definition>
         <argsstring>(Index index) const</argsstring>
         <name>operator()</name>
-        <qualifiedname>dsm::SparseMatrix::operator()</qualifiedname>
         <param>
           <type>Index</type>
           <declname>index</declname>
         </param>
-    <requiresclause>std::unsigned_integral&lt;Index&gt;    </requiresclause>
         <briefdescription>
 <para>access an element of the matrix </para>
         </briefdescription>
@@ -1175,17 +1107,15 @@
         </inbodydescription>
         <location file="src/dsm/headers/SparseMatrix.hpp" line="193" column="13" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="599" bodyend="605"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a8bd55e2d01646882e62c07f52f6f3645" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1af32c5e52810f45bce04c54b1678b9dd8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>T &amp;</type>
-        <definition>T &amp; dsm::SparseMatrix&lt; Index, T &gt;::operator()</definition>
+        <definition>requires std::unsigned_integral&lt; Index &gt; T &amp; dsm::SparseMatrix&lt; Index, T &gt;::operator()</definition>
         <argsstring>(Index index)</argsstring>
         <name>operator()</name>
-        <qualifiedname>dsm::SparseMatrix::operator()</qualifiedname>
         <param>
           <type>Index</type>
           <declname>index</declname>
         </param>
-    <requiresclause>std::unsigned_integral&lt;Index&gt;    </requiresclause>
         <briefdescription>
 <para>access an element of the matrix </para>
         </briefdescription>
@@ -1216,7 +1146,7 @@
         </inbodydescription>
         <location file="src/dsm/headers/SparseMatrix.hpp" line="199" column="7" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="609" bodyend="615"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a91bd4c01d3181be7b297ecd9a4914888" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1aabd47e611ef8e2456b6e7307c3252890" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename I</type>
@@ -1225,16 +1155,14 @@
             <type>typename U</type>
           </param>
         </templateparamlist>
-        <type><ref refid="classdsm_1_1SparseMatrix" kindref="compound">SparseMatrix</ref>&lt; Index, T &gt;</type>
-        <definition>SparseMatrix&lt; Index, T &gt; dsm::SparseMatrix&lt; Index, T &gt;::operator+</definition>
+        <type>requires std::unsigned_integral&lt; I &gt; <ref refid="classdsm_1_1SparseMatrix" kindref="compound">SparseMatrix</ref>&lt; Index, T &gt;</type>
+        <definition>requires std::unsigned_integral&lt;I&gt; SparseMatrix&lt;Index, T&gt; dsm::SparseMatrix&lt; Index, T &gt;::operator+</definition>
         <argsstring>(const SparseMatrix&lt; I, U &gt; &amp;other)</argsstring>
         <name>operator+</name>
-        <qualifiedname>dsm::SparseMatrix::operator+</qualifiedname>
         <param>
           <type>const <ref refid="classdsm_1_1SparseMatrix" kindref="compound">SparseMatrix</ref>&lt; I, U &gt; &amp;</type>
           <declname>other</declname>
         </param>
-    <requiresclause>std::unsigned_integral&lt;I&gt;    </requiresclause>
         <briefdescription>
 <para>sum of two matrices </para>
         </briefdescription>
@@ -1265,7 +1193,7 @@
         </inbodydescription>
         <location file="src/dsm/headers/SparseMatrix.hpp" line="207" column="18" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="207" bodyend="223"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a54b3d02da778b737f276aeb700034569" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1ab75404692818cf899304cac8704e185d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename I</type>
@@ -1274,16 +1202,14 @@
             <type>typename U</type>
           </param>
         </templateparamlist>
-        <type><ref refid="classdsm_1_1SparseMatrix" kindref="compound">SparseMatrix</ref>&lt; Index, T &gt;</type>
-        <definition>SparseMatrix&lt; Index, T &gt; dsm::SparseMatrix&lt; Index, T &gt;::operator-</definition>
+        <type>requires std::unsigned_integral&lt; I &gt; <ref refid="classdsm_1_1SparseMatrix" kindref="compound">SparseMatrix</ref>&lt; Index, T &gt;</type>
+        <definition>requires std::unsigned_integral&lt;I&gt; SparseMatrix&lt;Index, T&gt; dsm::SparseMatrix&lt; Index, T &gt;::operator-</definition>
         <argsstring>(const SparseMatrix&lt; I, U &gt; &amp;other)</argsstring>
         <name>operator-</name>
-        <qualifiedname>dsm::SparseMatrix::operator-</qualifiedname>
         <param>
           <type>const <ref refid="classdsm_1_1SparseMatrix" kindref="compound">SparseMatrix</ref>&lt; I, U &gt; &amp;</type>
           <declname>other</declname>
         </param>
-    <requiresclause>std::unsigned_integral&lt;I&gt;    </requiresclause>
         <briefdescription>
 <para>difference of two matrices </para>
         </briefdescription>
@@ -1314,13 +1240,11 @@
         </inbodydescription>
         <location file="src/dsm/headers/SparseMatrix.hpp" line="231" column="18" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="231" bodyend="247"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a54e568a8554b883278ad72cdd4384baa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1ac89861a861a1d84076882380e6474d46" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="classdsm_1_1SparseMatrix" kindref="compound">SparseMatrix</ref></type>
-        <definition>SparseMatrix&lt; Index, T &gt; dsm::SparseMatrix&lt; Index, T &gt;::operator++</definition>
+        <definition>requires std::unsigned_integral&lt; Index &gt; SparseMatrix&lt; Index, T &gt; dsm::SparseMatrix&lt; Index, T &gt;::operator++</definition>
         <argsstring>()</argsstring>
         <name>operator++</name>
-        <qualifiedname>dsm::SparseMatrix::operator++</qualifiedname>
-    <requiresclause>std::unsigned_integral&lt;Index&gt;    </requiresclause>
         <briefdescription>
 <para>transpose the matrix </para>
         </briefdescription>
@@ -1333,7 +1257,7 @@
         </inbodydescription>
         <location file="src/dsm/headers/SparseMatrix.hpp" line="251" column="18" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="619" bodyend="625"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1aa90b33f56364b548294485cd0cbb73c6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a09f78d83dc057aaa6865ac6cd91ab43b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename I</type>
@@ -1342,16 +1266,14 @@
             <type>typename U</type>
           </param>
         </templateparamlist>
-        <type><ref refid="classdsm_1_1SparseMatrix" kindref="compound">SparseMatrix</ref> &amp;</type>
-        <definition>SparseMatrix &amp; dsm::SparseMatrix&lt; Index, T &gt;::operator+=</definition>
+        <type>requires std::unsigned_integral&lt; I &gt; <ref refid="classdsm_1_1SparseMatrix" kindref="compound">SparseMatrix</ref> &amp;</type>
+        <definition>requires std::unsigned_integral&lt;I&gt; SparseMatrix&amp; dsm::SparseMatrix&lt; Index, T &gt;::operator+=</definition>
         <argsstring>(const SparseMatrix&lt; I, U &gt; &amp;other)</argsstring>
         <name>operator+=</name>
-        <qualifiedname>dsm::SparseMatrix::operator+=</qualifiedname>
         <param>
           <type>const <ref refid="classdsm_1_1SparseMatrix" kindref="compound">SparseMatrix</ref>&lt; I, U &gt; &amp;</type>
           <declname>other</declname>
         </param>
-    <requiresclause>std::unsigned_integral&lt;I&gt;    </requiresclause>
         <briefdescription>
 <para>sum of two matrices </para>
         </briefdescription>
@@ -1382,7 +1304,7 @@
         </inbodydescription>
         <location file="src/dsm/headers/SparseMatrix.hpp" line="259" column="18"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a91895519f35ff4c734fd02dd2fbd37ab" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a5c6f729555f6b6f051a4b13cb747041a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename I</type>
@@ -1391,16 +1313,14 @@
             <type>typename U</type>
           </param>
         </templateparamlist>
-        <type><ref refid="classdsm_1_1SparseMatrix" kindref="compound">SparseMatrix</ref> &amp;</type>
-        <definition>SparseMatrix &amp; dsm::SparseMatrix&lt; Index, T &gt;::operator-=</definition>
+        <type>requires std::unsigned_integral&lt; I &gt; <ref refid="classdsm_1_1SparseMatrix" kindref="compound">SparseMatrix</ref> &amp;</type>
+        <definition>requires std::unsigned_integral&lt;I&gt; SparseMatrix&amp; dsm::SparseMatrix&lt; Index, T &gt;::operator-=</definition>
         <argsstring>(const SparseMatrix&lt; I, U &gt; &amp;other)</argsstring>
         <name>operator-=</name>
-        <qualifiedname>dsm::SparseMatrix::operator-=</qualifiedname>
         <param>
           <type>const <ref refid="classdsm_1_1SparseMatrix" kindref="compound">SparseMatrix</ref>&lt; I, U &gt; &amp;</type>
           <declname>other</declname>
         </param>
-    <requiresclause>std::unsigned_integral&lt;I&gt;    </requiresclause>
         <briefdescription>
 <para>difference of two matrices </para>
         </briefdescription>
@@ -1431,7 +1351,7 @@
         </inbodydescription>
         <location file="src/dsm/headers/SparseMatrix.hpp" line="267" column="18"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1ae20a5b39d6da7b1a52c828b970a0c5df" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a09325308f2fbf11ffbc2b9043f4fb0b9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename I</type>
@@ -1440,16 +1360,14 @@
             <type>typename U</type>
           </param>
         </templateparamlist>
-        <type><ref refid="classdsm_1_1SparseMatrix" kindref="compound">SparseMatrix</ref>&lt; Index, T &gt; &amp;</type>
-        <definition>SparseMatrix&lt; Index, T &gt; &amp; dsm::SparseMatrix&lt; Index, T &gt;::operator+=</definition>
+        <type>requires std::unsigned_integral&lt; Index &gt; requires std::unsigned_integral&lt; I &gt; <ref refid="classdsm_1_1SparseMatrix" kindref="compound">SparseMatrix</ref>&lt; Index, T &gt; &amp;</type>
+        <definition>requires std::unsigned_integral&lt;Index&gt; requires std::unsigned_integral&lt;I&gt; SparseMatrix&lt;Index, T&gt;&amp; dsm::SparseMatrix&lt; Index, T &gt;::operator+=</definition>
         <argsstring>(const SparseMatrix&lt; I, U &gt; &amp;other)</argsstring>
         <name>operator+=</name>
-        <qualifiedname>dsm::SparseMatrix::operator+=</qualifiedname>
         <param>
           <type>const <ref refid="classdsm_1_1SparseMatrix" kindref="compound">SparseMatrix</ref>&lt; I, U &gt; &amp;</type>
           <declname>other</declname>
         </param>
-    <requiresclause>std::unsigned_integral&lt;I&gt;    </requiresclause>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
@@ -1458,7 +1376,7 @@
         </inbodydescription>
         <location file="src/dsm/headers/SparseMatrix.hpp" line="631" column="29" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="631" bodyend="640"/>
       </memberdef>
-      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a495e1ea6e979fb2a9573add8a9fe0132" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a9ed7c96e2f7cf29f78e5cf9648570ac1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename I</type>
@@ -1467,16 +1385,14 @@
             <type>typename U</type>
           </param>
         </templateparamlist>
-        <type><ref refid="classdsm_1_1SparseMatrix" kindref="compound">SparseMatrix</ref>&lt; Index, T &gt; &amp;</type>
-        <definition>SparseMatrix&lt; Index, T &gt; &amp; dsm::SparseMatrix&lt; Index, T &gt;::operator-=</definition>
+        <type>requires std::unsigned_integral&lt; Index &gt; requires std::unsigned_integral&lt; I &gt; <ref refid="classdsm_1_1SparseMatrix" kindref="compound">SparseMatrix</ref>&lt; Index, T &gt; &amp;</type>
+        <definition>requires std::unsigned_integral&lt;Index&gt; requires std::unsigned_integral&lt;I&gt; SparseMatrix&lt;Index, T&gt;&amp; dsm::SparseMatrix&lt; Index, T &gt;::operator-=</definition>
         <argsstring>(const SparseMatrix&lt; I, U &gt; &amp;other)</argsstring>
         <name>operator-=</name>
-        <qualifiedname>dsm::SparseMatrix::operator-=</qualifiedname>
         <param>
           <type>const <ref refid="classdsm_1_1SparseMatrix" kindref="compound">SparseMatrix</ref>&lt; I, U &gt; &amp;</type>
           <declname>other</declname>
         </param>
-    <requiresclause>std::unsigned_integral&lt;I&gt;    </requiresclause>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
@@ -1485,8 +1401,7 @@
         </inbodydescription>
         <location file="src/dsm/headers/SparseMatrix.hpp" line="646" column="29" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="646" bodyend="655"/>
       </memberdef>
-    </sectiondef>
-    <requiresclause>std::unsigned_integral&lt;Index&gt;    </requiresclause>
+      </sectiondef>
     <briefdescription>
 <para>The <ref refid="classdsm_1_1SparseMatrix" kindref="compound">SparseMatrix</ref> class represents a sparse matrix. </para>
     </briefdescription>
@@ -1516,46 +1431,46 @@
       <member refid="classdsm_1_1SparseMatrix_1ac3844e70ee4f66e99fbb614f98b401fa" prot="private" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>_defaultReturn</name></member>
       <member refid="classdsm_1_1SparseMatrix_1a30d57be7953a27be5644ea4268a9637f" prot="private" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>_matrix</name></member>
       <member refid="classdsm_1_1SparseMatrix_1a276157c8e17c2fbf84cf7baf152ef097" prot="private" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>_rows</name></member>
-      <member refid="classdsm_1_1SparseMatrix_1a892a480a2b01a235761febce912ed931" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>begin</name></member>
-      <member refid="classdsm_1_1SparseMatrix_1ad70bb2e39855717832d70ddf3f5fbc40" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>clear</name></member>
-      <member refid="classdsm_1_1SparseMatrix_1abc2c366b7df2603f5b7ea76fcc502326" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>contains</name></member>
-      <member refid="classdsm_1_1SparseMatrix_1a056ccf45ad47093b0ceaa9a277c2c23c" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>contains</name></member>
-      <member refid="classdsm_1_1SparseMatrix_1ad79de75b148c1efac96c15e7739ed147" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>end</name></member>
-      <member refid="classdsm_1_1SparseMatrix_1ad8c9da7dc8cb3c5d20555b77d371102c" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>erase</name></member>
-      <member refid="classdsm_1_1SparseMatrix_1a79b1b4382f46151b2d041323f4f0cd87" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>eraseColumn</name></member>
-      <member refid="classdsm_1_1SparseMatrix_1a8f46edacde72b5536601aa34afdf6c9c" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>eraseRow</name></member>
-      <member refid="classdsm_1_1SparseMatrix_1a74f5db866384afbc89a25946c041cf75" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>getCol</name></member>
-      <member refid="classdsm_1_1SparseMatrix_1a324fef44afb80419ddadf75c07aa5baa" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>getColDim</name></member>
-      <member refid="classdsm_1_1SparseMatrix_1ae0f8a3682264568f0637b181f39e29f3" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>getDegreeVector</name></member>
-      <member refid="classdsm_1_1SparseMatrix_1a762f5c6e5c53aca71b6c4ff4268d1f06" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>getLaplacian</name></member>
-      <member refid="classdsm_1_1SparseMatrix_1a2e50f75dd63f015a8b6d67a303a01339" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>getNormCols</name></member>
-      <member refid="classdsm_1_1SparseMatrix_1ad6ddec658daf21afae7f3f45a9e9c771" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>getNormRows</name></member>
-      <member refid="classdsm_1_1SparseMatrix_1a38beec1dc82c27fb3d20adf5f0f35c20" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>getRow</name></member>
-      <member refid="classdsm_1_1SparseMatrix_1ac8866f3f41f20a84dcc476da3633d1cd" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>getRowDim</name></member>
-      <member refid="classdsm_1_1SparseMatrix_1ae58a3ca0ad970f7c3e7466a45ea25591" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>getStrengthVector</name></member>
-      <member refid="classdsm_1_1SparseMatrix_1ab6b3473077ffbfbe137212698fdb5f34" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>insert</name></member>
-      <member refid="classdsm_1_1SparseMatrix_1a92fac1217639758e933fd0689729712e" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>insert</name></member>
-      <member refid="classdsm_1_1SparseMatrix_1a591d522596eabd972bc440e90863e850" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>insert_or_assign</name></member>
-      <member refid="classdsm_1_1SparseMatrix_1a67230fe263de59bd21646314277e8536" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>insert_or_assign</name></member>
-      <member refid="classdsm_1_1SparseMatrix_1a01ba0d4bb2c3b39bcf1baa39a565d381" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>max_size</name></member>
-      <member refid="classdsm_1_1SparseMatrix_1a6860c09d6293e53ed9633f5943b86075" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>operator()</name></member>
-      <member refid="classdsm_1_1SparseMatrix_1a0263a77fef7e41d26d7dec1708d574dc" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>operator()</name></member>
-      <member refid="classdsm_1_1SparseMatrix_1a9ba5d323b069a446f14f8d0a912e8666" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>operator()</name></member>
-      <member refid="classdsm_1_1SparseMatrix_1a8bd55e2d01646882e62c07f52f6f3645" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>operator()</name></member>
-      <member refid="classdsm_1_1SparseMatrix_1a91bd4c01d3181be7b297ecd9a4914888" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>operator+</name></member>
-      <member refid="classdsm_1_1SparseMatrix_1a54e568a8554b883278ad72cdd4384baa" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>operator++</name></member>
-      <member refid="classdsm_1_1SparseMatrix_1aa90b33f56364b548294485cd0cbb73c6" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>operator+=</name></member>
-      <member refid="classdsm_1_1SparseMatrix_1ae20a5b39d6da7b1a52c828b970a0c5df" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>operator+=</name></member>
-      <member refid="classdsm_1_1SparseMatrix_1a54b3d02da778b737f276aeb700034569" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>operator-</name></member>
-      <member refid="classdsm_1_1SparseMatrix_1a91895519f35ff4c734fd02dd2fbd37ab" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>operator-=</name></member>
-      <member refid="classdsm_1_1SparseMatrix_1a495e1ea6e979fb2a9573add8a9fe0132" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>operator-=</name></member>
-      <member refid="classdsm_1_1SparseMatrix_1a5ca3ccd61b5f0909edccc4b717468c79" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>reshape</name></member>
-      <member refid="classdsm_1_1SparseMatrix_1af61a9b16d9f534fd31e1f1482763cd2e" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>reshape</name></member>
-      <member refid="classdsm_1_1SparseMatrix_1abdc6b47c390b02810982fc2025fe25b6" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>size</name></member>
-      <member refid="classdsm_1_1SparseMatrix_1a76bbd78270509ea42c3194f263293abf" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>SparseMatrix</name></member>
-      <member refid="classdsm_1_1SparseMatrix_1aff59e8b11d2642db4703b9d97d0b1e89" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>SparseMatrix</name></member>
-      <member refid="classdsm_1_1SparseMatrix_1a44f088f9960540ca7f221531e8a97ec2" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>SparseMatrix</name></member>
-      <member refid="classdsm_1_1SparseMatrix_1ac514a1ba68b6b76ab41c04a63a182533" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>symmetrize</name></member>
+      <member refid="classdsm_1_1SparseMatrix_1ad7e1eaa769a97ef872b41f6e6470400d" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>begin</name></member>
+      <member refid="classdsm_1_1SparseMatrix_1a48287852ed2a75ec39a20ba62603965f" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>clear</name></member>
+      <member refid="classdsm_1_1SparseMatrix_1a57384e33f75162bf97d464f1a73b7275" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>contains</name></member>
+      <member refid="classdsm_1_1SparseMatrix_1ab553af75991a9a071706d9c7442bee42" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>contains</name></member>
+      <member refid="classdsm_1_1SparseMatrix_1a2bef1265fcc398018886e922e9dc8a32" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>end</name></member>
+      <member refid="classdsm_1_1SparseMatrix_1aa6fa072085421ac384ccc51643a5ad71" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>erase</name></member>
+      <member refid="classdsm_1_1SparseMatrix_1a1c2500e9a378261858f9080168cd8a70" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>eraseColumn</name></member>
+      <member refid="classdsm_1_1SparseMatrix_1ab90fbdc9bef8a76372794f6c5663e379" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>eraseRow</name></member>
+      <member refid="classdsm_1_1SparseMatrix_1a8b8775939be49a5ccf8cfc3346e3c051" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>getCol</name></member>
+      <member refid="classdsm_1_1SparseMatrix_1a7a26cbcb48add01159687a2dce0af1fb" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>getColDim</name></member>
+      <member refid="classdsm_1_1SparseMatrix_1a9678cdb744ee265b8287384381bc970d" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>getDegreeVector</name></member>
+      <member refid="classdsm_1_1SparseMatrix_1aeaa3dc462bf0c6786b067ff27be7c837" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>getLaplacian</name></member>
+      <member refid="classdsm_1_1SparseMatrix_1ab4594b100f9f4c3306e04cccff7e1b00" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>getNormCols</name></member>
+      <member refid="classdsm_1_1SparseMatrix_1a7c22bd85d2453b5e750ca3cad4fe0e95" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>getNormRows</name></member>
+      <member refid="classdsm_1_1SparseMatrix_1a2db82a51ef907957266444c5ca561eaa" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>getRow</name></member>
+      <member refid="classdsm_1_1SparseMatrix_1ad11afd5ce431d2b966ce8a6dd43fb010" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>getRowDim</name></member>
+      <member refid="classdsm_1_1SparseMatrix_1a481674fb8b567fe33c53eeb969fe8bd6" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>getStrengthVector</name></member>
+      <member refid="classdsm_1_1SparseMatrix_1a492040f03e7ca8642aa2fde70cd42c73" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>insert</name></member>
+      <member refid="classdsm_1_1SparseMatrix_1a3efa1838bd32378023f615302bdcd686" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>insert</name></member>
+      <member refid="classdsm_1_1SparseMatrix_1abb586ab0a9fbc5f2b035af3b6313a019" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>insert_or_assign</name></member>
+      <member refid="classdsm_1_1SparseMatrix_1a655c2acdb2c8b3731719fdd7a0dccb1c" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>insert_or_assign</name></member>
+      <member refid="classdsm_1_1SparseMatrix_1ad89567696887d9dfbee87795c0c6285d" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>max_size</name></member>
+      <member refid="classdsm_1_1SparseMatrix_1ac03d4bdbd9b86a1b6cc195b26517e5a9" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>operator()</name></member>
+      <member refid="classdsm_1_1SparseMatrix_1a1c7de44b13b5549ed9b9e2da9412ea64" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>operator()</name></member>
+      <member refid="classdsm_1_1SparseMatrix_1ad379e300d6b825983ace5fbad5332ca3" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>operator()</name></member>
+      <member refid="classdsm_1_1SparseMatrix_1af32c5e52810f45bce04c54b1678b9dd8" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>operator()</name></member>
+      <member refid="classdsm_1_1SparseMatrix_1aabd47e611ef8e2456b6e7307c3252890" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>operator+</name></member>
+      <member refid="classdsm_1_1SparseMatrix_1ac89861a861a1d84076882380e6474d46" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>operator++</name></member>
+      <member refid="classdsm_1_1SparseMatrix_1a09f78d83dc057aaa6865ac6cd91ab43b" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>operator+=</name></member>
+      <member refid="classdsm_1_1SparseMatrix_1a09325308f2fbf11ffbc2b9043f4fb0b9" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>operator+=</name></member>
+      <member refid="classdsm_1_1SparseMatrix_1ab75404692818cf899304cac8704e185d" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>operator-</name></member>
+      <member refid="classdsm_1_1SparseMatrix_1a5c6f729555f6b6f051a4b13cb747041a" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>operator-=</name></member>
+      <member refid="classdsm_1_1SparseMatrix_1a9ed7c96e2f7cf29f78e5cf9648570ac1" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>operator-=</name></member>
+      <member refid="classdsm_1_1SparseMatrix_1a51334882e61e39a865b22cc157168647" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>reshape</name></member>
+      <member refid="classdsm_1_1SparseMatrix_1a63f514cfb61078375437e060e338de7c" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>reshape</name></member>
+      <member refid="classdsm_1_1SparseMatrix_1a31c1ecaf62652757d8e02527a5f25a80" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>size</name></member>
+      <member refid="classdsm_1_1SparseMatrix_1a50b55ef6d77f882ed7064ea7d06cfe54" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>SparseMatrix</name></member>
+      <member refid="classdsm_1_1SparseMatrix_1a4a1ad35ac8a796355028883826a44f1a" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>SparseMatrix</name></member>
+      <member refid="classdsm_1_1SparseMatrix_1a0d36e25ae348dc66c6e90e80ecc41c55" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>SparseMatrix</name></member>
+      <member refid="classdsm_1_1SparseMatrix_1aa726011b476e3da1b31bfb20a0ff7174" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>symmetrize</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>
