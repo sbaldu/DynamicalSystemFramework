@@ -255,8 +255,9 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
-  template <typename T1, typename... Tn>
-    requires is_street_v<std::remove_reference_t<T1>> && (is_street_v<std::remove_reference_t<Tn>> && ...)
+                                         template <typename T1, typename... Tn>
+               requires is_street_v<std::remove_reference_t<T1>> &&
+                        (is_street_v<std::remove_reference_t<Tn>> && ...)
   void Graph<Id, Size>::addStreets(T1&& street, Tn&&... streets) {
     addStreet(std::forward<T1>(street));
     addStreets(std::forward<Tn>(streets)...);
