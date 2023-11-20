@@ -104,6 +104,9 @@ namespace dsm {
     /// @brief Get the graph's street map
     /// @return A std::unordered_map containing the graph's streets
     std::unordered_map<Id, shared<Street<Id, Size>>> streetSet() const;
+
+    std::optional<DijkstraResult<Id>> dijkstra(const Node<Id>& source, const Node<Id>& destination) const;
+    std::optional<DijkstraResult<Id>> dijkstra(Id source, Id destination) const;
   };
 
   template <typename Id, typename Size>
