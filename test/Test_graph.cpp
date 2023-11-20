@@ -62,6 +62,7 @@ TEST_CASE("Graph") {
     CHECK_FALSE(graph.adjMatrix()->contains(1, 3));
   }
 
+<<<<<<< HEAD
   SUBCASE("Construction with addStreets") {
     Street s1(1, std::make_pair(0, 1));
     Street s2(2, std::make_pair(1, 2));
@@ -81,6 +82,8 @@ TEST_CASE("Graph") {
     CHECK_FALSE(graph.adjMatrix()->contains(1, 3));
   }
 
+=======
+>>>>>>> main
   SUBCASE("importAdj - dsm") {
     // This tests the importAdj function over .dsm files
     // GIVEN: a graph

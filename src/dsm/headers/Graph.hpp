@@ -87,7 +87,7 @@ namespace dsm {
 
     template <typename T1>
       requires is_street_v<std::remove_reference_t<T1>>
-    void addStreets(T1&& streets);
+    void addStreets(T1&& street);
 
     template <typename T1, typename... Tn>
       requires is_street_v<std::remove_reference_t<T1>> && (is_street_v<std::remove_reference_t<Tn>> && ...)
