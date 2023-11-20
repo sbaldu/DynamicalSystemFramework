@@ -1,4 +1,4 @@
-/// @file       src/Node.hpp
+/// @file       src/dsm/headers/Node.hpp
 /// @brief      Defines the Node class.
 ///
 /// @details    This file contains the definition of the Node class.

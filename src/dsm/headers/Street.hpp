@@ -1,4 +1,4 @@
-/// @file       src/Street.hpp
+/// @file       src/dsm/headers/Street.hpp
 /// @brief      Defines the Street class.
 ///
 /// @details    This file contains the definition of the Street class.

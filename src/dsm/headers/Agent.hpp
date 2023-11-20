@@ -1,4 +1,4 @@
-/// @file       src/Agent.hpp
+/// @file       src/dsm/headers/Agent.hpp
 /// @brief      Defines the Agent class.
 ///
 /// @details    This file contains the definition of the Agent class.

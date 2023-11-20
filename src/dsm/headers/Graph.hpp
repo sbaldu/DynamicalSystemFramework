@@ -1,4 +1,4 @@
-/// @file       src/Graph.hpp
+/// @file       src/dsm/headers/Graph.hpp
 /// @brief      Defines the Graph class.
 ///
 /// @details    This file contains the definition of the Graph class.
