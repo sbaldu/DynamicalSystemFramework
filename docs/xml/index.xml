@@ -1,48 +1,51 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygenindex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="index.xsd" version="1.9.8" xml:lang="en-US">
+<doxygenindex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="index.xsd" version="1.9.1" xml:lang="en-US">
   <compound refid="classdsm_1_1Agent" kind="class"><name>dsm::Agent</name>
-    <member refid="classdsm_1_1Agent_1a7433bfceca214d94e1d231f813f88d07" kind="variable"><name>m_itinerary</name></member>
-    <member refid="classdsm_1_1Agent_1ad3d5e45a19dfeeb4f7265dc69d6b15c1" kind="variable"><name>m_speed</name></member>
-    <member refid="classdsm_1_1Agent_1aac2976c04c7ae1aaebad7bc9e3c89844" kind="variable"><name>m_index</name></member>
-    <member refid="classdsm_1_1Agent_1a8737398b57ab4919302422a1c110ff66" kind="variable"><name>m_position</name></member>
-    <member refid="classdsm_1_1Agent_1a7ca6c832248e741ad7268e3654cbcff2" kind="variable"><name>m_previousPosition</name></member>
-    <member refid="classdsm_1_1Agent_1a505a59d703ae7e24fa6c1e38f3fd1028" kind="variable"><name>m_time</name></member>
-    <member refid="classdsm_1_1Agent_1a389eb91280e95b57b003a7bb0f6b676c" kind="function"><name>Agent</name></member>
-    <member refid="classdsm_1_1Agent_1a5683483f462e39f7365b8fe6dbaac384" kind="function"><name>Agent</name></member>
-    <member refid="classdsm_1_1Agent_1a66235488bdfec5a3cd25ae400f20f4c4" kind="function"><name>Agent</name></member>
-    <member refid="classdsm_1_1Agent_1a51f7c54f9e507d51b7a679b4fe4b3d60" kind="function"><name>setPosition</name></member>
-    <member refid="classdsm_1_1Agent_1a74fadc6586f0d0ea2bf17cb210216a00" kind="function"><name>setItinerary</name></member>
-    <member refid="classdsm_1_1Agent_1ade761cb1f91af8b91fe67401594cc305" kind="function"><name>setSpeed</name></member>
-    <member refid="classdsm_1_1Agent_1a9fc9f454c8062efe7a01c56a87c8e893" kind="function"><name>incrementTime</name></member>
-    <member refid="classdsm_1_1Agent_1a2d429a1bb925b886a0e82eca32266287" kind="function"><name>incrementTime</name></member>
-    <member refid="classdsm_1_1Agent_1a264ef7083f883bc7f104cf75fc17f33e" kind="function"><name>resetTime</name></member>
-    <member refid="classdsm_1_1Agent_1ab1851b81a5e275610187a7d28047f648" kind="function"><name>index</name></member>
-    <member refid="classdsm_1_1Agent_1a7a7910fe55a211cdff4daccdffa4d1d8" kind="function"><name>position</name></member>
-    <member refid="classdsm_1_1Agent_1af4c66c9bd994d16fa5b110559556a41e" kind="function"><name>previousPosition</name></member>
-    <member refid="classdsm_1_1Agent_1aae480cf9cad655ff4136e1dc77314841" kind="function"><name>itinerary</name></member>
-    <member refid="classdsm_1_1Agent_1a3437faa68aa546741a48f2ea47b1758f" kind="function"><name>speed</name></member>
-    <member refid="classdsm_1_1Agent_1a0219ef98df9eecb95623fa689e5a6b3e" kind="function"><name>time</name></member>
+    <member refid="classdsm_1_1Agent_1aabe336e28193f6cf7f104091d69692eb" kind="variable"><name>m_itinerary</name></member>
+    <member refid="classdsm_1_1Agent_1ac281b44ab9ad42bfb2e47430855ea8d8" kind="variable"><name>m_speed</name></member>
+    <member refid="classdsm_1_1Agent_1ae4179c0476ac1f5968d5442125f46315" kind="variable"><name>m_delay</name></member>
+    <member refid="classdsm_1_1Agent_1ae0201e983152e87df62487ee807b9270" kind="variable"><name>m_index</name></member>
+    <member refid="classdsm_1_1Agent_1a6f5b623d7204fef47cb2fdbed3a1f3d4" kind="variable"><name>m_streetId</name></member>
+    <member refid="classdsm_1_1Agent_1a23181f51c22c3c8a7ec080c2e3e27ffe" kind="variable"><name>m_time</name></member>
+    <member refid="classdsm_1_1Agent_1af0c7799d27104d01a60b03a1e159835d" kind="function"><name>Agent</name></member>
+    <member refid="classdsm_1_1Agent_1a2e3f2457fd359d7dc0c2e28b60c99259" kind="function"><name>Agent</name></member>
+    <member refid="classdsm_1_1Agent_1a864dd6524080acf49933b4ac74f4895a" kind="function"><name>Agent</name></member>
+    <member refid="classdsm_1_1Agent_1aaba67776effa18a8cf83256b7a0f8177" kind="function"><name>setStreetId</name></member>
+    <member refid="classdsm_1_1Agent_1aa93ce3ae6fbec47fffd43200b86110f9" kind="function"><name>setItinerary</name></member>
+    <member refid="classdsm_1_1Agent_1a249fa1e43040f68ef09a0e1d60a79f96" kind="function"><name>setSpeed</name></member>
+    <member refid="classdsm_1_1Agent_1a2809ae1bbcbe77633913d43982ea823c" kind="function"><name>setDelay</name></member>
+    <member refid="classdsm_1_1Agent_1a13d0562e6acafb866960d717cc4fb670" kind="function"><name>incrementTime</name></member>
+    <member refid="classdsm_1_1Agent_1acb90b61b31ae05b50b76de47e20c7bd6" kind="function"><name>incrementTime</name></member>
+    <member refid="classdsm_1_1Agent_1acc15634eeaea621bf407f77cc30ac87a" kind="function"><name>resetTime</name></member>
+    <member refid="classdsm_1_1Agent_1ac4658d146f4c3ff7cc9f4a0c9a70078d" kind="function"><name>index</name></member>
+    <member refid="classdsm_1_1Agent_1a3a15a471d6dd1148c8ad494bfd67ca96" kind="function"><name>streetId</name></member>
+    <member refid="classdsm_1_1Agent_1a830a79ba200b23ba23774f889c673bb0" kind="function"><name>itinerary</name></member>
+    <member refid="classdsm_1_1Agent_1abcf59bb67437986459517ae2bd69f7c1" kind="function"><name>speed</name></member>
+    <member refid="classdsm_1_1Agent_1a8109cb7b2f8947f54625a282dee0dc92" kind="function"><name>delay</name></member>
+    <member refid="classdsm_1_1Agent_1a36e15a53b1fc48d7a2f2e080baa84ee0" kind="function"><name>time</name></member>
   </compound>
   <compound refid="classdsm_1_1Graph" kind="class"><name>dsm::Graph</name>
-    <member refid="classdsm_1_1Graph_1a5cbe389bfbc37db4d61f8a7467bcc4f9" kind="variable"><name>m_nodes</name></member>
-    <member refid="classdsm_1_1Graph_1a499a3a5fb6cb079010b508d10633a758" kind="variable"><name>m_streets</name></member>
+    <member refid="classdsm_1_1Graph_1a82bd6998f115d9d05872fb1438dc766e" kind="variable"><name>m_nodes</name></member>
+    <member refid="classdsm_1_1Graph_1a82ddbe1275584645f173db51828d202f" kind="variable"><name>m_streets</name></member>
     <member refid="classdsm_1_1Graph_1aa0f10644c6e30df6880f0c8c26a111d6" kind="variable"><name>m_adjacency</name></member>
-    <member refid="classdsm_1_1Graph_1aa3737592e1af21a39cda4b2c45862ac5" kind="function"><name>Graph</name></member>
-    <member refid="classdsm_1_1Graph_1ae7b2423f9273b9ae65e431c4c8e0b102" kind="function"><name>Graph</name></member>
-    <member refid="classdsm_1_1Graph_1af5d4c809ef004de2dfde03b3df92609e" kind="function"><name>Graph</name></member>
-    <member refid="classdsm_1_1Graph_1a9597482c114e45c866c607ee958b5f38" kind="function"><name>buildAdj</name></member>
-    <member refid="classdsm_1_1Graph_1a6da4e69fa548c5d336171448e962e619" kind="function"><name>importAdj</name></member>
-    <member refid="classdsm_1_1Graph_1a9ead5a1c3783d3b0a137c53eed619d54" kind="function"><name>addNode</name></member>
-    <member refid="classdsm_1_1Graph_1a5f3955f7f30c7f73d74035656b3777c7" kind="function"><name>addNode</name></member>
-    <member refid="classdsm_1_1Graph_1acde71b4899f4a3c06c47cfb745bc8c3f" kind="function"><name>addNodes</name></member>
-    <member refid="classdsm_1_1Graph_1af93b0f06097ec0e1b85e9f6b0ab6bdf8" kind="function"><name>addNodes</name></member>
-    <member refid="classdsm_1_1Graph_1ab7afafad25382c2ea504db47dfe28aef" kind="function"><name>addStreet</name></member>
-    <member refid="classdsm_1_1Graph_1ade2a7b8b165907086f87a6ebedcefb2f" kind="function"><name>addStreet</name></member>
-    <member refid="classdsm_1_1Graph_1af4c45a369ae9394f7acb2b045194ca6f" kind="function"><name>addStreets</name></member>
-    <member refid="classdsm_1_1Graph_1a4ed4bfad5369c6ba71adb529d2819112" kind="function"><name>addStreets</name></member>
-    <member refid="classdsm_1_1Graph_1a8ccd4e35dc4063f423902c920bb0c723" kind="function"><name>adjMatrix</name></member>
-    <member refid="classdsm_1_1Graph_1aee0e338487f687cae252ee51a0f4c982" kind="function"><name>nodeSet</name></member>
-    <member refid="classdsm_1_1Graph_1aff1ae77416eff8585c376192ed4fc595" kind="function"><name>streetSet</name></member>
+    <member refid="classdsm_1_1Graph_1ae515dc05e641ae032f51ee1332831b98" kind="function"><name>Graph</name></member>
+    <member refid="classdsm_1_1Graph_1a45b7fe1d389f2f67981d1ce46be20128" kind="function"><name>Graph</name></member>
+    <member refid="classdsm_1_1Graph_1a87e97609bcc593f80a7e568320b1a7d1" kind="function"><name>Graph</name></member>
+    <member refid="classdsm_1_1Graph_1a379d1051a9596957286543e262b4514c" kind="function"><name>buildAdj</name></member>
+    <member refid="classdsm_1_1Graph_1a12485e07ca4397cdc21cc75e26fdd89f" kind="function"><name>importAdj</name></member>
+    <member refid="classdsm_1_1Graph_1a856d0f814897cd45d3a111fbdba6ddc3" kind="function"><name>addNode</name></member>
+    <member refid="classdsm_1_1Graph_1a797d512830effa735a4dad12292bb9be" kind="function"><name>addNode</name></member>
+    <member refid="classdsm_1_1Graph_1a9e92893bc7e521463ea8cf29ec2f1ed8" kind="function"><name>requires</name></member>
+    <member refid="classdsm_1_1Graph_1a997d6dd63bbf73cf334904e10f7a7fb1" kind="function"><name>addNodes</name></member>
+    <member refid="classdsm_1_1Graph_1accc4186d12b8d08582036834b564a6ad" kind="function"><name>addStreet</name></member>
+    <member refid="classdsm_1_1Graph_1a30c764118503fe2a279e263cd943c791" kind="function"><name>addStreet</name></member>
+    <member refid="classdsm_1_1Graph_1a50b4842d5f8eab859141f56bf61aa986" kind="function"><name>requires</name></member>
+    <member refid="classdsm_1_1Graph_1a7e7d4b3fef65256c064bdec785b22a4f" kind="function"><name>addStreets</name></member>
+    <member refid="classdsm_1_1Graph_1a93f4a6ca599ac9cb2de508eb100c9052" kind="function"><name>adjMatrix</name></member>
+    <member refid="classdsm_1_1Graph_1a00fd4b0f7e95c0cd6564a30819654178" kind="function"><name>nodeSet</name></member>
+    <member refid="classdsm_1_1Graph_1ac15a4597ad8f61365b2ecc7ef40a4b82" kind="function"><name>streetSet</name></member>
+    <member refid="classdsm_1_1Graph_1ab3bbe774910d3d516b3de6036c54a59c" kind="function"><name>addNodes</name></member>
+    <member refid="classdsm_1_1Graph_1ad80a0a365a58c7a8b7741eaf20b72692" kind="function"><name>addStreets</name></member>
   </compound>
   <compound refid="structdsm_1_1is__node" kind="struct"><name>dsm::is_node</name>
   </compound>
@@ -70,81 +73,77 @@
     <member refid="classdsm_1_1Itinerary_1abff9bd1a883c8d93f044f73bc17ba7f8" kind="variable"><name>m_path</name></member>
     <member refid="classdsm_1_1Itinerary_1ad60cf04c4de8dd879a4788de3759cdb2" kind="variable"><name>m_trip</name></member>
     <member refid="classdsm_1_1Itinerary_1abe674b77c57bcc3c3cde6a4d95d251f9" kind="function"><name>Itinerary</name></member>
-    <member refid="classdsm_1_1Itinerary_1a879d5ab63362c054d60e381d6431643f" kind="function"><name>Itinerary</name></member>
+    <member refid="classdsm_1_1Itinerary_1a3bcef6426d4f397bdd80ae809e4abefa" kind="function"><name>Itinerary</name></member>
     <member refid="classdsm_1_1Itinerary_1a80b029a98863cbe8faefe1eeb9f01eaa" kind="function"><name>Itinerary</name></member>
-    <member refid="classdsm_1_1Itinerary_1adce71ba8dfc64afdc33fb3361026ee49" kind="function"><name>Itinerary</name></member>
-    <member refid="classdsm_1_1Itinerary_1ab0b0e118d2abeef6a56c363927976b6e" kind="function"><name>Itinerary</name></member>
-    <member refid="classdsm_1_1Itinerary_1a68087a6fdba498daf947f8879bded605" kind="function"><name>setSource</name></member>
-    <member refid="classdsm_1_1Itinerary_1a2b13323c1753fce6097534b9133f665d" kind="function"><name>setDestination</name></member>
-    <member refid="classdsm_1_1Itinerary_1adcc12cb21df1a4f3f4eac6c32916c9f9" kind="function"><name>setPath</name></member>
-    <member refid="classdsm_1_1Itinerary_1a5002ea744e6274813484bcde170de517" kind="function"><name>source</name></member>
-    <member refid="classdsm_1_1Itinerary_1a9d7e78e7e3df89692290fc0ca0731a17" kind="function"><name>destination</name></member>
-    <member refid="classdsm_1_1Itinerary_1a333c9a66c8ceddcc2345fcee40dcdfb3" kind="function"><name>trip</name></member>
-    <member refid="classdsm_1_1Itinerary_1a15fe02a7d9eabeeeb0333ae53e025527" kind="function"><name>path</name></member>
+    <member refid="classdsm_1_1Itinerary_1a34476f64330c4b68f18fde47b1cfc196" kind="function"><name>Itinerary</name></member>
+    <member refid="classdsm_1_1Itinerary_1ac10c49a80cf8eafa3d8526562411872e" kind="function"><name>Itinerary</name></member>
+    <member refid="classdsm_1_1Itinerary_1a71f1866902c5d3d6144adfd3309aa292" kind="function"><name>setSource</name></member>
+    <member refid="classdsm_1_1Itinerary_1a94483f076fcf7e4262e927c819906454" kind="function"><name>setDestination</name></member>
+    <member refid="classdsm_1_1Itinerary_1a778a325a4164bd8931faf0eed5cb2960" kind="function"><name>setPath</name></member>
+    <member refid="classdsm_1_1Itinerary_1a8ffdda4eb8e51d6c0988cc6b4666b009" kind="function"><name>source</name></member>
+    <member refid="classdsm_1_1Itinerary_1ae637abd0e6aa89fa956c732ac601f25f" kind="function"><name>destination</name></member>
+    <member refid="classdsm_1_1Itinerary_1ae942a76b5e1ea0b10e83ed458ef58488" kind="function"><name>trip</name></member>
+    <member refid="classdsm_1_1Itinerary_1a45a888226ac4d09be5c2c64d903b964e" kind="function"><name>path</name></member>
   </compound>
   <compound refid="classdsm_1_1Node" kind="class"><name>dsm::Node</name>
     <member refid="classdsm_1_1Node_1a0e4af4b2760e13608a0a4ae313b98fd7" kind="variable"><name>m_queue</name></member>
     <member refid="classdsm_1_1Node_1a22eda670f2cc65f7ec08d2916de33d35" kind="variable"><name>m_coords</name></member>
     <member refid="classdsm_1_1Node_1a65e7816217a27bfedbe91e0f866b2c10" kind="variable"><name>m_id</name></member>
     <member refid="classdsm_1_1Node_1a75d2959b0ca30715dc3086b68aaa6b61" kind="function"><name>Node</name></member>
-    <member refid="classdsm_1_1Node_1a77816db7c053668e21fc29778862ead5" kind="function"><name>Node</name></member>
-    <member refid="classdsm_1_1Node_1af34885977123568417fa9bff1c683a72" kind="function"><name>Node</name></member>
-    <member refid="classdsm_1_1Node_1a7280a4a30847faf7abf54e4dcd309a5f" kind="function"><name>Node</name></member>
-    <member refid="classdsm_1_1Node_1a1e66e41903d9ed19c20de4b5669186af" kind="function"><name>setCoords</name></member>
-    <member refid="classdsm_1_1Node_1a299b2503986e933d4dfd3db02cd65b31" kind="function"><name>setQueue</name></member>
-    <member refid="classdsm_1_1Node_1a47d352ec6008a49e73fcacb308762bb5" kind="function"><name>id</name></member>
-    <member refid="classdsm_1_1Node_1a155a31e830a3f25d93f4191289e671b0" kind="function"><name>coords</name></member>
-    <member refid="classdsm_1_1Node_1a57a37129a23899424df886dc3beb75a1" kind="function"><name>queue</name></member>
-  </compound>
-  <compound refid="structdsm_1_1nodeHash" kind="struct"><name>dsm::nodeHash</name>
-    <member refid="structdsm_1_1nodeHash_1a6af18881c470253d7825386a1118ff6f" kind="function"><name>operator()</name></member>
-    <member refid="structdsm_1_1nodeHash_1a1b57e15cf33d65ff99f0c7fd73e7a9f7" kind="function"><name>operator()</name></member>
+    <member refid="classdsm_1_1Node_1a892ce1333095c40e25e5018f33514ae6" kind="function"><name>Node</name></member>
+    <member refid="classdsm_1_1Node_1adb1781f3464d8ac34c5f52c90858459c" kind="function"><name>Node</name></member>
+    <member refid="classdsm_1_1Node_1a92106f14d03da91df50ab229733f59a5" kind="function"><name>Node</name></member>
+    <member refid="classdsm_1_1Node_1acdec7de88a46ad7edc2e561b8e2014a6" kind="function"><name>setCoords</name></member>
+    <member refid="classdsm_1_1Node_1a6337227506949168f1cb561175effa21" kind="function"><name>setQueue</name></member>
+    <member refid="classdsm_1_1Node_1af11c9fd77141a161613842965c62e273" kind="function"><name>id</name></member>
+    <member refid="classdsm_1_1Node_1a95872f94b4428c666566b9dd2855f4e9" kind="function"><name>coords</name></member>
+    <member refid="classdsm_1_1Node_1a99f5fd6d030ac5823e00c5b8c8aff704" kind="function"><name>queue</name></member>
   </compound>
   <compound refid="classdsm_1_1SparseMatrix" kind="class"><name>dsm::SparseMatrix</name>
     <member refid="classdsm_1_1SparseMatrix_1a30d57be7953a27be5644ea4268a9637f" kind="variable"><name>_matrix</name></member>
     <member refid="classdsm_1_1SparseMatrix_1a276157c8e17c2fbf84cf7baf152ef097" kind="variable"><name>_rows</name></member>
     <member refid="classdsm_1_1SparseMatrix_1a85714cae09568767fa0c8fc3035b8b89" kind="variable"><name>_cols</name></member>
     <member refid="classdsm_1_1SparseMatrix_1ac3844e70ee4f66e99fbb614f98b401fa" kind="variable"><name>_defaultReturn</name></member>
-    <member refid="classdsm_1_1SparseMatrix_1a76bbd78270509ea42c3194f263293abf" kind="function"><name>SparseMatrix</name></member>
-    <member refid="classdsm_1_1SparseMatrix_1aff59e8b11d2642db4703b9d97d0b1e89" kind="function"><name>SparseMatrix</name></member>
-    <member refid="classdsm_1_1SparseMatrix_1a44f088f9960540ca7f221531e8a97ec2" kind="function"><name>SparseMatrix</name></member>
-    <member refid="classdsm_1_1SparseMatrix_1ab6b3473077ffbfbe137212698fdb5f34" kind="function"><name>insert</name></member>
-    <member refid="classdsm_1_1SparseMatrix_1a92fac1217639758e933fd0689729712e" kind="function"><name>insert</name></member>
-    <member refid="classdsm_1_1SparseMatrix_1a591d522596eabd972bc440e90863e850" kind="function"><name>insert_or_assign</name></member>
-    <member refid="classdsm_1_1SparseMatrix_1a67230fe263de59bd21646314277e8536" kind="function"><name>insert_or_assign</name></member>
-    <member refid="classdsm_1_1SparseMatrix_1ad8c9da7dc8cb3c5d20555b77d371102c" kind="function"><name>erase</name></member>
-    <member refid="classdsm_1_1SparseMatrix_1a8f46edacde72b5536601aa34afdf6c9c" kind="function"><name>eraseRow</name></member>
-    <member refid="classdsm_1_1SparseMatrix_1a79b1b4382f46151b2d041323f4f0cd87" kind="function"><name>eraseColumn</name></member>
-    <member refid="classdsm_1_1SparseMatrix_1ad70bb2e39855717832d70ddf3f5fbc40" kind="function"><name>clear</name></member>
-    <member refid="classdsm_1_1SparseMatrix_1abc2c366b7df2603f5b7ea76fcc502326" kind="function"><name>contains</name></member>
-    <member refid="classdsm_1_1SparseMatrix_1a056ccf45ad47093b0ceaa9a277c2c23c" kind="function"><name>contains</name></member>
-    <member refid="classdsm_1_1SparseMatrix_1ae0f8a3682264568f0637b181f39e29f3" kind="function"><name>getDegreeVector</name></member>
-    <member refid="classdsm_1_1SparseMatrix_1ae58a3ca0ad970f7c3e7466a45ea25591" kind="function"><name>getStrengthVector</name></member>
-    <member refid="classdsm_1_1SparseMatrix_1a762f5c6e5c53aca71b6c4ff4268d1f06" kind="function"><name>getLaplacian</name></member>
-    <member refid="classdsm_1_1SparseMatrix_1a38beec1dc82c27fb3d20adf5f0f35c20" kind="function"><name>getRow</name></member>
-    <member refid="classdsm_1_1SparseMatrix_1a74f5db866384afbc89a25946c041cf75" kind="function"><name>getCol</name></member>
-    <member refid="classdsm_1_1SparseMatrix_1ad6ddec658daf21afae7f3f45a9e9c771" kind="function"><name>getNormRows</name></member>
-    <member refid="classdsm_1_1SparseMatrix_1a2e50f75dd63f015a8b6d67a303a01339" kind="function"><name>getNormCols</name></member>
-    <member refid="classdsm_1_1SparseMatrix_1ac8866f3f41f20a84dcc476da3633d1cd" kind="function"><name>getRowDim</name></member>
-    <member refid="classdsm_1_1SparseMatrix_1a324fef44afb80419ddadf75c07aa5baa" kind="function"><name>getColDim</name></member>
-    <member refid="classdsm_1_1SparseMatrix_1abdc6b47c390b02810982fc2025fe25b6" kind="function"><name>size</name></member>
-    <member refid="classdsm_1_1SparseMatrix_1a01ba0d4bb2c3b39bcf1baa39a565d381" kind="function"><name>max_size</name></member>
-    <member refid="classdsm_1_1SparseMatrix_1ac514a1ba68b6b76ab41c04a63a182533" kind="function"><name>symmetrize</name></member>
-    <member refid="classdsm_1_1SparseMatrix_1a5ca3ccd61b5f0909edccc4b717468c79" kind="function"><name>reshape</name></member>
-    <member refid="classdsm_1_1SparseMatrix_1af61a9b16d9f534fd31e1f1482763cd2e" kind="function"><name>reshape</name></member>
-    <member refid="classdsm_1_1SparseMatrix_1a892a480a2b01a235761febce912ed931" kind="function"><name>begin</name></member>
-    <member refid="classdsm_1_1SparseMatrix_1ad79de75b148c1efac96c15e7739ed147" kind="function"><name>end</name></member>
-    <member refid="classdsm_1_1SparseMatrix_1a6860c09d6293e53ed9633f5943b86075" kind="function"><name>operator()</name></member>
-    <member refid="classdsm_1_1SparseMatrix_1a0263a77fef7e41d26d7dec1708d574dc" kind="function"><name>operator()</name></member>
-    <member refid="classdsm_1_1SparseMatrix_1a9ba5d323b069a446f14f8d0a912e8666" kind="function"><name>operator()</name></member>
-    <member refid="classdsm_1_1SparseMatrix_1a8bd55e2d01646882e62c07f52f6f3645" kind="function"><name>operator()</name></member>
-    <member refid="classdsm_1_1SparseMatrix_1a91bd4c01d3181be7b297ecd9a4914888" kind="function"><name>operator+</name></member>
-    <member refid="classdsm_1_1SparseMatrix_1a54b3d02da778b737f276aeb700034569" kind="function"><name>operator-</name></member>
-    <member refid="classdsm_1_1SparseMatrix_1a54e568a8554b883278ad72cdd4384baa" kind="function"><name>operator++</name></member>
-    <member refid="classdsm_1_1SparseMatrix_1aa90b33f56364b548294485cd0cbb73c6" kind="function"><name>operator+=</name></member>
-    <member refid="classdsm_1_1SparseMatrix_1a91895519f35ff4c734fd02dd2fbd37ab" kind="function"><name>operator-=</name></member>
-    <member refid="classdsm_1_1SparseMatrix_1ae20a5b39d6da7b1a52c828b970a0c5df" kind="function"><name>operator+=</name></member>
-    <member refid="classdsm_1_1SparseMatrix_1a495e1ea6e979fb2a9573add8a9fe0132" kind="function"><name>operator-=</name></member>
+    <member refid="classdsm_1_1SparseMatrix_1a50b55ef6d77f882ed7064ea7d06cfe54" kind="function"><name>SparseMatrix</name></member>
+    <member refid="classdsm_1_1SparseMatrix_1a4a1ad35ac8a796355028883826a44f1a" kind="function"><name>SparseMatrix</name></member>
+    <member refid="classdsm_1_1SparseMatrix_1a0d36e25ae348dc66c6e90e80ecc41c55" kind="function"><name>SparseMatrix</name></member>
+    <member refid="classdsm_1_1SparseMatrix_1a492040f03e7ca8642aa2fde70cd42c73" kind="function"><name>insert</name></member>
+    <member refid="classdsm_1_1SparseMatrix_1a3efa1838bd32378023f615302bdcd686" kind="function"><name>insert</name></member>
+    <member refid="classdsm_1_1SparseMatrix_1abb586ab0a9fbc5f2b035af3b6313a019" kind="function"><name>insert_or_assign</name></member>
+    <member refid="classdsm_1_1SparseMatrix_1a655c2acdb2c8b3731719fdd7a0dccb1c" kind="function"><name>insert_or_assign</name></member>
+    <member refid="classdsm_1_1SparseMatrix_1aa6fa072085421ac384ccc51643a5ad71" kind="function"><name>erase</name></member>
+    <member refid="classdsm_1_1SparseMatrix_1ab90fbdc9bef8a76372794f6c5663e379" kind="function"><name>eraseRow</name></member>
+    <member refid="classdsm_1_1SparseMatrix_1a1c2500e9a378261858f9080168cd8a70" kind="function"><name>eraseColumn</name></member>
+    <member refid="classdsm_1_1SparseMatrix_1a48287852ed2a75ec39a20ba62603965f" kind="function"><name>clear</name></member>
+    <member refid="classdsm_1_1SparseMatrix_1a57384e33f75162bf97d464f1a73b7275" kind="function"><name>contains</name></member>
+    <member refid="classdsm_1_1SparseMatrix_1ab553af75991a9a071706d9c7442bee42" kind="function"><name>contains</name></member>
+    <member refid="classdsm_1_1SparseMatrix_1a9678cdb744ee265b8287384381bc970d" kind="function"><name>getDegreeVector</name></member>
+    <member refid="classdsm_1_1SparseMatrix_1a481674fb8b567fe33c53eeb969fe8bd6" kind="function"><name>getStrengthVector</name></member>
+    <member refid="classdsm_1_1SparseMatrix_1aeaa3dc462bf0c6786b067ff27be7c837" kind="function"><name>getLaplacian</name></member>
+    <member refid="classdsm_1_1SparseMatrix_1a2db82a51ef907957266444c5ca561eaa" kind="function"><name>getRow</name></member>
+    <member refid="classdsm_1_1SparseMatrix_1a8b8775939be49a5ccf8cfc3346e3c051" kind="function"><name>getCol</name></member>
+    <member refid="classdsm_1_1SparseMatrix_1a7c22bd85d2453b5e750ca3cad4fe0e95" kind="function"><name>getNormRows</name></member>
+    <member refid="classdsm_1_1SparseMatrix_1ab4594b100f9f4c3306e04cccff7e1b00" kind="function"><name>getNormCols</name></member>
+    <member refid="classdsm_1_1SparseMatrix_1ad11afd5ce431d2b966ce8a6dd43fb010" kind="function"><name>getRowDim</name></member>
+    <member refid="classdsm_1_1SparseMatrix_1a7a26cbcb48add01159687a2dce0af1fb" kind="function"><name>getColDim</name></member>
+    <member refid="classdsm_1_1SparseMatrix_1a31c1ecaf62652757d8e02527a5f25a80" kind="function"><name>size</name></member>
+    <member refid="classdsm_1_1SparseMatrix_1ad89567696887d9dfbee87795c0c6285d" kind="function"><name>max_size</name></member>
+    <member refid="classdsm_1_1SparseMatrix_1aa726011b476e3da1b31bfb20a0ff7174" kind="function"><name>symmetrize</name></member>
+    <member refid="classdsm_1_1SparseMatrix_1a51334882e61e39a865b22cc157168647" kind="function"><name>reshape</name></member>
+    <member refid="classdsm_1_1SparseMatrix_1a63f514cfb61078375437e060e338de7c" kind="function"><name>reshape</name></member>
+    <member refid="classdsm_1_1SparseMatrix_1ad7e1eaa769a97ef872b41f6e6470400d" kind="function"><name>begin</name></member>
+    <member refid="classdsm_1_1SparseMatrix_1a2bef1265fcc398018886e922e9dc8a32" kind="function"><name>end</name></member>
+    <member refid="classdsm_1_1SparseMatrix_1ac03d4bdbd9b86a1b6cc195b26517e5a9" kind="function"><name>operator()</name></member>
+    <member refid="classdsm_1_1SparseMatrix_1a1c7de44b13b5549ed9b9e2da9412ea64" kind="function"><name>operator()</name></member>
+    <member refid="classdsm_1_1SparseMatrix_1ad379e300d6b825983ace5fbad5332ca3" kind="function"><name>operator()</name></member>
+    <member refid="classdsm_1_1SparseMatrix_1af32c5e52810f45bce04c54b1678b9dd8" kind="function"><name>operator()</name></member>
+    <member refid="classdsm_1_1SparseMatrix_1aabd47e611ef8e2456b6e7307c3252890" kind="function"><name>operator+</name></member>
+    <member refid="classdsm_1_1SparseMatrix_1ab75404692818cf899304cac8704e185d" kind="function"><name>operator-</name></member>
+    <member refid="classdsm_1_1SparseMatrix_1ac89861a861a1d84076882380e6474d46" kind="function"><name>operator++</name></member>
+    <member refid="classdsm_1_1SparseMatrix_1a09f78d83dc057aaa6865ac6cd91ab43b" kind="function"><name>operator+=</name></member>
+    <member refid="classdsm_1_1SparseMatrix_1a5c6f729555f6b6f051a4b13cb747041a" kind="function"><name>operator-=</name></member>
+    <member refid="classdsm_1_1SparseMatrix_1a09325308f2fbf11ffbc2b9043f4fb0b9" kind="function"><name>operator+=</name></member>
+    <member refid="classdsm_1_1SparseMatrix_1a9ed7c96e2f7cf29f78e5cf9648570ac1" kind="function"><name>operator-=</name></member>
   </compound>
   <compound refid="classdsm_1_1Street" kind="class"><name>dsm::Street</name>
     <member refid="classdsm_1_1Street_1a65440345861cd64e77fcf2eaa2abba77" kind="variable"><name>m_queue</name></member>
@@ -155,40 +154,40 @@
     <member refid="classdsm_1_1Street_1a61b00bbb44683c0b0bbb8f8ad7377dd0" kind="variable"><name>m_size</name></member>
     <member refid="classdsm_1_1Street_1a2d1ab859347c98ce129d9ac9e5bf7a9a" kind="variable"><name>m_capacity</name></member>
     <member refid="classdsm_1_1Street_1a1002585429a3a23e1f3c58b53f24346b" kind="function"><name>Street</name></member>
-    <member refid="classdsm_1_1Street_1afe71e982cae1f045e0133696a3191854" kind="function"><name>Street</name></member>
-    <member refid="classdsm_1_1Street_1a31ad3cfa5833a0367bb35ac4f5fe8d81" kind="function"><name>Street</name></member>
-    <member refid="classdsm_1_1Street_1afd4e2460e804f9b2806a52b571cc18bf" kind="function"><name>Street</name></member>
-    <member refid="classdsm_1_1Street_1aaa00040f1a658da889fab600ce61e5f1" kind="function"><name>Street</name></member>
-    <member refid="classdsm_1_1Street_1ada18829381e12f2bd0ccc29867b2cdb7" kind="function"><name>setId</name></member>
-    <member refid="classdsm_1_1Street_1a7022595cc57600fb0b531acea0f49456" kind="function"><name>setCapacity</name></member>
-    <member refid="classdsm_1_1Street_1adbb6ac57d1ae1cc3cb442f5943ce9254" kind="function"><name>setLength</name></member>
-    <member refid="classdsm_1_1Street_1ae4616f31df5ec83ba679701d00d8d3eb" kind="function"><name>setQueue</name></member>
-    <member refid="classdsm_1_1Street_1a36ad992896e28b3ec09d829812aa808d" kind="function"><name>setNodePair</name></member>
-    <member refid="classdsm_1_1Street_1a4566f82e77e4f1324e0a093c99651043" kind="function"><name>setNodePair</name></member>
-    <member refid="classdsm_1_1Street_1a33a82dcd55a4fb58e2fbdd8447bfa78e" kind="function"><name>setNodePair</name></member>
-    <member refid="classdsm_1_1Street_1a5a9612b03ebc5a83ce39986d2de16c7b" kind="function"><name>setMaxSpeed</name></member>
-    <member refid="classdsm_1_1Street_1ad118a6df7683912211201accc57834f5" kind="function"><name>id</name></member>
-    <member refid="classdsm_1_1Street_1a3f58c8387de1bc3ebdf10dc6f953e823" kind="function"><name>size</name></member>
-    <member refid="classdsm_1_1Street_1a4bd2d6ef044dcdbc49c48ea1b7fab5f7" kind="function"><name>capacity</name></member>
-    <member refid="classdsm_1_1Street_1a8fcaf6c6e3a5eacc195abcb11499e288" kind="function"><name>length</name></member>
-    <member refid="classdsm_1_1Street_1afb41a6b8ef3cf1bd247a726672506d7f" kind="function"><name>queue</name></member>
-    <member refid="classdsm_1_1Street_1afb91d15f9d075abff5e003b65c66993d" kind="function"><name>nodePair</name></member>
-    <member refid="classdsm_1_1Street_1a41e03a008759849a9cbbfab32f828471" kind="function"><name>density</name></member>
-    <member refid="classdsm_1_1Street_1ac4e212a4d223925f5d3138a7a86b753b" kind="function"><name>maxSpeed</name></member>
-    <member refid="classdsm_1_1Street_1a838f1a6ceb2f32e12e063707ac65e446" kind="function"><name>enqueue</name></member>
-    <member refid="classdsm_1_1Street_1a888ba3292e7d524d4f014e1e11fe0488" kind="function"><name>dequeue</name></member>
-  </compound>
-  <compound refid="structdsm_1_1streetHash" kind="struct"><name>dsm::streetHash</name>
-    <member refid="structdsm_1_1streetHash_1afca2bc8b2b720cd857c38736d2836bf1" kind="function"><name>operator()</name></member>
-    <member refid="structdsm_1_1streetHash_1a1a5b678f8a5517373acd29a63d1cd332" kind="function"><name>operator()</name></member>
+    <member refid="classdsm_1_1Street_1a77acd8f3557cb9eb855ab72f99b67c6f" kind="function"><name>Street</name></member>
+    <member refid="classdsm_1_1Street_1a262b4243ec55001ce00233d24ac0a9a1" kind="function"><name>Street</name></member>
+    <member refid="classdsm_1_1Street_1ada830ed31c1d483d221643af9f933029" kind="function"><name>Street</name></member>
+    <member refid="classdsm_1_1Street_1a21990e15f83949ee0b15b9d1e5fced60" kind="function"><name>Street</name></member>
+    <member refid="classdsm_1_1Street_1a1864aa8dfa760187943eef2586685a79" kind="function"><name>setId</name></member>
+    <member refid="classdsm_1_1Street_1a55cfbf1ea269b38411310083487d96e5" kind="function"><name>setCapacity</name></member>
+    <member refid="classdsm_1_1Street_1acb9278c14820710ac075c7c07380814b" kind="function"><name>setLength</name></member>
+    <member refid="classdsm_1_1Street_1ad6b99ebe61048f001caadd9f303ae216" kind="function"><name>setQueue</name></member>
+    <member refid="classdsm_1_1Street_1a83a15b9a380d846584f3275a54890018" kind="function"><name>setNodePair</name></member>
+    <member refid="classdsm_1_1Street_1a88542a7145d33e2e1c855f13c240e7e2" kind="function"><name>setNodePair</name></member>
+    <member refid="classdsm_1_1Street_1a7364b43eefd6cbbcec5842131aca50fc" kind="function"><name>setNodePair</name></member>
+    <member refid="classdsm_1_1Street_1ac00431c1c416c161c8607d7f36011863" kind="function"><name>setMaxSpeed</name></member>
+    <member refid="classdsm_1_1Street_1a6a1959d02cf46308faeeac4875fd37fd" kind="function"><name>id</name></member>
+    <member refid="classdsm_1_1Street_1a3a325887bbbb09935d4f7d2925342669" kind="function"><name>size</name></member>
+    <member refid="classdsm_1_1Street_1aa2e415dfb4cf07ec57bcada69c3136b5" kind="function"><name>capacity</name></member>
+    <member refid="classdsm_1_1Street_1aa1066debd2c50b13885b9d69930e611a" kind="function"><name>length</name></member>
+    <member refid="classdsm_1_1Street_1ab4e55f7421f405ec26e1b5c682ad20de" kind="function"><name>queue</name></member>
+    <member refid="classdsm_1_1Street_1acf05ca953f7aa5b3d7debcd499950d75" kind="function"><name>nodePair</name></member>
+    <member refid="classdsm_1_1Street_1a81e971d718d4f5cae839ebeaada05a0b" kind="function"><name>density</name></member>
+    <member refid="classdsm_1_1Street_1aa5384728acf2cb3908bd952c41803011" kind="function"><name>maxSpeed</name></member>
+    <member refid="classdsm_1_1Street_1abc62ec10e3b85d88508c036f60930785" kind="function"><name>enqueue</name></member>
+    <member refid="classdsm_1_1Street_1ad96a2ad5f6ecd00cf40094ba405f6090" kind="function"><name>dequeue</name></member>
+    <member refid="classdsm_1_1Street_1a24078dff7ca73041ae8a61d7af368900" kind="function"><name>enqueue</name></member>
   </compound>
   <compound refid="namespacedsm" kind="namespace"><name>dsm</name>
     <member refid="Graph_8hpp_1a9d6cb8869a2aa84ad1c1ac8f86d0b947" kind="typedef"><name>shared</name></member>
+    <member refid="Agent_8hpp_1a5fa86e1f15bf514e92a83e9d2060f9b6" kind="variable"><name>Size</name></member>
     <member refid="is__node_8hpp_1a2ae76a18f0b5f6da24d140c09c084533" kind="variable"><name>is_node_v</name></member>
     <member refid="is__numeric_8hpp_1a2a5929299d5be1807177ad84f5e40e0c" kind="variable"><name>is_numeric_v</name></member>
     <member refid="is__street_8hpp_1a5d5a43a3c5eccbfcec2350a43dbc7eb6" kind="variable"><name>is_street_v</name></member>
-    <member refid="HashFunctions_8hpp_1ab6529c4d47cce93aca6cd019ef99db35" kind="function"><name>operator==</name></member>
-    <member refid="HashFunctions_8hpp_1a01449cb77151e808cef715ee917aba4d" kind="function"><name>operator==</name></member>
+    <member refid="Agent_8hpp_1a76566af5379cba731a8b2ab784c1fec5" kind="function"><name>requires</name></member>
+    <member refid="Agent_8hpp_1a401ed49f59be4b33b75bfdaf90bad862" kind="function"><name>requires</name></member>
+    <member refid="Graph_8hpp_1aaf581a8ff140e4692f60fa41880ce28e" kind="function"><name>requires</name></member>
+    <member refid="Graph_8hpp_1aadbeb98dceba88dcb765b04972ce4648" kind="function"><name>requires</name></member>
   </compound>
   <compound refid="namespacestd" kind="namespace"><name>std</name>
   </compound>
@@ -205,11 +204,6 @@
   <compound refid="SparseMatrix_8hpp" kind="file"><name>SparseMatrix.hpp</name>
   </compound>
   <compound refid="Street_8hpp" kind="file"><name>Street.hpp</name>
-  </compound>
-  <compound refid="test_8cpp" kind="file"><name>test.cpp</name>
-    <member refid="test_8cpp_1ae66f6b31b5ad750f1fe042a706a4e3d4" kind="function"><name>main</name></member>
-  </compound>
-  <compound refid="HashFunctions_8hpp" kind="file"><name>HashFunctions.hpp</name>
   </compound>
   <compound refid="is__node_8hpp" kind="file"><name>is_node.hpp</name>
   </compound>

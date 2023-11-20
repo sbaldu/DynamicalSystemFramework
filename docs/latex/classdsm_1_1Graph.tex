@@ -1,118 +1,117 @@
-\doxysection{dsm\+::Graph\texorpdfstring{$<$}{<} Id, Size \texorpdfstring{$>$}{>} Class Template Reference}
-\hypertarget{classdsm_1_1Graph}{}\label{classdsm_1_1Graph}\index{dsm::Graph$<$ Id, Size $>$@{dsm::Graph$<$ Id, Size $>$}}
+\hypertarget{classdsm_1_1Graph}{}\doxysection{dsm\+::Graph$<$ Id, Size $>$ Class Template Reference}
+\label{classdsm_1_1Graph}\index{dsm::Graph$<$ Id, Size $>$@{dsm::Graph$<$ Id, Size $>$}}
 
 
-The \doxylink{classdsm_1_1Graph}{Graph} class represents a graph in the network.  
+The \mbox{\hyperlink{classdsm_1_1Graph}{Graph}} class represents a graph in the network.  
 
 
 
 
 {\ttfamily \#include $<$Graph.\+hpp$>$}
 
-\doxysubsubsection*{Public Member Functions}
+\doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\hyperlink{classdsm_1_1Graph_ae7b2423f9273b9ae65e431c4c8e0b102}{Graph}} (const \mbox{\hyperlink{classdsm_1_1SparseMatrix}{Sparse\+Matrix}}$<$ Id, bool $>$ \&adj)
-\begin{DoxyCompactList}\small\item\em Construct a new \doxylink{classdsm_1_1Graph}{Graph} object. \end{DoxyCompactList}\item 
-\mbox{\hyperlink{classdsm_1_1Graph_af5d4c809ef004de2dfde03b3df92609e}{Graph}} (const std\+::unordered\+\_\+set$<$ shared$<$ \mbox{\hyperlink{classdsm_1_1Street}{Street}}$<$ Id, Size $>$ $>$, \mbox{\hyperlink{structdsm_1_1nodeHash}{node\+Hash}}$<$ Id $>$ $>$ \&\mbox{\hyperlink{classdsm_1_1Graph_aff1ae77416eff8585c376192ed4fc595}{street\+Set}})
-\begin{DoxyCompactList}\small\item\em Construct a new \doxylink{classdsm_1_1Graph}{Graph} object. \end{DoxyCompactList}\item 
-\Hypertarget{classdsm_1_1Graph_a9597482c114e45c866c607ee958b5f38}\label{classdsm_1_1Graph_a9597482c114e45c866c607ee958b5f38} 
-void {\bfseries build\+Adj} ()
+\mbox{\hyperlink{classdsm_1_1Graph_a45b7fe1d389f2f67981d1ce46be20128}{Graph}} (const \mbox{\hyperlink{classdsm_1_1SparseMatrix}{Sparse\+Matrix}}$<$ Id, bool $>$ \&adj)
+\begin{DoxyCompactList}\small\item\em Construct a new \mbox{\hyperlink{classdsm_1_1Graph}{Graph}} object. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classdsm_1_1Graph_a87e97609bcc593f80a7e568320b1a7d1}{Graph}} (const std\+::unordered\+\_\+map$<$ Id, shared$<$ \mbox{\hyperlink{classdsm_1_1Street}{Street}}$<$ Id, Size $>$$>$$>$ \&\mbox{\hyperlink{classdsm_1_1Graph_ac15a4597ad8f61365b2ecc7ef40a4b82}{street\+Set}})
+\begin{DoxyCompactList}\small\item\em Construct a new \mbox{\hyperlink{classdsm_1_1Graph}{Graph}} object. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classdsm_1_1Graph_a379d1051a9596957286543e262b4514c}\label{classdsm_1_1Graph_a379d1051a9596957286543e262b4514c}} 
+void \mbox{\hyperlink{classdsm_1_1Graph_a379d1051a9596957286543e262b4514c}{build\+Adj}} ()
 \begin{DoxyCompactList}\small\item\em Build the graph\textquotesingle{}s adjacency matrix. \end{DoxyCompactList}\item 
-void \mbox{\hyperlink{classdsm_1_1Graph_a6da4e69fa548c5d336171448e962e619}{import\+Adj}} (const std\+::string \&file\+Name)
+void \mbox{\hyperlink{classdsm_1_1Graph_a12485e07ca4397cdc21cc75e26fdd89f}{import\+Adj}} (const std\+::string \&file\+Name)
 \begin{DoxyCompactList}\small\item\em Import the graph\textquotesingle{}s adjacency matrix from a file. \end{DoxyCompactList}\item 
-void \mbox{\hyperlink{classdsm_1_1Graph_a9ead5a1c3783d3b0a137c53eed619d54}{add\+Node}} (shared$<$ \mbox{\hyperlink{classdsm_1_1Node}{Node}}$<$ Id $>$ $>$ node)
+void \mbox{\hyperlink{classdsm_1_1Graph_a856d0f814897cd45d3a111fbdba6ddc3}{add\+Node}} (shared$<$ \mbox{\hyperlink{classdsm_1_1Node}{Node}}$<$ Id $>$$>$ node)
 \begin{DoxyCompactList}\small\item\em Add a node to the graph. \end{DoxyCompactList}\item 
-void \mbox{\hyperlink{classdsm_1_1Graph_a5f3955f7f30c7f73d74035656b3777c7}{add\+Node}} (const \mbox{\hyperlink{classdsm_1_1Node}{Node}}$<$ Id $>$ \&node)
+void \mbox{\hyperlink{classdsm_1_1Graph_a797d512830effa735a4dad12292bb9be}{add\+Node}} (const \mbox{\hyperlink{classdsm_1_1Node}{Node}}$<$ Id $>$ \&node)
 \begin{DoxyCompactList}\small\item\em Add a node to the graph. \end{DoxyCompactList}\item 
-\Hypertarget{classdsm_1_1Graph_acde71b4899f4a3c06c47cfb745bc8c3f}\label{classdsm_1_1Graph_acde71b4899f4a3c06c47cfb745bc8c3f} 
-{\footnotesize template$<$typename... Tn$>$ \newline
-requires (is\+\_\+node\+\_\+v$<$Tn$>$ \&\& ...)}\\void {\bfseries add\+Nodes} (Tn \&\&... nodes)
+\mbox{\Hypertarget{classdsm_1_1Graph_a9e92893bc7e521463ea8cf29ec2f1ed8}\label{classdsm_1_1Graph_a9e92893bc7e521463ea8cf29ec2f1ed8}} 
+{\footnotesize template$<$typename... Tn$>$ }\\{\bfseries requires} (is\+\_\+node\+\_\+v$<$ Tn $>$ \&\&...) void add\+Nodes(Tn \&\&... nodes)
 \item 
-\Hypertarget{classdsm_1_1Graph_af93b0f06097ec0e1b85e9f6b0ab6bdf8}\label{classdsm_1_1Graph_af93b0f06097ec0e1b85e9f6b0ab6bdf8} 
-{\footnotesize template$<$typename T1 , typename... Tn$>$ \newline
-requires is\+\_\+node\+\_\+v$<$T1$>$ \&\& (is\+\_\+node\+\_\+v$<$Tn$>$ \&\& ...)}\\void {\bfseries add\+Nodes} (T1 \&\&node, Tn \&\&... nodes)
+\mbox{\Hypertarget{classdsm_1_1Graph_a997d6dd63bbf73cf334904e10f7a7fb1}\label{classdsm_1_1Graph_a997d6dd63bbf73cf334904e10f7a7fb1}} 
+{\footnotesize template$<$typename T1 , typename... Tn$>$ }\\requires is\+\_\+node\+\_\+v$<$ T1 $>$ \&\&is\+\_\+node\+\_\+v$<$ Tn $>$ \&\&void {\bfseries add\+Nodes} (T1 \&\&node, Tn \&\&... nodes)
 \item 
-void \mbox{\hyperlink{classdsm_1_1Graph_ab7afafad25382c2ea504db47dfe28aef}{add\+Street}} (shared$<$ \mbox{\hyperlink{classdsm_1_1Street}{Street}}$<$ Id, Size $>$ $>$ street)
+void \mbox{\hyperlink{classdsm_1_1Graph_accc4186d12b8d08582036834b564a6ad}{add\+Street}} (shared$<$ \mbox{\hyperlink{classdsm_1_1Street}{Street}}$<$ Id, Size $>$$>$ street)
 \begin{DoxyCompactList}\small\item\em Add a street to the graph. \end{DoxyCompactList}\item 
-void \mbox{\hyperlink{classdsm_1_1Graph_ade2a7b8b165907086f87a6ebedcefb2f}{add\+Street}} (const \mbox{\hyperlink{classdsm_1_1Street}{Street}}$<$ Id, Size $>$ \&street)
+void \mbox{\hyperlink{classdsm_1_1Graph_a30c764118503fe2a279e263cd943c791}{add\+Street}} (const \mbox{\hyperlink{classdsm_1_1Street}{Street}}$<$ Id, Size $>$ \&street)
 \begin{DoxyCompactList}\small\item\em Add a street to the graph. \end{DoxyCompactList}\item 
-\Hypertarget{classdsm_1_1Graph_af4c45a369ae9394f7acb2b045194ca6f}\label{classdsm_1_1Graph_af4c45a369ae9394f7acb2b045194ca6f} 
-{\footnotesize template$<$typename... Tn$>$ \newline
-requires (is\+\_\+street\+\_\+v$<$Tn$>$ \&\& ...)}\\void {\bfseries add\+Streets} (Tn \&\&... streets)
+\mbox{\Hypertarget{classdsm_1_1Graph_a50b4842d5f8eab859141f56bf61aa986}\label{classdsm_1_1Graph_a50b4842d5f8eab859141f56bf61aa986}} 
+{\footnotesize template$<$typename... Tn$>$ }\\{\bfseries requires} (is\+\_\+street\+\_\+v$<$ Tn $>$ \&\&...) void add\+Streets(Tn \&\&... streets)
 \item 
-\Hypertarget{classdsm_1_1Graph_a4ed4bfad5369c6ba71adb529d2819112}\label{classdsm_1_1Graph_a4ed4bfad5369c6ba71adb529d2819112} 
-{\footnotesize template$<$typename T1 , typename... Tn$>$ \newline
-requires is\+\_\+street\+\_\+v$<$T1$>$ \&\& (is\+\_\+street\+\_\+v$<$Tn$>$ \&\& ...)}\\void {\bfseries add\+Streets} (T1 \&\&street, Tn \&\&... streets)
+\mbox{\Hypertarget{classdsm_1_1Graph_a7e7d4b3fef65256c064bdec785b22a4f}\label{classdsm_1_1Graph_a7e7d4b3fef65256c064bdec785b22a4f}} 
+{\footnotesize template$<$typename T1 , typename... Tn$>$ }\\requires is\+\_\+street\+\_\+v$<$ T1 $>$ \&\&is\+\_\+street\+\_\+v$<$ Tn $>$ \&\&void {\bfseries add\+Streets} (T1 \&\&street, Tn \&\&... streets)
 \item 
-shared$<$ \mbox{\hyperlink{classdsm_1_1SparseMatrix}{Sparse\+Matrix}}$<$ Id, bool $>$ $>$ \mbox{\hyperlink{classdsm_1_1Graph_a8ccd4e35dc4063f423902c920bb0c723}{adj\+Matrix}} () const
+shared$<$ \mbox{\hyperlink{classdsm_1_1SparseMatrix}{Sparse\+Matrix}}$<$ Id, bool $>$ $>$ \mbox{\hyperlink{classdsm_1_1Graph_a93f4a6ca599ac9cb2de508eb100c9052}{adj\+Matrix}} () const
 \begin{DoxyCompactList}\small\item\em Get the graph\textquotesingle{}s adjacency matrix. \end{DoxyCompactList}\item 
-std\+::unordered\+\_\+set$<$ shared$<$ \mbox{\hyperlink{classdsm_1_1Node}{Node}}$<$ Id $>$ $>$, \mbox{\hyperlink{structdsm_1_1nodeHash}{node\+Hash}}$<$ Id $>$ $>$ \mbox{\hyperlink{classdsm_1_1Graph_aee0e338487f687cae252ee51a0f4c982}{node\+Set}} () const
-\begin{DoxyCompactList}\small\item\em Get the graph\textquotesingle{}s node set. \end{DoxyCompactList}\item 
-std\+::unordered\+\_\+set$<$ shared$<$ \mbox{\hyperlink{classdsm_1_1Street}{Street}}$<$ Id, Size $>$ $>$, \mbox{\hyperlink{structdsm_1_1streetHash}{street\+Hash}}$<$ Id, Size $>$ $>$ \mbox{\hyperlink{classdsm_1_1Graph_aff1ae77416eff8585c376192ed4fc595}{street\+Set}} () const
-\begin{DoxyCompactList}\small\item\em Get the graph\textquotesingle{}s street set. \end{DoxyCompactList}\end{DoxyCompactItemize}
+std\+::unordered\+\_\+map$<$ Id, shared$<$ \mbox{\hyperlink{classdsm_1_1Node}{Node}}$<$ Id $>$ $>$ $>$ \mbox{\hyperlink{classdsm_1_1Graph_a00fd4b0f7e95c0cd6564a30819654178}{node\+Set}} () const
+\begin{DoxyCompactList}\small\item\em Get the graph\textquotesingle{}s node map. \end{DoxyCompactList}\item 
+std\+::unordered\+\_\+map$<$ Id, shared$<$ \mbox{\hyperlink{classdsm_1_1Street}{Street}}$<$ Id, Size $>$ $>$ $>$ \mbox{\hyperlink{classdsm_1_1Graph_ac15a4597ad8f61365b2ecc7ef40a4b82}{street\+Set}} () const
+\begin{DoxyCompactList}\small\item\em Get the graph\textquotesingle{}s street map. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classdsm_1_1Graph_ab3bbe774910d3d516b3de6036c54a59c}\label{classdsm_1_1Graph_ab3bbe774910d3d516b3de6036c54a59c}} 
+{\footnotesize template$<$typename T1 , typename... Tn$>$ }\\requires std\+::unsigned\+\_\+integral$<$ Id $>$ \&\&std\+::unsigned\+\_\+integral$<$ Size $>$ requires is\+\_\+node\+\_\+v$<$ T1 $>$ \&\&is\+\_\+node\+\_\+v$<$ Tn $>$ \&\&void {\bfseries add\+Nodes} (T1 \&\&node, Tn \&\&... nodes)
+\item 
+\mbox{\Hypertarget{classdsm_1_1Graph_ad80a0a365a58c7a8b7741eaf20b72692}\label{classdsm_1_1Graph_ad80a0a365a58c7a8b7741eaf20b72692}} 
+{\footnotesize template$<$typename T1 , typename... Tn$>$ }\\requires std\+::unsigned\+\_\+integral$<$ Id $>$ \&\&std\+::unsigned\+\_\+integral$<$ Size $>$ requires is\+\_\+street\+\_\+v$<$ T1 $>$ \&\&is\+\_\+street\+\_\+v$<$ Tn $>$ \&\&void {\bfseries add\+Streets} (T1 \&\&street, Tn \&\&... streets)
+\end{DoxyCompactItemize}
 
 
 \doxysubsection{Detailed Description}
 \subsubsection*{template$<$typename Id, typename Size$>$\newline
-requires (std\+::unsigned\+\_\+integral$<$Id$>$ \&\& std\+::unsigned\+\_\+integral$<$Size$>$)\newline
 class dsm\+::\+Graph$<$ Id, Size $>$}
-The \doxylink{classdsm_1_1Graph}{Graph} class represents a graph in the network. 
+
+The \mbox{\hyperlink{classdsm_1_1Graph}{Graph}} class represents a graph in the network. 
 
 
 \begin{DoxyTemplParams}{Template Parameters}
-{\em Id,The} & type of the graph\textquotesingle{}s id. It must be an unsigned integral type. \\
+{\em Id} & The type of the graph\textquotesingle{}s id. It must be an unsigned integral type. \\
 \hline
-{\em Size,The} & type of the graph\textquotesingle{}s capacity. It must be an unsigned integral type. \\
+{\em Size} & The type of the graph\textquotesingle{}s capacity. It must be an unsigned integral type. \\
 \hline
 \end{DoxyTemplParams}
 
 
 \doxysubsection{Constructor \& Destructor Documentation}
-\Hypertarget{classdsm_1_1Graph_ae7b2423f9273b9ae65e431c4c8e0b102}\label{classdsm_1_1Graph_ae7b2423f9273b9ae65e431c4c8e0b102} 
+\mbox{\Hypertarget{classdsm_1_1Graph_a45b7fe1d389f2f67981d1ce46be20128}\label{classdsm_1_1Graph_a45b7fe1d389f2f67981d1ce46be20128}} 
 \index{dsm::Graph$<$ Id, Size $>$@{dsm::Graph$<$ Id, Size $>$}!Graph@{Graph}}
 \index{Graph@{Graph}!dsm::Graph$<$ Id, Size $>$@{dsm::Graph$<$ Id, Size $>$}}
 \doxysubsubsection{\texorpdfstring{Graph()}{Graph()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
-{\footnotesize\ttfamily template$<$typename Id , typename Size $>$ \newline
-requires (std\+::unsigned\+\_\+integral$<$Id$>$ \&\& std\+::unsigned\+\_\+integral$<$Size$>$)\\
-\mbox{\hyperlink{classdsm_1_1Graph}{dsm\+::\+Graph}}$<$ Id, Size $>$\+::\+Graph (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classdsm_1_1SparseMatrix}{Sparse\+Matrix}}$<$ Id, bool $>$ \&}]{adj }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily template$<$typename Id , typename Size $>$ \\
+requires std\+::unsigned\+\_\+integral$<$ Id $>$ \&\&std\+::unsigned\+\_\+integral$<$ Size $>$ \mbox{\hyperlink{classdsm_1_1Graph}{dsm\+::\+Graph}}$<$ Id, Size $>$\+::\mbox{\hyperlink{classdsm_1_1Graph}{Graph}} (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classdsm_1_1SparseMatrix}{Sparse\+Matrix}}$<$ Id, bool $>$ \&}]{adj }\end{DoxyParamCaption})}
 
 
 
-Construct a new \doxylink{classdsm_1_1Graph}{Graph} object. 
+Construct a new \mbox{\hyperlink{classdsm_1_1Graph}{Graph}} object. 
 
 
 \begin{DoxyParams}{Parameters}
-{\em adj,An} & adjacency matrix made by a \doxylink{classdsm_1_1SparseMatrix}{Sparse\+Matrix} representing the graph\textquotesingle{}s adjacency matrix \\
+{\em adj} & An adjacency matrix made by a \mbox{\hyperlink{classdsm_1_1SparseMatrix}{Sparse\+Matrix}} representing the graph\textquotesingle{}s adjacency matrix \\
 \hline
 \end{DoxyParams}
-\Hypertarget{classdsm_1_1Graph_af5d4c809ef004de2dfde03b3df92609e}\label{classdsm_1_1Graph_af5d4c809ef004de2dfde03b3df92609e} 
+\mbox{\Hypertarget{classdsm_1_1Graph_a87e97609bcc593f80a7e568320b1a7d1}\label{classdsm_1_1Graph_a87e97609bcc593f80a7e568320b1a7d1}} 
 \index{dsm::Graph$<$ Id, Size $>$@{dsm::Graph$<$ Id, Size $>$}!Graph@{Graph}}
 \index{Graph@{Graph}!dsm::Graph$<$ Id, Size $>$@{dsm::Graph$<$ Id, Size $>$}}
 \doxysubsubsection{\texorpdfstring{Graph()}{Graph()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
-{\footnotesize\ttfamily template$<$typename Id , typename Size $>$ \newline
-requires (std\+::unsigned\+\_\+integral$<$Id$>$ \&\& std\+::unsigned\+\_\+integral$<$Size$>$)\\
-\mbox{\hyperlink{classdsm_1_1Graph}{dsm\+::\+Graph}}$<$ Id, Size $>$\+::\+Graph (\begin{DoxyParamCaption}\item[{const std\+::unordered\+\_\+set$<$ shared$<$ \mbox{\hyperlink{classdsm_1_1Street}{Street}}$<$ Id, Size $>$ $>$, \mbox{\hyperlink{structdsm_1_1nodeHash}{node\+Hash}}$<$ Id $>$ $>$ \&}]{street\+Set }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily template$<$typename Id , typename Size $>$ \\
+requires std\+::unsigned\+\_\+integral$<$ Id $>$ \&\&std\+::unsigned\+\_\+integral$<$ Size $>$ \mbox{\hyperlink{classdsm_1_1Graph}{dsm\+::\+Graph}}$<$ Id, Size $>$\+::\mbox{\hyperlink{classdsm_1_1Graph}{Graph}} (\begin{DoxyParamCaption}\item[{const std\+::unordered\+\_\+map$<$ Id, shared$<$ \mbox{\hyperlink{classdsm_1_1Street}{Street}}$<$ Id, Size $>$$>$$>$ \&}]{street\+Set }\end{DoxyParamCaption})}
 
 
 
-Construct a new \doxylink{classdsm_1_1Graph}{Graph} object. 
+Construct a new \mbox{\hyperlink{classdsm_1_1Graph}{Graph}} object. 
 
 
 \begin{DoxyParams}{Parameters}
-{\em street\+Set,A} & set of streets representing the graph\textquotesingle{}s streets \\
+{\em street\+Set} & A map of streets representing the graph\textquotesingle{}s streets \\
 \hline
 \end{DoxyParams}
 
 
 \doxysubsection{Member Function Documentation}
-\Hypertarget{classdsm_1_1Graph_a5f3955f7f30c7f73d74035656b3777c7}\label{classdsm_1_1Graph_a5f3955f7f30c7f73d74035656b3777c7} 
+\mbox{\Hypertarget{classdsm_1_1Graph_a797d512830effa735a4dad12292bb9be}\label{classdsm_1_1Graph_a797d512830effa735a4dad12292bb9be}} 
 \index{dsm::Graph$<$ Id, Size $>$@{dsm::Graph$<$ Id, Size $>$}!addNode@{addNode}}
 \index{addNode@{addNode}!dsm::Graph$<$ Id, Size $>$@{dsm::Graph$<$ Id, Size $>$}}
 \doxysubsubsection{\texorpdfstring{addNode()}{addNode()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
-{\footnotesize\ttfamily template$<$typename Id , typename Size $>$ \newline
-requires (std\+::unsigned\+\_\+integral$<$Id$>$ \&\& std\+::unsigned\+\_\+integral$<$Size$>$)\\
-void \mbox{\hyperlink{classdsm_1_1Graph}{dsm\+::\+Graph}}$<$ Id, Size $>$\+::add\+Node (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classdsm_1_1Node}{Node}}$<$ Id $>$ \&}]{node }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily template$<$typename Id , typename Size $>$ \\
+requires std\+::unsigned\+\_\+integral$<$ Id $>$ \&\&std\+::unsigned\+\_\+integral$<$ Size $>$ void \mbox{\hyperlink{classdsm_1_1Graph}{dsm\+::\+Graph}}$<$ Id, Size $>$\+::add\+Node (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classdsm_1_1Node}{Node}}$<$ Id $>$ \&}]{node }\end{DoxyParamCaption})}
 
 
 
@@ -120,16 +119,15 @@ Add a node to the graph.
 
 
 \begin{DoxyParams}{Parameters}
-{\em node,A} & reference to the node to add \\
+{\em node} & A reference to the node to add \\
 \hline
 \end{DoxyParams}
-\Hypertarget{classdsm_1_1Graph_a9ead5a1c3783d3b0a137c53eed619d54}\label{classdsm_1_1Graph_a9ead5a1c3783d3b0a137c53eed619d54} 
+\mbox{\Hypertarget{classdsm_1_1Graph_a856d0f814897cd45d3a111fbdba6ddc3}\label{classdsm_1_1Graph_a856d0f814897cd45d3a111fbdba6ddc3}} 
 \index{dsm::Graph$<$ Id, Size $>$@{dsm::Graph$<$ Id, Size $>$}!addNode@{addNode}}
 \index{addNode@{addNode}!dsm::Graph$<$ Id, Size $>$@{dsm::Graph$<$ Id, Size $>$}}
 \doxysubsubsection{\texorpdfstring{addNode()}{addNode()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
-{\footnotesize\ttfamily template$<$typename Id , typename Size $>$ \newline
-requires (std\+::unsigned\+\_\+integral$<$Id$>$ \&\& std\+::unsigned\+\_\+integral$<$Size$>$)\\
-void \mbox{\hyperlink{classdsm_1_1Graph}{dsm\+::\+Graph}}$<$ Id, Size $>$\+::add\+Node (\begin{DoxyParamCaption}\item[{shared$<$ \mbox{\hyperlink{classdsm_1_1Node}{Node}}$<$ Id $>$ $>$}]{node }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily template$<$typename Id , typename Size $>$ \\
+requires std\+::unsigned\+\_\+integral$<$ Id $>$ \&\&std\+::unsigned\+\_\+integral$<$ Size $>$ void \mbox{\hyperlink{classdsm_1_1Graph}{dsm\+::\+Graph}}$<$ Id, Size $>$\+::add\+Node (\begin{DoxyParamCaption}\item[{shared$<$ \mbox{\hyperlink{classdsm_1_1Node}{Node}}$<$ Id $>$$>$}]{node }\end{DoxyParamCaption})}
 
 
 
@@ -137,16 +135,15 @@ Add a node to the graph.
 
 
 \begin{DoxyParams}{Parameters}
-{\em node,A} & std\+::shared\+\_\+ptr to the node to add \\
+{\em node} & A std\+::shared\+\_\+ptr to the node to add \\
 \hline
 \end{DoxyParams}
-\Hypertarget{classdsm_1_1Graph_ade2a7b8b165907086f87a6ebedcefb2f}\label{classdsm_1_1Graph_ade2a7b8b165907086f87a6ebedcefb2f} 
+\mbox{\Hypertarget{classdsm_1_1Graph_a30c764118503fe2a279e263cd943c791}\label{classdsm_1_1Graph_a30c764118503fe2a279e263cd943c791}} 
 \index{dsm::Graph$<$ Id, Size $>$@{dsm::Graph$<$ Id, Size $>$}!addStreet@{addStreet}}
 \index{addStreet@{addStreet}!dsm::Graph$<$ Id, Size $>$@{dsm::Graph$<$ Id, Size $>$}}
 \doxysubsubsection{\texorpdfstring{addStreet()}{addStreet()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
-{\footnotesize\ttfamily template$<$typename Id , typename Size $>$ \newline
-requires (std\+::unsigned\+\_\+integral$<$Id$>$ \&\& std\+::unsigned\+\_\+integral$<$Size$>$)\\
-void \mbox{\hyperlink{classdsm_1_1Graph}{dsm\+::\+Graph}}$<$ Id, Size $>$\+::add\+Street (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classdsm_1_1Street}{Street}}$<$ Id, Size $>$ \&}]{street }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily template$<$typename Id , typename Size $>$ \\
+requires std\+::unsigned\+\_\+integral$<$ Id $>$ \&\&std\+::unsigned\+\_\+integral$<$ Size $>$ void \mbox{\hyperlink{classdsm_1_1Graph}{dsm\+::\+Graph}}$<$ Id, Size $>$\+::add\+Street (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classdsm_1_1Street}{Street}}$<$ Id, Size $>$ \&}]{street }\end{DoxyParamCaption})}
 
 
 
@@ -154,16 +151,15 @@ Add a street to the graph.
 
 
 \begin{DoxyParams}{Parameters}
-{\em street,A} & reference to the street to add \\
+{\em street} & A reference to the street to add \\
 \hline
 \end{DoxyParams}
-\Hypertarget{classdsm_1_1Graph_ab7afafad25382c2ea504db47dfe28aef}\label{classdsm_1_1Graph_ab7afafad25382c2ea504db47dfe28aef} 
+\mbox{\Hypertarget{classdsm_1_1Graph_accc4186d12b8d08582036834b564a6ad}\label{classdsm_1_1Graph_accc4186d12b8d08582036834b564a6ad}} 
 \index{dsm::Graph$<$ Id, Size $>$@{dsm::Graph$<$ Id, Size $>$}!addStreet@{addStreet}}
 \index{addStreet@{addStreet}!dsm::Graph$<$ Id, Size $>$@{dsm::Graph$<$ Id, Size $>$}}
 \doxysubsubsection{\texorpdfstring{addStreet()}{addStreet()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
-{\footnotesize\ttfamily template$<$typename Id , typename Size $>$ \newline
-requires (std\+::unsigned\+\_\+integral$<$Id$>$ \&\& std\+::unsigned\+\_\+integral$<$Size$>$)\\
-void \mbox{\hyperlink{classdsm_1_1Graph}{dsm\+::\+Graph}}$<$ Id, Size $>$\+::add\+Street (\begin{DoxyParamCaption}\item[{shared$<$ \mbox{\hyperlink{classdsm_1_1Street}{Street}}$<$ Id, Size $>$ $>$}]{street }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily template$<$typename Id , typename Size $>$ \\
+requires std\+::unsigned\+\_\+integral$<$ Id $>$ \&\&std\+::unsigned\+\_\+integral$<$ Size $>$ void \mbox{\hyperlink{classdsm_1_1Graph}{dsm\+::\+Graph}}$<$ Id, Size $>$\+::add\+Street (\begin{DoxyParamCaption}\item[{shared$<$ \mbox{\hyperlink{classdsm_1_1Street}{Street}}$<$ Id, Size $>$$>$}]{street }\end{DoxyParamCaption})}
 
 
 
@@ -171,16 +167,15 @@ Add a street to the graph.
 
 
 \begin{DoxyParams}{Parameters}
-{\em street,A} & std\+::shared\+\_\+ptr to the street to add \\
+{\em street} & A std\+::shared\+\_\+ptr to the street to add \\
 \hline
 \end{DoxyParams}
-\Hypertarget{classdsm_1_1Graph_a8ccd4e35dc4063f423902c920bb0c723}\label{classdsm_1_1Graph_a8ccd4e35dc4063f423902c920bb0c723} 
+\mbox{\Hypertarget{classdsm_1_1Graph_a93f4a6ca599ac9cb2de508eb100c9052}\label{classdsm_1_1Graph_a93f4a6ca599ac9cb2de508eb100c9052}} 
 \index{dsm::Graph$<$ Id, Size $>$@{dsm::Graph$<$ Id, Size $>$}!adjMatrix@{adjMatrix}}
 \index{adjMatrix@{adjMatrix}!dsm::Graph$<$ Id, Size $>$@{dsm::Graph$<$ Id, Size $>$}}
 \doxysubsubsection{\texorpdfstring{adjMatrix()}{adjMatrix()}}
-{\footnotesize\ttfamily template$<$typename Id , typename Size $>$ \newline
-requires (std\+::unsigned\+\_\+integral$<$Id$>$ \&\& std\+::unsigned\+\_\+integral$<$Size$>$)\\
-shared$<$ \mbox{\hyperlink{classdsm_1_1SparseMatrix}{Sparse\+Matrix}}$<$ Id, bool $>$ $>$ \mbox{\hyperlink{classdsm_1_1Graph}{dsm\+::\+Graph}}$<$ Id, Size $>$\+::adj\+Matrix (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+{\footnotesize\ttfamily template$<$typename Id , typename Size $>$ \\
+requires std\+::unsigned\+\_\+integral$<$ Id $>$ \&\&std\+::unsigned\+\_\+integral$<$ Size $>$ shared$<$ \mbox{\hyperlink{classdsm_1_1SparseMatrix}{Sparse\+Matrix}}$<$ Id, bool $>$ $>$ \mbox{\hyperlink{classdsm_1_1Graph}{dsm\+::\+Graph}}$<$ Id, Size $>$\+::adj\+Matrix}
 
 
 
@@ -189,13 +184,12 @@ Get the graph\textquotesingle{}s adjacency matrix.
 \begin{DoxyReturn}{Returns}
 A std\+::shared\+\_\+ptr to the graph\textquotesingle{}s adjacency matrix 
 \end{DoxyReturn}
-\Hypertarget{classdsm_1_1Graph_a6da4e69fa548c5d336171448e962e619}\label{classdsm_1_1Graph_a6da4e69fa548c5d336171448e962e619} 
+\mbox{\Hypertarget{classdsm_1_1Graph_a12485e07ca4397cdc21cc75e26fdd89f}\label{classdsm_1_1Graph_a12485e07ca4397cdc21cc75e26fdd89f}} 
 \index{dsm::Graph$<$ Id, Size $>$@{dsm::Graph$<$ Id, Size $>$}!importAdj@{importAdj}}
 \index{importAdj@{importAdj}!dsm::Graph$<$ Id, Size $>$@{dsm::Graph$<$ Id, Size $>$}}
 \doxysubsubsection{\texorpdfstring{importAdj()}{importAdj()}}
-{\footnotesize\ttfamily template$<$typename Id , typename Size $>$ \newline
-requires (std\+::unsigned\+\_\+integral$<$Id$>$ \&\& std\+::unsigned\+\_\+integral$<$Size$>$)\\
-void \mbox{\hyperlink{classdsm_1_1Graph}{dsm\+::\+Graph}}$<$ Id, Size $>$\+::import\+Adj (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{file\+Name }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily template$<$typename Id , typename Size $>$ \\
+requires std\+::unsigned\+\_\+integral$<$ Id $>$ \&\&std\+::unsigned\+\_\+integral$<$ Size $>$ void \mbox{\hyperlink{classdsm_1_1Graph}{dsm\+::\+Graph}}$<$ Id, Size $>$\+::import\+Adj (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{file\+Name }\end{DoxyParamCaption})}
 
 
 
@@ -203,7 +197,7 @@ Import the graph\textquotesingle{}s adjacency matrix from a file.
 
 
 \begin{DoxyParams}{Parameters}
-{\em file\+Name,The} & name of the file to import the adjacency matrix from. \\
+{\em file\+Name} & The name of the file to import the adjacency matrix from. \\
 \hline
 \end{DoxyParams}
 
@@ -211,35 +205,33 @@ Import the graph\textquotesingle{}s adjacency matrix from a file.
 {\em std\+::invalid\+\_\+argument} & if the file is not found or the format is not supported The matrix format is deduced from the file extension. Currently only .dsm files are supported. \\
 \hline
 \end{DoxyExceptions}
-\Hypertarget{classdsm_1_1Graph_aee0e338487f687cae252ee51a0f4c982}\label{classdsm_1_1Graph_aee0e338487f687cae252ee51a0f4c982} 
+\mbox{\Hypertarget{classdsm_1_1Graph_a00fd4b0f7e95c0cd6564a30819654178}\label{classdsm_1_1Graph_a00fd4b0f7e95c0cd6564a30819654178}} 
 \index{dsm::Graph$<$ Id, Size $>$@{dsm::Graph$<$ Id, Size $>$}!nodeSet@{nodeSet}}
 \index{nodeSet@{nodeSet}!dsm::Graph$<$ Id, Size $>$@{dsm::Graph$<$ Id, Size $>$}}
 \doxysubsubsection{\texorpdfstring{nodeSet()}{nodeSet()}}
-{\footnotesize\ttfamily template$<$typename Id , typename Size $>$ \newline
-requires (std\+::unsigned\+\_\+integral$<$Id$>$ \&\& std\+::unsigned\+\_\+integral$<$Size$>$)\\
-std\+::unordered\+\_\+set$<$ shared$<$ \mbox{\hyperlink{classdsm_1_1Node}{Node}}$<$ Id $>$ $>$, \mbox{\hyperlink{structdsm_1_1nodeHash}{node\+Hash}}$<$ Id $>$ $>$ \mbox{\hyperlink{classdsm_1_1Graph}{dsm\+::\+Graph}}$<$ Id, Size $>$\+::node\+Set (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+{\footnotesize\ttfamily template$<$typename Id , typename Size $>$ \\
+requires std\+::unsigned\+\_\+integral$<$ Id $>$ \&\&std\+::unsigned\+\_\+integral$<$ Size $>$ std\+::unordered\+\_\+map$<$ Id, shared$<$ \mbox{\hyperlink{classdsm_1_1Node}{Node}}$<$ Id $>$ $>$ $>$ \mbox{\hyperlink{classdsm_1_1Graph}{dsm\+::\+Graph}}$<$ Id, Size $>$\+::node\+Set}
 
 
 
-Get the graph\textquotesingle{}s node set. 
+Get the graph\textquotesingle{}s node map. 
 
 \begin{DoxyReturn}{Returns}
-A std\+::unordered\+\_\+set containing the graph\textquotesingle{}s nodes 
+A std\+::unordered\+\_\+map containing the graph\textquotesingle{}s nodes 
 \end{DoxyReturn}
-\Hypertarget{classdsm_1_1Graph_aff1ae77416eff8585c376192ed4fc595}\label{classdsm_1_1Graph_aff1ae77416eff8585c376192ed4fc595} 
+\mbox{\Hypertarget{classdsm_1_1Graph_ac15a4597ad8f61365b2ecc7ef40a4b82}\label{classdsm_1_1Graph_ac15a4597ad8f61365b2ecc7ef40a4b82}} 
 \index{dsm::Graph$<$ Id, Size $>$@{dsm::Graph$<$ Id, Size $>$}!streetSet@{streetSet}}
 \index{streetSet@{streetSet}!dsm::Graph$<$ Id, Size $>$@{dsm::Graph$<$ Id, Size $>$}}
 \doxysubsubsection{\texorpdfstring{streetSet()}{streetSet()}}
-{\footnotesize\ttfamily template$<$typename Id , typename Size $>$ \newline
-requires (std\+::unsigned\+\_\+integral$<$Id$>$ \&\& std\+::unsigned\+\_\+integral$<$Size$>$)\\
-std\+::unordered\+\_\+set$<$ shared$<$ \mbox{\hyperlink{classdsm_1_1Street}{Street}}$<$ Id, Size $>$ $>$, \mbox{\hyperlink{structdsm_1_1streetHash}{street\+Hash}}$<$ Id, Size $>$ $>$ \mbox{\hyperlink{classdsm_1_1Graph}{dsm\+::\+Graph}}$<$ Id, Size $>$\+::street\+Set (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+{\footnotesize\ttfamily template$<$typename Id , typename Size $>$ \\
+requires std\+::unsigned\+\_\+integral$<$ Id $>$ \&\&std\+::unsigned\+\_\+integral$<$ Size $>$ std\+::unordered\+\_\+map$<$ Id, shared$<$ \mbox{\hyperlink{classdsm_1_1Street}{Street}}$<$ Id, Size $>$ $>$ $>$ \mbox{\hyperlink{classdsm_1_1Graph}{dsm\+::\+Graph}}$<$ Id, Size $>$\+::street\+Set}
 
 
 
-Get the graph\textquotesingle{}s street set. 
+Get the graph\textquotesingle{}s street map. 
 
 \begin{DoxyReturn}{Returns}
-A std\+::unordered\+\_\+set containing the graph\textquotesingle{}s streets 
+A std\+::unordered\+\_\+map containing the graph\textquotesingle{}s streets 
 \end{DoxyReturn}
 
 

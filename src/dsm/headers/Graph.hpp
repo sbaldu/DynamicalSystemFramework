@@ -35,8 +35,8 @@ namespace dsm {
   using std::make_shared;
 
   /// @brief The Graph class represents a graph in the network.
-  /// @tparam Id, The type of the graph's id. It must be an unsigned integral type.
-  /// @tparam Size, The type of the graph's capacity. It must be an unsigned integral type.
+  /// @tparam Id The type of the graph's id. It must be an unsigned integral type.
+  /// @tparam Size The type of the graph's capacity. It must be an unsigned integral type.
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   class Graph {
@@ -48,26 +48,26 @@ namespace dsm {
   public:
     Graph();
     /// @brief Construct a new Graph object
-    /// @param adj, An adjacency matrix made by a SparseMatrix representing the graph's adjacency matrix
+    /// @param adj An adjacency matrix made by a SparseMatrix representing the graph's adjacency matrix
     Graph(const SparseMatrix<Id, bool>& adj);
     /// @brief Construct a new Graph object
-    /// @param streetSet, A map of streets representing the graph's streets
+    /// @param streetSet A map of streets representing the graph's streets
     Graph(const std::unordered_map<Id, shared<Street<Id, Size>>>& streetSet);
 
     /// @brief Build the graph's adjacency matrix
     void buildAdj();
 
     /// @brief Import the graph's adjacency matrix from a file
-    /// @param fileName, The name of the file to import the adjacency matrix from.
+    /// @param fileName The name of the file to import the adjacency matrix from.
     /// @throws std::invalid_argument if the file is not found or the format is not supported
     /// The matrix format is deduced from the file extension. Currently only .dsm files are supported.
     void importAdj(const std::string& fileName);
 
     /// @brief Add a node to the graph
-    /// @param node, A std::shared_ptr to the node to add
+    /// @param node A std::shared_ptr to the node to add
     void addNode(shared<Node<Id>> node);
     /// @brief Add a node to the graph
-    /// @param node, A reference to the node to add
+    /// @param node A reference to the node to add
     void addNode(const Node<Id>& node);
 
     template <typename... Tn>
@@ -79,10 +79,10 @@ namespace dsm {
     void addNodes(T1&& node, Tn&&... nodes);
 
     /// @brief Add a street to the graph
-    /// @param street, A std::shared_ptr to the street to add
+    /// @param street A std::shared_ptr to the street to add
     void addStreet(shared<Street<Id, Size>> street);
     /// @brief Add a street to the graph
-    /// @param street, A reference to the street to add
+    /// @param street A reference to the street to add
     void addStreet(const Street<Id, Size>& street);
 
     template <typename T1>

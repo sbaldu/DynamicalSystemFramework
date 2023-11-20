@@ -1,27 +1,25 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="namespacedsm" kind="namespace" language="C++">
     <compoundname>dsm</compoundname>
     <innerclass refid="classdsm_1_1Agent" prot="public">dsm::Agent</innerclass>
     <innerclass refid="classdsm_1_1Graph" prot="public">dsm::Graph</innerclass>
+    <innerclass refid="classdsm_1_1Itinerary" prot="public">dsm::Itinerary</innerclass>
+    <innerclass refid="classdsm_1_1Node" prot="public">dsm::Node</innerclass>
+    <innerclass refid="classdsm_1_1SparseMatrix" prot="public">dsm::SparseMatrix</innerclass>
+    <innerclass refid="classdsm_1_1Street" prot="public">dsm::Street</innerclass>
     <innerclass refid="structdsm_1_1is__node" prot="public">dsm::is_node</innerclass>
-    <innerclass refid="structdsm_1_1is__node_3_01const_01Node_3_01Id_01_4_01_6_01_4" prot="public">dsm::is_node&lt; const Node&lt; Id &gt; &amp; &gt;</innerclass>
     <innerclass refid="structdsm_1_1is__node_3_01Node_3_01Id_01_4_01_4" prot="public">dsm::is_node&lt; Node&lt; Id &gt; &gt;</innerclass>
+    <innerclass refid="structdsm_1_1is__node_3_01const_01Node_3_01Id_01_4_01_6_01_4" prot="public">dsm::is_node&lt; const Node&lt; Id &gt; &amp; &gt;</innerclass>
     <innerclass refid="structdsm_1_1is__node_3_01shared_3_01Node_3_01Id_01_4_01_4_01_4" prot="public">dsm::is_node&lt; shared&lt; Node&lt; Id &gt; &gt; &gt;</innerclass>
     <innerclass refid="structdsm_1_1is__numeric" prot="public">dsm::is_numeric</innerclass>
     <innerclass refid="structdsm_1_1is__numeric_3_01bool_01_4" prot="public">dsm::is_numeric&lt; bool &gt;</innerclass>
     <innerclass refid="structdsm_1_1is__numeric_3_01char_01_4" prot="public">dsm::is_numeric&lt; char &gt;</innerclass>
     <innerclass refid="structdsm_1_1is__street" prot="public">dsm::is_street</innerclass>
+    <innerclass refid="structdsm_1_1is__street_3_01Street_3_01Id_00_01Size_01_4_01_4" prot="public">dsm::is_street&lt; Street&lt; Id, Size &gt; &gt;</innerclass>
     <innerclass refid="structdsm_1_1is__street_3_01const_01Street_3_01Id_00_01Size_01_4_01_6_01_4" prot="public">dsm::is_street&lt; const Street&lt; Id, Size &gt; &amp; &gt;</innerclass>
     <innerclass refid="structdsm_1_1is__street_3_01shared_3_01Street_3_01Id_00_01Size_01_4_01_4_01_4" prot="public">dsm::is_street&lt; shared&lt; Street&lt; Id, Size &gt; &gt; &gt;</innerclass>
-    <innerclass refid="structdsm_1_1is__street_3_01Street_3_01Id_00_01Size_01_4_01_4" prot="public">dsm::is_street&lt; Street&lt; Id, Size &gt; &gt;</innerclass>
-    <innerclass refid="classdsm_1_1Itinerary" prot="public">dsm::Itinerary</innerclass>
-    <innerclass refid="classdsm_1_1Node" prot="public">dsm::Node</innerclass>
-    <innerclass refid="structdsm_1_1nodeHash" prot="public">dsm::nodeHash</innerclass>
-    <innerclass refid="classdsm_1_1SparseMatrix" prot="public">dsm::SparseMatrix</innerclass>
-    <innerclass refid="classdsm_1_1Street" prot="public">dsm::Street</innerclass>
-    <innerclass refid="structdsm_1_1streetHash" prot="public">dsm::streetHash</innerclass>
-    <sectiondef kind="typedef">
+      <sectiondef kind="typedef">
       <memberdef kind="typedef" id="Graph_8hpp_1a9d6cb8869a2aa84ad1c1ac8f86d0b947" prot="public" static="no">
         <templateparamlist>
           <param>
@@ -32,17 +30,29 @@
         <definition>using dsm::shared = typedef std::shared_ptr&lt;T&gt;</definition>
         <argsstring></argsstring>
         <name>shared</name>
-        <qualifiedname>dsm::shared</qualifiedname>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/Graph.hpp" line="35" column="3" bodyfile="src/dsm/headers/Graph.hpp" bodystart="35" bodyend="-1"/>
+        <location file="src/dsm/headers/Graph.hpp" line="34" column="3" bodyfile="src/dsm/headers/Graph.hpp" bodystart="34" bodyend="-1"/>
       </memberdef>
-    </sectiondef>
-    <sectiondef kind="var">
+      </sectiondef>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="Agent_8hpp_1a5fa86e1f15bf514e92a83e9d2060f9b6" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>dsm::Size</definition>
+        <argsstring></argsstring>
+        <name>Size</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/dsm/headers/Agent.hpp" line="96" column="4" bodyfile="src/dsm/headers/Agent.hpp" bodystart="96" bodyend="-1"/>
+      </memberdef>
       <memberdef kind="variable" id="is__node_8hpp_1a2ae76a18f0b5f6da24d140c09c084533" prot="public" static="no" constexpr="yes" mutable="no">
         <templateparamlist>
           <param>
@@ -53,7 +63,6 @@
         <definition>constexpr bool dsm::is_node_v</definition>
         <argsstring></argsstring>
         <name>is_node_v</name>
-        <qualifiedname>dsm::is_node_v</qualifiedname>
         <initializer>= <ref refid="structdsm_1_1is__node" kindref="compound">is_node</ref>&lt;T&gt;::value</initializer>
         <briefdescription>
         </briefdescription>
@@ -73,7 +82,6 @@
         <definition>constexpr bool dsm::is_numeric_v</definition>
         <argsstring></argsstring>
         <name>is_numeric_v</name>
-        <qualifiedname>dsm::is_numeric_v</qualifiedname>
         <initializer>= <ref refid="structdsm_1_1is__numeric" kindref="compound">is_numeric</ref>&lt;T&gt;::value</initializer>
         <briefdescription>
         </briefdescription>
@@ -93,7 +101,6 @@
         <definition>constexpr bool dsm::is_street_v</definition>
         <argsstring></argsstring>
         <name>is_street_v</name>
-        <qualifiedname>dsm::is_street_v</qualifiedname>
         <initializer>= <ref refid="structdsm_1_1is__street" kindref="compound">is_street</ref>&lt;T&gt;::value</initializer>
         <briefdescription>
         </briefdescription>
@@ -103,36 +110,9 @@
         </inbodydescription>
         <location file="src/dsm/utility/TypeTraits/is_street.hpp" line="31" column="25" bodyfile="src/dsm/utility/TypeTraits/is_street.hpp" bodystart="31" bodyend="-1"/>
       </memberdef>
-    </sectiondef>
-    <sectiondef kind="func">
-      <memberdef kind="function" id="HashFunctions_8hpp_1ab6529c4d47cce93aca6cd019ef99db35" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <templateparamlist>
-          <param>
-            <type>typename Id</type>
-          </param>
-        </templateparamlist>
-        <type>bool</type>
-        <definition>bool dsm::operator==</definition>
-        <argsstring>(shared&lt; const Node&lt; Id &gt; &gt; p1, shared&lt; const Node&lt; Id &gt; &gt; p2)</argsstring>
-        <name>operator==</name>
-        <qualifiedname>dsm::operator==</qualifiedname>
-        <param>
-          <type>shared&lt; const <ref refid="classdsm_1_1Node" kindref="compound">Node</ref>&lt; Id &gt; &gt;</type>
-          <declname>p1</declname>
-        </param>
-        <param>
-          <type>shared&lt; const <ref refid="classdsm_1_1Node" kindref="compound">Node</ref>&lt; Id &gt; &gt;</type>
-          <declname>p2</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="src/dsm/utility/HashFunctions.hpp" line="38" column="8" bodyfile="src/dsm/utility/HashFunctions.hpp" bodystart="38" bodyend="40"/>
-      </memberdef>
-      <memberdef kind="function" id="HashFunctions_8hpp_1a01449cb77151e808cef715ee917aba4d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="Agent_8hpp_1a76566af5379cba731a8b2ab784c1fec5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename Id</type>
@@ -140,19 +120,16 @@
           <param>
             <type>typename Size</type>
           </param>
+          <param>
+            <type>typename Delay</type>
+          </param>
         </templateparamlist>
-        <type>bool</type>
-        <definition>bool dsm::operator==</definition>
-        <argsstring>(shared&lt; const Street&lt; Id, Size &gt; &gt; p1, shared&lt; const Street&lt; Id, Size &gt; &gt; p2)</argsstring>
-        <name>operator==</name>
-        <qualifiedname>dsm::operator==</qualifiedname>
+        <type></type>
+        <definition>dsm::requires</definition>
+        <argsstring>(std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; &amp;&amp;is_numeric_v&lt; Delay &gt;) Agent&lt; Id</argsstring>
+        <name>requires</name>
         <param>
-          <type>shared&lt; const <ref refid="classdsm_1_1Street" kindref="compound">Street</ref>&lt; Id, Size &gt; &gt;</type>
-          <declname>p1</declname>
-        </param>
-        <param>
-          <type>shared&lt; const <ref refid="classdsm_1_1Street" kindref="compound">Street</ref>&lt; Id, Size &gt; &gt;</type>
-          <declname>p2</declname>
+          <type>std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; &amp;&amp;is_numeric_v&lt; Delay &gt;</type>
         </param>
         <briefdescription>
         </briefdescription>
@@ -160,13 +137,88 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/utility/HashFunctions.hpp" line="48" column="8" bodyfile="src/dsm/utility/HashFunctions.hpp" bodystart="48" bodyend="50"/>
+        <location file="src/dsm/headers/Agent.hpp" line="95" column="5"/>
       </memberdef>
-    </sectiondef>
+      <memberdef kind="function" id="Agent_8hpp_1a401ed49f59be4b33b75bfdaf90bad862" prot="public" static="no" const="yes" explicit="no" inline="no" refqual="lvalue" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Id</type>
+          </param>
+          <param>
+            <type>typename Size</type>
+          </param>
+          <param>
+            <type>typename Delay</type>
+          </param>
+        </templateparamlist>
+        <type></type>
+        <definition>dsm::requires</definition>
+        <argsstring>(std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; &amp;&amp;is_numeric_v&lt; Delay &gt;) const Itinerary&lt; Id &gt; &amp;Agent&lt; Id</argsstring>
+        <name>requires</name>
+        <param>
+          <type>std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; &amp;&amp;is_numeric_v&lt; Delay &gt;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/dsm/headers/Agent.hpp" line="186" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="Graph_8hpp_1aaf581a8ff140e4692f60fa41880ce28e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename...</type>
+            <declname>Tn</declname>
+            <defname>Tn</defname>
+          </param>
+        </templateparamlist>
+        <type>requires std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt;</type>
+        <definition>requires std::unsigned_integral&lt;Id&gt;&amp;&amp; std::unsigned_integral&lt;Size&gt; dsm::requires</definition>
+        <argsstring>(is_node_v&lt; Tn &gt; &amp;&amp;...) void Graph&lt; Id</argsstring>
+        <name>requires</name>
+        <param>
+          <type>is_node_v&lt; Tn &gt; &amp;&amp;</type>
+          <declname>...</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/dsm/headers/Graph.hpp" line="213" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="Graph_8hpp_1aadbeb98dceba88dcb765b04972ce4648" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename...</type>
+            <declname>Tn</declname>
+            <defname>Tn</defname>
+          </param>
+        </templateparamlist>
+        <type>requires std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt;</type>
+        <definition>requires std::unsigned_integral&lt;Id&gt;&amp;&amp; std::unsigned_integral&lt;Size&gt; dsm::requires</definition>
+        <argsstring>(is_street_v&lt; Tn &gt; &amp;&amp;...) void Graph&lt; Id</argsstring>
+        <name>requires</name>
+        <param>
+          <type>is_street_v&lt; Tn &gt; &amp;&amp;</type>
+          <declname>...</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/dsm/headers/Graph.hpp" line="240" column="5"/>
+      </memberdef>
+      </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="src/dsm/headers/Agent.hpp" line="19" column="1"/>
+    <location file="src/dsm/headers/Agent.hpp" line="23" column="1"/>
   </compounddef>
 </doxygen>

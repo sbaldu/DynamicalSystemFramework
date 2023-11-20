@@ -22,8 +22,8 @@
 
 namespace dsm {
   /// @brief The Street class represents a street in the network.
-  /// @tparam Id, The type of the street's id. It must be an unsigned integral type.
-  /// @tparam Size, The type of the street's capacity. It must be an unsigned integral type.
+  /// @tparam Id The type of the street's id. It must be an unsigned integral type.
+  /// @tparam Size The type of the street's capacity. It must be an unsigned integral type.
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   class Street {
@@ -43,73 +43,74 @@ namespace dsm {
     /// @param nodePair, The street's node pair
     Street(Id index, std::pair<Id, Id> nodePair);
     /// @brief Construct a new Street object
-    /// @param index, The street's id
-    /// @param capacity, The street's capacity
-    /// @param len, The street's length
-    /// @param nodePair, The street's node pair
+    /// @param index The street's id
+    /// @param capacity The street's capacity
+    /// @param len The street's length
+    /// @param nodePair The street's node pair
     Street(Id index, Size capacity, double len, std::pair<Id, Id> nodePair);
     /// @brief Construct a new Street object
-    /// @param index, The street's id
-    /// @param capacity, The street's capacity
-    /// @param len, The street's length
-    /// @param maxSpeed, The street's speed limit
-    /// @param nodePair, The street's node pair
+    /// @param index The street's id
+    /// @param capacity The street's capacity
+    /// @param len The street's length
+    /// @param maxSpeed The street's speed limit
+    /// @param nodePair The street's node pair
     Street(Id index, Size capacity, double len, double maxSpeed, std::pair<Id, Id> nodePair);
 
     /// @brief Set the street's id
-    /// @param id, The street's id
+    /// @param id The street's id
     void setId(Id id);
     /// @brief Set the street's capacity
-    /// @param capacity, The street's capacity
+    /// @param capacity The street's capacity
     void setCapacity(Size capacity);
     /// @brief Set the street's length
-    /// @param len, The street's length
+    /// @param len The street's length
     void setLength(double len);
     /// @brief Set the street's queue
-    /// @param queue, The street's queue
+    /// @param queue The street's queue
     void setQueue(std::queue<Size> queue);
     /// @brief Set the street's node pair
-    /// @param node1, The source node of the street
-    /// @param node2, The destination node of the street
+    /// @param node1 The source node of the street
+    /// @param node2 The destination node of the street
     void setNodePair(Id node1, Id node2);
     /// @brief Set the street's node pair
-    /// @param node1, The source node of the street
-    /// @param node2, The destination node of the street
+    /// @param node1 The source node of the street
+    /// @param node2 The destination node of the street
     void setNodePair(const Node<Id>& node1, const Node<Id>& node2);
     /// @brief Set the street's node pair
-    /// @param pair, The street's node pair
+    /// @param pair The street's node pair
     void setNodePair(std::pair<Id, Id> pair);
     /// @brief Set the street's speed limit
-    /// @param speed, The street's speed limit
+    /// @param speed The street's speed limit
     /// @throw std::invalid_argument, If the speed is negative
     void setMaxSpeed(double speed);
 
     /// @brief Get the street's id
-    /// @return Id, The street's id
+    /// @return Id The street's id
     Id id() const;
     /// @brief Get the street's size
-    /// @return Size, The street's size
+    /// @return Size The street's size
     Size size() const;
     /// @brief Get the street's capacity
-    /// @return Size, The street's capacity
+    /// @return Size The street's capacity
     Size capacity() const;
     /// @brief Get the street's length
-    /// @return double, The street's length
+    /// @return double The street's length
     double length() const;
     /// @brief Get the street's queue
-    /// @return std::queue<Size>, The street's queue
+    /// @return std::queue<Size> The street's queue
     const std::queue<Size>& queue() const;
     /// @brief Get the street's node pair
-    /// @return std::pair<Id, Id>, The street's node pair
+    /// @return std::pair<Id, Id> The street's node pair
     const std::pair<Id, Id>& nodePair() const;
     /// @brief Get the street's density
-    /// @return double, The street's density
+    /// @return double The street's density
     double density() const;
     /// @brief Get the street's speed limit
-    /// @return double, The street's speed limit
+    /// @return double The street's speed limit
     double maxSpeed() const;
     /// @brief Add an agent to the street's queue
-    /// @param agent, The agent to add
+    /// @tparam Delay The type of the agent's delay
+    /// @param agent The agent to add
     template <typename Delay>
     void enqueue(const Agent<Id, Size, Delay>& agent);
     /// @brief Remove an agent from the street's queue

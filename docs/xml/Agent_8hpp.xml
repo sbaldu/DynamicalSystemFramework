@@ -1,17 +1,29 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="Agent_8hpp" kind="file" language="C++">
     <compoundname>Agent.hpp</compoundname>
     <includes refid="Itinerary_8hpp" local="yes">Itinerary.hpp</includes>
     <includes refid="SparseMatrix_8hpp" local="yes">SparseMatrix.hpp</includes>
     <includes refid="is__numeric_8hpp" local="yes">../utility/TypeTraits/is_numeric.hpp</includes>
+    <includes local="no">concepts</includes>
     <includes local="no">stdexcept</includes>
     <includes local="no">string</includes>
     <includes local="no">limits</includes>
     <includedby refid="dsm_8hpp" local="yes">src/dsm/dsm.hpp</includedby>
     <includedby refid="Street_8hpp" local="yes">src/dsm/headers/Street.hpp</includedby>
-    <includedby refid="test_8cpp" local="yes">src/dsm/headers/test.cpp</includedby>
     <incdepgraph>
+      <node id="5">
+        <label>limits</label>
+      </node>
+      <node id="3">
+        <label>stdexcept</label>
+      </node>
+      <node id="4">
+        <label>string</label>
+      </node>
+      <node id="2">
+        <label>concepts</label>
+      </node>
       <node id="1">
         <label>src/dsm/headers/Agent.hpp</label>
         <link refid="Agent_8hpp"/>
@@ -21,15 +33,8 @@
         </childnode>
         <childnode refid="4" relation="include">
         </childnode>
-      </node>
-      <node id="4">
-        <label>limits</label>
-      </node>
-      <node id="2">
-        <label>stdexcept</label>
-      </node>
-      <node id="3">
-        <label>string</label>
+        <childnode refid="5" relation="include">
+        </childnode>
       </node>
     </incdepgraph>
     <innerclass refid="classdsm_1_1Agent" prot="public">dsm::Agent</innerclass>
@@ -39,140 +44,151 @@
     <detaileddescription>
     </detaileddescription>
     <programlisting>
-<codeline lineno="1"></codeline>
-<codeline lineno="7"><highlight class="normal"></highlight></codeline>
-<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>Agent_hpp</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>Agent_hpp</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="10"><highlight class="normal"></highlight></codeline>
-<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;Itinerary.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;SparseMatrix.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;../utility/TypeTraits/is_numeric.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="14"><highlight class="normal"></highlight></codeline>
-<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdexcept&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;string&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;limits&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="18"><highlight class="normal"></highlight></codeline>
-<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">dsm<sp/>{</highlight></codeline>
-<codeline lineno="22"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Id&gt;</highlight></codeline>
-<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">requires</highlight><highlight class="normal"><sp/>std::unsigned_integral&lt;Id&gt;</highlight></codeline>
-<codeline lineno="24" refid="classdsm_1_1Agent" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classdsm_1_1Agent" kindref="compound">Agent</ref><sp/>{</highlight></codeline>
-<codeline lineno="25"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
-<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classdsm_1_1Itinerary" kindref="compound">Itinerary&lt;Id&gt;</ref><sp/>m_itinerary;</highlight></codeline>
-<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>m_speed;</highlight></codeline>
-<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/>Id<sp/>m_index;</highlight></codeline>
-<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/>Id<sp/>m_position;</highlight></codeline>
-<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/>Id<sp/>m_previousPosition;</highlight></codeline>
-<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>m_time;</highlight></codeline>
-<codeline lineno="32"><highlight class="normal"></highlight></codeline>
-<codeline lineno="33"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
-<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classdsm_1_1Agent" kindref="compound">Agent</ref>()<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classdsm_1_1Agent" kindref="compound">Agent</ref>(Id<sp/><ref refid="classdsm_1_1Agent_1ab1851b81a5e275610187a7d28047f648" kindref="member">index</ref>,<sp/>Id<sp/><ref refid="classdsm_1_1Agent_1a7a7910fe55a211cdff4daccdffa4d1d8" kindref="member">position</ref>);</highlight></codeline>
-<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classdsm_1_1Agent" kindref="compound">Agent</ref>(Id<sp/><ref refid="classdsm_1_1Agent_1ab1851b81a5e275610187a7d28047f648" kindref="member">index</ref>,<sp/>Id<sp/><ref refid="classdsm_1_1Agent_1a7a7910fe55a211cdff4daccdffa4d1d8" kindref="member">position</ref>,<sp/><ref refid="classdsm_1_1Itinerary" kindref="compound">Itinerary&lt;Id&gt;</ref><sp/><ref refid="classdsm_1_1Agent_1aae480cf9cad655ff4136e1dc77314841" kindref="member">itinerary</ref>);</highlight></codeline>
-<codeline lineno="44"><highlight class="normal"></highlight></codeline>
-<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classdsm_1_1Agent_1a51f7c54f9e507d51b7a679b4fe4b3d60" kindref="member">setPosition</ref>(Id<sp/><ref refid="classdsm_1_1Agent_1a7a7910fe55a211cdff4daccdffa4d1d8" kindref="member">position</ref>);</highlight></codeline>
-<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classdsm_1_1Agent_1a74fadc6586f0d0ea2bf17cb210216a00" kindref="member">setItinerary</ref>(<ref refid="classdsm_1_1Itinerary" kindref="compound">Itinerary&lt;Id&gt;</ref><sp/><ref refid="classdsm_1_1Agent_1aae480cf9cad655ff4136e1dc77314841" kindref="member">itinerary</ref>);</highlight></codeline>
-<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classdsm_1_1Agent_1ade761cb1f91af8b91fe67401594cc305" kindref="member">setSpeed</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classdsm_1_1Agent_1a3437faa68aa546741a48f2ea47b1758f" kindref="member">speed</ref>);</highlight></codeline>
-<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classdsm_1_1Agent_1a9fc9f454c8062efe7a01c56a87c8e893" kindref="member">incrementTime</ref>();</highlight></codeline>
-<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classdsm_1_1Agent_1a9fc9f454c8062efe7a01c56a87c8e893" kindref="member">incrementTime</ref>(</highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="classdsm_1_1Agent_1a0219ef98df9eecb95623fa689e5a6b3e" kindref="member">time</ref>);</highlight></codeline>
-<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classdsm_1_1Agent_1a264ef7083f883bc7f104cf75fc17f33e" kindref="member">resetTime</ref>();</highlight></codeline>
-<codeline lineno="64"><highlight class="normal"></highlight></codeline>
-<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/>Id<sp/><ref refid="classdsm_1_1Agent_1ab1851b81a5e275610187a7d28047f648" kindref="member">index</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/>Id<sp/><ref refid="classdsm_1_1Agent_1a7a7910fe55a211cdff4daccdffa4d1d8" kindref="member">position</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/>Id<sp/><ref refid="classdsm_1_1Agent_1af4c66c9bd994d16fa5b110559556a41e" kindref="member">previousPosition</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classdsm_1_1Itinerary" kindref="compound">Itinerary&lt;Id&gt;</ref>&amp;<sp/><ref refid="classdsm_1_1Agent_1aae480cf9cad655ff4136e1dc77314841" kindref="member">itinerary</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classdsm_1_1Agent_1a3437faa68aa546741a48f2ea47b1758f" kindref="member">speed</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="classdsm_1_1Agent_1a0219ef98df9eecb95623fa689e5a6b3e" kindref="member">time</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="83"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
-<codeline lineno="84"><highlight class="normal"></highlight></codeline>
-<codeline lineno="85"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Id&gt;</highlight></codeline>
-<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">requires</highlight><highlight class="normal"><sp/>std::unsigned_integral&lt;Id&gt;</highlight></codeline>
-<codeline lineno="87"><highlight class="normal"><sp/><sp/><ref refid="classdsm_1_1Agent" kindref="compound">Agent&lt;Id&gt;::Agent</ref>(Id<sp/>index,<sp/>Id<sp/>position)</highlight></codeline>
-<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>m_speed{0.},<sp/>m_index{index},<sp/>m_position{position},<sp/>m_previousPosition{position},<sp/>m_time{0}<sp/>{}</highlight></codeline>
-<codeline lineno="89"><highlight class="normal"></highlight></codeline>
-<codeline lineno="90"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Id&gt;</highlight></codeline>
-<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">requires</highlight><highlight class="normal"><sp/>std::unsigned_integral&lt;Id&gt;</highlight></codeline>
-<codeline lineno="92"><highlight class="normal"><sp/><sp/>Agent&lt;Id&gt;::Agent(Id<sp/>index,<sp/>Id<sp/>position,<sp/>Itinerary&lt;Id&gt;<sp/>itinerary)</highlight></codeline>
-<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>m_itinerary{std::move(itinerary)},</highlight></codeline>
-<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>m_speed{0.},</highlight></codeline>
-<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>m_index{index},</highlight></codeline>
-<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>m_position{position},</highlight></codeline>
-<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>m_previousPosition{position},</highlight></codeline>
-<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>m_time{0}<sp/>{}</highlight></codeline>
-<codeline lineno="99"><highlight class="normal"></highlight></codeline>
-<codeline lineno="100"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Id&gt;</highlight></codeline>
-<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">requires</highlight><highlight class="normal"><sp/>std::unsigned_integral&lt;Id&gt;</highlight></codeline>
-<codeline lineno="102"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classdsm_1_1Agent_1a51f7c54f9e507d51b7a679b4fe4b3d60" kindref="member">Agent&lt;Id&gt;::setPosition</ref>(Id<sp/>position)<sp/>{</highlight></codeline>
-<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/>m_position<sp/>=<sp/>position;</highlight></codeline>
-<codeline lineno="104"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
-<codeline lineno="105"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Id&gt;</highlight></codeline>
-<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">requires</highlight><highlight class="normal"><sp/>std::unsigned_integral&lt;Id&gt;</highlight></codeline>
-<codeline lineno="107"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classdsm_1_1Agent_1a74fadc6586f0d0ea2bf17cb210216a00" kindref="member">Agent&lt;Id&gt;::setItinerary</ref>(Itinerary&lt;Id&gt;<sp/>itinerary)<sp/>{</highlight></codeline>
-<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/>m_itinerary<sp/>=<sp/>std::move(itinerary);</highlight></codeline>
-<codeline lineno="109"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
-<codeline lineno="110"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Id&gt;</highlight></codeline>
-<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">requires</highlight><highlight class="normal"><sp/>std::unsigned_integral&lt;Id&gt;</highlight></codeline>
-<codeline lineno="112"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classdsm_1_1Agent_1ade761cb1f91af8b91fe67401594cc305" kindref="member">Agent&lt;Id&gt;::setSpeed</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>speed)<sp/>{</highlight></codeline>
-<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(speed<sp/>&lt;<sp/>0)<sp/>{</highlight></codeline>
-<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>std::string<sp/>errorMsg<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Error<sp/>at<sp/>line<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>std::to_string(__LINE__)<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;<sp/>in<sp/>file<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>__FILE__<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;:<sp/>&quot;</highlight><highlight class="normal"><sp/>+</highlight></codeline>
-<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;Speed<sp/>must<sp/>be<sp/>positive&quot;</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::invalid_argument(errorMsg);</highlight></codeline>
-<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/>m_speed<sp/>=<sp/>speed;</highlight></codeline>
-<codeline lineno="119"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
-<codeline lineno="120"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Id&gt;</highlight></codeline>
-<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">requires</highlight><highlight class="normal"><sp/>std::unsigned_integral&lt;Id&gt;</highlight></codeline>
-<codeline lineno="122"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classdsm_1_1Agent_1a9fc9f454c8062efe7a01c56a87c8e893" kindref="member">Agent&lt;Id&gt;::incrementTime</ref>()<sp/>{</highlight></codeline>
-<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(m_time<sp/>==<sp/>std::numeric_limits&lt;unsigned<sp/>int&gt;::max())<sp/>{</highlight></codeline>
-<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>std::string<sp/>errorMsg<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Error<sp/>at<sp/>line<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>std::to_string(__LINE__)<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;<sp/>in<sp/>file<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>__FILE__<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;:<sp/>&quot;</highlight><highlight class="normal"><sp/>+</highlight></codeline>
-<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;Time<sp/>has<sp/>reached<sp/>its<sp/>maximum<sp/>value&quot;</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::overflow_error(errorMsg);</highlight></codeline>
-<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/>++m_time;</highlight></codeline>
-<codeline lineno="129"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
-<codeline lineno="130"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Id&gt;</highlight></codeline>
-<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">requires</highlight><highlight class="normal"><sp/>std::unsigned_integral&lt;Id&gt;</highlight></codeline>
-<codeline lineno="132"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classdsm_1_1Agent_1a9fc9f454c8062efe7a01c56a87c8e893" kindref="member">Agent&lt;Id&gt;::incrementTime</ref>(</highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>time)<sp/>{</highlight></codeline>
-<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(m_time<sp/>+<sp/>time<sp/>&lt;<sp/>m_time)<sp/>{</highlight></codeline>
-<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>std::string<sp/>errorMsg<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Error<sp/>at<sp/>line<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>std::to_string(__LINE__)<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;<sp/>in<sp/>file<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>__FILE__<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;:<sp/>&quot;</highlight><highlight class="normal"><sp/>+</highlight></codeline>
-<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;Time<sp/>has<sp/>reached<sp/>its<sp/>maximum<sp/>value&quot;</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::overflow_error(errorMsg);</highlight></codeline>
-<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/>m_time<sp/>+=<sp/>time;</highlight></codeline>
-<codeline lineno="139"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
-<codeline lineno="140"><highlight class="normal"></highlight></codeline>
-<codeline lineno="141"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Id&gt;</highlight></codeline>
-<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">requires</highlight><highlight class="normal"><sp/>std::unsigned_integral&lt;Id&gt;</highlight></codeline>
-<codeline lineno="143"><highlight class="normal"><sp/><sp/>Id<sp/><ref refid="classdsm_1_1Agent_1ab1851b81a5e275610187a7d28047f648" kindref="member">Agent&lt;Id&gt;::index</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>m_index;</highlight></codeline>
-<codeline lineno="145"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
-<codeline lineno="146"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Id&gt;</highlight></codeline>
-<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">requires</highlight><highlight class="normal"><sp/>std::unsigned_integral&lt;Id&gt;</highlight></codeline>
-<codeline lineno="148"><highlight class="normal"><sp/><sp/>Id<sp/><ref refid="classdsm_1_1Agent_1a7a7910fe55a211cdff4daccdffa4d1d8" kindref="member">Agent&lt;Id&gt;::position</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>m_position;</highlight></codeline>
-<codeline lineno="150"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
-<codeline lineno="151"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Id&gt;</highlight></codeline>
-<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">requires</highlight><highlight class="normal"><sp/>std::unsigned_integral&lt;Id&gt;</highlight></codeline>
-<codeline lineno="153"><highlight class="normal"><sp/><sp/>Id<sp/><ref refid="classdsm_1_1Agent_1af4c66c9bd994d16fa5b110559556a41e" kindref="member">Agent&lt;Id&gt;::previousPosition</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>m_previousPosition;</highlight></codeline>
-<codeline lineno="155"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
-<codeline lineno="156"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Id&gt;</highlight></codeline>
-<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">requires</highlight><highlight class="normal"><sp/>std::unsigned_integral&lt;Id&gt;</highlight></codeline>
-<codeline lineno="158"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classdsm_1_1Agent_1a3437faa68aa546741a48f2ea47b1758f" kindref="member">Agent&lt;Id&gt;::speed</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>m_speed;</highlight></codeline>
-<codeline lineno="160"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
-<codeline lineno="161"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Id&gt;</highlight></codeline>
-<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">requires</highlight><highlight class="normal"><sp/>std::unsigned_integral&lt;Id&gt;</highlight></codeline>
-<codeline lineno="163"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="classdsm_1_1Agent_1a0219ef98df9eecb95623fa689e5a6b3e" kindref="member">Agent&lt;Id&gt;::time</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>m_time;</highlight></codeline>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>Agent_hpp</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>Agent_hpp</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;Itinerary.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;SparseMatrix.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;../utility/TypeTraits/is_numeric.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;concepts&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdexcept&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;string&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;limits&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">dsm<sp/>{</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Id,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Size,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Delay&gt;</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/>requires<sp/>std::unsigned_integral&lt;Id&gt;<sp/>&amp;&amp;<sp/>std::unsigned_integral&lt;Size&gt;<sp/>&amp;&amp;<sp/>is_numeric_v&lt;Delay&gt;</highlight></codeline>
+<codeline lineno="30" refid="classdsm_1_1Agent" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classdsm_1_1Agent" kindref="compound">Agent</ref><sp/>{</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classdsm_1_1Itinerary" kindref="compound">Itinerary&lt;Id&gt;</ref><sp/>m_itinerary;</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>m_speed;</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/>Delay<sp/>m_delay;</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/>Id<sp/>m_index;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/>Id<sp/>m_streetId;</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>m_time;</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classdsm_1_1Agent" kindref="compound">Agent</ref>()<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classdsm_1_1Agent" kindref="compound">Agent</ref>(Id<sp/><ref refid="classdsm_1_1Agent_1ac4658d146f4c3ff7cc9f4a0c9a70078d" kindref="member">index</ref>,<sp/>Id<sp/><ref refid="classdsm_1_1Agent_1a3a15a471d6dd1148c8ad494bfd67ca96" kindref="member">streetId</ref>);</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classdsm_1_1Agent" kindref="compound">Agent</ref>(Id<sp/><ref refid="classdsm_1_1Agent_1ac4658d146f4c3ff7cc9f4a0c9a70078d" kindref="member">index</ref>,<sp/>Id<sp/><ref refid="classdsm_1_1Agent_1a3a15a471d6dd1148c8ad494bfd67ca96" kindref="member">streetId</ref>,<sp/><ref refid="classdsm_1_1Itinerary" kindref="compound">Itinerary&lt;Id&gt;</ref><sp/><ref refid="classdsm_1_1Agent_1a830a79ba200b23ba23774f889c673bb0" kindref="member">itinerary</ref>);</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classdsm_1_1Agent_1aaba67776effa18a8cf83256b7a0f8177" kindref="member">setStreetId</ref>(Id<sp/><ref refid="classdsm_1_1Agent_1a3a15a471d6dd1148c8ad494bfd67ca96" kindref="member">streetId</ref>);</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classdsm_1_1Agent_1aa93ce3ae6fbec47fffd43200b86110f9" kindref="member">setItinerary</ref>(<ref refid="classdsm_1_1Itinerary" kindref="compound">Itinerary&lt;Id&gt;</ref><sp/><ref refid="classdsm_1_1Agent_1a830a79ba200b23ba23774f889c673bb0" kindref="member">itinerary</ref>);</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classdsm_1_1Agent_1a249fa1e43040f68ef09a0e1d60a79f96" kindref="member">setSpeed</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classdsm_1_1Agent_1abcf59bb67437986459517ae2bd69f7c1" kindref="member">speed</ref>);</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classdsm_1_1Agent_1a2809ae1bbcbe77633913d43982ea823c" kindref="member">setDelay</ref>(Delay<sp/><ref refid="classdsm_1_1Agent_1a8109cb7b2f8947f54625a282dee0dc92" kindref="member">delay</ref>);</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classdsm_1_1Agent_1a13d0562e6acafb866960d717cc4fb670" kindref="member">incrementTime</ref>();</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classdsm_1_1Agent_1a13d0562e6acafb866960d717cc4fb670" kindref="member">incrementTime</ref>(</highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="classdsm_1_1Agent_1a36e15a53b1fc48d7a2f2e080baa84ee0" kindref="member">time</ref>);</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classdsm_1_1Agent_1acc15634eeaea621bf407f77cc30ac87a" kindref="member">resetTime</ref>();</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/>Id<sp/><ref refid="classdsm_1_1Agent_1ac4658d146f4c3ff7cc9f4a0c9a70078d" kindref="member">index</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/>Id<sp/><ref refid="classdsm_1_1Agent_1a3a15a471d6dd1148c8ad494bfd67ca96" kindref="member">streetId</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classdsm_1_1Itinerary" kindref="compound">Itinerary&lt;Id&gt;</ref>&amp;<sp/><ref refid="classdsm_1_1Agent_1a830a79ba200b23ba23774f889c673bb0" kindref="member">itinerary</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classdsm_1_1Agent_1abcf59bb67437986459517ae2bd69f7c1" kindref="member">speed</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/>Delay<sp/><ref refid="classdsm_1_1Agent_1a8109cb7b2f8947f54625a282dee0dc92" kindref="member">delay</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="classdsm_1_1Agent_1a36e15a53b1fc48d7a2f2e080baa84ee0" kindref="member">time</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Id,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Size,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Delay&gt;</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/>requires(std::unsigned_integral&lt;Id&gt;<sp/>&amp;&amp;<sp/>std::unsigned_integral&lt;Size&gt;<sp/>&amp;&amp;<sp/>is_numeric_v&lt;Delay&gt;)</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><ref refid="classdsm_1_1Agent" kindref="compound">Agent&lt;Id, Size, Delay&gt;::Agent</ref>(Id<sp/>index,<sp/>Id<sp/>streetId)</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>m_speed{0.},<sp/>m_index{index},<sp/>m_streetId{streetId},<sp/>m_time{0}<sp/>{}</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Id,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Size,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Delay&gt;</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/>requires(std::unsigned_integral&lt;Id&gt;<sp/>&amp;&amp;<sp/>std::unsigned_integral&lt;Size&gt;<sp/>&amp;&amp;<sp/>is_numeric_v&lt;Delay&gt;)</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/>Agent&lt;Id,<sp/>Size,<sp/>Delay&gt;::Agent(Id<sp/>index,<sp/>Id<sp/>streetId,<sp/>Itinerary&lt;Id&gt;<sp/>itinerary)</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>m_itinerary{std::move(itinerary)},<sp/>m_speed{0.},<sp/>m_index{index},<sp/>m_streetId{streetId},<sp/>m_time{0}<sp/>{}</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Id,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Size,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Delay&gt;</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/>requires(std::unsigned_integral&lt;Id&gt;<sp/>&amp;&amp;<sp/>std::unsigned_integral&lt;Size&gt;<sp/>&amp;&amp;<sp/>is_numeric_v&lt;Delay&gt;)</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classdsm_1_1Agent_1aaba67776effa18a8cf83256b7a0f8177" kindref="member">Agent&lt;Id, Size, Delay&gt;::setStreetId</ref>(Id<sp/>streetId)<sp/>{</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/>m_streetId<sp/>=<sp/>streetId;</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Id,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Size,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Delay&gt;</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/>requires(std::unsigned_integral&lt;Id&gt;<sp/>&amp;&amp;<sp/>std::unsigned_integral&lt;Size&gt;<sp/>&amp;&amp;<sp/>is_numeric_v&lt;Delay&gt;)</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classdsm_1_1Agent_1aa93ce3ae6fbec47fffd43200b86110f9" kindref="member">Agent&lt;Id, Size, Delay&gt;::setItinerary</ref>(Itinerary&lt;Id&gt;<sp/>itinerary)<sp/>{</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/>m_itinerary<sp/>=<sp/>std::move(itinerary);</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Id,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Size,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Delay&gt;</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/>requires(std::unsigned_integral&lt;Id&gt;<sp/>&amp;&amp;<sp/>std::unsigned_integral&lt;Size&gt;<sp/>&amp;&amp;<sp/>is_numeric_v&lt;Delay&gt;)</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classdsm_1_1Agent_1a249fa1e43040f68ef09a0e1d60a79f96" kindref="member">Agent&lt;Id, Size, Delay&gt;::setSpeed</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>speed)<sp/>{</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(speed<sp/>&lt;<sp/>0)<sp/>{</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>std::string<sp/>errorMsg<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Error<sp/>at<sp/>line<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>std::to_string(__LINE__)<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;<sp/>in<sp/>file<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>__FILE__<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;:<sp/>&quot;</highlight><highlight class="normal"><sp/>+</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;Speed<sp/>must<sp/>be<sp/>positive&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::invalid_argument(errorMsg);</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/>m_speed<sp/>=<sp/>speed;</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Id,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Size,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Delay&gt;</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/>requires(std::unsigned_integral&lt;Id&gt;<sp/>&amp;&amp;<sp/>std::unsigned_integral&lt;Size&gt;<sp/>&amp;&amp;<sp/>is_numeric_v&lt;Delay&gt;)</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classdsm_1_1Agent_1a2809ae1bbcbe77633913d43982ea823c" kindref="member">Agent&lt;Id, Size, Delay&gt;::setDelay</ref>(Delay<sp/>delay)<sp/>{</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/>m_delay<sp/>=<sp/>delay;</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Id,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Size,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Delay&gt;</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/>requires(std::unsigned_integral&lt;Id&gt;<sp/>&amp;&amp;<sp/>std::unsigned_integral&lt;Size&gt;<sp/>&amp;&amp;<sp/>is_numeric_v&lt;Delay&gt;)</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classdsm_1_1Agent_1a13d0562e6acafb866960d717cc4fb670" kindref="member">Agent&lt;Id, Size, Delay&gt;::incrementTime</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(m_time<sp/>==<sp/>std::numeric_limits&lt;unsigned<sp/>int&gt;::max())<sp/>{</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>std::string<sp/>errorMsg<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Error<sp/>at<sp/>line<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>std::to_string(__LINE__)<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;<sp/>in<sp/>file<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>__FILE__<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;:<sp/>&quot;</highlight><highlight class="normal"><sp/>+</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;Time<sp/>has<sp/>reached<sp/>its<sp/>maximum<sp/>value&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::overflow_error(errorMsg);</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/>++m_time;</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"></highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Id,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Size,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Delay&gt;</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/>requires(std::unsigned_integral&lt;Id&gt;<sp/>&amp;&amp;<sp/>std::unsigned_integral&lt;Size&gt;<sp/>&amp;&amp;<sp/>is_numeric_v&lt;Delay&gt;)</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classdsm_1_1Agent_1a13d0562e6acafb866960d717cc4fb670" kindref="member">Agent&lt;Id, Size, Delay&gt;::incrementTime</ref>(</highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>time)<sp/>{</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(m_time<sp/>+<sp/>time<sp/>&lt;<sp/>m_time)<sp/>{</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>std::string<sp/>errorMsg<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;Error<sp/>at<sp/>line<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>std::to_string(__LINE__)<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;<sp/>in<sp/>file<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>__FILE__<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;:<sp/>&quot;</highlight><highlight class="normal"><sp/>+</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;Time<sp/>has<sp/>reached<sp/>its<sp/>maximum<sp/>value&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::overflow_error(errorMsg);</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/>m_time<sp/>+=<sp/>time;</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Id,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Size,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Delay&gt;</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/>requires(std::unsigned_integral&lt;Id&gt;<sp/>&amp;&amp;<sp/>std::unsigned_integral&lt;Size&gt;<sp/>&amp;&amp;<sp/>is_numeric_v&lt;Delay&gt;)</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/>Id<sp/><ref refid="classdsm_1_1Agent_1ac4658d146f4c3ff7cc9f4a0c9a70078d" kindref="member">Agent&lt;Id, Size, Delay&gt;::index</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>m_index;</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"></highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Id,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Size,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Delay&gt;</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/>requires(std::unsigned_integral&lt;Id&gt;<sp/>&amp;&amp;<sp/>std::unsigned_integral&lt;Size&gt;<sp/>&amp;&amp;<sp/>is_numeric_v&lt;Delay&gt;)</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/>Id<sp/><ref refid="classdsm_1_1Agent_1a3a15a471d6dd1148c8ad494bfd67ca96" kindref="member">Agent&lt;Id, Size, Delay&gt;::streetId</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>m_streetId;</highlight></codeline>
 <codeline lineno="165"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
-<codeline lineno="166"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Id&gt;</highlight></codeline>
-<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">requires</highlight><highlight class="normal"><sp/>std::unsigned_integral&lt;Id&gt;</highlight></codeline>
-<codeline lineno="168"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Itinerary&lt;Id&gt;&amp;<sp/><ref refid="classdsm_1_1Agent_1aae480cf9cad655ff4136e1dc77314841" kindref="member">Agent&lt;Id&gt;::itinerary</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>m_itinerary;</highlight></codeline>
-<codeline lineno="170"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
-<codeline lineno="171"><highlight class="normal">};<sp/><sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>dsm</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="166"><highlight class="normal"></highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Id,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Size,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Delay&gt;</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/>requires(std::unsigned_integral&lt;Id&gt;<sp/>&amp;&amp;<sp/>std::unsigned_integral&lt;Size&gt;<sp/>&amp;&amp;<sp/>is_numeric_v&lt;Delay&gt;)</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classdsm_1_1Agent_1abcf59bb67437986459517ae2bd69f7c1" kindref="member">Agent&lt;Id, Size, Delay&gt;::speed</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>m_speed;</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
 <codeline lineno="172"><highlight class="normal"></highlight></codeline>
-<codeline lineno="173"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Id,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Size,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Delay&gt;</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/>requires(std::unsigned_integral&lt;Id&gt;<sp/>&amp;&amp;<sp/>std::unsigned_integral&lt;Size&gt;<sp/>&amp;&amp;<sp/>is_numeric_v&lt;Delay&gt;)</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/>Delay<sp/><ref refid="classdsm_1_1Agent_1a8109cb7b2f8947f54625a282dee0dc92" kindref="member">Agent&lt;Id, Size, Delay&gt;::delay</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>m_delay;</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"></highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Id,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Size,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Delay&gt;</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/>requires(std::unsigned_integral&lt;Id&gt;<sp/>&amp;&amp;<sp/>std::unsigned_integral&lt;Size&gt;<sp/>&amp;&amp;<sp/>is_numeric_v&lt;Delay&gt;)</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="classdsm_1_1Agent_1a36e15a53b1fc48d7a2f2e080baa84ee0" kindref="member">Agent&lt;Id, Size, Delay&gt;::time</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>m_time;</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"></highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Id,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Size,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Delay&gt;</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/><sp/><sp/>requires(std::unsigned_integral&lt;Id&gt;<sp/>&amp;&amp;<sp/>std::unsigned_integral&lt;Size&gt;<sp/>&amp;&amp;<sp/>is_numeric_v&lt;Delay&gt;)</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Itinerary&lt;Id&gt;&amp;<sp/><ref refid="classdsm_1_1Agent_1a830a79ba200b23ba23774f889c673bb0" kindref="member">Agent&lt;Id, Size, Delay&gt;::itinerary</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>m_itinerary;</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="190"><highlight class="normal">};<sp/><sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>dsm</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="191"><highlight class="normal"></highlight></codeline>
+<codeline lineno="192"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
     </programlisting>
     <location file="src/dsm/headers/Agent.hpp"/>
   </compounddef>

@@ -22,9 +22,9 @@
 
 namespace dsm {
   /// @brief The Agent class represents an agent in the network.
-  /// @tparam Id, The type of the agent's id. It must be an unsigned integral type.
-  /// @tparam Size, The type of the size of a street. It must be an unsigned integral type.
-  /// @tparam Delay, The type of the agent's delay. It must be a numeric type (see utility/TypeTraits/is_numeric.hpp).
+  /// @tparam Id The type of the agent's id. It must be an unsigned integral type.
+  /// @tparam Size The type of the size of a street. It must be an unsigned integral type.
+  /// @tparam Delay The type of the agent's delay. It must be a numeric type (see utility/TypeTraits/is_numeric.hpp).
   template <typename Id, typename Size, typename Delay>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
   class Agent {
@@ -39,33 +39,33 @@ namespace dsm {
   public:
     Agent() = default;
     /// @brief Construct a new Agent object
-    /// @param index, The agent's id
-    /// @param streetId, The id of the street currently occupied by the agent
+    /// @param index The agent's id
+    /// @param streetId The id of the street currently occupied by the agent
     Agent(Id index, Id streetId);
     /// @brief Construct a new Agent object
-    /// @param index, The agent's id
-    /// @param streetId, The id of the street currently occupied by the agent
-    /// @param itinerary, The agent's itinerary
+    /// @param index The agent's id
+    /// @param streetId The id of the street currently occupied by the agent
+    /// @param itinerary The agent's itinerary
     Agent(Id index, Id streetId, Itinerary<Id> itinerary);
 
     /// @brief Set the street occupied by the agent
-    /// @param streetId, The id of the street currently occupied by the agent
+    /// @param streetId The id of the street currently occupied by the agent
     void setStreetId(Id streetId);
     /// @brief Set the agent's itinerary
-    /// @param itinerary, The agent's itinerary
+    /// @param itinerary The agent's itinerary
     void setItinerary(Itinerary<Id> itinerary);
     /// @brief Set the agent's speed
-    /// @param speed, The agent's speed
+    /// @param speed The agent's speed
     /// @throw std::invalid_argument, if speed is negative
     void setSpeed(double speed);
     /// @brief Set the agent's delay
-    /// @param delay, The agent's delay
+    /// @param delay The agent's delay
     void setDelay(Delay delay);
     /// @brief Increment the agent's time by 1
     /// @throw std::overflow_error, if time has reached its maximum value
     void incrementTime();
     /// @brief Increment the agent's time by a given value
-    /// @param time, The value to increment the agent's time by
+    /// @param time The value to increment the agent's time by
     /// @throw std::overflow_error, if time has reached its maximum value
     void incrementTime(unsigned int time);
     /// @brief Reset the agent's time to 0

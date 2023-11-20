@@ -26,33 +26,33 @@ namespace dsm {
   public:
     Node() = default;
     /// @brief Construct a new Node object
-    /// @param id, The node's id
+    /// @param id The node's id
     explicit Node(Id id);
     /// @brief Construct a new Node object
-    /// @param id, The node's id
-    /// @param coords, A std::pair containing the node's coordinates
+    /// @param id The node's id
+    /// @param coords A std::pair containing the node's coordinates
     Node(Id id, std::pair<double, double> coords);
     /// @brief Construct a new Node object
-    /// @param id, The node's id
-    /// @param coords, A std::pair containing the node's coordinates
-    /// @param queue, A std::queue containing the node's queue
+    /// @param id The node's id
+    /// @param coords A std::pair containing the node's coordinates
+    /// @param queue A std::queue containing the node's queue
     Node(Id id, std::pair<double, double> coords, std::queue<Id> queue);
 
     /// @brief Set the node's coordinates
-    /// @param coords, A std::pair containing the node's coordinates
+    /// @param coords A std::pair containing the node's coordinates
     void setCoords(std::pair<double, double> coords);
     /// @brief Set the node's queue
-    /// @param queue, A std::queue containing the node's queue
+    /// @param queue A std::queue containing the node's queue
     void setQueue(std::queue<Id> queue);
 
     /// @brief Get the node's id
-    /// @return Id, The node's id
+    /// @return Id The node's id
     Id id() const;
     /// @brief Get the node's coordinates
     /// @return std::pair<double,, double> A std::pair containing the node's coordinates
     const std::pair<double, double>& coords() const;
     /// @brief Get the node's queue
-    /// @return std::queue<Id>, A std::queue containing the node's queue
+    /// @return std::queue<Id> A std::queue containing the node's queue
     const std::queue<Id>& queue() const;
   };
 
