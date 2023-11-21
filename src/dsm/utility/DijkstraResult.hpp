@@ -28,10 +28,10 @@ namespace dsm {
     /// @brief Get the path
     /// @return A vector of the ids of the nodes in the path
     /// @details The path is represented by a vector of the ids of the nodes in the path.
-    const std::vector<Id>& getPath() const { return m_path; }
+    const std::vector<Id>& path() const { return m_path; }
     /// @brief Get the distance
     /// @return The distance of the path
-    double getDistance() const { return m_distance; }
+    double distance() const { return m_distance; }
   };
 };  // namespace dsm
 
