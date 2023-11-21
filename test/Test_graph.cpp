@@ -62,6 +62,25 @@ TEST_CASE("Graph") {
     CHECK_FALSE(graph.adjMatrix()->contains(1, 3));
   }
 
+  SUBCASE("Construction with addStreets") {
+    Street s1(1, std::make_pair(0, 1));
+    Street s2(2, std::make_pair(1, 2));
+    Street s3(3, std::make_pair(0, 2));
+    Street s4(4, std::make_pair(0, 3));
+    Street s5(5, std::make_pair(2, 3));
+    Graph graph;
+    graph.addStreets(s1, s2, s3, s4, s5);
+    graph.buildAdj();
+
+    CHECK_EQ(graph.streetSet().size(), 5);
+    CHECK_EQ(graph.nodeSet().size(), 4);
+    CHECK_EQ(graph.adjMatrix()->size(), 5);
+    CHECK(graph.adjMatrix()->contains(0, 1));
+    CHECK(graph.adjMatrix()->contains(1, 2));
+    CHECK(graph.adjMatrix()->contains(0, 2));
+    CHECK_FALSE(graph.adjMatrix()->contains(1, 3));
+  }
+
   SUBCASE("importAdj - dsm") {
     // This tests the importAdj function over .dsm files
     // GIVEN: a graph
