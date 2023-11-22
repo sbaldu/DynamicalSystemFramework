@@ -620,7 +620,7 @@ namespace dsm {
       }
       return;
     }
-    if(_rows == 1) {
+    if (_rows == 1) {
       this->_cols = index;
       auto copy = _matrix;
       for (const auto& it : copy) {
