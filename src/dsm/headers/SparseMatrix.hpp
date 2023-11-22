@@ -89,10 +89,10 @@ namespace dsm {
     void eraseColumn(Index index);
 
     /// @brief set to 0 all the elements in a row
-	void emptyRow(Index index);
+    void emptyRow(Index index);
 
     /// @brief set to 0 all the elements in a column
-	void emptyColumn(Index index);
+    void emptyColumn(Index index);
 
     /// @brief empty the matrix and set the dimensions to zero
     void clear();
