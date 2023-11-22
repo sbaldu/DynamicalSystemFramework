@@ -318,7 +318,6 @@ namespace dsm {
     prev[source] = std::numeric_limits<Id>::max();
     double distance{};
 
-    size_t previousSize{unvisitedNodes.size()};
     while (unvisitedNodes.size() != 0) {
       source = std::min_element(unvisitedNodes.begin(),
                                 unvisitedNodes.end(),
@@ -370,11 +369,6 @@ namespace dsm {
           prev[neighbour.first] = source;
         }
       }
-
-      if (unvisitedNodes.size() == previousSize) {
-        return std::nullopt;
-      }
-      previousSize = unvisitedNodes.size();
 
       adj.emptyColumn(source);
     }
