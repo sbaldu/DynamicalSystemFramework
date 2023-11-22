@@ -88,6 +88,12 @@ namespace dsm {
     /// @throw std::out_of_range if the index is out of range
     void eraseColumn(Index index);
 
+    /// @brief set to 0 all the elements in a row
+	void emptyRow(Index index);
+
+    /// @brief set to 0 all the elements in a column
+	void emptyColumn(Index index);
+
     /// @brief empty the matrix and set the dimensions to zero
     void clear();
 
@@ -369,6 +375,22 @@ namespace dsm {
     }
     --_cols;
     _matrix = new_matrix;
+  }
+
+  template <typename Index, typename T>
+    requires std::unsigned_integral<Index>
+  void SparseMatrix<Index, T>::emptyRow(Index index) {
+    for (Index i = 0; i < _cols; ++i) {
+      _matrix.erase(index * _cols + i);
+    }
+  }
+
+  template <typename Index, typename T>
+    requires std::unsigned_integral<Index>
+  void SparseMatrix<Index, T>::emptyColumn(Index index) {
+    for (Index i = 0; i < _rows; ++i) {
+      _matrix.erase(i * _cols + index);
+    }
   }
 
   template <typename Index, typename T>
