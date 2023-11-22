@@ -693,10 +693,10 @@ TEST_CASE("Boolean Matrix") {
     m.insert(0, 1, true);
     m.insert(1, 2, true);
     m.reshape(2);
-    // CHECK(m(0, 0));
-    // CHECK(m(0, 1));
-    // CHECK_THROWS(m(1, 2));
-    // CHECK(m.size() == 2);
+    CHECK(m(0, 0));
+    CHECK(m(0, 1));
+    CHECK_THROWS(m(1, 2));
+    CHECK(m.size() == 2);
   }
   SUBCASE("reshape in greater dimension") {
     /*
@@ -757,7 +757,7 @@ TEST_CASE("Boolean Matrix") {
     m.insert(0, true);
     m.insert_and_expand(3, true);
     CHECK(m(0));
-    CHECK(m(1));
+    CHECK(m(3));
     CHECK(m.size() == 2);
     CHECK(m.getRowDim() == 4);
     CHECK(m.getColDim() == 1);
