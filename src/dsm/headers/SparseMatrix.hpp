@@ -336,7 +336,7 @@ namespace dsm {
   void SparseMatrix<Index, T>::insert_and_expand(Index i, Index j, T value) {
     if (!(i < _rows) || !(j < _cols)) {
       Index delta = std::max(i - _rows, j - _cols);
-      if(_cols == 1) {
+      if (_cols == 1) {
         if (!((i + delta) < (_rows + delta))) {
           ++delta;
         }
