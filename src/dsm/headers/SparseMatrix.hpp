@@ -79,7 +79,7 @@ namespace dsm {
     void insert_and_expand(Index i, Index j, T value);
 
     /// @brief insert a value in the matrix and expand the matrix if necessary.
-    /// NOTE: this function will make the matrix square
+    /// NOTE: this function will make the matrix square if it is not a vector.
     /// @param i index
     /// @param value value to insert
     void insert_and_expand(Index index, T value);
@@ -353,6 +353,8 @@ namespace dsm {
     if (!(index < _rows * _cols)) {
       if (_cols == 1) {
         this->reshape(index + 1, 1);
+      } else if (_rows == 1) {
+        this->reshape(1, index + 1);
       } else {
         Index dim = std::ceil(std::sqrt(index));
         Index delta = std::max(dim - _rows, dim - _cols) + 1;
@@ -610,6 +612,16 @@ namespace dsm {
   void SparseMatrix<Index, T>::reshape(Index index) {
     if (_cols == 1) {
       this->_rows = index;
+      auto copy = _matrix;
+      for (const auto& it : copy) {
+        if (!(it.first < index)) {
+          _matrix.erase(it.first);
+        }
+      }
+      return;
+    }
+    if(_rows == 1) {
+      this->_cols = index;
       auto copy = _matrix;
       for (const auto& it : copy) {
         if (!(it.first < index)) {

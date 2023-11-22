@@ -753,6 +753,14 @@ TEST_CASE("Boolean Matrix") {
     CHECK(m.getColDim() == 5);
   }
   SUBCASE("insert_and_expand - column vector") {
+    /*
+    This test tests if the insert_and_expand function works correctly
+    The insert_and_expand function should insert a value in the matrix
+    and expand the matrix if necessary
+    GIVEN: the insert_and_expand function is called
+    WHEN: the function is called on a matrix
+    THEN: the function should insert a value in the matrix and expanding it
+    */
     SparseMatrix<uint16_t, bool> m(3);
     m.insert(0, true);
     m.insert_and_expand(3, true);
@@ -761,5 +769,24 @@ TEST_CASE("Boolean Matrix") {
     CHECK(m.size() == 2);
     CHECK(m.getRowDim() == 4);
     CHECK(m.getColDim() == 1);
+  }
+  SUBCASE("insert_and_expand - row vector") {
+    /*
+    This test tests if the insert_and_expand function works correctly
+    The insert_and_expand function should insert a value in the matrix
+    and expand the matrix if necessary
+    GIVEN: the insert_and_expand function is called
+    WHEN: the function is called on a matrix
+    THEN: the function should insert a value in the matrix and expanding it
+    */
+    SparseMatrix<uint16_t, bool> m(3);
+    m.insert(0, true);
+    auto t = ++m;
+    t.insert_and_expand(3, true);
+    CHECK(t(0));
+    CHECK(t(3));
+    CHECK(t.size() == 2);
+    CHECK(t.getRowDim() == 1);
+    CHECK(t.getColDim() == 4);
   }
 }
