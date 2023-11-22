@@ -29,11 +29,6 @@
 
 namespace dsm {
 
-  // Alias for shared pointers
-  template <typename T>
-  using shared = std::shared_ptr<T>;
-  using std::make_shared;
-
   /// @brief The Graph class represents a graph in the network.
   /// @tparam Id, The type of the graph's id. It must be an unsigned integral type.
   /// @tparam Size, The type of the graph's capacity. It must be an unsigned integral type.
@@ -41,9 +36,9 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   class Graph {
   private:
-    std::unordered_map<Id, shared<Node<Id>>> m_nodes;
-    std::unordered_map<Id, shared<Street<Id, Size>>> m_streets;
-    shared<SparseMatrix<Id, bool>> m_adjacency;
+  std::unordered_map<Id, std::shared_ptr<Node<Id>>> m_nodes;
+    std::unordered_map<Id, std::shared_ptr<Street<Id, Size>>> m_streets;
+    std::shared_ptr<SparseMatrix<Id, bool>> m_adjacency;
 
   public:
     Graph();
@@ -52,7 +47,7 @@ namespace dsm {
     Graph(const SparseMatrix<Id, bool>& adj);
     /// @brief Construct a new Graph object
     /// @param streetSet, A map of streets representing the graph's streets
-    Graph(const std::unordered_map<Id, shared<Street<Id, Size>>>& streetSet);
+    Graph(const std::unordered_map<Id, std::shared_ptr<Street<Id, Size>>>& streetSet);
 
     /// @brief Build the graph's adjacency matrix
     void buildAdj();
@@ -64,8 +59,8 @@ namespace dsm {
     void importAdj(const std::string& fileName);
 
     /// @brief Add a node to the graph
-    /// @param node, A std::shared_ptr to the node to add
-    void addNode(shared<Node<Id>> node);
+    /// @param node, A std::std::shared_ptr_ptr to the node to add
+    void addNode(std::shared_ptr<Node<Id>> node);
     /// @brief Add a node to the graph
     /// @param node, A reference to the node to add
     void addNode(const Node<Id>& node);
@@ -80,7 +75,7 @@ namespace dsm {
 
     /// @brief Add a street to the graph
     /// @param street, A std::shared_ptr to the street to add
-    void addStreet(shared<Street<Id, Size>> street);
+    void addStreet(std::shared_ptr<Street<Id, Size>> street);
     /// @brief Add a street to the graph
     /// @param street, A reference to the street to add
     void addStreet(const Street<Id, Size>& street);
@@ -95,13 +90,13 @@ namespace dsm {
 
     /// @brief Get the graph's adjacency matrix
     /// @return A std::shared_ptr to the graph's adjacency matrix
-    shared<SparseMatrix<Id, bool>> adjMatrix() const;
+    std::shared_ptr<SparseMatrix<Id, bool>> adjMatrix() const;
     /// @brief Get the graph's node map
     /// @return A std::unordered_map containing the graph's nodes
-    std::unordered_map<Id, shared<Node<Id>>> nodeSet() const;
+    std::unordered_map<Id, std::shared_ptr<Node<Id>>> nodeSet() const;
     /// @brief Get the graph's street map
     /// @return A std::unordered_map containing the graph's streets
-    std::unordered_map<Id, shared<Street<Id, Size>>> streetSet() const;
+    std::unordered_map<Id, std::shared_ptr<Street<Id, Size>>> streetSet() const;
   };
 
   template <typename Id, typename Size>
@@ -124,7 +119,7 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  Graph<Id, Size>::Graph(const std::unordered_map<Id, shared<Street<Id, Size>>>& streetSet)
+  Graph<Id, Size>::Graph(const std::unordered_map<Id, std::shared_ptr<Street<Id, Size>>>& streetSet)
       : m_adjacency{make_shared<SparseMatrix<Id, bool>>()} {
     for (const auto& street : streetSet) {
       m_streets.insert(std::make_pair(street->id(), street));
@@ -191,7 +186,7 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Graph<Id, Size>::addNode(shared<Node<Id>> node) {
+  void Graph<Id, Size>::addNode(std::shared_ptr<Node<Id>> node) {
     m_nodes.insert(std::make_pair(node->id(), node));
   }
 
@@ -218,7 +213,7 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Graph<Id, Size>::addStreet(shared<Street<Id, Size>> street) {
+  void Graph<Id, Size>::addStreet(std::shared_ptr<Street<Id, Size>> street) {
     // insert street
     m_streets.insert(std::make_pair(street->id(), street));
     // insert nodes
@@ -265,19 +260,19 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  shared<SparseMatrix<Id, bool>> Graph<Id, Size>::adjMatrix() const {
+  std::shared_ptr<SparseMatrix<Id, bool>> Graph<Id, Size>::adjMatrix() const {
     return m_adjacency;
   }
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  std::unordered_map<Id, shared<Node<Id>>> Graph<Id, Size>::nodeSet() const {
+  std::unordered_map<Id, std::shared_ptr<Node<Id>>> Graph<Id, Size>::nodeSet() const {
     return m_nodes;
   }
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  std::unordered_map<Id, shared<Street<Id, Size>>> Graph<Id, Size>::streetSet() const {
+  std::unordered_map<Id, std::shared_ptr<Street<Id, Size>>> Graph<Id, Size>::streetSet() const {
     return m_streets;
   }
 };  // namespace dsm
