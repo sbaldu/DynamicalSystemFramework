@@ -78,12 +78,6 @@ namespace dsm {
     /// @param value value to insert
     void insert_and_expand(Index i, Index j, T value);
 
-    /// @brief insert a value in the matrix and expand the matrix if necessary.
-    /// NOTE: this function will make the matrix square if it is not a vector.
-    /// @param i index
-    /// @param value value to insert
-    void insert_and_expand(Index index, T value);
-
     /// @brief remove a value from the matrix
     /// @param i row index
     /// @param j column index
@@ -341,27 +335,20 @@ namespace dsm {
     requires std::unsigned_integral<Index>
   void SparseMatrix<Index, T>::insert_and_expand(Index i, Index j, T value) {
     if (!(i < _rows) || !(j < _cols)) {
-      Index delta = std::max(i - _rows, j - _cols) + 1;
-      this->reshape(_rows + delta, _cols + delta);
-    }
-    _matrix.insert_or_assign(i * _cols + j, value);
-  }
-
-  template <typename Index, typename T>
-    requires std::unsigned_integral<Index>
-  void SparseMatrix<Index, T>::insert_and_expand(Index index, T value) {
-    if (!(index < _rows * _cols)) {
-      if (_cols == 1) {
-        this->reshape(index + 1, 1);
-      } else if (_rows == 1) {
-        this->reshape(1, index + 1);
+      Index delta = std::max(i - _rows, j - _cols);
+      if(_cols == 1) {
+        if (!((i + delta) < (_rows + delta))) {
+          ++delta;
+        }
+        this->reshape(_rows + delta);
       } else {
-        Index dim = std::ceil(std::sqrt(index));
-        Index delta = std::max(dim - _rows, dim - _cols) + 1;
+        if (!((i * (_cols + delta) + j) < (_rows + delta) * (_cols + delta))) {
+          ++delta;
+        }
         this->reshape(_rows + delta, _cols + delta);
       }
     }
-    _matrix.insert_or_assign(index, value);
+    _matrix.insert_or_assign(i * _cols + j, value);
   }
 
   template <typename Index, typename T>
@@ -595,7 +582,7 @@ namespace dsm {
   template <typename Index, typename T>
     requires std::unsigned_integral<Index>
   void SparseMatrix<Index, T>::reshape(Index rows, Index cols) {
-    auto oldCols = this->_cols;
+    Index oldCols = this->_cols;
     this->_rows = rows;
     this->_cols = cols;
     auto copy = _matrix;
@@ -610,34 +597,13 @@ namespace dsm {
   template <typename Index, typename T>
     requires std::unsigned_integral<Index>
   void SparseMatrix<Index, T>::reshape(Index index) {
-    if (_cols == 1) {
-      this->_rows = index;
-      auto copy = _matrix;
-      for (const auto& it : copy) {
-        if (!(it.first < index)) {
-          _matrix.erase(it.first);
-        }
-      }
-      return;
-    }
-    if (_rows == 1) {
-      this->_cols = index;
-      auto copy = _matrix;
-      for (const auto& it : copy) {
-        if (!(it.first < index)) {
-          _matrix.erase(it.first);
-        }
-      }
-      return;
-    }
-    Index oldCols = this->_cols;
     this->_rows = index;
-    this->_cols = index;
+    this->_cols = 1;
     auto copy = _matrix;
     for (auto& it : copy) {
       _matrix.erase(it.first);
-      if (it.first < index * index) {
-        this->insert_or_assign(it.first / oldCols, it.first % oldCols, it.second);
+      if (it.first < index) {
+        this->insert_or_assign(it.first, it.second);
       }
     }
   }
