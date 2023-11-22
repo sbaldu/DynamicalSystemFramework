@@ -79,9 +79,10 @@ namespace dsm {
     void insert_and_expand(Index i, Index j, T value);
 
     /// @brief insert a value in the matrix and expand the matrix if necessary.
+    /// NOTE: this function will make the matrix square
     /// @param i index
     /// @param value value to insert
-    void insert_and_expand(Index i, T value);
+    void insert_and_expand(Index index, T value);
 
     /// @brief remove a value from the matrix
     /// @param i row index
