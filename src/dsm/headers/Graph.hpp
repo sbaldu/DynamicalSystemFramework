@@ -13,6 +13,7 @@
 #include <concepts>
 #include <limits>
 #include <memory>
+#include <optional>
 #include <ranges>
 #include <unordered_map>
 #include <unordered_set>
@@ -296,9 +297,14 @@ namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   std::optional<DijkstraResult<Id>> Graph<Id, Size>::dijkstra(Id source, Id destination) const {
-    const size_t n_nodes{m_nodes.size()};
-
     std::unordered_map<Id, shared<Node<Id>>> unvisitedNodes{m_nodes};
+    if (!unvisitedNodes.contains(source)) {
+      return std::nullopt;
+    }
+
+    const size_t n_nodes{m_nodes.size()};
+    auto adj{*m_adjacency};
+
     std::unordered_set<Id> visitedNodes;
     std::vector<std::pair<Id, double>> dist(n_nodes);
     std::for_each(dist.begin(), dist.end(), [count = 0](auto& element) mutable -> void {
@@ -308,40 +314,69 @@ namespace dsm {
     });
     dist[source] = std::make_pair(source, 0.);
 
-    std::vector<Id> path;
+    std::vector<Id> prev(n_nodes);
+    prev[source] = std::numeric_limits<Id>::max();
     double distance{};
+
+    size_t previousSize{unvisitedNodes.size()};
     while (unvisitedNodes.size() != 0) {
-      source = std::min_element(
-                   unvisitedNodes.begin(),
-                   unvisitedNodes.end(),
-                   [&dist](const auto& a, const auto& b) -> bool { return dist[a.first] < dist[b.first]; })
+      source = std::min_element(unvisitedNodes.begin(),
+                                unvisitedNodes.end(),
+                                [&dist](const auto& a, const auto& b) -> bool {
+                                  return dist[a.first].second < dist[b.first].second;
+                                })
                    ->first;
       distance = dist[source].second;
       unvisitedNodes.erase(source);
       visitedNodes.insert(source);
-      path.push_back(source);
 
-      // If the destination is reached, return the path
+      // if the destination is reached, return the path
       if (source == destination) {
+        std::vector<Id> path{source};
+        Id previous{source};
+        while (true) {
+          previous = prev[previous];
+          if (previous == std::numeric_limits<Id>::max()) {
+            break;
+          }
+          path.push_back(previous);
+        }
+        std::reverse(path.begin(), path.end());
         return DijkstraResult<Id>(path, distance);
       }
 
-      for (const auto& neighbour : m_adjacency->getRow(source)) {
-        // If the node has already been visited, skip it
+      const auto& neighbors{adj.getRow(source)};
+      // if the node is isolated, stop the algorithm
+      if (neighbors.size() == 0) {
+        return std::nullopt;
+      }
+
+      for (const auto& neighbour : neighbors) {
+        // if the node has already been visited, skip it
         if (visitedNodes.find(neighbour.first) != visitedNodes.end()) {
           continue;
         }
 
-        double streetLength{
-            std::find_if(m_streets.cbegin(), m_streets.cend(), [source, &neighbour](const auto& street) -> bool {
-              return street.second->nodePair().first == source &&
-                     street.second->nodePair().second == neighbour.first;
-            })->second->length()};
-        // If current path is shorter than the previous one, update the distance
+        double streetLength{std::find_if(m_streets.cbegin(),
+                                         m_streets.cend(),
+                                         [source, &neighbour](const auto& street) -> bool {
+                                           return street.second->nodePair().first == source &&
+                                                  street.second->nodePair().second == neighbour.first;
+                                         })
+                                ->second->length()};
+        // if current path is shorter than the previous one, update the distance
         if (streetLength + dist[source].second < dist[neighbour.first].second) {
           dist[neighbour.first].second = streetLength + dist[source].second;
+          prev[neighbour.first] = source;
         }
       }
+
+      if (unvisitedNodes.size() == previousSize) {
+        return std::nullopt;
+      }
+      previousSize = unvisitedNodes.size();
+
+      adj.emptyColumn(source);
     }
 
     return std::nullopt;
