@@ -1,3 +1,5 @@
+
+#include <cassert>
 #include <cstdint>
 
 #include "Graph.hpp"
@@ -10,6 +12,22 @@
 using Graph = dsm::Graph<uint16_t, uint16_t>;
 using SparseMatrix = dsm::SparseMatrix<uint16_t, bool>;
 using Street = dsm::Street<uint16_t, uint16_t>;
+using Path = std::vector<uint16_t>;
+
+template <typename T1, typename T2>
+bool checkPath(const std::vector<T1>& path1, const std::vector<T2>& path2) {
+  const size_t length{path1.size()};
+  assert(length == path2.size());
+
+  bool equal{true};
+  for (size_t i{}; i < length; ++i) {
+	if (path1[i] != path2[i]) {
+	  equal = false;
+	}
+  }
+
+  return equal;
+}
 
 TEST_CASE("Graph") {
   SUBCASE("Constructor_1") {
