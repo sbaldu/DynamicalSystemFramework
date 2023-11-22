@@ -17,6 +17,7 @@
 #include <typeinfo>
 #include <unordered_map>
 #include <vector>
+#include <cmath>
 
 namespace dsm {
   /// @brief The SparseMatrix class represents a sparse matrix.
@@ -71,12 +72,29 @@ namespace dsm {
     /// @throw std::out_of_range if the index is out of range
     void insert_or_assign(Index index, T value);
 
+    /// @brief insert a value in the matrix and expand the matrix if necessary.
+    /// @param i row index
+    /// @param j column index
+    /// @param value value to insert
+    void insert_and_expand(Index i, Index j, T value);
+
+    /// @brief insert a value in the matrix and expand the matrix if necessary.
+    /// @param i index
+    /// @param value value to insert
+    void insert_and_expand(Index i, T value);
+
     /// @brief remove a value from the matrix
     /// @param i row index
     /// @param j column index
     /// @throw std::out_of_range if the index is out of range
     /// @throw std::runtime_error if the element is not found
     void erase(Index i, Index j);
+
+    /// @brief remove a value from the matrix
+    /// @param index index in vectorial form
+    /// @throw std::out_of_range if the index is out of range
+    /// @throw std::runtime_error if the element is not found
+    void erase(Index index);
 
     /// @brief remove a row from the matrix
     /// @param index row index
@@ -320,6 +338,27 @@ namespace dsm {
 
   template <typename Index, typename T>
     requires std::unsigned_integral<Index>
+  void SparseMatrix<Index, T>::insert_and_expand(Index i, Index j, T value) {
+    if (!(i < _rows) || !(j < _cols)) {
+      Index delta = std::max(i - _rows, j - _cols) + 1;
+      this->reshape(_rows + delta, _cols + delta);
+    }
+    _matrix.insert_or_assign(i * _cols + j, value);
+  }
+
+  template <typename Index, typename T>
+    requires std::unsigned_integral<Index>
+  void SparseMatrix<Index, T>::insert_and_expand(Index index, T value) {
+    if (!(index < _rows * _cols)) {
+      Index dim = std::ceil(std::sqrt(index));
+      Index delta = std::max(dim - _rows, dim - _cols) + 1;
+      this->reshape(_rows + delta, _cols + delta);
+    }
+    _matrix.insert_or_assign(index, value);
+  }
+
+  template <typename Index, typename T>
+    requires std::unsigned_integral<Index>
   void SparseMatrix<Index, T>::erase(Index i, Index j) {
     if (i >= _rows || j >= _cols) {
       throw std::out_of_range("Index out of range");
@@ -327,6 +366,16 @@ namespace dsm {
     _matrix.find(i * _cols + j) != _matrix.end()
         ? _matrix.erase(i * _cols + j)
         : throw std::runtime_error("SparseMatrix: element not found");
+  }
+
+  template <typename Index, typename T>
+    requires std::unsigned_integral<Index>
+  void SparseMatrix<Index, T>::erase(Index index) {
+    if (index > _rows * _cols - 1) {
+      throw std::out_of_range("Index out of range");
+    }
+    _matrix.find(index) != _matrix.end() ? _matrix.erase(index)
+                                         : throw std::runtime_error("SparseMatrix: element not found");
   }
 
   template <typename Index, typename T>
@@ -539,12 +588,14 @@ namespace dsm {
   template <typename Index, typename T>
     requires std::unsigned_integral<Index>
   void SparseMatrix<Index, T>::reshape(Index rows, Index cols) {
+    auto oldCols = this->_cols;
     this->_rows = rows;
     this->_cols = cols;
     auto copy = _matrix;
     for (auto& it : copy) {
-      if (it.first > rows * cols - 1) {
-        _matrix.erase(it.first);
+      _matrix.erase(it.first);
+      if (!(it.first > rows * cols - 1)) {
+        this->insert_or_assign(it.first / oldCols, it.first % oldCols, it.second);
       }
     }
   }
@@ -552,12 +603,14 @@ namespace dsm {
   template <typename Index, typename T>
     requires std::unsigned_integral<Index>
   void SparseMatrix<Index, T>::reshape(Index dim) {
+    auto oldCols = this->_cols;
     this->_rows = dim;
     this->_cols = dim;
     auto copy = _matrix;
     for (auto& it : copy) {
-      if (it.first > dim * dim - 1) {
-        _matrix.erase(it.first);
+      _matrix.erase(it.first);
+      if (!(it.first > dim * dim - 1)) {
+        this->insert_or_assign(it.first / oldCols, it.first % oldCols, it.second);
       }
     }
   }

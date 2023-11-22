@@ -698,4 +698,58 @@ TEST_CASE("Boolean Matrix") {
     CHECK_THROWS(m(1, 2));
     CHECK(m.size() == 2);
   }
+  SUBCASE("reshape in greater dimension") {
+    /*
+    The reshape function should reshape the matrix
+    GIVEN: the reshape function is called
+    WHEN: the function is called on a matrix
+    THEN: the function should reshape the matrix
+    */
+    SparseMatrix<uint16_t, bool> m(3, 3);
+    m.insert(0, 0, true);
+    m.insert(0, 1, true);
+    m.insert(1, 2, true);
+    m.reshape(4, 4);
+    CHECK(m(0, 0));
+    CHECK(m(0, 1));
+    CHECK(m(1, 2));
+  }
+  SUBCASE("insert_and_expand") {
+    /*
+    The insert_and_expand function should insert a value in the matrix
+    and expand the matrix if necessary
+    GIVEN: the insert_and_expand function is called
+    WHEN: the function is called on a matrix
+    THEN: the function should insert a value in the matrix and expanding it
+    */
+    SparseMatrix<uint16_t, bool> m(3, 3);
+    m.insert(0, 0, true);
+    m.insert(1, 2, true);
+    m.insert_and_expand(3, 3, true);
+    CHECK(m(0, 0));
+    CHECK(m(1, 2));
+    CHECK(m(3, 3));
+    CHECK(m.size() == 3);
+    CHECK(m.getRowDim() == 4);
+    CHECK(m.getColDim() == 4);
+  }
+  SUBCASE("insert_and_expand with one parameter") {
+    /*
+    The insert_and_expand function should insert a value in the matrix
+    and expand the matrix if necessary
+    GIVEN: the insert_and_expand function is called
+    WHEN: the function is called on a matrix
+    THEN: the function should insert a value in the matrix and expanding it
+    */
+    SparseMatrix<uint16_t, bool> m(3, 3);
+    m.insert(0, 0, true);
+    m.insert(1, 2, true);
+    m.insert_and_expand(16, true);
+    CHECK(m(0, 0));
+    CHECK(m(1, 2));
+    CHECK(m(16));
+    CHECK(m.size() == 3);
+    CHECK(m.getRowDim() == 5);
+    CHECK(m.getColDim() == 5);
+  }
 }
