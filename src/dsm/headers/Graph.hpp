@@ -36,7 +36,7 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   class Graph {
   private:
-  std::unordered_map<Id, std::shared_ptr<Node<Id>>> m_nodes;
+    std::unordered_map<Id, std::shared_ptr<Node<Id>>> m_nodes;
     std::unordered_map<Id, std::shared_ptr<Street<Id, Size>>> m_streets;
     std::shared_ptr<SparseMatrix<Id, bool>> m_adjacency;
 
