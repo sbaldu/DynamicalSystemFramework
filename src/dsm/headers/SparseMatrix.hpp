@@ -351,9 +351,13 @@ namespace dsm {
     requires std::unsigned_integral<Index>
   void SparseMatrix<Index, T>::insert_and_expand(Index index, T value) {
     if (!(index < _rows * _cols)) {
+      if(_cols == 1) {
+        this->reshape(index, 1);
+      } else {
       Index dim = std::ceil(std::sqrt(index));
       Index delta = std::max(dim - _rows, dim - _cols) + 1;
       this->reshape(_rows + delta, _cols + delta);
+      }
     }
     _matrix.insert_or_assign(index, value);
   }
@@ -603,14 +607,24 @@ namespace dsm {
 
   template <typename Index, typename T>
     requires std::unsigned_integral<Index>
-  void SparseMatrix<Index, T>::reshape(Index dim) {
-    auto oldCols = this->_cols;
-    this->_rows = dim;
-    this->_cols = dim;
+  void SparseMatrix<Index, T>::reshape(Index index) {
+    if(_cols == 1) {
+      this->_rows = index;
+      auto copy = _matrix;
+      for (const auto& it : copy) {
+        if(!(it.first < index)) {
+          _matrix.erase(it.first);
+        }
+      }
+      return;
+    }
+    Index oldCols = this->_cols;
+    this->_rows = index;
+    this->_cols = index;
     auto copy = _matrix;
     for (auto& it : copy) {
       _matrix.erase(it.first);
-      if (!(it.first > dim * dim - 1)) {
+      if (it.first > index * index - 1) {
         this->insert_or_assign(it.first / oldCols, it.first % oldCols, it.second);
       }
     }
