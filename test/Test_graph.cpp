@@ -138,11 +138,17 @@ TEST_CASE("Dijkstra") {
     graph.addStreets(s1,s2,s3,s4,s5);
     graph.buildAdj();
     auto result = graph.dijkstra(0, 1);
-    CHECK(result.value().getPath().size() == 2);
-    CHECK(result.value().getDistance() == 3.);
+	Path correctPath{0, 1};
+	CHECK(result.has_value());
+    CHECK_EQ(result.value().path().size(), 2);
+	CHECK(checkPath(result.value().path(), correctPath));
+    CHECK_EQ(result.value().distance(), 3.);
     result = graph.dijkstra(0, 2);
-    CHECK(result.value().getPath().size() == 3);
-    CHECK(result.value().getDistance() == 5.);
+	correctPath = Path{0,1,2};
+	CHECK(result.has_value());
+    CHECK_EQ(result.value().path().size(), 3);
+	CHECK(checkPath(result.value().path(), correctPath));
+    CHECK_EQ(result.value().distance(), 5.);
   }
 
   SUBCASE("Case 2") {
@@ -153,6 +159,11 @@ TEST_CASE("Dijkstra") {
 	graph.addStreets(s1,s2,s3);
 	graph.buildAdj();
 	auto result = graph.dijkstra(0, 2);
+	Path correctPath{0, 1, 2};
+	CHECK(result.has_value());
+    CHECK_EQ(result.value().path().size(), 3);
+	CHECK(checkPath(result.value().path(), correctPath));
+    CHECK_EQ(result.value().distance(), 2.);
   }
   
   SUBCASE("Case 3") {
@@ -163,6 +174,11 @@ TEST_CASE("Dijkstra") {
 	graph.addStreets(s1,s2,s3);
 	graph.buildAdj();
 	auto result = graph.dijkstra(0, 2);
+	Path correctPath{0, 2};
+	CHECK(result.has_value());
+    CHECK_EQ(result.value().path().size(), 2);
+	CHECK(checkPath(result.value().path(), correctPath));
+    CHECK_EQ(result.value().distance(), 6.);
   }
 
   SUBCASE("Case 4") {
@@ -173,19 +189,40 @@ TEST_CASE("Dijkstra") {
 	Street s5(4, 5, 1., std::make_pair(1, 4));
 	Street s6(5, 5, 5., std::make_pair(1, 3));
 	Street s7(6, 5, 7., std::make_pair(3, 4));
-	Street s8(0, 5, 3., std::make_pair(1, 0));
-	Street s9(1, 5, 1., std::make_pair(2, 0));
-	Street s10(2, 5, 7., std::make_pair(2, 1));
-	Street s11(3, 5, 2., std::make_pair(3, 2));
-	Street s12(4, 5, 1., std::make_pair(4, 1));
-	Street s13(5, 5, 5., std::make_pair(3, 1));
-	Street s14(6, 5, 7., std::make_pair(4, 3));
+	Street s8(7, 5, 3., std::make_pair(1, 0));
+	Street s9(8, 5, 1., std::make_pair(2, 0));
+	Street s10(9, 5, 7., std::make_pair(2, 1));
+	Street s11(10, 5, 2., std::make_pair(3, 2));
+	Street s12(11, 5, 1., std::make_pair(4, 1));
+	Street s13(12, 5, 5., std::make_pair(3, 1));
+	Street s14(13, 5, 7., std::make_pair(4, 3));
 	Graph graph{};
 	graph.addStreets(s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14);
 	graph.buildAdj();
 	auto result = graph.dijkstra(2, 4);
+	Path correctPath{2, 0, 1, 4};
+	CHECK(result.has_value());
+    CHECK_EQ(result.value().path().size(), 4);
+	CHECK(checkPath(result.value().path(), correctPath));
+    CHECK_EQ(result.value().distance(), 5.);
+	result = graph.dijkstra(2, 0);
+	correctPath = Path{2, 0};
+	CHECK(result.has_value());
+    CHECK_EQ(result.value().path().size(), 2);
+	CHECK(checkPath(result.value().path(), correctPath));
+    CHECK_EQ(result.value().distance(), 1.);
 	result = graph.dijkstra(2, 1);
+	correctPath = Path{2, 0, 1};
+	CHECK(result.has_value());
+    CHECK_EQ(result.value().path().size(), 3);
+	CHECK(checkPath(result.value().path(), correctPath));
+    CHECK_EQ(result.value().distance(), 4.);
 	result = graph.dijkstra(2, 3);
+	correctPath = Path{2, 3};
+	CHECK(result.has_value());
+    CHECK_EQ(result.value().path().size(), 2);
+	CHECK(checkPath(result.value().path(), correctPath));
+    CHECK_EQ(result.value().distance(), 2.);
   }
 
   SUBCASE("Case 5") {
@@ -196,25 +233,61 @@ TEST_CASE("Dijkstra") {
 	Street s5(4, 5, 15., std::make_pair(3, 5));
 	Street s6(5, 5, 10., std::make_pair(3, 4));
 	Street s7(6, 5, 6., std::make_pair(4, 5));
-	Street s8(0, 5, 2., std::make_pair(4, 6));
-	Street s9(1, 5, 6., std::make_pair(5, 6));
-	Street s10(0, 5, 2., std::make_pair(1, 0));
-	Street s11(1, 5, 6., std::make_pair(2, 0));
-	Street s12(2, 5, 5., std::make_pair(3, 1));
-	Street s13(3, 5, 8., std::make_pair(3, 2));
-	Street s14(4, 5, 15., std::make_pair(5, 3));
-	Street s15(5, 5, 10., std::make_pair(4, 3));
-	Street s16(6, 5, 6., std::make_pair(5, 4));
-	Street s17(0, 5, 2., std::make_pair(6, 4));
-	Street s18(1, 5, 6., std::make_pair(6, 5));
+	Street s8(7, 5, 2., std::make_pair(4, 6));
+	Street s9(8, 5, 6., std::make_pair(5, 6));
+	Street s10(9, 5, 2., std::make_pair(1, 0));
+	Street s11(10, 5, 6., std::make_pair(2, 0));
+	Street s12(11, 5, 5., std::make_pair(3, 1));
+	Street s13(12, 5, 8., std::make_pair(3, 2));
+	Street s14(13, 5, 15., std::make_pair(5, 3));
+	Street s15(14, 5, 10., std::make_pair(4, 3));
+	Street s16(15, 5, 6., std::make_pair(5, 4));
+	Street s17(16, 5, 2., std::make_pair(6, 4));
+	Street s18(17, 5, 6., std::make_pair(6, 5));
 	Graph graph{};
 	graph.addStreets(s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15,s16,s17,s18);
 	graph.buildAdj();
-	auto result = graph.dijkstra(0, 2);
+	auto result = graph.dijkstra(0, 1);
+	Path correctPath{0, 1};
+	CHECK(result.has_value());
+    CHECK_EQ(result.value().path().size(), 2);
+	CHECK(checkPath(result.value().path(), correctPath));
+    CHECK_EQ(result.value().distance(), 2.);
+
+	result = graph.dijkstra(0, 2);
+	correctPath = Path{0, 2};
+	CHECK(result.has_value());
+    CHECK_EQ(result.value().path().size(), 2);
+	CHECK(checkPath(result.value().path(), correctPath));
+    CHECK_EQ(result.value().distance(), 6.);
+
 	result = graph.dijkstra(0, 3);
+	correctPath = Path{0, 1, 3};
+	CHECK(result.has_value());
+    CHECK_EQ(result.value().path().size(), 3);
+	CHECK(checkPath(result.value().path(), correctPath));
+    CHECK_EQ(result.value().distance(), 7.);
+
 	result = graph.dijkstra(0, 4);
+	correctPath = Path{0, 1, 3, 4};
+	CHECK(result.has_value());
+    CHECK_EQ(result.value().path().size(), 4);
+	CHECK(checkPath(result.value().path(), correctPath));
+    CHECK_EQ(result.value().distance(), 17.);
+
 	result = graph.dijkstra(0, 5);
+	correctPath = Path{0, 1, 3, 5};
+	CHECK(result.has_value());
+    CHECK_EQ(result.value().path().size(), 4);
+	CHECK(checkPath(result.value().path(), correctPath));
+    CHECK_EQ(result.value().distance(), 22.);
+
 	result = graph.dijkstra(0, 6);
+	correctPath = Path{0, 1, 3, 4, 6};
+	CHECK(result.has_value());
+    CHECK_EQ(result.value().path().size(), 5);
+	CHECK(checkPath(result.value().path(), correctPath));
+    CHECK_EQ(result.value().distance(), 19.);
   }
 
   SUBCASE("Case 6") {
@@ -225,26 +298,32 @@ TEST_CASE("Dijkstra") {
 	Street s5(4, 5, 10., std::make_pair(1, 2));
 	Street s6(5, 5, 11., std::make_pair(2, 3));
 	Street s7(6, 5, 2., std::make_pair(2, 5));
-	Street s8(0, 5, 6., std::make_pair(3, 4));
-	Street s9(1, 5, 9., std::make_pair(5, 4));
-	Street s10(0, 5, 7., std::make_pair(1, 0));
-	Street s11(1, 5, 9., std::make_pair(2, 0));
-	Street s12(2, 5, 14., std::make_pair(5, 0));
-	Street s13(3, 5, 15., std::make_pair(3, 1));
-	Street s14(4, 5, 10., std::make_pair(2, 1));
-	Street s15(5, 5, 11., std::make_pair(3, 2));
-	Street s16(6, 5, 2., std::make_pair(5, 2));
-	Street s17(0, 5, 6., std::make_pair(4, 3));
-	Street s18(1, 5, 9., std::make_pair(4, 5));
+	Street s8(7, 5, 6., std::make_pair(3, 4));
+	Street s9(8, 5, 9., std::make_pair(5, 4));
+	Street s10(9, 5, 7., std::make_pair(1, 0));
+	Street s11(10, 5, 9., std::make_pair(2, 0));
+	Street s12(11, 5, 14., std::make_pair(5, 0));
+	Street s13(12, 5, 15., std::make_pair(3, 1));
+	Street s14(13, 5, 10., std::make_pair(2, 1));
+	Street s15(14, 5, 11., std::make_pair(3, 2));
+	Street s16(15, 5, 2., std::make_pair(5, 2));
+	Street s17(16, 5, 6., std::make_pair(4, 3));
+	Street s18(17, 5, 9., std::make_pair(4, 5));
 	Graph graph{};
 	graph.addStreets(s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15,s16,s17,s18);
 	graph.buildAdj();
 	auto result = graph.dijkstra(0, 4);
+	Path correctPath{0, 2, 5, 4};
+	CHECK(result.has_value());
+    CHECK_EQ(result.value().path().size(), 4);
+	CHECK(checkPath(result.value().path(), correctPath));
+    CHECK_EQ(result.value().distance(), 20.);
   }
 
   SUBCASE("Case 7") {
 	Street s1(0, 5, 1., std::make_pair(1, 2));
 	Street s2(1, 5, 6., std::make_pair(0, 2));
+	Street s3(2, 5, 6., std::make_pair(2, 0));
 	Graph graph{};
 	graph.addStreets(s1,s2,s3);
 	graph.buildAdj();
