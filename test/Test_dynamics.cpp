@@ -6,7 +6,6 @@
 #include "Street.hpp"
 #include "SparseMatrix.hpp"
 
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
 
 using Dynamics = dsm::FirstOrderDynamics<uint16_t, uint16_t, uint16_t>;
@@ -25,6 +24,7 @@ TEST_CASE("Dynamics") {
         Dynamics dynamics(graph);
         CHECK(dynamics.graph().nodeSet().size() == 3);
         CHECK(dynamics.graph().streetSet().size() == 4);
+        CHECK(dynamics.meanSpeed() == 0.);
     }
     SUBCASE("AddRandomAgents") {
         /// GIVEN: an itineary
