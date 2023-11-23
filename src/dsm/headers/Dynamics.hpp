@@ -154,6 +154,12 @@ namespace dsm {
     /// @brief Get the mean speed of the agents
     /// @return double, The mean speed of the agents
     double meanSpeed() const;
+    /// @brief Get the mean density of the streets
+    /// @return double, The mean density of the streets
+    double meanDensity() const;
+    /// @brief Get the mean flow of the streets
+    /// @return double, The mean flow of the streets
+    double meanFlow() const;
   };
 
   template <typename Id, typename Size, typename Delay>
@@ -376,6 +382,23 @@ namespace dsm {
                            0.,
                            [](double sum, const auto& agent) { return sum + agent->speed(); }) /
            m_agents.size();
+  }
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>)
+  double Dynamics<Id, Size, Delay>::meanDensity() const {
+    if (m_graph->streetSet().size() == 0) {
+      return 0.;
+    }
+    return std::accumulate(m_graph->streetSet().cbegin(),
+                           m_graph->streetSet().cend(),
+                           0.,
+                           [](double sum, const auto& street) { return sum + street.second->density(); }) /
+           m_graph->streetSet().size();
+  }
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>)
+  double Dynamics<Id, Size, Delay>::meanFlow() const {
+    return this->meanDensity() * this->meanSpeed();
   }
 
   template <typename Id, typename Size, typename Delay>

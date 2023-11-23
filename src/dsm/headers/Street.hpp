@@ -120,7 +120,7 @@ namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   Street<Id, Size>::Street(Id index, std::pair<Id, Id> pair)
-      : m_nodePair{std::move(pair)}, m_maxSpeed{30.}, m_id{index}, m_size{0} {}
+      : m_nodePair{std::move(pair)}, m_maxSpeed{30.}, m_id{index}, m_size{0}, m_capacity{1} {}
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)

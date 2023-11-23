@@ -25,6 +25,8 @@ TEST_CASE("Dynamics") {
         CHECK(dynamics.graph().nodeSet().size() == 3);
         CHECK(dynamics.graph().streetSet().size() == 4);
         CHECK(dynamics.meanSpeed() == 0.);
+        CHECK(dynamics.meanDensity() == 0.);
+        CHECK(dynamics.meanFlow() == 0.);
     }
     SUBCASE("AddRandomAgents") {
         /// GIVEN: an itineary
