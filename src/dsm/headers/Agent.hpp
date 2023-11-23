@@ -117,8 +117,8 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
   void Agent<Id, Size, Delay>::setSpeed(double speed) {
     if (speed < 0) {
-      std::string errorMsg = "Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                             "Speed must be positive";
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                           "Speed must be positive"};
       throw std::invalid_argument(errorMsg);
     }
     m_speed = speed;
@@ -134,8 +134,8 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
   void Agent<Id, Size, Delay>::incrementTime() {
     if (m_time == std::numeric_limits<unsigned int>::max()) {
-      std::string errorMsg = "Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                             "Time has reached its maximum value";
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                           "Time has reached its maximum value"};
       throw std::overflow_error(errorMsg);
     }
     ++m_time;
@@ -145,8 +145,8 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
   void Agent<Id, Size, Delay>::incrementTime(unsigned int time) {
     if (m_time + time < m_time) {
-      std::string errorMsg = "Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                             "Time has reached its maximum value";
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                           "Time has reached its maximum value"};
       throw std::overflow_error(errorMsg);
     }
     m_time += time;

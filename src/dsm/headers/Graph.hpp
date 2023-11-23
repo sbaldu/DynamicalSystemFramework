@@ -59,7 +59,7 @@ namespace dsm {
 
     /// @brief Import the graph's adjacency matrix from a file
     /// @param fileName, The name of the file to import the adjacency matrix from.
-    /// @throws std::invalid_argument if the file is not found or the format is not supported
+    /// @throws std::invalid_argument if the file is not found, invalid or the format is not supported
     /// The matrix format is deduced from the file extension. Currently only .dsm files are supported.
     void importAdj(const std::string& fileName);
 
@@ -157,15 +157,15 @@ namespace dsm {
     if (fileExt == "dsm") {
       std::ifstream file(fileName);
       if (!file.is_open()) {
-        std::string errrorMsg =
-            "Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " + "File not found";
+        std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                              "File not found"};
         throw std::invalid_argument(errrorMsg);
       }
       Id rows, cols;
       file >> rows >> cols;
       if (rows != cols) {
-        std::string errrorMsg = "Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ +
-                                ": " + "Adjacency matrix must be square";
+        std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                              "Adjacency matrix must be square"};
         throw std::invalid_argument(errrorMsg);
       }
       m_adjacency = make_shared<SparseMatrix<Id, bool>>(rows, cols);
@@ -183,8 +183,8 @@ namespace dsm {
                                    make_shared<Street<Id, Size>>(index, std::make_pair(node1, node2)));
       }
     } else {
-      std::string errrorMsg = "Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                              "File extension not supported";
+      std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                            "File extension not supported"};
       throw std::invalid_argument(errrorMsg);
     }
   }
