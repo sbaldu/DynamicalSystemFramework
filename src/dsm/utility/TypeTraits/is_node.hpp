@@ -22,6 +22,9 @@ namespace dsm {
   struct is_node<Node<Id>> : std::true_type {};
 
   template <typename Id>
+  struct is_node<const Node<Id>> : std::true_type {};
+
+  template <typename Id>
   struct is_node<const Node<Id>&> : std::true_type {};
 
   template <typename Id>

@@ -5,7 +5,6 @@
 #include "Street.hpp"
 #include "SparseMatrix.hpp"
 
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
 
 using Graph = dsm::Graph<uint16_t, uint16_t>;
@@ -14,11 +13,12 @@ using Street = dsm::Street<uint16_t, uint16_t>;
 
 TEST_CASE("Graph") {
   SUBCASE("Constructor_1") {
-    Street street{1, 2, 3};
+    Street street{1, std::make_pair(0, 1)};
     Graph graph{};
     graph.addStreet(street);
     graph.buildAdj();
     CHECK(graph.streetSet().size() == 1);
+    CHECK_EQ(graph.nodeSet().size(), 2);
     CHECK(graph.adjMatrix()->size() == 1);
   }
 
@@ -37,6 +37,48 @@ TEST_CASE("Graph") {
     CHECK(graph.adjMatrix()->contains(2, 3));
     CHECK(graph.adjMatrix()->contains(3, 2));
     CHECK_FALSE(graph.adjMatrix()->contains(2, 1));
+  }
+
+  SUBCASE("Construction with addStreet") {
+    Street s1(1, std::make_pair(0, 1));
+    Street s2(2, std::make_pair(1, 2));
+    Street s3(3, std::make_pair(0, 2));
+    Street s4(4, std::make_pair(0, 3));
+    Street s5(5, std::make_pair(2, 3));
+    Graph graph;
+    graph.addStreet(s1);
+    graph.addStreet(s2);
+    graph.addStreet(s3);
+    graph.addStreet(s4);
+    graph.addStreet(s5);
+    graph.buildAdj();
+
+    CHECK_EQ(graph.streetSet().size(), 5);
+    CHECK_EQ(graph.nodeSet().size(), 4);
+    CHECK_EQ(graph.adjMatrix()->size(), 5);
+    CHECK(graph.adjMatrix()->contains(0, 1));
+    CHECK(graph.adjMatrix()->contains(1, 2));
+    CHECK(graph.adjMatrix()->contains(0, 2));
+    CHECK_FALSE(graph.adjMatrix()->contains(1, 3));
+  }
+
+  SUBCASE("Construction with addStreets") {
+    Street s1(1, std::make_pair(0, 1));
+    Street s2(2, std::make_pair(1, 2));
+    Street s3(3, std::make_pair(0, 2));
+    Street s4(4, std::make_pair(0, 3));
+    Street s5(5, std::make_pair(2, 3));
+    Graph graph;
+    graph.addStreets(s1, s2, s3, s4, s5);
+    graph.buildAdj();
+
+    CHECK_EQ(graph.streetSet().size(), 5);
+    CHECK_EQ(graph.nodeSet().size(), 4);
+    CHECK_EQ(graph.adjMatrix()->size(), 5);
+    CHECK(graph.adjMatrix()->contains(0, 1));
+    CHECK(graph.adjMatrix()->contains(1, 2));
+    CHECK(graph.adjMatrix()->contains(0, 2));
+    CHECK_FALSE(graph.adjMatrix()->contains(1, 3));
   }
 
   SUBCASE("importAdj - dsm") {

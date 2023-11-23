@@ -2,7 +2,6 @@
 
 #include "Node.hpp"
 
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
 
 using Node = dsm::Node<uint16_t>;
