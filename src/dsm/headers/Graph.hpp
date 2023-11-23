@@ -143,7 +143,7 @@ namespace dsm {
   void Graph<Id, Size>::buildAdj() {
     // find max values in streets node pairs
     const size_t maxNode{m_nodes.size()};
-    m_adjacency->reshape(maxNode);
+    m_adjacency->reshape(maxNode, maxNode);
     for (const auto& street : m_streets) {
       m_adjacency->insert(street.second->nodePair().first, street.second->nodePair().second, true);
     }
