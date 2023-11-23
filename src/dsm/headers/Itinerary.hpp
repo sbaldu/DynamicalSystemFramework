@@ -12,6 +12,7 @@
 
 #include <concepts>
 #include <utility>
+#include <string>
 
 namespace dsm {
   /// @brief The Itinerary class represents an itinerary in the network.
@@ -50,6 +51,7 @@ namespace dsm {
     void setDestination(Id destination);
     /// @brief Set the itinerary's path
     /// @param path, An adjacency matrix made by a SparseMatrix representing the itinerary's path
+    /// @throw std::invalid_argument, if the itinerary's source or destination is not in the path's
     void setPath(SparseMatrix<Id, bool> path);
 
     /// @brief Get the itinerary's source
@@ -92,6 +94,11 @@ namespace dsm {
   template <typename Id>
     requires std::unsigned_integral<Id>
   void Itinerary<Id>::setPath(SparseMatrix<Id, bool> path) {
+    if (!(m_trip.first < path.size()) || !(m_trip.second < path.size())) {
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                           "The itinerary's source or destination is not in the path's range"};
+      throw std::invalid_argument(errorMsg);
+    }
     m_path = std::move(path);
   }
 
