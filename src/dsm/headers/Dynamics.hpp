@@ -15,6 +15,7 @@
 #include <random>
 #include <span>
 #include <string>
+#include <numeric>
 
 #include "Agent.hpp"
 #include "Itinerary.hpp"
@@ -123,10 +124,10 @@ namespace dsm {
       requires(is_itinerary_v<Tn> && ...)
     void addItineraries(Tn... itineraries);
     /// @brief Add a pack of itineraries
-    /// @tparam T1 
-    /// @tparam ...Tn 
-    /// @param itinerary 
-    /// @param ...itineraries 
+    /// @tparam T1
+    /// @tparam ...Tn
+    /// @param itinerary
+    /// @param ...itineraries
     template <typename T1, typename... Tn>
       requires(is_itinerary_v<T1> && (is_itinerary_v<Tn> && ...))
     void addItineraries(T1 itinerary, Tn... itineraries);
@@ -140,7 +141,7 @@ namespace dsm {
     /// @param agentId The index of the agent to move
     /// @return true If the agent has been moved, false otherwise
     bool moveAgent(Size agentId);
-    
+
     /// @brief Evolve the simulation
     /// @tparam F The type of the function to call
     /// @tparam ...Tn The types of the arguments of the function
@@ -149,6 +150,10 @@ namespace dsm {
     template <typename F, typename... Tn>
       requires std::is_invocable_v<F, Tn...>
     void evolve(F f, Tn... args);
+
+    /// @brief Get the mean speed of the agents
+    /// @return double, The mean speed of the agents
+    double meanSpeed() const;
   };
 
   template <typename Id, typename Size, typename Delay>
@@ -285,7 +290,8 @@ namespace dsm {
     for (Size i{0}; i < nAgents; ++i) {
       Size itineraryIndex{itineraryDist(m_generator)};
       auto& itinerary{*m_itineraries[itineraryIndex]};
-      this->addAgent(Agent<Id, Size, Delay>{static_cast<Size>(m_agents.size()), itinerary.source(), itinerary});
+      this->addAgent(
+          Agent<Id, Size, Delay>{static_cast<Size>(m_agents.size()), itinerary.source(), itinerary});
     }
   }
 
@@ -323,25 +329,26 @@ namespace dsm {
     m_time = 0;
   }
   template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  bool Dynamics<Id, Size, Delay>::moveAgent(Size agentId) {
-    auto agentIt{std::find_if(
-        m_agents.begin(), m_agents.end(), [agentId](const auto& agent) -> bool { return agent->index() == agentId; })};
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>) bool
+  Dynamics<Id, Size, Delay>::moveAgent(Size agentId) {
+    auto agentIt{std::find_if(m_agents.begin(), m_agents.end(), [agentId](const auto& agent) -> bool {
+      return agent->index() == agentId;
+    })};
     if (agentIt == m_agents.end()) {
       return false;
     }
     const auto& street{m_graph->street((*agentIt)->position())};
-    const auto& possibleMoves{(*agent)->itinerary().path().getRow((*agent).position())}
+    const auto& possibleMoves { (*agentIt)->itinerary().path().getRow((*agentIt).position()) };
     const auto p = m_uniformDist(m_generator);
     auto sum = 0.;
-    for (const auto& move: possibleMoves) {
-      sum  += move.second;
+    for (const auto& move : possibleMoves) {
+      sum += move.second;
       if (p < sum) {
         const auto& nextStreet = m_graph->street(move.first);
         if (street->density() < 1.) {
           street->dequeue();
-          nextStreet->enqueue(*agent);
-          (*agent)->setPosition(move.first);
+          nextStreet->enqueue(*agentIt);
+          (*agentIt)->setPosition(move.first);
           return true;
         }
         return false;
@@ -356,6 +363,19 @@ namespace dsm {
     requires std::is_invocable_v<F, Tn...>
   void Dynamics<Id, Size, Delay>::evolve(F f, Tn... args) {
     f(args...);
+  }
+
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>)
+  double Dynamics<Id, Size, Delay>::meanSpeed() const {
+    if (m_agents.size() == 0) {
+      return 0.;
+    }
+    return std::accumulate(m_agents.cbegin(),
+                           m_agents.cend(),
+                           0.,
+                           [](double sum, const auto& agent) { return sum + agent->speed(); }) /
+           m_agents.size();
   }
 
   template <typename Id, typename Size, typename Delay>
