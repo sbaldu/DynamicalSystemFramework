@@ -27,6 +27,7 @@ TEST_CASE("Dynamics") {
         CHECK(dynamics.meanSpeed() == 0.);
         CHECK(dynamics.meanDensity() == 0.);
         CHECK(dynamics.meanFlow() == 0.);
+        CHECK(dynamics.meanTravelTime() == 0.);
     }
     SUBCASE("AddRandomAgents") {
         /// GIVEN: an itineary

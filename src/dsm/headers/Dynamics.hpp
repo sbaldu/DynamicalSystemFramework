@@ -42,6 +42,7 @@ namespace dsm {
     double m_minSpeedRateo;
     std::mt19937_64 m_generator{std::random_device{}()};
     std::uniform_real_distribution<double> m_uniformDist{0., 1.};
+    std::vector<unsigned int> m_travelTimes;
 
   public:
     Dynamics() = delete;
@@ -160,6 +161,9 @@ namespace dsm {
     /// @brief Get the mean flow of the streets
     /// @return double, The mean flow of the streets
     double meanFlow() const;
+    /// @brief Get the mean travel time of the agents
+    /// @return double, The mean travel time of the agents
+    double meanTravelTime() const;
   };
 
   template <typename Id, typename Size, typename Delay>
@@ -399,6 +403,14 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>)
   double Dynamics<Id, Size, Delay>::meanFlow() const {
     return this->meanDensity() * this->meanSpeed();
+  }
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>)
+  double Dynamics<Id, Size, Delay>::meanTravelTime() const {
+    if (m_travelTimes.size() == 0) {
+      return 0.;
+    }
+    return std::accumulate(m_travelTimes.cbegin(), m_travelTimes.cend(), 0.) / m_travelTimes.size();
   }
 
   template <typename Id, typename Size, typename Delay>
