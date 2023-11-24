@@ -51,7 +51,7 @@ namespace dsm {
     Agent(Id index, Id streetId, Itinerary<Id> itinerary);
 
     /// @brief Set the street occupied by the agent
-    /// @param streetId, The id of the street currently occupied by the agent
+    /// @param streetId The id of the street currently occupied by the agent
     void setStreetId(Id streetId);
     /// @brief Set the id of the next node in the agent's itinerary
     /// @param nextNodeId The id of the next node in the agent's itinerary
@@ -70,7 +70,7 @@ namespace dsm {
     /// @throw std::overflow_error, if time has reached its maximum value
     void incrementTime();
     /// @brief Increment the agent's time by a given value
-    /// @param time, The value to increment the agent's time by
+    /// @param time The value to increment the agent's time by
     /// @throw std::overflow_error, if time has reached its maximum value
     void incrementTime(unsigned int time);
     /// @brief Reset the agent's time to 0
