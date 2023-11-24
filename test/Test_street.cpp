@@ -93,10 +93,10 @@ TEST_CASE("Street") {
     /*This tests the insertion of an agent in a street's queue*/
 
     // define some agents
-    Agent a1{1, 1};  // they are all in street 1
-    Agent a2{2, 1};
-    Agent a3{3, 1};
-    Agent a4{4, 1};
+    Agent a1{1, 1, 0};  // they are all in street 1
+    Agent a2{2, 1, 0};
+    Agent a3{3, 1, 0};
+    Agent a4{4, 1, 0};
 
     Street street{1, 4, 3.5, std::make_pair(0, 1)};
     // fill the queue
@@ -116,10 +116,10 @@ TEST_CASE("Street") {
     /*This tests the exit of an agent from a street's queue*/
 
     // define some agents
-    Agent a1{1, 1};  // they are all in street 1
-    Agent a2{2, 1};
-    Agent a3{3, 1};
-    Agent a4{4, 1};
+    Agent a1{1, 1, 0};  // they are all in street 1
+    Agent a2{2, 1, 0};
+    Agent a3{3, 1, 0};
+    Agent a4{4, 1, 0};
 
     Street street{1, 4, 3.5, std::make_pair(0, 1)};
     // fill the queue
