@@ -144,6 +144,8 @@ namespace dsm {
     bool moveAgent(Size agentId);
 
     /// @brief Evolve the simulation
+    void evolve(bool reinsert_vehicles = false);
+    /// @brief Evolve the simulation
     /// @tparam F The type of the function to call
     /// @tparam ...Tn The types of the arguments of the function
     /// @param f The function to call
@@ -367,6 +369,14 @@ namespace dsm {
     return false;
   }
 
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>)
+  void Dynamics<Id, Size, Delay>::evolve(bool reinsert_vehicles) {
+    for (auto& agent : m_agents) {
+      // TODO: implement
+    }
+    ++m_time;
+  }
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   template <typename F, typename... Tn>
