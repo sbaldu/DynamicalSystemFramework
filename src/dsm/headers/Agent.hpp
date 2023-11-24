@@ -225,8 +225,8 @@ namespace dsm {
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>) bool
-  Agent<Id, Size, Delay>::has_arrived() const {
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
+  bool Agent<Id, Size, Delay>::has_arrived() const {
     return (m_delay == 0 && m_nextNodeId == m_itinerary.destination());
   }
 
