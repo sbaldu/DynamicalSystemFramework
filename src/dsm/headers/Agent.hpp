@@ -34,7 +34,6 @@ namespace dsm {
     Delay m_delay;
     Id m_index;
     Id m_streetId;
-    Id m_nextNodeId;
     unsigned int m_time;
 
   public:
@@ -42,8 +41,7 @@ namespace dsm {
     /// @brief Construct a new Agent object
     /// @param index The agent's id
     /// @param streetId The id of the street currently occupied by the agent
-    /// @param nextNodeId The id of the node to which the agent is heading
-    Agent(Id index, Id streetId, Id nextNodeId);
+    Agent(Id index, Id streetId);
     /// @brief Construct a new Agent object
     /// @param index The agent's id
     /// @param streetId The id of the street currently occupied by the agent
@@ -53,9 +51,6 @@ namespace dsm {
     /// @brief Set the street occupied by the agent
     /// @param streetId The id of the street currently occupied by the agent
     void setStreetId(Id streetId);
-    /// @brief Set the id of the next node in the agent's itinerary
-    /// @param nextNodeId The id of the next node in the agent's itinerary
-    void setNextNodeId(Id nextNodeId);
     /// @brief Set the agent's itinerary
     /// @param itinerary, The agent's itinerary
     void setItinerary(Itinerary<Id> itinerary);
@@ -63,9 +58,16 @@ namespace dsm {
     /// @param speed, The agent's speed
     /// @throw std::invalid_argument, if speed is negative
     void setSpeed(double speed);
+    /// @brief Increment the agent's delay by 1
+    /// @throw std::overflow_error, if delay has reached its maximum value
+    void incrementDelay();
     /// @brief Set the agent's delay
-    /// @param delay, The agent's delay
-    void setDelay(Delay delay);
+    /// @param delay The agent's delay
+    /// @throw std::overflow_error, if delay has reached its maximum value
+    void incrementDelay(Delay delay);
+    /// @brief Decrement the agent's delay by 1
+    /// @throw std::underflow_error, if delay has reached its minimum value
+    void decrementDelay();
     /// @brief Increment the agent's time by 1
     /// @throw std::overflow_error, if time has reached its maximum value
     void incrementTime();
@@ -82,9 +84,6 @@ namespace dsm {
     /// @brief Get the id of the street currently occupied by the agent
     /// @return The id of the street currently occupied by the agent
     Id streetId() const;
-    /// @brief Get the id of the node to which the agent is heading
-    /// @return The id of the node to which the agent is heading
-    Id nextNodeId() const;
     /// @brief Get the agent's itinerary
     /// @return The agent's itinerary
     const Itinerary<Id>& itinerary() const;
@@ -97,22 +96,12 @@ namespace dsm {
     /// @brief Get the agent's travel time
     /// @return The agent's travel time
     unsigned int time() const;
-    /// @brief Check if the agent has arrived at its destination
-    /// @return true, if the agent has arrived at its destination
-    bool has_arrived() const;
-
-    /// @brief Increment the agent's delay by 1
-    /// @throw std::overflow_error, if delay has reached its maximum value
-    Agent& operator++();
-    /// @brief Decrement the agent's delay by 1
-    /// @throw std::underflow_error, if delay has reached its minimum value
-    Agent& operator--();
   };
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
-  Agent<Id, Size, Delay>::Agent(Id index, Id streetId, Id nextNodeId)
-      : m_speed{0.}, m_delay{0}, m_index{index}, m_streetId{streetId}, m_nextNodeId{nextNodeId}, m_time{0} {}
+  Agent<Id, Size, Delay>::Agent(Id index, Id streetId)
+      : m_speed{0.}, m_delay{0}, m_index{index}, m_streetId{streetId}, m_time{0} {}
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
@@ -122,19 +111,12 @@ namespace dsm {
         m_delay{0},
         m_index{index},
         m_streetId{streetId},
-        m_nextNodeId{itinerary.source()},
         m_time{0} {}
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
   void Agent<Id, Size, Delay>::setStreetId(Id streetId) {
     m_streetId = streetId;
-  }
-
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
-  void Agent<Id, Size, Delay>::setNextNodeId(Id nextNodeId) {
-    m_nextNodeId = nextNodeId;
   }
 
   template <typename Id, typename Size, typename Delay>
@@ -153,11 +135,35 @@ namespace dsm {
     }
     m_speed = speed;
   }
-
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
-  void Agent<Id, Size, Delay>::setDelay(Delay delay) {
+  void Agent<Id, Size, Delay>::incrementDelay() {
+    if (m_delay == std::numeric_limits<Delay>::max()) {
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                           "Delay has reached its maximum value"};
+      throw std::overflow_error(errorMsg);
+    }
+    ++m_delay;
+  }
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
+  void Agent<Id, Size, Delay>::incrementDelay(Delay delay) {
+    if (m_delay + delay < m_delay) {
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                           "Delay has reached its maximum value"};
+      throw std::overflow_error(errorMsg);
+    }
     m_delay = delay;
+  }
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
+  void Agent<Id, Size, Delay>::decrementDelay() {
+    if (m_delay == 0) {
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                           "Delay has reached its minimum value"};
+      throw std::underflow_error(errorMsg);
+    }
+    --m_delay;
   }
 
   template <typename Id, typename Size, typename Delay>
@@ -196,12 +202,6 @@ namespace dsm {
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
-  Id Agent<Id, Size, Delay>::nextNodeId() const {
-    return m_nextNodeId;
-  }
-
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
   double Agent<Id, Size, Delay>::speed() const {
     return m_speed;
   }
@@ -222,35 +222,6 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
   const Itinerary<Id>& Agent<Id, Size, Delay>::itinerary() const {
     return m_itinerary;
-  }
-
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
-  bool Agent<Id, Size, Delay>::has_arrived() const {
-    return (m_delay == 0 && m_nextNodeId == m_itinerary.destination());
-  }
-
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
-  Agent<Id, Size, Delay>& Agent<Id, Size, Delay>::operator++() {
-    if (m_delay == std::numeric_limits<Delay>::max()) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                           "Delay has reached its maximum value"};
-      throw std::overflow_error(errorMsg);
-    }
-    ++m_delay;
-    return *this;
-  }
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
-  Agent<Id, Size, Delay>& Agent<Id, Size, Delay>::operator--() {
-    if (m_delay == 0) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                           "Delay has reached its minimum value"};
-      throw std::underflow_error(errorMsg);
-    }
-    --m_delay;
-    return *this;
   }
 };  // namespace dsm
 

@@ -15,7 +15,7 @@ using Bench = sb::Bench<long long int>;
 
 int main() {
   Street street(0, 1000, 10., std::make_pair(0, 1));
-  Agent agent(0, 0, 0);
+  Agent agent(0, 0);
   Bench b(1000);
 
   std::cout << "Benchmarking enqueue\n";
