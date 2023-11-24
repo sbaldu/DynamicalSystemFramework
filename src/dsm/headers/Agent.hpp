@@ -31,10 +31,10 @@ namespace dsm {
   private:
     Itinerary<Id> m_itinerary;
     double m_speed;
+    Delay m_delay;
     Id m_index;
     Id m_streetId;
     Id m_nextNodeId;
-    Delay m_delay;
     unsigned int m_time;
 
   public:
@@ -112,17 +112,17 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
   Agent<Id, Size, Delay>::Agent(Id index, Id streetId, Id nextNodeId)
-      : m_speed{0.}, m_index{index}, m_streetId{streetId}, m_nextNodeId{nextNodeId}, m_delay{0}, m_time{0} {}
+      : m_speed{0.}, m_delay{0}, m_index{index}, m_streetId{streetId}, m_nextNodeId{nextNodeId}, m_time{0} {}
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
   Agent<Id, Size, Delay>::Agent(Id index, Id streetId, Itinerary<Id> itinerary)
       : m_itinerary{std::move(itinerary)},
         m_speed{0.},
+        m_delay{0},
         m_index{index},
         m_streetId{streetId},
         m_nextNodeId{itinerary.source()},
-        m_delay{0},
         m_time{0} {}
 
   template <typename Id, typename Size, typename Delay>
