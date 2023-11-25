@@ -65,6 +65,9 @@ namespace dsm {
     /// @throw std::invalid_argument, If the error probability is not between 0 and 1
     void setErrorProbability(double errorProbability);
     /// @brief Update the paths of the itineraries based on the actual travel times
+    template <typename Tid, typename F, typename... Tn>
+      requires std::is_invocable_v<F, Tn...>
+    void setAgentSpeed(Tid agentId, F f, Tn... args);
     void updatePaths();  //TODO: implement
 
     /// @brief Get the graph
@@ -144,8 +147,6 @@ namespace dsm {
     bool moveAgent(Size agentId);
 
     /// @brief Evolve the simulation
-    void evolve(bool reinsert_vehicles = false);
-    /// @brief Evolve the simulation
     /// @tparam F The type of the function to call
     /// @tparam ...Tn The types of the arguments of the function
     /// @param f The function to call
@@ -207,6 +208,24 @@ namespace dsm {
       throw std::invalid_argument(errorMsg);
     }
     m_errorProbability = errorProbability;
+  }
+
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
+  template <typename Tid, typename F, typename... Tn>
+    requires std::is_invocable_v<F, Tn...>
+  void Dynamics<Id, Size, Delay>::setAgentSpeed(Tid agentId, F f, Tn... args) {
+    auto agentIt{std::find_if(
+        m_agents.begin(), m_agents.end(), [agentId](auto agent) { return agent->index() == agentId; })};
+    if (agentIt == m_agents.end()) {
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                           "Agent " + std::to_string(agentId) + " not found"};
+      throw std::invalid_argument(errorMsg);
+    }
+    auto& agent{*agentIt};
+    auto& street{this->m_graph->street(agent->position())};
+    double speed{f(args...)};
+    agentIt->setSpeed(speed);
   }
 
   template <typename Id, typename Size, typename Delay>
@@ -350,7 +369,7 @@ namespace dsm {
       return false;
     }
     const auto& street{m_graph->street((*agentIt)->position())};
-    const auto& possibleMoves { (*agentIt)->itinerary().path().getRow((*agentIt).position()) };
+    const auto& possibleMoves{(*agentIt)->itinerary().path().getRow((*agentIt).position())};
     const auto p = m_uniformDist(m_generator);
     auto sum = 0.;
     for (const auto& move : possibleMoves) {
@@ -369,14 +388,6 @@ namespace dsm {
     return false;
   }
 
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>)
-  void Dynamics<Id, Size, Delay>::evolve(bool reinsert_vehicles) {
-    for (auto& agent : m_agents) {
-      // TODO: implement
-    }
-    ++m_time;
-  }
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   template <typename F, typename... Tn>
@@ -438,7 +449,9 @@ namespace dsm {
     /// @param agentId, The index of the agent
     /// @throw std::invalid_argument, If the agent is not found
     void setAgentSpeed(Size agentId);
-    void setSpeed();
+
+    /// @brief Evolve the simulation
+    void evolve(bool reinsert_vehicles = false);
   };
 
   template <typename Id, typename Size, typename Delay>
@@ -459,11 +472,17 @@ namespace dsm {
     auto& agent{*agentIt};
     auto& street{this->m_graph->street(agent->position())};
     double speed{street->maxSpeed() * (1. - this->m_minSpeedRateo * street->density())};
+    agentIt->setSpeed(speed);
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void FirstOrderDynamics<Id, Size, Delay>::setSpeed() {}
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>)
+  void FirstOrderDynamics<Id, Size, Delay>::evolve(bool reinsert_vehicles) {
+    for (auto& agent : m_agents) {
+      // TODO: implement
+    }
+    ++this->m_time;
+  }
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
