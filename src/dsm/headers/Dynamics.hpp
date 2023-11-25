@@ -463,7 +463,7 @@ namespace dsm {
     void setAgentSpeed(Size agentId);
 
     /// @brief Evolve the simulation
-    void evolve(bool reinsert_vehicles = false);
+    void evolve(bool reinsert_agents = false);
   };
 
   template <typename Id, typename Size, typename Delay>
@@ -489,7 +489,7 @@ namespace dsm {
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>)
-  void FirstOrderDynamics<Id, Size, Delay>::evolve(bool reinsert_vehicles) {
+  void FirstOrderDynamics<Id, Size, Delay>::evolve(bool reinsert_agents) {
     for (auto& agent : m_agents) {
       if (!(agent->delay() > 0)) {
         // TODO: check if agent can move and move it if possible
