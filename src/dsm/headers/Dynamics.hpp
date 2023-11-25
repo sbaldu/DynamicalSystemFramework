@@ -64,11 +64,19 @@ namespace dsm {
     /// @param errorProbability, The error probability
     /// @throw std::invalid_argument, If the error probability is not between 0 and 1
     void setErrorProbability(double errorProbability);
-    /// @brief Update the paths of the itineraries based on the actual travel times
+    /// @brief Set the speed of an agent
+    /// @tparam Tid The type of the agent's id
+    /// @tparam F The type of the function to call
+    /// @tparam ...Tn The types of the arguments of the function
+    /// @param agentId The index of the agent
+    /// @param f The function to call
+    /// @param ...args The arguments of the function
+    /// @throw std::invalid_argument, If the agent is not found
     template <typename Tid, typename F, typename... Tn>
       requires std::is_invocable_v<F, Tn...>
     void setAgentSpeed(Tid agentId, F f, Tn... args);
-    void updatePaths();  //TODO: implement
+    /// @brief Update the paths of the itineraries based on the actual travel times
+    void updatePaths();
 
     /// @brief Get the graph
     /// @return const Graph<Id, Size>&, The graph
@@ -230,7 +238,11 @@ namespace dsm {
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>)
-  void Dynamics<Id, Size, Delay>::updatePaths() {}
+  void Dynamics<Id, Size, Delay>::updatePaths() {
+    for (auto& itinerary : m_itineraries) {
+      // TODO: implement
+    }
+  }
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
