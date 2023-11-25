@@ -491,7 +491,7 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>)
   void FirstOrderDynamics<Id, Size, Delay>::evolve(bool reinsert_vehicles) {
     for (auto& agent : m_agents) {
-      if(!(agent-delay() > 0)) {
+      if (!(agent->delay() > 0)) {
         // TODO: check if agent can move and move it if possible
       }
       agent->decrementDelay();
