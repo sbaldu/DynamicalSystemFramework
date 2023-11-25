@@ -1,7 +1,5 @@
 var searchData=
 [
-  ['node_0',['node',['../classdsm_1_1Node.html',1,'dsm::Node&lt; Id &gt;'],['../classdsm_1_1Node.html#a77816db7c053668e21fc29778862ead5',1,'dsm::Node::Node(Id id)'],['../classdsm_1_1Node.html#af34885977123568417fa9bff1c683a72',1,'dsm::Node::Node(Id id, std::pair&lt; double, double &gt; coords)'],['../classdsm_1_1Node.html#a7280a4a30847faf7abf54e4dcd309a5f',1,'dsm::Node::Node(Id id, std::pair&lt; double, double &gt; coords, std::queue&lt; Id &gt; queue)']]],
-  ['nodehash_1',['nodeHash',['../structdsm_1_1nodeHash.html',1,'dsm']]],
-  ['nodepair_2',['nodePair',['../classdsm_1_1Street.html#afb91d15f9d075abff5e003b65c66993d',1,'dsm::Street']]],
-  ['nodeset_3',['nodeSet',['../classdsm_1_1Graph.html#aee0e338487f687cae252ee51a0f4c982',1,'dsm::Graph']]]
+  ['nextnodeid_44',['nextNodeId',['../classdsm_1_1Agent.html#a773795411a700d03a6f45308c75df230',1,'dsm::Agent']]],
+  ['node_45',['Node',['../classdsm_1_1Node.html',1,'dsm::Node&lt; Id &gt;'],['../classdsm_1_1Node.html#a892ce1333095c40e25e5018f33514ae6',1,'dsm::Node::Node(Id id)'],['../classdsm_1_1Node.html#adb1781f3464d8ac34c5f52c90858459c',1,'dsm::Node::Node(Id id, std::pair&lt; double, double &gt; coords)'],['../classdsm_1_1Node.html#a92106f14d03da91df50ab229733f59a5',1,'dsm::Node::Node(Id id, std::pair&lt; double, double &gt; coords, std::queue&lt; Id &gt; queue)']]]
 ];
