@@ -353,16 +353,18 @@ TEST_CASE("Dijkstra") {
     CHECK_FALSE(result.has_value());
   }
 
-  SUBCASE("Multiple paths") {
-    Street s1{0, 1, 5., std::make_pair(0, 1)};
-    Street s2{1, 1, 5., std::make_pair(1, 2)};
-    Street s3{2, 1, 5., std::make_pair(0, 3)};
-    Street s4{3, 1, 5., std::make_pair(3, 2)};
+  SUBCASE("street") {
+    /// GIVEN: a graph
+    /// WHEN: we add a street
+    /// THEN: the street is added
     Graph graph{};
-    graph.addStreets(s1, s2, s3, s4);
-    graph.buildAdj();
-    auto result = graph.shortestPath(0, 2);
+    Street street{1, 1, 1., std::make_pair(0, 1)};
+    graph.addStreet(street);
+    auto result = graph.street(0, 1);
     CHECK(result.has_value());
-    // TODO: test multiple paths
+    auto street2 = result.value();
+    CHECK_EQ(street2->id(), 1);
+    CHECK_EQ(street2->length(), 1.);
+    CHECK_EQ(street2->capacity(), 1);
   }
 }

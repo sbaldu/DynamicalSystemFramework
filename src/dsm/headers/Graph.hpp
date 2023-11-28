@@ -105,6 +105,12 @@ namespace dsm {
     /// @brief Get the graph's street map
     /// @return A std::unordered_map containing the graph's streets
     std::unordered_map<Id, shared<Street<Id, Size>>> streetSet() const;
+    /// @brief Get a street from the graph
+    /// @param source The source node
+    /// @param destination The destination node
+    /// @return A std::optional containing a std::shared_ptr to the street if it exists, otherwise
+    /// std::nullopt
+    std::optional<shared<Street<Id, Size>>> street(Id source, Id destination);
 
     /// @brief Get the shortest path between two nodes using dijkstra algorithm
     /// @param source, The source node
@@ -294,6 +300,21 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   std::unordered_map<Id, shared<Street<Id, Size>>> Graph<Id, Size>::streetSet() const {
     return m_streets;
+  }
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  std::optional<shared<Street<Id, Size>>> Graph<Id, Size>::street(Id source, Id destination) {
+    auto streetIt = std::find_if(m_streets.begin(),
+                                 m_streets.end(),
+                                 [source, destination](const auto& street) -> bool {
+                                   return street.second->nodePair().first == source &&
+                                          street.second->nodePair().second == destination;
+                                 });
+    if (streetIt == m_streets.end()) {
+      return std::nullopt;
+    }
+    return streetIt->second;
   }
 
   template <typename Id, typename Size>
