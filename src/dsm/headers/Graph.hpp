@@ -106,8 +106,16 @@ namespace dsm {
     /// @return A std::unordered_map containing the graph's streets
     std::unordered_map<Id, shared<Street<Id, Size>>> streetSet() const;
 
+	/// @brief Get the shortest path between two nodes using dijkstra algorithm
+	/// @param source, The source node
+	/// @param destination, The destination node
+	/// @return A DijkstraResult object containing the path and the distance
     std::optional<DijkstraResult<Id>> shortestPath(const Node<Id>& source,
                                                    const Node<Id>& destination) const;
+	/// @brief Get the shortest path between two nodes using dijkstra algorithm
+	/// @param source, The source node id
+	/// @param destination, The destination node id
+	/// @return A DijkstraResult object containing the path and the distance
     std::optional<DijkstraResult<Id>> shortestPath(Id source, Id destination) const;
   };
 
