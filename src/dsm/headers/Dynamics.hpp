@@ -239,8 +239,39 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>)
   void Dynamics<Id, Size, Delay>::updatePaths() {
+    const Size dimension = m_graph->adjMatrix()->getRowDim();
     for (auto& itinerary : m_itineraries) {
-      // TODO: implement
+      SparseMatrix<Id, bool> path{dimension, dimension};
+      for (Size i{0}; i < dimension; ++i) {
+        if (i == itinerary->destination()) {
+          continue;
+        }
+        auto result{m_graph->shortestPath(i, itinerary->destination())};
+        if (!result.has_value()) {
+          continue;
+        }
+        auto minDistance{result.value().distance()};
+        for (auto const& node : m_graph->adjMatrix()->getRow(i)) {
+          auto streetResult = m_graph->street(i, node.first);
+          if(!streetResult.has_value()) {
+            continue;
+          }
+          auto streetLength{streetResult.value()->length()};
+          // TimePoint expectedTravelTime{
+          //     streetLength};  // / street->maxSpeed()};  // TODO: change into input velocity
+          result = m_graph->shortestPath(node.first, itinerary->destination());
+          if (!result.has_value()) {
+            continue;
+          }
+          auto distance = result.value().distance();
+          
+          // if (!(distance > minDistance + expectedTravelTime)) {
+            if (!(distance > minDistance + streetLength)) {
+            path.insert(i, node.first, 1);
+          }
+        }
+        itinerary->setPath(path);
+      }
     }
   }
 

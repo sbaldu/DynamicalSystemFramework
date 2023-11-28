@@ -67,4 +67,45 @@ TEST_CASE("Dynamics") {
         Dynamics dynamics(graph);
         CHECK_THROWS(dynamics.addRandomAgents(1));
     }
+    SUBCASE("updatePaths") {
+        /// GIVEN: a dynamics object
+        /// WHEN: we update the paths
+        /// THEN: the paths are updated
+        Street s1{0, 1, 2., std::make_pair(0, 1)};
+        Street s2{1, 1, 5., std::make_pair(1, 2)};
+        Street s3{2, 1, 10., std::make_pair(0, 2)};
+        Graph graph2;
+        graph2.addStreets(s1, s2, s3);
+        graph2.buildAdj();
+        Dynamics dynamics{graph2};
+        Itineary itinerary{0, 2};
+        dynamics.addItinerary(itinerary);
+        dynamics.updatePaths();
+        CHECK_EQ(dynamics.itineraries().size(), 1);
+        CHECK(dynamics.itineraries()[0]->path()(0, 1));
+    }
+    SUBCASE("updatePaths - equal lentgth") {
+        /// GIVEN: a dynamics object
+        /// WHEN: we update the paths
+        /// THEN: the paths are updated
+        Street s1{0, 1, 5., std::make_pair(0, 1)};
+        Street s2{1, 1, 5., std::make_pair(1, 2)};
+        Street s3{2, 1, 5., std::make_pair(0, 3)};
+        Street s4{3, 1, 5., std::make_pair(3, 2)};
+        Graph graph2;
+        graph2.addStreets(s1, s2, s3, s4);
+        graph2.buildAdj();
+        Dynamics dynamics{graph2};
+        Itineary itinerary{0, 2};
+        dynamics.addItinerary(itinerary);
+        dynamics.updatePaths();
+        CHECK_EQ(dynamics.itineraries().size(), 1);
+        CHECK_EQ(dynamics.itineraries()[0]->path().size(), 4);
+        CHECK_EQ(dynamics.itineraries()[0]->path().getRowDim(), 4);
+        CHECK_EQ(dynamics.itineraries()[0]->path().getColDim(), 4);
+        CHECK(dynamics.itineraries()[0]->path()(0, 1));
+        CHECK(dynamics.itineraries()[0]->path()(1, 2));
+        CHECK(dynamics.itineraries()[0]->path()(0, 3));
+        CHECK(dynamics.itineraries()[0]->path()(3, 2));
+    }
 }
