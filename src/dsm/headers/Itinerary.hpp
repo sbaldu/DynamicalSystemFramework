@@ -94,11 +94,11 @@ namespace dsm {
   template <typename Id>
     requires std::unsigned_integral<Id>
   void Itinerary<Id>::setPath(SparseMatrix<Id, bool> path) {
-    if (!(m_trip.first < path.size()) || !(m_trip.second < path.size())) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                           "The itinerary's source or destination is not in the path's range"};
-      throw std::invalid_argument(errorMsg);
-    }
+    // if (!(m_trip.first < path.size()) || !(m_trip.second < path.size())) {
+    //   std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+    //                        "The itinerary's source or destination is not in the path's range"};
+    //   throw std::invalid_argument(errorMsg);
+    // }
     m_path = std::move(path);
   }
 
