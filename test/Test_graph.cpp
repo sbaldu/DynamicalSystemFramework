@@ -137,13 +137,13 @@ TEST_CASE("Dijkstra") {
     Graph graph{};
     graph.addStreets(s1, s2, s3, s4, s5);
     graph.buildAdj();
-    auto result = graph.dijkstra(0, 1);
+    auto result = graph.shortestPath(0, 1);
     Path correctPath{0, 1};
     CHECK(result.has_value());
     CHECK_EQ(result.value().path().size(), 2);
     CHECK(checkPath(result.value().path(), correctPath));
     CHECK_EQ(result.value().distance(), 3.);
-    result = graph.dijkstra(0, 2);
+    result = graph.shortestPath(0, 2);
     correctPath = Path{0, 1, 2};
     CHECK(result.has_value());
     CHECK_EQ(result.value().path().size(), 3);
@@ -158,7 +158,7 @@ TEST_CASE("Dijkstra") {
     Graph graph{};
     graph.addStreets(s1, s2, s3);
     graph.buildAdj();
-    auto result = graph.dijkstra(0, 2);
+    auto result = graph.shortestPath(0, 2);
     Path correctPath{0, 1, 2};
     CHECK(result.has_value());
     CHECK_EQ(result.value().path().size(), 3);
@@ -173,7 +173,7 @@ TEST_CASE("Dijkstra") {
     Graph graph{};
     graph.addStreets(s1, s2, s3);
     graph.buildAdj();
-    auto result = graph.dijkstra(0, 2);
+    auto result = graph.shortestPath(0, 2);
     Path correctPath{0, 2};
     CHECK(result.has_value());
     CHECK_EQ(result.value().path().size(), 2);
@@ -199,25 +199,25 @@ TEST_CASE("Dijkstra") {
     Graph graph{};
     graph.addStreets(s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14);
     graph.buildAdj();
-    auto result = graph.dijkstra(2, 4);
+    auto result = graph.shortestPath(2, 4);
     Path correctPath{2, 0, 1, 4};
     CHECK(result.has_value());
     CHECK_EQ(result.value().path().size(), 4);
     CHECK(checkPath(result.value().path(), correctPath));
     CHECK_EQ(result.value().distance(), 5.);
-    result = graph.dijkstra(2, 0);
+    result = graph.shortestPath(2, 0);
     correctPath = Path{2, 0};
     CHECK(result.has_value());
     CHECK_EQ(result.value().path().size(), 2);
     CHECK(checkPath(result.value().path(), correctPath));
     CHECK_EQ(result.value().distance(), 1.);
-    result = graph.dijkstra(2, 1);
+    result = graph.shortestPath(2, 1);
     correctPath = Path{2, 0, 1};
     CHECK(result.has_value());
     CHECK_EQ(result.value().path().size(), 3);
     CHECK(checkPath(result.value().path(), correctPath));
     CHECK_EQ(result.value().distance(), 4.);
-    result = graph.dijkstra(2, 3);
+    result = graph.shortestPath(2, 3);
     correctPath = Path{2, 3};
     CHECK(result.has_value());
     CHECK_EQ(result.value().path().size(), 2);
@@ -247,42 +247,42 @@ TEST_CASE("Dijkstra") {
     Graph graph{};
     graph.addStreets(s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14, s15, s16, s17, s18);
     graph.buildAdj();
-    auto result = graph.dijkstra(0, 1);
+    auto result = graph.shortestPath(0, 1);
     Path correctPath{0, 1};
     CHECK(result.has_value());
     CHECK_EQ(result.value().path().size(), 2);
     CHECK(checkPath(result.value().path(), correctPath));
     CHECK_EQ(result.value().distance(), 2.);
 
-    result = graph.dijkstra(0, 2);
+    result = graph.shortestPath(0, 2);
     correctPath = Path{0, 2};
     CHECK(result.has_value());
     CHECK_EQ(result.value().path().size(), 2);
     CHECK(checkPath(result.value().path(), correctPath));
     CHECK_EQ(result.value().distance(), 6.);
 
-    result = graph.dijkstra(0, 3);
+    result = graph.shortestPath(0, 3);
     correctPath = Path{0, 1, 3};
     CHECK(result.has_value());
     CHECK_EQ(result.value().path().size(), 3);
     CHECK(checkPath(result.value().path(), correctPath));
     CHECK_EQ(result.value().distance(), 7.);
 
-    result = graph.dijkstra(0, 4);
+    result = graph.shortestPath(0, 4);
     correctPath = Path{0, 1, 3, 4};
     CHECK(result.has_value());
     CHECK_EQ(result.value().path().size(), 4);
     CHECK(checkPath(result.value().path(), correctPath));
     CHECK_EQ(result.value().distance(), 17.);
 
-    result = graph.dijkstra(0, 5);
+    result = graph.shortestPath(0, 5);
     correctPath = Path{0, 1, 3, 5};
     CHECK(result.has_value());
     CHECK_EQ(result.value().path().size(), 4);
     CHECK(checkPath(result.value().path(), correctPath));
     CHECK_EQ(result.value().distance(), 22.);
 
-    result = graph.dijkstra(0, 6);
+    result = graph.shortestPath(0, 6);
     correctPath = Path{0, 1, 3, 4, 6};
     CHECK(result.has_value());
     CHECK_EQ(result.value().path().size(), 5);
@@ -312,7 +312,7 @@ TEST_CASE("Dijkstra") {
     Graph graph{};
     graph.addStreets(s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14, s15, s16, s17, s18);
     graph.buildAdj();
-    auto result = graph.dijkstra(0, 4);
+    auto result = graph.shortestPath(0, 4);
     Path correctPath{0, 2, 5, 4};
     CHECK(result.has_value());
     CHECK_EQ(result.value().path().size(), 4);
@@ -327,7 +327,7 @@ TEST_CASE("Dijkstra") {
     Graph graph{};
     graph.addStreets(s1, s2, s3);
     graph.buildAdj();
-    auto result = graph.dijkstra(0, 1);
+    auto result = graph.shortestPath(0, 1);
     CHECK_FALSE(result.has_value());
   }
 
@@ -338,7 +338,7 @@ TEST_CASE("Dijkstra") {
     Graph graph{};
     graph.addStreets(s1, s2, s3);
     graph.buildAdj();
-    auto result = graph.dijkstra(3, 1);
+    auto result = graph.shortestPath(3, 1);
     CHECK_FALSE(result.has_value());
   }
 
@@ -349,7 +349,7 @@ TEST_CASE("Dijkstra") {
     Graph graph{};
     graph.addStreets(s1, s2, s3);
     graph.buildAdj();
-    auto result = graph.dijkstra(1, 3);
+    auto result = graph.shortestPath(1, 3);
     CHECK_FALSE(result.has_value());
   }
 
@@ -361,7 +361,7 @@ TEST_CASE("Dijkstra") {
     Graph graph{};
     graph.addStreets(s1, s2, s3, s4);
     graph.buildAdj();
-    auto result = graph.dijkstra(0, 2);
+    auto result = graph.shortestPath(0, 2);
     CHECK(result.has_value());
     // TODO: test multiple paths
   }
