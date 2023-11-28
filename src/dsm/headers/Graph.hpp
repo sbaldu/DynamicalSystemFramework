@@ -13,8 +13,10 @@
 #include <concepts>
 #include <limits>
 #include <memory>
+#include <optional>
 #include <ranges>
 #include <unordered_map>
+#include <unordered_set>
 #include <queue>
 #include <type_traits>
 #include <utility>
@@ -24,6 +26,7 @@
 #include "Node.hpp"
 #include "SparseMatrix.hpp"
 #include "Street.hpp"
+#include "../utility/DijkstraResult.hpp"
 #include "../utility/TypeTraits/is_node.hpp"
 #include "../utility/TypeTraits/is_street.hpp"
 
@@ -59,7 +62,7 @@ namespace dsm {
 
     /// @brief Import the graph's adjacency matrix from a file
     /// @param fileName, The name of the file to import the adjacency matrix from.
-    /// @throws std::invalid_argument if the file is not found or the format is not supported
+    /// @throws std::invalid_argument if the file is not found, invalid or the format is not supported
     /// The matrix format is deduced from the file extension. Currently only .dsm files are supported.
     void importAdj(const std::string& fileName);
 
@@ -102,6 +105,18 @@ namespace dsm {
     /// @brief Get the graph's street map
     /// @return A std::unordered_map containing the graph's streets
     std::unordered_map<Id, shared<Street<Id, Size>>> streetSet() const;
+
+    /// @brief Get the shortest path between two nodes using dijkstra algorithm
+    /// @param source, The source node
+    /// @param destination, The destination node
+    /// @return A DijkstraResult object containing the path and the distance
+    std::optional<DijkstraResult<Id>> shortestPath(const Node<Id>& source,
+                                                   const Node<Id>& destination) const;
+    /// @brief Get the shortest path between two nodes using dijkstra algorithm
+    /// @param source, The source node id
+    /// @param destination, The destination node id
+    /// @return A DijkstraResult object containing the path and the distance
+    std::optional<DijkstraResult<Id>> shortestPath(Id source, Id destination) const;
   };
 
   template <typename Id, typename Size>
@@ -157,15 +172,15 @@ namespace dsm {
     if (fileExt == "dsm") {
       std::ifstream file(fileName);
       if (!file.is_open()) {
-        std::string errrorMsg =
-            "Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " + "File not found";
+        std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                              "File not found"};
         throw std::invalid_argument(errrorMsg);
       }
       Id rows, cols;
       file >> rows >> cols;
       if (rows != cols) {
-        std::string errrorMsg = "Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ +
-                                ": " + "Adjacency matrix must be square";
+        std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                              "Adjacency matrix must be square"};
         throw std::invalid_argument(errrorMsg);
       }
       m_adjacency = make_shared<SparseMatrix<Id, bool>>(rows, cols);
@@ -183,8 +198,8 @@ namespace dsm {
                                    make_shared<Street<Id, Size>>(index, std::make_pair(node1, node2)));
       }
     } else {
-      std::string errrorMsg = "Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                              "File extension not supported";
+      std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                            "File extension not supported"};
       throw std::invalid_argument(errrorMsg);
     }
   }
@@ -279,6 +294,95 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   std::unordered_map<Id, shared<Street<Id, Size>>> Graph<Id, Size>::streetSet() const {
     return m_streets;
+  }
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  std::optional<DijkstraResult<Id>> Graph<Id, Size>::shortestPath(const Node<Id>& source,
+                                                                  const Node<Id>& destination) const {
+    return dijkstra(source.id(), destination.id());
+  }
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  std::optional<DijkstraResult<Id>> Graph<Id, Size>::shortestPath(Id source, Id destination) const {
+    std::unordered_map<Id, shared<Node<Id>>> unvisitedNodes{m_nodes};
+    if (!unvisitedNodes.contains(source)) {
+      return std::nullopt;
+    }
+
+    const size_t n_nodes{m_nodes.size()};
+    auto adj{*m_adjacency};
+
+    std::unordered_set<Id> visitedNodes;
+    std::vector<std::pair<Id, double>> dist(n_nodes);
+    std::for_each(dist.begin(), dist.end(), [count = 0](auto& element) mutable -> void {
+      element.first = count;
+      element.second = std::numeric_limits<double>::max();
+      ++count;
+    });
+    dist[source] = std::make_pair(source, 0.);
+
+    std::vector<Id> prev(n_nodes);
+    prev[source] = std::numeric_limits<Id>::max();
+    double distance{};
+
+    while (unvisitedNodes.size() != 0) {
+      source = std::min_element(unvisitedNodes.begin(),
+                                unvisitedNodes.end(),
+                                [&dist](const auto& a, const auto& b) -> bool {
+                                  return dist[a.first].second < dist[b.first].second;
+                                })
+                   ->first;
+      distance = dist[source].second;
+      unvisitedNodes.erase(source);
+      visitedNodes.insert(source);
+
+      // if the destination is reached, return the path
+      if (source == destination) {
+        std::vector<Id> path{source};
+        Id previous{source};
+        while (true) {
+          previous = prev[previous];
+          if (previous == std::numeric_limits<Id>::max()) {
+            break;
+          }
+          path.push_back(previous);
+        }
+        std::reverse(path.begin(), path.end());
+        return DijkstraResult<Id>(path, distance);
+      }
+
+      const auto& neighbors{adj.getRow(source)};
+      // if the node is isolated, stop the algorithm
+      if (neighbors.size() == 0) {
+        return std::nullopt;
+      }
+
+      for (const auto& neighbour : neighbors) {
+        // if the node has already been visited, skip it
+        if (visitedNodes.find(neighbour.first) != visitedNodes.end()) {
+          continue;
+        }
+
+        double streetLength{std::find_if(m_streets.cbegin(),
+                                         m_streets.cend(),
+                                         [source, &neighbour](const auto& street) -> bool {
+                                           return street.second->nodePair().first == source &&
+                                                  street.second->nodePair().second == neighbour.first;
+                                         })
+                                ->second->length()};
+        // if current path is shorter than the previous one, update the distance
+        if (streetLength + dist[source].second < dist[neighbour.first].second) {
+          dist[neighbour.first].second = streetLength + dist[source].second;
+          prev[neighbour.first] = source;
+        }
+      }
+
+      adj.emptyColumn(source);
+    }
+
+    return std::nullopt;
   }
 };  // namespace dsm
 

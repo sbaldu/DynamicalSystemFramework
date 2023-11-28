@@ -2,6 +2,7 @@ var searchData=
 [
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   ['max_5fsize_0',['max_size',['../classdsm_1_1SparseMatrix.html#a01ba0d4bb2c3b39bcf1baa39a565d381',1,'dsm::SparseMatrix']]],
   ['maxspeed_1',['maxSpeed',['../classdsm_1_1Street.html#ac4e212a4d223925f5d3138a7a86b753b',1,'dsm::Street']]]
 =======
@@ -11,4 +12,7 @@ var searchData=
   ['max_5fsize_146',['max_size',['../classdsm_1_1SparseMatrix.html#ad89567696887d9dfbee87795c0c6285d',1,'dsm::SparseMatrix']]],
   ['maxspeed_147',['maxSpeed',['../classdsm_1_1Street.html#a120a1b309c3922ad12d9eb7539c2d697',1,'dsm::Street']]]
 >>>>>>> ebf2eca (Updated docs)
+=======
+  ['max_5fsize_123',['max_size',['../classdsm_1_1SparseMatrix.html#ad89567696887d9dfbee87795c0c6285d',1,'dsm::SparseMatrix']]]
+>>>>>>> main
 ];

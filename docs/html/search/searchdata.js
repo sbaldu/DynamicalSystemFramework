@@ -2,6 +2,7 @@ var indexSectionsWithContent =
 {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   0: "abcdegilmnopqrst",
   1: "agins",
   2: "abcdegilmnopqrst"
@@ -16,6 +17,11 @@ var indexSectionsWithContent =
   2: "adgins",
   3: "abcdegilmnopqrst"
 >>>>>>> ebf2eca (Updated docs)
+=======
+  0: "abcdeghimnopqrst",
+  1: "ains",
+  2: "abcdeghimnopqrst"
+>>>>>>> main
 };
 
 var indexSectionNames =

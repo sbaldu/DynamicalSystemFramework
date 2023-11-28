@@ -64,6 +64,7 @@ namespace dsm {
     void setCapacity(Size capacity);
     /// @brief Set the street's length
     /// @param len, The street's length
+    /// @throw std::invalid_argument, If the length is negative
     void setLength(double len);
     /// @brief Set the street's queue
     /// @param queue, The street's queue
@@ -152,6 +153,11 @@ namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Street<Id, Size>::setLength(double len) {
+    if (len < 0.) {
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                           "The length of a street cannot be negative."};
+      throw std::invalid_argument(errorMsg);
+    }
     m_len = len;
   }
   template <typename Id, typename Size>
@@ -178,8 +184,8 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Street<Id, Size>::setMaxSpeed(double speed) {
     if (speed < 0.) {
-      std::string errorMsg = "Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                             "The maximum speed of a street cannot be negative.";
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                           "The maximum speed of a street cannot be negative."};
       throw std::invalid_argument(errorMsg);
     }
     m_maxSpeed = speed;

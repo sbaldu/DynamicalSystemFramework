@@ -2,6 +2,7 @@ var searchData=
 [
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   ['queue_0',['queue',['../classdsm_1_1Node.html#a57a37129a23899424df886dc3beb75a1',1,'dsm::Node::queue()'],['../classdsm_1_1Street.html#afb41a6b8ef3cf1bd247a726672506d7f',1,'dsm::Street::queue()']]]
 =======
   ['resettime_99',['resetTime',['../classdsm_1_1Agent.html#a264ef7083f883bc7f104cf75fc17f33e',1,'dsm::Agent']]],
@@ -10,4 +11,7 @@ var searchData=
 =======
   ['queue_160',['queue',['../classdsm_1_1Node.html#a99f5fd6d030ac5823e00c5b8c8aff704',1,'dsm::Node::queue()'],['../classdsm_1_1Street.html#a7c1ef46483afb407b45570a485553ae3',1,'dsm::Street::queue()']]]
 >>>>>>> ebf2eca (Updated docs)
+=======
+  ['queue_134',['queue',['../classdsm_1_1Node.html#a99f5fd6d030ac5823e00c5b8c8aff704',1,'dsm::Node']]]
+>>>>>>> main
 ];
