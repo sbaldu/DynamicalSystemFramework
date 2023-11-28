@@ -380,17 +380,17 @@ namespace dsm {
   template <typename Index, typename T>
     requires std::unsigned_integral<Index>
   void SparseMatrix<Index, T>::emptyRow(Index index) {
-	for (const auto& x : this->getRow(index)) {
-	  _matrix.erase(index * _cols + x.first);
-	}
+    for (const auto& x : this->getRow(index)) {
+      _matrix.erase(index * _cols + x.first);
+    }
   }
 
   template <typename Index, typename T>
     requires std::unsigned_integral<Index>
   void SparseMatrix<Index, T>::emptyColumn(Index index) {
-	for (const auto& x : this->getCol(index)) {
-	  _matrix.erase(x.first * _cols + index);
-	}
+    for (const auto& x : this->getCol(index)) {
+      _matrix.erase(x.first * _cols + index);
+    }
   }
 
   template <typename Index, typename T>
