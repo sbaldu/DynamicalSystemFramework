@@ -51,7 +51,7 @@ TEST_CASE("Node") {
     */
     Node node{1};
     std::queue<uint16_t> queue;
-    CHECK_THROWS(node.dequeue());
+    CHECK_FALSE(node.dequeue().has_value());
     queue.push(2);
     queue.push(3);
     CHECK_THROWS(node.setQueue(queue));
@@ -61,7 +61,7 @@ TEST_CASE("Node") {
     node.setCapacity(2);
     CHECK_FALSE(node.isFull());
     node.enqueue(3);
-    CHECK_EQ(node.dequeue(), 2);
-    CHECK_EQ(node.dequeue(), 3);
+    CHECK_EQ(node.dequeue().value(), 2);
+    CHECK_EQ(node.dequeue().value(), 3);
   }
 }

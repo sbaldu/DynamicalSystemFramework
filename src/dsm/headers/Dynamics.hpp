@@ -253,7 +253,7 @@ namespace dsm {
         auto minDistance{result.value().distance()};
         for (auto const& node : m_graph->adjMatrix()->getRow(i)) {
           auto streetResult = m_graph->street(i, node.first);
-          if(!streetResult.has_value()) {
+          if (!streetResult.has_value()) {
             continue;
           }
           auto streetLength{streetResult.value()->length()};
@@ -264,9 +264,9 @@ namespace dsm {
             continue;
           }
           auto distance = result.value().distance();
-          
+
           // if (!(distance > minDistance + expectedTravelTime)) {
-            if (!(distance > minDistance + streetLength)) {
+          if (!(distance > minDistance + streetLength)) {
             path.insert(i, node.first, 1);
           }
         }
@@ -402,31 +402,37 @@ namespace dsm {
   void Dynamics<Id, Size, Delay>::resetTime() {
     m_time = 0;
   }
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>) bool
-  Dynamics<Id, Size, Delay>::moveAgent(Size agentId) {
-    auto& agent = m_agents[agentId];
-    const auto& street{m_graph->street((*agentIt)->position())};
-    auto& possibleMoves{agent->itinerary().path().getRow((*agentIt).position())};
-    if (m_uniformDist(m_generator) < m_errorProbability) {
-      possibleMoves = m_graph->adjMatrix()->getRow((*agentIt)->position());
-    }
-    // geerate a int between 0 and possibleMoves.size() - 1
-    std::uniform_int_distribution<Size> moveDist{0, static_cast<Size>(possibleMoves.size() - 1)};
-    const auto p{moveDist(m_generator)};
-    const auto& nextStreet{m_graph->street(possibleMoves[p].first)};
-    // What about nodes???
-    if (nextStreet->density() < 1) {
-      agent->setPosition(possibleMoves[p].first);
-      this->setAgentSpeed(agent->id());
-      /*
-      (*agentIt)->setDelay(nextStreet->length());
-      nextStreet->incrementDensity();
-      street->decrementDensity();
-      return true;
-    }
-    */
-  }
+  // template <typename Id, typename Size, typename Delay>
+  //   requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>) bool
+  // Dynamics<Id, Size, Delay>::moveAgent(Size agentId) {
+  //   auto& agent = m_agents[agentId];
+  //   auto& street{m_graph->street(agent->position())};
+  //   auto& node{m_graph->node(street->destination())};
+  //   if (node.queue().front() != agentId) {
+  //     if (node.isFull()) {
+  //       return false;
+  //     }
+  //     street.dequeue();
+  //     node.enqueue(agentId);
+  //   }
+  //   auto& possibleMoves{agent->itinerary().path().getRow(agent.position())};
+  //   if (m_uniformDist(m_generator) < m_errorProbability) {
+  //     possibleMoves = m_graph->adjMatrix()->getRow((*agentIt)->position());
+  //   }
+  //   // geerate a int between 0 and possibleMoves.size() - 1
+  //   std::uniform_int_distribution<Size> moveDist{0, static_cast<Size>(possibleMoves.size() - 1)};
+  //   const auto p{moveDist(m_generator)};
+  //   const auto& nextStreet{m_graph->street(possibleMoves[p].first)};
+  //   // What about nodes???
+  //   if (nextStreet->density() < 1) {
+  //     agent->setPosition(possibleMoves[p].first);
+  //     this->setAgentSpeed(agent->id());
+  //     agent->setDelay(nextStreet->length());
+  //     nextStreet->incrementDensity();
+  //     street->decrementDensity();
+  //     return true;
+  //   }
+  // }
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
@@ -518,13 +524,44 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>)
   void FirstOrderDynamics<Id, Size, Delay>::evolve(bool reinsert_agents) {
-    for (auto& agent : m_agents) {
-      if (!(agent->delay() > 0)) {
-        // TODO: check if agent can move and move it if possible
+    // decrement all agent delays
+    std::ranges::for_each(this->m_agents, [](auto& agent) {
+      if (agent->delay() > 0) {
+        agent->decrementDelay();
+      };
+      agent->incrementTime();
+    });
+    // move the first agent of each street
+    for (auto& street : this->m_graph->streetSet()) {
+      auto& agent = m_agents[street.queue().front()];
+      if (agent->delay() > 0) {
+        continue;
       }
-      agent->decrementDelay();
-      agent->incrementTravelTime();
-      // TODO: implement the rest of the funciton
+      auto& destinationNode{street->destination()};
+      if (destinationNode.isFull()) {
+        continue;
+      }
+      street.dequeue();
+      destinationNode.enqueue(agent->index());
+    }
+    // move the agents from each node
+    for (auto& node : this->m_graph->nodeSet()) {
+      while (!node.queue().empty()) {
+        auto& agent = m_agents[node.queue().front()];
+        auto& possibleMoves{agent->itinerary().path().getRow(agent.position())};
+        if (m_uniformDist(this->m_generator) < this->m_errorProbability) {
+          possibleMoves = this->m_graph->adjMatrix()->getRow(agent->position());
+        }
+        std::uniform_int_distribution<Size> moveDist{0, static_cast<Size>(possibleMoves.size() - 1)};
+        const auto p{moveDist(this->m_generator)};
+        auto& nextStreet{this->m_graph->street(possibleMoves[p].first)};
+        if (nextStreet->density() < 1) {
+          agent->setPosition(possibleMoves[p].first);
+          this->setAgentSpeed(agent->id());
+          agent->setDelay(nextStreet->length());
+          nextStreet.enqueue(agent->id());
+        }
+      }
     }
     ++this->m_time;
   }

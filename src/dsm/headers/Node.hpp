@@ -13,6 +13,7 @@
 #include <utility>
 #include <string>
 #include <stdexcept>
+#include <optional>
 
 namespace dsm {
   /// @brief The Node class represents a node in the network.
@@ -58,7 +59,7 @@ namespace dsm {
     /// @brief Dequeue an id from the node's queue
     /// @return Id The dequeued id
     /// @throw std::runtime_error if the queue is empty
-    Id dequeue();
+    std::optional<Id> dequeue();
 
     /// @brief Get the node's id
     /// @return Id, The node's id
@@ -138,11 +139,9 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
-  Id Node<Id, Size>::dequeue() {
+  std::optional<Id> Node<Id, Size>::dequeue() {
     if (m_queue.empty()) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                           "Node's queue is empty"};
-      throw std::runtime_error(errorMsg);
+      return std::nullopt;
     }
     Id id = m_queue.front();
     m_queue.pop();
