@@ -108,4 +108,21 @@ TEST_CASE("Dynamics") {
         CHECK(dynamics.itineraries()[0]->path()(0, 3));
         CHECK(dynamics.itineraries()[0]->path()(3, 2));
     }
+    SUBCASE("evolve with one agent") {
+        /// GIVEN: a dynamics object
+        /// WHEN: we evolve the dynamics
+        /// THEN: the dynamics evolves
+        Street s1{0, 1, 2., std::make_pair(0, 1)};
+        Street s2{1, 1, 5., std::make_pair(1, 2)};
+        Street s3{2, 1, 10., std::make_pair(0, 2)};
+        Graph graph2;
+        graph2.addStreets(s1, s2, s3);
+        graph2.buildAdj();
+        Dynamics dynamics{graph2};
+        Itineary itinerary{0, 2};
+        dynamics.addItinerary(itinerary);
+        dynamics.addRandomAgents(1);
+        dynamics.updatePaths();
+        dynamics.evolve(false);
+    }
 }
