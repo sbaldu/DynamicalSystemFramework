@@ -7,7 +7,7 @@
 #include "Graph.hpp"
 
 using Agent = dsm::Agent<uint32_t, uint32_t, double>;
-using Node = dsm::Node<uint32_t>;
+using Node = dsm::Node<uint32_t, uint32_t>;
 using Street = dsm::Street<uint32_t, uint32_t>;
 using SparseMatrix = dsm::SparseMatrix<uint32_t, bool>;
 

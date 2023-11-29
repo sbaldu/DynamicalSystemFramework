@@ -9,7 +9,7 @@
 #include "doctest.h"
 
 using Agent = dsm::Agent<uint16_t, uint16_t, double>;
-using Node = dsm::Node<uint16_t>;
+using Node = dsm::Node<uint16_t, uint16_t>;
 using Street = dsm::Street<uint16_t, uint16_t>;
 
 TEST_CASE("Street") {
