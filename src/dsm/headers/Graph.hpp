@@ -44,7 +44,7 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   class Graph {
   private:
-    std::unordered_map<Id, shared<Node<Id>>> m_nodes;
+    std::unordered_map<Id, shared<Node<Id, Size>>> m_nodes;
     std::unordered_map<Id, shared<Street<Id, Size>>> m_streets;
     shared<SparseMatrix<Id, bool>> m_adjacency;
 
@@ -68,10 +68,10 @@ namespace dsm {
 
     /// @brief Add a node to the graph
     /// @param node, A std::shared_ptr to the node to add
-    void addNode(shared<Node<Id>> node);
+    void addNode(shared<Node<Id, Size>> node);
     /// @brief Add a node to the graph
     /// @param node, A reference to the node to add
-    void addNode(const Node<Id>& node);
+    void addNode(const Node<Id, Size>& node);
 
     template <typename... Tn>
       requires(is_node_v<std::remove_reference_t<Tn>> && ...)
@@ -101,7 +101,7 @@ namespace dsm {
     shared<SparseMatrix<Id, bool>> adjMatrix() const;
     /// @brief Get the graph's node map
     /// @return A std::unordered_map containing the graph's nodes
-    std::unordered_map<Id, shared<Node<Id>>> nodeSet() const;
+    std::unordered_map<Id, shared<Node<Id, Size>>> nodeSet() const;
     /// @brief Get the graph's street map
     /// @return A std::unordered_map containing the graph's streets
     std::unordered_map<Id, shared<Street<Id, Size>>> streetSet() const;
@@ -110,8 +110,8 @@ namespace dsm {
     /// @param source, The source node
     /// @param destination, The destination node
     /// @return A DijkstraResult object containing the path and the distance
-    std::optional<DijkstraResult<Id>> shortestPath(const Node<Id>& source,
-                                                   const Node<Id>& destination) const;
+    std::optional<DijkstraResult<Id>> shortestPath(const Node<Id, Size>& source,
+                                                   const Node<Id, Size>& destination) const;
     /// @brief Get the shortest path between two nodes using dijkstra algorithm
     /// @param source, The source node id
     /// @param destination, The destination node id
@@ -128,7 +128,7 @@ namespace dsm {
   Graph<Id, Size>::Graph(const SparseMatrix<Id, bool>& adj)
       : m_adjacency{make_shared<SparseMatrix<Id, bool>>(adj)} {
     std::ranges::for_each(std::views::iota(0, (int)adj.getColDim()), [this](auto i) -> void {
-      m_nodes.insert(std::make_pair(i, make_shared<Node<Id>>(i)));
+      m_nodes.insert(std::make_pair(i, make_shared<Node<Id, Size>>(i)));
     });
 
     std::ranges::for_each(std::views::iota(0, (int)adj.size()), [this, adj](auto i) -> void {
@@ -146,8 +146,8 @@ namespace dsm {
 
       Id node1 = street->nodePair().first;
       Id node2 = street->nodePair().second;
-      m_nodes.insert(node1, make_shared<Node<Id>>(node1));
-      m_nodes.insert(node2, make_shared<Node<Id>>(node2));
+      m_nodes.insert(node1, make_shared<Node<Id, Size>>(node1));
+      m_nodes.insert(node2, make_shared<Node<Id, Size>>(node2));
     }
 
     buildAdj();
@@ -192,8 +192,8 @@ namespace dsm {
         m_adjacency->insert(index, val);
         const Id node1{static_cast<Id>(index / rows)};
         const Id node2{static_cast<Id>(index % cols)};
-        m_nodes.insert_or_assign(node1, make_shared<Node<Id>>(node1));
-        m_nodes.insert_or_assign(node2, make_shared<Node<Id>>(node2));
+        m_nodes.insert_or_assign(node1, make_shared<Node<Id, Size>>(node1));
+        m_nodes.insert_or_assign(node2, make_shared<Node<Id, Size>>(node2));
         m_streets.insert_or_assign(index,
                                    make_shared<Street<Id, Size>>(index, std::make_pair(node1, node2)));
       }
@@ -206,14 +206,14 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Graph<Id, Size>::addNode(shared<Node<Id>> node) {
+  void Graph<Id, Size>::addNode(shared<Node<Id, Size>> node) {
     m_nodes.insert(std::make_pair(node->id(), node));
   }
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Graph<Id, Size>::addNode(const Node<Id>& node) {
-    m_nodes.insert(std::make_pair(node.id(), make_shared<Node<Id>>(node)));
+  void Graph<Id, Size>::addNode(const Node<Id, Size>& node) {
+    m_nodes.insert(std::make_pair(node.id(), make_shared<Node<Id, Size>>(node)));
   }
 
   template <typename Id, typename Size>
@@ -251,8 +251,8 @@ namespace dsm {
     // insert nodes
     const Id node1{street.nodePair().first};
     const Id node2{street.nodePair().second};
-    m_nodes.insert_or_assign(node1, make_shared<Node<Id>>(node1));
-    m_nodes.insert_or_assign(node2, make_shared<Node<Id>>(node2));
+    m_nodes.insert_or_assign(node1, make_shared<Node<Id, Size>>(node1));
+    m_nodes.insert_or_assign(node2, make_shared<Node<Id, Size>>(node2));
   }
 
   template <typename Id, typename Size>
@@ -265,8 +265,8 @@ namespace dsm {
     // insert nodes
     const Id node1{street.nodePair().first};
     const Id node2{street.nodePair().second};
-    m_nodes.insert_or_assign(node1, make_shared<Node<Id>>(node1));
-    m_nodes.insert_or_assign(node2, make_shared<Node<Id>>(node2));
+    m_nodes.insert_or_assign(node1, make_shared<Node<Id, Size>>(node1));
+    m_nodes.insert_or_assign(node2, make_shared<Node<Id, Size>>(node2));
   }
 
   template <typename Id, typename Size>
@@ -286,7 +286,7 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  std::unordered_map<Id, shared<Node<Id>>> Graph<Id, Size>::nodeSet() const {
+  std::unordered_map<Id, shared<Node<Id, Size>>> Graph<Id, Size>::nodeSet() const {
     return m_nodes;
   }
 
@@ -298,15 +298,15 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  std::optional<DijkstraResult<Id>> Graph<Id, Size>::shortestPath(const Node<Id>& source,
-                                                                  const Node<Id>& destination) const {
+  std::optional<DijkstraResult<Id>> Graph<Id, Size>::shortestPath(const Node<Id, Size>& source,
+                                                                  const Node<Id, Size>& destination) const {
     return dijkstra(source.id(), destination.id());
   }
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   std::optional<DijkstraResult<Id>> Graph<Id, Size>::shortestPath(Id source, Id destination) const {
-    std::unordered_map<Id, shared<Node<Id>>> unvisitedNodes{m_nodes};
+    std::unordered_map<Id, shared<Node<Id, Size>>> unvisitedNodes{m_nodes};
     if (!unvisitedNodes.contains(source)) {
       return std::nullopt;
     }

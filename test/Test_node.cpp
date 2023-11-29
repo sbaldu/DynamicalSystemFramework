@@ -4,7 +4,7 @@
 
 #include "doctest.h"
 
-using Node = dsm::Node<uint16_t>;
+using Node = dsm::Node<uint16_t, uint16_t>;
 
 TEST_CASE("Node") {
   SUBCASE("Constructor") {
@@ -42,5 +42,26 @@ TEST_CASE("Node") {
     CHECK(node.coords().second == 3.5);
     CHECK(node.queue().front() == 2);
     CHECK(node.queue().back() == 3);
+  }
+  SUBCASE("queue management") {
+    /*This tests the queue management functions.
+    GIVEN: A Node
+    WHEN: The queue is set, an id is enqueued, and an id is dequeued
+    THEN: The queue is set correctly, the id is enqueued correctly, and the id is dequeued correctly
+    */
+    Node node{1};
+    std::queue<uint16_t> queue;
+    CHECK_THROWS(node.dequeue());
+    queue.push(2);
+    queue.push(3);
+    CHECK_THROWS(node.setQueue(queue));
+    node.enqueue(2);
+    CHECK_THROWS(node.enqueue(3));
+    CHECK(node.isFull());
+    node.setCapacity(2);
+    CHECK_FALSE(node.isFull());
+    node.enqueue(3);
+    CHECK_EQ(node.dequeue(), 2);
+    CHECK_EQ(node.dequeue(), 3);
   }
 }
