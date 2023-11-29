@@ -168,8 +168,8 @@ namespace dsm {
   }
 
   template <typename Id, typename Size>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> bool
-  Node<Id, Size>::isFull() const {
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
+  bool Node<Id, Size>::isFull() const {
     return m_queue.size() == m_capacity;
   }
 
