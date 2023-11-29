@@ -405,30 +405,27 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>) bool
   Dynamics<Id, Size, Delay>::moveAgent(Size agentId) {
-    auto agentIt{std::find_if(m_agents.begin(), m_agents.end(), [agentId](const auto& agent) -> bool {
-      return agent->index() == agentId;
-    })};
-    if (agentIt == m_agents.end()) {
-      return false;
-    }
+    auto& agent = m_agents[agentId];
     const auto& street{m_graph->street((*agentIt)->position())};
-    const auto& possibleMoves{(*agentIt)->itinerary().path().getRow((*agentIt).position())};
-    const auto p = m_uniformDist(m_generator);
-    auto sum = 0.;
-    for (const auto& move : possibleMoves) {
-      sum += move.second;
-      if (p < sum) {
-        const auto& nextStreet = m_graph->street(move.first);
-        if (street->density() < 1.) {
-          street->dequeue();
-          nextStreet->enqueue(*agentIt);
-          (*agentIt)->setPosition(move.first);
-          return true;
-        }
-        return false;
-      }
+    auto& possibleMoves{agent->itinerary().path().getRow((*agentIt).position())};
+    if (m_uniformDist(m_generator) < m_errorProbability) {
+      possibleMoves = m_graph->adjMatrix()->getRow((*agentIt)->position());
     }
-    return false;
+    // geerate a int between 0 and possibleMoves.size() - 1
+    std::uniform_int_distribution<Size> moveDist{0, static_cast<Size>(possibleMoves.size() - 1)};
+    const auto p{moveDist(m_generator)};
+    const auto& nextStreet{m_graph->street(possibleMoves[p].first)};
+    // What about nodes???
+    if (nextStreet->density() < 1) {
+      agent->setPosition(possibleMoves[p].first);
+      this->setAgentSpeed(agent->id());
+      /*
+      (*agentIt)->setDelay(nextStreet->length());
+      nextStreet->incrementDensity();
+      street->decrementDensity();
+      return true;
+    }
+    */
   }
 
   template <typename Id, typename Size, typename Delay>
