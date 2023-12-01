@@ -38,8 +38,9 @@ TEST_CASE("Dynamics") {
         dynamics.addItinerary(itineary);
         dynamics.addRandomAgents(1);
         CHECK(dynamics.agents().size() == 1);
-        CHECK(dynamics.agents()[0]->itinerary().source() == itineary.source());
-        CHECK(dynamics.agents()[0]->itinerary().destination() == itineary.destination());
+        auto agents = dynamics.agents();
+        CHECK(agents[0]->itinerary().source() == itineary.source());
+        CHECK(agents[0]->itinerary().destination() == itineary.destination());
     }
     SUBCASE("AddRandomAgents with many itineraries") {
         /// GIVEN: a dynamics object
@@ -53,12 +54,13 @@ TEST_CASE("Dynamics") {
         dynamics.addItinerary(itineary3);
         dynamics.addRandomAgents(3);
         CHECK(dynamics.agents().size() == 3);
-        CHECK(dynamics.agents()[0]->itinerary().source() == itineary2.source());
-        CHECK(dynamics.agents()[0]->itinerary().destination() == itineary2.destination());
-        CHECK(dynamics.agents()[1]->itinerary().source() == itineary.source());
-        CHECK(dynamics.agents()[1]->itinerary().destination() == itineary.destination());
-        CHECK(dynamics.agents()[2]->itinerary().source() == itineary3.source());
-        CHECK(dynamics.agents()[2]->itinerary().destination() == itineary3.destination());
+        auto agents = dynamics.agents();
+        CHECK(agents[0]->itinerary().source() == itineary2.source());
+        CHECK(agents[0]->itinerary().destination() == itineary2.destination());
+        CHECK(agents[1]->itinerary().source() == itineary.source());
+        CHECK(agents[1]->itinerary().destination() == itineary.destination());
+        CHECK(agents[2]->itinerary().source() == itineary3.source());
+        CHECK(agents[2]->itinerary().destination() == itineary3.destination());
     }
     SUBCASE("AddRandomAgents - exceptions") {
         /// GIVEN: a dynamics object
