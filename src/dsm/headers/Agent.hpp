@@ -29,7 +29,7 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
   class Agent {
   private:
-    Id m_index;
+    Id m_id;
     Id m_streetId;
     Id m_itineraryId;
     Delay m_delay;
