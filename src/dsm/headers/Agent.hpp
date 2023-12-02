@@ -106,7 +106,12 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
   Agent<Id, Size, Delay>::Agent(Id id, Id streetId, Itinerary<Id> itinerary)
-      : m_itinerary{std::move(itinerary)}, m_speed{0.}, m_delay{0}, m_id{id}, m_streetId{streetId}, m_time{0} {}
+      : m_itinerary{std::move(itinerary)},
+        m_speed{0.},
+        m_delay{0},
+        m_id{id},
+        m_streetId{streetId},
+        m_time{0} {}
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
