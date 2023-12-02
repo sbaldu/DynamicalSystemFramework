@@ -42,7 +42,7 @@ namespace dsm {
     /// @param id The agent's id
     /// @param streetId The id of the street currently occupied by the agent
     /// @param itineraryId The agent's itinerary
-    Agent(Id index, Id streetId, Id itineraryId);
+    Agent(Id id, Id streetId, Id itineraryId);
     /// @brief Set the street occupied by the agent
     /// @param streetId The id of the street currently occupied by the agent
     void setStreetId(Id streetId);
@@ -95,8 +95,8 @@ namespace dsm {
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
-  Agent<Id, Size, Delay>::Agent(Id index, Id streetId, Id itineraryId)
-      : m_index{index},
+  Agent<Id, Size, Delay>::Agent(Id id, Id streetId, Id itineraryId)
+      : m_id{id},
         m_streetId{streetId},
         m_itineraryId{itineraryId},
         m_delay{0},
