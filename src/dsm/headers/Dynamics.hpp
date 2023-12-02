@@ -17,6 +17,7 @@
 #include <string>
 #include <numeric>
 #include <unordered_map>
+#include <iterator>
 
 #include "Agent.hpp"
 #include "Itinerary.hpp"
@@ -366,7 +367,7 @@ namespace dsm {
     for (Size i{0}; i < nAgents; ++i) {
       Size itineraryId{itineraryDist(m_generator)};
       this->addAgent(
-          Agent<Id, Size, Delay>{static_cast<Size>(m_agents.size()), 0, itineraryId});
+          Agent<Id, Size, Delay>{static_cast<Size>(m_agents.size()), std::nullopt, itineraryId});
     }
   }
 
@@ -518,6 +519,10 @@ namespace dsm {
         auto possibleMoves{this->m_itineraries[agent->itineraryId()]->path().getRow(street->nodePair().second)};
         if (this->m_uniformDist(this->m_generator) < this->m_errorProbability) {
           possibleMoves = this->m_graph->adjMatrix()->getRow(street->nodePair().second);
+        }
+        Size nMoves = static_cast<Size>(possibleMoves.size());
+        if (nMoves == 0) {
+          continue;
         }
         std::uniform_int_distribution<Size> moveDist{0, static_cast<Size>(possibleMoves.size() - 1)};
         const auto p{moveDist(this->m_generator)};
