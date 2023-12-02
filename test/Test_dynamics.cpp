@@ -126,5 +126,16 @@ TEST_CASE("Dynamics") {
         dynamics.addRandomAgents(1);
         dynamics.updatePaths();
         dynamics.evolve(false);
+        auto agents = dynamics.agents();
+        CHECK_EQ(agents[0]->time(), 1);
+        CHECK_EQ(agents[0]->delay(), 0);
+        CHECK_EQ(agents[0]->streetId(), 0);
+        dynamics.evolve(false);
+        // dynamics.evolve(false);
+        // agents = dynamics.agents();
+        // // CHECK_EQ(agents[0]->time(), 2);
+        // // CHECK_EQ(agents[0]->delay(), 0);
+        // // CHECK_EQ(agents[0]->streetId(), 0);
+        // CHECK_EQ(agents[0]->speed(), 30);
     }
 }

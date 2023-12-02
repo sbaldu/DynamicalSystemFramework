@@ -35,7 +35,7 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
   class Dynamics {
   protected:
-    std::vector<std::unique_ptr<Itinerary<Id>>> m_itineraries;
+    std::unordered_map<Id, std::unique_ptr<Itinerary<Id>>> m_itineraries;
     std::unordered_map<Id, std::shared_ptr<Agent<Id, Size, Delay>>> m_agents;
     TimePoint m_time;
     std::unique_ptr<Graph<Id, Size>> m_graph;
@@ -492,13 +492,6 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>)
   void FirstOrderDynamics<Id, Size, Delay>::evolve(bool reinsert_agents) {
-    // decrement all agent delays
-    std::ranges::for_each(this->m_agents, [](auto& agent) {
-      if (agent.second->delay() > 0) {
-        agent.second->decrementDelay();
-      };
-      agent.second->incrementTime();
-    });
     // move the first agent of each street
     for (auto& streetPair : this->m_graph->streetSet()) {
       auto& street{streetPair.second};
@@ -521,23 +514,42 @@ namespace dsm {
       auto& node{nodePair.second};
       while (!node->queue().empty()) {
         auto& agent = this->m_agents[node->queue().front()];
-        auto possibleMoves{agent->itinerary().path().getRow(agent->streetId())};
-        if (this->m_uniformDist(this->m_generator) < this->m_errorProbability) {
-          possibleMoves = this->m_graph->adjMatrix()->getRow(agent->streetId());
-        }
-        std::uniform_int_distribution<Size> moveDist{0, static_cast<Size>(possibleMoves.size() - 1)};
-        const auto p{moveDist(this->m_generator)};
-        auto iterator = possibleMoves.begin();
-        std::advance(iterator, p);
-        auto& nextStreet{this->m_graph->streetSet()[iterator->first]};
-        if (nextStreet->density() < 1) {
-          agent->setStreetId(iterator->first);
-          this->setAgentSpeed(agent->index());
-          agent->incrementDelay(nextStreet->length());
-          nextStreet->enqueue(*agent);
-        }
+        const auto& street = this->m_graph->streetSet()[agent->streetId()];
+        auto possibleMoves{agent->itinerary().path().getRow(street->nodePair().second)};
+        // if (this->m_uniformDist(this->m_generator) < this->m_errorProbability) {
+        //   possibleMoves = this->m_graph->adjMatrix()->getRow(street->nodePair().second));
+        // }
+        // std::uniform_int_distribution<Size> moveDist{0, static_cast<Size>(possibleMoves.size() - 1)};
+        // const auto p{moveDist(this->m_generator)};
+        // auto iterator = possibleMoves.begin();
+        // std::advance(iterator, p);
+        // auto& nextStreet{this->m_graph->streetSet()[iterator->first]};
+        // if (nextStreet->density() < 1) {
+        //   agent->setStreetId(iterator->first);
+        //   this->setAgentSpeed(agent->index());
+        //   agent->incrementDelay(nextStreet->length());
+        //   nextStreet->enqueue(*agent);
+        // }
       }
     }
+    // cycle over agents and put them in the src node
+    for (auto& agentPair : this->m_agents) {
+      auto& agent{agentPair.second};
+      if (agent->delay() == 0 && agent->time() == 0) {
+      auto& srcNode{this->m_graph->nodeSet()[agent->itinerary().source()]};
+      if (srcNode->isFull()) {
+        continue;
+      }
+      srcNode->enqueue(agent->index());
+      }
+    }
+    // decrement all agent delays
+    std::ranges::for_each(this->m_agents, [](auto& agent) {
+      if (agent.second->delay() > 0) {
+        agent.second->decrementDelay();
+      };
+      agent.second->incrementTime();
+    });
     ++this->m_time;
   }
 
