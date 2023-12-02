@@ -35,10 +35,10 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
   class Dynamics {
   protected:
-    std::unordered_map<Id, std::unique_ptr<Itinerary<Id>>> m_itineraries;
+    std::unordered_map<Id, std::shared_ptr<Itinerary<Id>>> m_itineraries;
     std::unordered_map<Id, std::shared_ptr<Agent<Id, Size, Delay>>> m_agents;
     TimePoint m_time;
-    std::unique_ptr<Graph<Id, Size>> m_graph;
+    std::shared_ptr<Graph<Id, Size>> m_graph;
     double m_errorProbability;
     double m_minSpeedRateo;
     std::mt19937_64 m_generator{std::random_device{}()};
@@ -69,7 +69,7 @@ namespace dsm {
     /// @tparam Tid The type of the agent's id
     /// @tparam F The type of the function to call
     /// @tparam ...Tn The types of the arguments of the function
-    /// @param agentId The index of the agent
+    /// @param agentId The id of the agent
     /// @param f The function to call
     /// @param ...args The arguments of the function
     /// @throw std::invalid_argument, If the agent is not found
@@ -84,7 +84,7 @@ namespace dsm {
     const Graph<Id, Size>& graph() const;
     /// @brief Get the itineraries
     /// @return const std::vector<Itinerary<Id>>&, The itineraries
-    const std::vector<std::unique_ptr<Itinerary<Id>>>& itineraries() const;
+    const std::unordered_map<Id, std::shared_ptr<Itinerary<Id>>>& itineraries() const;
     /// @brief Get the agents
     /// @return const std::vector<Agent<Id>>&, The agents
     const std::unordered_map<Id, std::shared_ptr<Agent<Id, Size, Delay>>>& agents() const;
@@ -114,13 +114,13 @@ namespace dsm {
     void addAgents(std::span<Agent<Id, Size, Delay>> agents);
 
     /// @brief Remove an agent from the simulation
-    /// @param agentId, the index of the agent to remove
+    /// @param agentId the id of the agent to remove
     void removeAgent(Size agentId);
     template <typename T1, typename... Tn>
       requires(std::is_convertible_v<T1, Size> && (std::is_convertible_v<Tn, Size> && ...))
     /// @brief Remove a pack of agents from the simulation
-    /// @param id, the index of the first agent to remove
-    /// @param ids, the pack of indexes of the agents to remove
+    /// @param id, the id of the first agent to remove
+    /// @param ids, the pack of ides of the agents to remove
     void removeAgents(T1 id, Tn... ids);
     /// @brief Add a set of agents to the simulation
     /// @param nAgents The number of agents to add
@@ -132,7 +132,7 @@ namespace dsm {
     void addItinerary(const Itinerary<Id>& itinerary);
     /// @brief Add an itinerary
     /// @param itinerary, Unique pointer to the itinerary
-    void addItinerary(std::unique_ptr<Itinerary<Id>> itinerary);
+    void addItinerary(std::shared_ptr<Itinerary<Id>> itinerary);
     template <typename... Tn>
       requires(is_itinerary_v<Tn> && ...)
     void addItineraries(Tn... itineraries);
@@ -151,7 +151,7 @@ namespace dsm {
     /// @brief Reset the simulation time
     void resetTime();
     /// @brief Move an agent
-    /// @param agentId The index of the agent to move
+    /// @param agentId The id of the agent to move
     /// @return true If the agent has been moved, false otherwise
     bool moveAgent(Size agentId);
 
@@ -225,7 +225,7 @@ namespace dsm {
     requires std::is_invocable_v<F, Tn...>
   void Dynamics<Id, Size, Delay>::setAgentSpeed(Tid agentId, F f, Tn... args) {
     auto agentIt{std::find_if(
-        m_agents.begin(), m_agents.end(), [agentId](auto agent) { return agent->index() == agentId; })};
+        m_agents.begin(), m_agents.end(), [agentId](auto agent) { return agent->id() == agentId; })};
     if (agentIt == m_agents.end()) {
       std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
                            "Agent " + std::to_string(agentId) + " not found"};
@@ -241,7 +241,8 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>)
   void Dynamics<Id, Size, Delay>::updatePaths() {
     const Size dimension = m_graph->adjMatrix()->getRowDim();
-    for (auto& itinerary : m_itineraries) {
+    for (auto& itineraryPair : m_itineraries) {
+      auto& itinerary{itineraryPair.second};
       SparseMatrix<Id, bool> path{dimension, dimension};
       for (Size i{0}; i < dimension; ++i) {
         if (i == itinerary->destination()) {
@@ -284,7 +285,7 @@ namespace dsm {
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  const std::vector<std::unique_ptr<Itinerary<Id>>>& Dynamics<Id, Size, Delay>::itineraries() const {
+  const std::unordered_map<Id, std::shared_ptr<Itinerary<Id>>>& Dynamics<Id, Size, Delay>::itineraries() const {
     return m_itineraries;
   }
 
@@ -303,13 +304,13 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Dynamics<Id, Size, Delay>::addAgent(const Agent<Id, Size, Delay>& agent) {
-    m_agents.emplace(agent.index(), std::make_shared<Agent<Id, Size, Delay>>(agent));
+    m_agents.emplace(agent.id(), std::make_shared<Agent<Id, Size, Delay>>(agent));
   }
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Dynamics<Id, Size, Delay>::addAgent(std::shared_ptr<Agent<Id, Size, Delay>> agent) {
-    m_agents.emplace(agent->index(), agent);
+    m_agents.emplace(agent->id(), agent);
   }
 
   template <typename Id, typename Size, typename Delay>
@@ -338,7 +339,7 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Dynamics<Id, Size, Delay>::removeAgent(Size agentId) {
     auto agentIt{std::find_if(
-        m_agents.begin(), m_agents.end(), [agentId](auto agent) { return agent->index() == agentId; })};
+        m_agents.begin(), m_agents.end(), [agentId](auto agent) { return agent->id() == agentId; })};
     if (agentIt != m_agents.end()) {
       m_agents.erase(agentIt);
     }
@@ -363,23 +364,22 @@ namespace dsm {
     }
     std::uniform_int_distribution<Size> itineraryDist{0, static_cast<Size>(m_itineraries.size() - 1)};
     for (Size i{0}; i < nAgents; ++i) {
-      Size itineraryIndex{itineraryDist(m_generator)};
-      auto& itinerary{*m_itineraries[itineraryIndex]};
+      Size itineraryId{itineraryDist(m_generator)};
       this->addAgent(
-          Agent<Id, Size, Delay>{static_cast<Size>(m_agents.size()), itinerary.source(), itinerary});
+          Agent<Id, Size, Delay>{static_cast<Size>(m_agents.size()), 0, itineraryId});
     }
   }
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Dynamics<Id, Size, Delay>::addItinerary(const Itinerary<Id>& itinerary) {
-    m_itineraries.push_back(std::make_unique<Itinerary<Id>>(itinerary));
+    m_itineraries.emplace(itinerary.id(), std::make_shared<Itinerary<Id>>(itinerary));
   }
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Dynamics<Id, Size, Delay>::addItinerary(std::unique_ptr<Itinerary<Id>> itinerary) {
-    m_itineraries.push_back(std::move(itinerary));
+  void Dynamics<Id, Size, Delay>::addItinerary(std::shared_ptr<Itinerary<Id>> itinerary) {
+    m_itineraries.emplace(itinerary.id(), std::move(itinerary));
   }
 
   template <typename Id, typename Size, typename Delay>
@@ -460,7 +460,7 @@ namespace dsm {
     /// @param graph, The graph representing the network
     FirstOrderDynamics(const Graph<Id, Size>& graph);
     /// @brief Set the speed of an agent
-    /// @param agentId, The index of the agent
+    /// @param agentId The id of the agent
     /// @throw std::invalid_argument, If the agent is not found
     void setAgentSpeed(Size agentId);
 
@@ -477,7 +477,7 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void FirstOrderDynamics<Id, Size, Delay>::setAgentSpeed(Size agentId) {
     auto agentIt{std::find_if(
-        this->m_agents.begin(), this->m_agents.end(), [agentId](auto agent) { return agent.second->index() == agentId; })};
+        this->m_agents.begin(), this->m_agents.end(), [agentId](auto agent) { return agent.second->id() == agentId; })};
     if (agentIt == this->m_agents.end()) {
       std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
                            "Agent " + std::to_string(agentId) + " not found"};
@@ -507,7 +507,7 @@ namespace dsm {
         continue;
       }
       street->dequeue();
-      destinationNode->enqueue(agent->index());
+      destinationNode->enqueue(agent->id());
     }
     // move the agents from each node
     for (auto& nodePair : this->m_graph->nodeSet()) {
@@ -515,32 +515,32 @@ namespace dsm {
       while (!node->queue().empty()) {
         auto& agent = this->m_agents[node->queue().front()];
         const auto& street = this->m_graph->streetSet()[agent->streetId()];
-        auto possibleMoves{agent->itinerary().path().getRow(street->nodePair().second)};
-        // if (this->m_uniformDist(this->m_generator) < this->m_errorProbability) {
-        //   possibleMoves = this->m_graph->adjMatrix()->getRow(street->nodePair().second));
-        // }
-        // std::uniform_int_distribution<Size> moveDist{0, static_cast<Size>(possibleMoves.size() - 1)};
-        // const auto p{moveDist(this->m_generator)};
-        // auto iterator = possibleMoves.begin();
-        // std::advance(iterator, p);
-        // auto& nextStreet{this->m_graph->streetSet()[iterator->first]};
-        // if (nextStreet->density() < 1) {
-        //   agent->setStreetId(iterator->first);
-        //   this->setAgentSpeed(agent->index());
-        //   agent->incrementDelay(nextStreet->length());
-        //   nextStreet->enqueue(*agent);
-        // }
+        auto possibleMoves{this->m_itineraries[agent->itineraryId()]->path().getRow(street->nodePair().second)};
+        if (this->m_uniformDist(this->m_generator) < this->m_errorProbability) {
+          possibleMoves = this->m_graph->adjMatrix()->getRow(street->nodePair().second);
+        }
+        std::uniform_int_distribution<Size> moveDist{0, static_cast<Size>(possibleMoves.size() - 1)};
+        const auto p{moveDist(this->m_generator)};
+        auto iterator = possibleMoves.begin();
+        std::advance(iterator, p);
+        auto& nextStreet{this->m_graph->streetSet()[iterator->first]};
+        if (nextStreet->density() < 1) {
+          agent->setStreetId(iterator->first);
+          this->setAgentSpeed(agent->id());
+          agent->incrementDelay(nextStreet->length());
+          nextStreet->enqueue(*agent);
+        }
       }
     }
     // cycle over agents and put them in the src node
     for (auto& agentPair : this->m_agents) {
       auto& agent{agentPair.second};
       if (agent->delay() == 0 && agent->time() == 0) {
-      auto& srcNode{this->m_graph->nodeSet()[agent->itinerary().source()]};
+      auto& srcNode{this->m_graph->nodeSet()[this->m_itineraries[agent->itineraryId()]->source()]};
       if (srcNode->isFull()) {
         continue;
       }
-      srcNode->enqueue(agent->index());
+      srcNode->enqueue(agent->id());
       }
     }
     // decrement all agent delays
