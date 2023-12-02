@@ -29,7 +29,7 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
   class Agent {
   private:
-    Id m_index;
+    Id m_id;
     Id m_streetId;
     Id m_itineraryId;
     Delay m_delay;
@@ -39,11 +39,10 @@ namespace dsm {
   public:
     Agent() = delete;
     /// @brief Construct a new Agent object
-    /// @param index The agent's id
+    /// @param id The agent's id
     /// @param streetId The id of the street currently occupied by the agent
     /// @param itineraryId The agent's itinerary
-    Agent(Id index, Id streetId, Id itineraryId);
-
+    Agent(Id id, Id streetId, Id itineraryId);
     /// @brief Set the street occupied by the agent
     /// @param streetId The id of the street currently occupied by the agent
     void setStreetId(Id streetId);
@@ -76,7 +75,7 @@ namespace dsm {
 
     /// @brief Get the agent's id
     /// @return The agent's id
-    Id index() const;
+    Id id() const;
     /// @brief Get the id of the street currently occupied by the agent
     /// @return The id of the street currently occupied by the agent
     Id streetId() const;
@@ -96,13 +95,8 @@ namespace dsm {
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
-  Agent<Id, Size, Delay>::Agent(Id index, Id streetId, Id itineraryId)
-      : m_index{index},
-        m_streetId{streetId},
-        m_itineraryId{itineraryId},
-        m_delay{0},
-        m_speed{0.},
-        m_time{0} {}
+  Agent<Id, Size, Delay>::Agent(Id id, Id streetId, Id itineraryId)
+      : m_id{id}, m_streetId{streetId}, m_itineraryId{itineraryId}, m_delay{0}, m_speed{0.}, m_time{0} {}
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
@@ -181,8 +175,8 @@ namespace dsm {
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
-  Id Agent<Id, Size, Delay>::index() const {
-    return m_index;
+  Id Agent<Id, Size, Delay>::id() const {
+    return m_id;
   }
 
   template <typename Id, typename Size, typename Delay>
