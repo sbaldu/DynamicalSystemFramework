@@ -10,18 +10,10 @@ using Itinerary = dsm::Itinerary<uint16_t>;
 
 TEST_CASE("Agent") {
   SUBCASE("Constructor_1") {
-    Agent agent{1, 1};
+    Agent agent{1, 1, 0};
     CHECK_EQ(agent.index(), 1);
     CHECK_EQ(agent.streetId(), 1);
-    CHECK_EQ(agent.speed(), 0);
-    CHECK_EQ(agent.delay(), 0);
-    CHECK_EQ(agent.time(), 0);
-  }
-  SUBCASE("Constructor_2") {
-    Itinerary itinerary{0, 1};
-    Agent agent{1, 1, itinerary};
-    CHECK_EQ(agent.index(), 1);
-    CHECK_EQ(agent.streetId(), 1);
+    CHECK_EQ(agent.itineraryId(), 0);
     CHECK_EQ(agent.speed(), 0);
     CHECK_EQ(agent.delay(), 0);
     CHECK_EQ(agent.time(), 0);
