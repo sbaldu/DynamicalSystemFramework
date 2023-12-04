@@ -22,6 +22,7 @@
 #include "Agent.hpp"
 #include "Itinerary.hpp"
 #include "Graph.hpp"
+#include "SparseMatrix.hpp"
 #include "../utility/TypeTraits/is_agent.hpp"
 #include "../utility/TypeTraits/is_itinerary.hpp"
 
@@ -286,13 +287,15 @@ namespace dsm {
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  const std::unordered_map<Id, std::shared_ptr<Itinerary<Id>>>& Dynamics<Id, Size, Delay>::itineraries() const {
+  const std::unordered_map<Id, std::shared_ptr<Itinerary<Id>>>& Dynamics<Id, Size, Delay>::itineraries()
+      const {
     return m_itineraries;
   }
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  const std::unordered_map<Id, std::shared_ptr<Agent<Id, Size, Delay>>>& Dynamics<Id, Size, Delay>::agents() const {
+  const std::unordered_map<Id, std::shared_ptr<Agent<Id, Size, Delay>>>& Dynamics<Id, Size, Delay>::agents()
+      const {
     return m_agents;
   }
 
@@ -366,8 +369,7 @@ namespace dsm {
     std::uniform_int_distribution<Size> itineraryDist{0, static_cast<Size>(m_itineraries.size() - 1)};
     for (Size i{0}; i < nAgents; ++i) {
       Size itineraryId{itineraryDist(m_generator)};
-      this->addAgent(
-          Agent<Id, Size, Delay>{static_cast<Size>(m_agents.size()), std::nullopt, itineraryId});
+      this->addAgent(Agent<Id, Size, Delay>{static_cast<Size>(m_agents.size()), itineraryId});
     }
   }
 
@@ -454,7 +456,6 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>)
   class FirstOrderDynamics : public Dynamics<Id, Size, Delay> {
-
   public:
     FirstOrderDynamics() = delete;
     /// @brief Construct a new First Order Dynamics object
@@ -477,15 +478,16 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void FirstOrderDynamics<Id, Size, Delay>::setAgentSpeed(Size agentId) {
-    auto agentIt{std::find_if(
-        this->m_agents.begin(), this->m_agents.end(), [agentId](auto agent) { return agent.second->id() == agentId; })};
+    auto agentIt{std::find_if(this->m_agents.begin(), this->m_agents.end(), [agentId](auto agent) {
+      return agent.second->id() == agentId;
+    })};
     if (agentIt == this->m_agents.end()) {
       std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
                            "Agent " + std::to_string(agentId) + " not found"};
       throw std::invalid_argument(errorMsg);
     }
     auto& agent{agentIt->second};
-    auto& street{this->m_graph->streetSet()[agent->streetId()]};
+    auto& street{this->m_graph->streetSet()[agent->streetId().value()]};
     double speed{street->maxSpeed() * (1. - this->m_minSpeedRateo * street->density())};
     agent->setSpeed(speed);
   }
@@ -515,10 +517,19 @@ namespace dsm {
       auto& node{nodePair.second};
       while (!node->queue().empty()) {
         auto& agent = this->m_agents[node->queue().front()];
-        const auto& street = this->m_graph->streetSet()[agent->streetId()];
-        auto possibleMoves{this->m_itineraries[agent->itineraryId()]->path().getRow(street->nodePair().second)};
-        if (this->m_uniformDist(this->m_generator) < this->m_errorProbability) {
-          possibleMoves = this->m_graph->adjMatrix()->getRow(street->nodePair().second);
+        SparseMatrix<Id, bool> possibleMoves;
+        if (agent->streetId().has_value()) {
+          const auto& street = this->m_graph->streetSet()[agent->streetId().value()];
+          possibleMoves =
+              this->m_itineraries[agent->itineraryId()]->path().getRow(street->nodePair().second);
+          if (this->m_uniformDist(this->m_generator) < this->m_errorProbability) {
+            possibleMoves = this->m_graph->adjMatrix()->getRow(street->nodePair().second);
+          }
+        } else {
+          possibleMoves = this->m_itineraries[agent->itineraryId()]->path().getRow(node->id());
+          if (this->m_uniformDist(this->m_generator) < this->m_errorProbability) {
+            possibleMoves = this->m_graph->adjMatrix()->getRow(node->id());
+          }
         }
         Size nMoves = static_cast<Size>(possibleMoves.size());
         if (nMoves == 0) {
@@ -534,6 +545,7 @@ namespace dsm {
           this->setAgentSpeed(agent->id());
           agent->incrementDelay(nextStreet->length());
           nextStreet->enqueue(*agent);
+          node->dequeue();
         }
       }
     }
@@ -541,11 +553,11 @@ namespace dsm {
     for (auto& agentPair : this->m_agents) {
       auto& agent{agentPair.second};
       if (agent->delay() == 0 && agent->time() == 0) {
-      auto& srcNode{this->m_graph->nodeSet()[this->m_itineraries[agent->itineraryId()]->source()]};
-      if (srcNode->isFull()) {
-        continue;
-      }
-      srcNode->enqueue(agent->id());
+        auto& srcNode{this->m_graph->nodeSet()[this->m_itineraries[agent->itineraryId()]->source()]};
+        if (srcNode->isFull()) {
+          continue;
+        }
+        srcNode->enqueue(agent->id());
       }
     }
     // decrement all agent delays

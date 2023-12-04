@@ -126,6 +126,7 @@ TEST_CASE("Dynamics") {
         graph2.addStreets(s1, s2, s3);
         graph2.buildAdj();
         Dynamics dynamics{graph2};
+        dynamics.setSeed(69);
         Itineary itinerary{0, 0, 2};
         dynamics.addItinerary(itinerary);
         dynamics.addRandomAgents(1);
@@ -134,13 +135,11 @@ TEST_CASE("Dynamics") {
         auto agents = dynamics.agents();
         CHECK_EQ(agents[0]->time(), 1);
         CHECK_EQ(agents[0]->delay(), 0);
-        CHECK_EQ(agents[0]->streetId(), 0);
+        CHECK_FALSE(agents[0]->streetId().has_value());
         dynamics.evolve(false);
-        // dynamics.evolve(false);
-        // agents = dynamics.agents();
-        // // CHECK_EQ(agents[0]->time(), 2);
-        // // CHECK_EQ(agents[0]->delay(), 0);
-        // // CHECK_EQ(agents[0]->streetId(), 0);
-        // CHECK_EQ(agents[0]->speed(), 30);
+        CHECK_EQ(agents[0]->time(), 2);
+        CHECK_EQ(agents[0]->delay(), 4);
+        CHECK_EQ(agents[0]->streetId().value(), 1);
+        CHECK_EQ(agents[0]->speed(), 30);
     }
 }
