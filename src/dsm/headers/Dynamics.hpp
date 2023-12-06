@@ -517,6 +517,16 @@ namespace dsm {
       auto& node{nodePair.second};
       while (!node->queue().empty()) {
         auto& agent = this->m_agents[node->queue().front()];
+        if (node->id() == this->m_itineraries[agent->itineraryId()]->destination()) {
+          this->m_travelTimes.push_back(agent->time());
+          node->dequeue();
+          if (reinsert_agents) {
+            auto newAgent = Agent<Id, Size, Delay>(agent->id(), agent->itineraryId());
+            this->m_agents.erase(agent->id());
+            this->addAgent(newAgent);
+          }
+          continue;
+        }
         SparseMatrix<Id, bool> possibleMoves;
         if (agent->streetId().has_value()) {
           const auto& street = this->m_graph->streetSet()[agent->streetId().value()];
