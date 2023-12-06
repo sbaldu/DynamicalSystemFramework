@@ -75,9 +75,9 @@ namespace dsm {
     /// @param f The function to call
     /// @param ...args The arguments of the function
     /// @throw std::invalid_argument, If the agent is not found
-    template <typename Tid, typename F, typename... Tn>
-      requires std::is_invocable_v<F, Tn...>
-    void setAgentSpeed(Tid agentId, F f, Tn... args);
+    // template <typename Tid, typename F, typename... Tn>
+    //   requires std::is_invocable_v<F, Tn...>
+    // void setAgentSpeed(Tid agentId, F f, Tn... args);
     /// @brief Update the paths of the itineraries based on the actual travel times
     void updatePaths();
 
@@ -221,23 +221,23 @@ namespace dsm {
     m_errorProbability = errorProbability;
   }
 
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
-  template <typename Tid, typename F, typename... Tn>
-    requires std::is_invocable_v<F, Tn...>
-  void Dynamics<Id, Size, Delay>::setAgentSpeed(Tid agentId, F f, Tn... args) {
-    auto agentIt{std::find_if(
-        m_agents.begin(), m_agents.end(), [agentId](auto agent) { return agent->id() == agentId; })};
-    if (agentIt == m_agents.end()) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                           "Agent " + std::to_string(agentId) + " not found"};
-      throw std::invalid_argument(errorMsg);
-    }
-    auto& agent{*agentIt};
-    auto& street{this->m_graph->street(agent->position())};
-    double speed{f(args...)};
-    agentIt->setSpeed(speed);
-  }
+  // template <typename Id, typename Size, typename Delay>
+  //   requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
+  // template <typename Tid, typename F, typename... Tn>
+  //   requires std::is_invocable_v<F, Tn...>
+  // void Dynamics<Id, Size, Delay>::setAgentSpeed(Tid agentId, F f, Tn... args) {
+  //   auto agentIt{std::find_if(
+  //       m_agents.begin(), m_agents.end(), [agentId](auto agent) { return agent->id() == agentId; })};
+  //   if (agentIt == m_agents.end()) {
+  //     std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+  //                          "Agent " + std::to_string(agentId) + " not found"};
+  //     throw std::invalid_argument(errorMsg);
+  //   }
+  //   auto& agent{*agentIt};
+  //   auto& street{this->m_graph->street(agent->position())};
+  //   double speed{f(args...)};
+  //   agentIt->setSpeed(speed);
+  // }
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>)
@@ -524,6 +524,8 @@ namespace dsm {
             auto newAgent = Agent<Id, Size, Delay>(agent->id(), agent->itineraryId());
             this->m_agents.erase(agent->id());
             this->addAgent(newAgent);
+          } else {
+            this->m_agents.erase(agent->id());
           }
           continue;
         }
@@ -549,11 +551,16 @@ namespace dsm {
         const auto p{moveDist(this->m_generator)};
         auto iterator = possibleMoves.begin();
         std::advance(iterator, p);
-        auto& nextStreet{this->m_graph->streetSet()[iterator->first]};
+        const auto& streetResult{this->m_graph->street(node->id(), iterator->first)};
+        if (!streetResult.has_value()) {
+          continue;
+        }
+        auto& nextStreet{streetResult.value()};
+
         if (nextStreet->density() < 1) {
           agent->setStreetId(iterator->first);
           this->setAgentSpeed(agent->id());
-          agent->incrementDelay(nextStreet->length());
+          agent->incrementDelay(nextStreet->length() / agent->speed());
           nextStreet->enqueue(*agent);
           node->dequeue();
         }

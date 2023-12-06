@@ -56,20 +56,21 @@ TEST_CASE("Dynamics") {
         dynamics.addRandomAgents(3);
         CHECK_EQ(dynamics.agents().size(), 3);
         auto agents = dynamics.agents();
-        CHECK(agents[0]->itinerary().source() == itineary2.source());
-        CHECK(agents[0]->itinerary().destination() == itineary2.destination());
-        CHECK(agents[1]->itinerary().source() == itineary.source());
-        CHECK(agents[1]->itinerary().destination() == itineary.destination());
-        CHECK(agents[2]->itinerary().source() == itineary3.source());
-        CHECK(agents[2]->itinerary().destination() == itineary3.destination());
+        auto itineraries = dynamics.itineraries();
+        CHECK_EQ(itineraries[agents[0]->itineraryId()]->source(), itineary2.source());
+        CHECK_EQ(itineraries[agents[0]->itineraryId()]->destination(), itineary2.destination());
+        CHECK_EQ(itineraries[agents[1]->itineraryId()]->source(), itineary.source());
+        CHECK_EQ(itineraries[agents[1]->itineraryId()]->destination(), itineary.destination());
+        CHECK_EQ(itineraries[agents[2]->itineraryId()]->source(), itineary3.source());
+        CHECK_EQ(itineraries[agents[2]->itineraryId()]->destination(), itineary3.destination());
     }
-    // SUBCASE("AddRandomAgents - exceptions") {
-    //     /// GIVEN: a dynamics object
-    //     /// WHEN: we add a random agent with a negative number of agents
-    //     /// THEN: an exception is thrown
-    //     Dynamics dynamics(graph);
-    //     CHECK_THROWS(dynamics.addRandomAgents(1));
-    // }
+    SUBCASE("AddRandomAgents - exceptions") {
+        /// GIVEN: a dynamics object
+        /// WHEN: we add a random agent with a negative number of agents
+        /// THEN: an exception is thrown
+        Dynamics dynamics(graph);
+        CHECK_THROWS(dynamics.addRandomAgents(1));
+    }
     SUBCASE("updatePaths") {
         /// GIVEN: a dynamics object
         /// WHEN: we update the paths
@@ -136,31 +137,37 @@ TEST_CASE("Dynamics") {
         CHECK_FALSE(agents[0]->streetId().has_value());
         dynamics.evolve(false);
         CHECK_EQ(agents[0]->time(), 2);
-        CHECK_EQ(agents[0]->delay(), 4);
+        CHECK_EQ(agents[0]->delay(), 0);
         CHECK_EQ(agents[0]->streetId().value(), 1);
         CHECK_EQ(agents[0]->speed(), 30);
     }
-    // SUBCASE("evolve on one road without insertion") {
-    //     /// GIVEN: a dynamics object
-    //     /// WHEN: we evolve the dynamics
-    //     /// THEN: the dynamics evolves
-    //     Street s1{0, 1, 2., std::make_pair(0, 1)};
-    //     Graph graph2;
-    //     graph2.addStreets(s1);
-    //     graph2.buildAdj();
-    //     Dynamics dynamics{graph2};
-    //     dynamics.setSeed(69);
-    //     Itineary itinerary{0, 0, 1};
-    //     dynamics.addItinerary(itinerary);
-    //     dynamics.addRandomAgents(1);
-    //     dynamics.updatePaths();
-    //     for (uint8_t i = 0; i < 10; ++i) {
-    //         dynamics.evolve(false);
-    //     }
-    //     auto agents = dynamics.agents();
-    //     CHECK_EQ(agents[0]->time(), 10);
-    //     CHECK_EQ(agents[0]->delay(), 0);
-    //     CHECK_EQ(agents[0]->streetId().value(), 0);
-    //     CHECK_EQ(agents[0]->speed(), 30);
-    // }
+    SUBCASE("evolve on one road without insertion") {
+        /// GIVEN: a dynamics object
+        /// WHEN: we evolve the dynamics
+        /// THEN: the dynamics evolves
+        Street s1{0, 1, 30., std::make_pair(0, 1)};
+        Street s2{1, 1, 30., std::make_pair(1, 0)};
+        Graph graph2;
+        graph2.addStreets(s1, s2);
+        graph2.buildAdj();
+        Dynamics dynamics{graph2};
+        dynamics.setSeed(69);
+        Itineary itinerary{0, 0, 1};
+        dynamics.addItinerary(itinerary);
+        dynamics.addRandomAgents(1);
+        dynamics.updatePaths();
+        // dynamics.evolve(false);
+        // dynamics.evolve(false);
+        for (uint8_t i = 0; i < 2; ++i) {
+            dynamics.evolve(false);
+        }
+        auto agents = dynamics.agents();
+        CHECK_EQ(agents[0]->time(), 2);
+        CHECK_EQ(agents[0]->delay(), 0);
+        CHECK_EQ(agents[0]->streetId().value(), 1);
+        CHECK_EQ(agents[0]->speed(), 30);
+        dynamics.evolve(false);
+        agents = dynamics.agents();
+        CHECK_EQ(agents.size(), 0);
+    }
 }
