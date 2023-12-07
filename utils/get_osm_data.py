@@ -1,6 +1,3 @@
-import sys
-import osmnx as ox
-
 """
 This script is used to get the OSM data of a place and save it in a csv file.
 The place is passed as a command line argument.
@@ -14,6 +11,9 @@ The output files are:
 
 The files are saved in the current directory.
 """
+
+import sys
+import osmnx as ox
 
 if __name__ == "__main__":
     ox.config(use_cache=True, log_console=True)
