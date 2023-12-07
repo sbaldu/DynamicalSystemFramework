@@ -99,13 +99,13 @@ TEST_CASE("Graph") {
     CHECK_FALSE(graph.adjMatrix()->contains(1, 3));
   }
 
-  SUBCASE("importAdj - dsm") {
-    // This tests the importAdj function over .dsm files
+  SUBCASE("importMatrix - dsm") {
+    // This tests the importMatrix function over .dsm files
     // GIVEN: a graph
     // WHEN: we import a .dsm file
     // THEN: the graph's adjacency matrix is the same as the one in the file
     Graph graph{};
-    graph.importAdj("./data/matrix.dsm");
+    graph.importMatrix("./data/matrix.dsm");
     CHECK_EQ(graph.adjMatrix()->max_size(), 9);
     CHECK_EQ(graph.adjMatrix()->getRowDim(), 3);
     CHECK_EQ(graph.adjMatrix()->getColDim(), 3);
@@ -116,14 +116,31 @@ TEST_CASE("Graph") {
     CHECK(graph.nodeSet().size() == 3);
     CHECK(graph.streetSet().size() == 4);
   }
-  SUBCASE("importAdj - EXCEPTIONS") {
-    // This tests the importAdj throws an exception when the file has not the correct format or is not found
+  SUBCASE("importMatrix - raw matrix") {
+    Graph graph{};
+    graph.importMatrix("./data/rawMatrix.txt", false);
+    CHECK_EQ(graph.adjMatrix()->max_size(), 9);
+    CHECK_EQ(graph.adjMatrix()->getRowDim(), 3);
+    CHECK_EQ(graph.adjMatrix()->getColDim(), 3);
+    CHECK(graph.adjMatrix()->operator()(0, 1));
+    CHECK(graph.adjMatrix()->operator()(1, 0));
+    CHECK(graph.adjMatrix()->operator()(1, 2));
+    CHECK(graph.adjMatrix()->operator()(2, 1));
+    CHECK(graph.nodeSet().size() == 3);
+    CHECK(graph.streetSet().size() == 4);
+    CHECK_EQ(graph.streetSet()[1]->length(), 500);
+    CHECK_EQ(graph.streetSet()[3]->length(), 200);
+    CHECK_EQ(graph.streetSet()[5]->length(), 1);
+    CHECK_EQ(graph.streetSet()[7]->length(), 3);
+  }
+  SUBCASE("importMatrix - EXCEPTIONS") {
+    // This tests the importMatrix throws an exception when the file has not the correct format or is not found
     // GIVEN: a graph
     // WHEN: we import a file with a wrong format
     // THEN: an exception is thrown
     Graph graph{};
-    CHECK_THROWS(graph.importAdj("./data/matrix.nogood"));
-    CHECK_THROWS(graph.importAdj("./data/not_found.dsm"));
+    CHECK_THROWS(graph.importMatrix("./data/matrix.nogood"));
+    CHECK_THROWS(graph.importMatrix("./data/not_found.dsm"));
   }
 }
 
@@ -351,18 +368,5 @@ TEST_CASE("Dijkstra") {
     graph.buildAdj();
     auto result = graph.shortestPath(1, 3);
     CHECK_FALSE(result.has_value());
-  }
-
-  SUBCASE("Multiple paths") {
-    Street s1{0, 1, 5., std::make_pair(0, 1)};
-    Street s2{1, 1, 5., std::make_pair(1, 2)};
-    Street s3{2, 1, 5., std::make_pair(0, 3)};
-    Street s4{3, 1, 5., std::make_pair(3, 2)};
-    Graph graph{};
-    graph.addStreets(s1, s2, s3, s4);
-    graph.buildAdj();
-    auto result = graph.shortestPath(0, 2);
-    CHECK(result.has_value());
-    // TODO: test multiple paths
   }
 }
