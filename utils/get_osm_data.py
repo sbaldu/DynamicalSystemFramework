@@ -2,6 +2,19 @@ import sys
 import osmnx as ox
 
 if __name__ == "__main__":
+    """
+    This script is used to get the OSM data of a place and save it in a csv file.
+    The place is passed as a command line argument.
+
+    Example:
+    python3 get_osm_data.py postua, vercelli, italy
+
+    The output files are:
+    - nodes.csv
+    - edges.csv
+
+    The files are saved in the current directory.
+    """
     ox.config(use_cache=True, log_console=True)
 
     place = sys.argv[1]
