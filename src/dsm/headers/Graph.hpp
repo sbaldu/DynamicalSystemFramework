@@ -285,13 +285,6 @@ namespace dsm {
                                    make_shared<Street<Id, Size>>(streetId, 1, std::stod(maxspeed), std::stod(length),
                                                                   std::make_pair(std::stoul(sourceId), std::stoul(targetId))));
         ++streetId;
-        if (oneway == "True") {
-            continue;
-        }
-        m_streets.insert_or_assign(streetId,
-                                   make_shared<Street<Id, Size>>(streetId, 1, std::stod(maxspeed), std::stod(length),
-                                                                  std::make_pair(std::stoul(targetId), std::stoul(sourceId))));
-        ++streetId;
       }
     } else {
       std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
