@@ -9,10 +9,10 @@
 
 #include "doctest.h"
 
-using Graph = dsm::Graph<uint16_t, uint16_t>;
-using SparseMatrix = dsm::SparseMatrix<uint16_t, bool>;
-using Street = dsm::Street<uint16_t, uint16_t>;
-using Path = std::vector<uint16_t>;
+using Graph = dsm::Graph<uint, uint>;
+using SparseMatrix = dsm::SparseMatrix<uint, bool>;
+using Street = dsm::Street<uint, uint>;
+using Path = std::vector<uint>;
 
 template <typename T1, typename T2>
 bool checkPath(const std::vector<T1>& path1, const std::vector<T2>& path2) {
@@ -124,6 +124,15 @@ TEST_CASE("Graph") {
     Graph graph{};
     CHECK_THROWS(graph.importAdj("./data/matrix.nogood"));
     CHECK_THROWS(graph.importAdj("./data/not_found.dsm"));
+  }
+  SUBCASE("importOSMNodes and importOSMEdges") {
+    Graph graph{};
+    graph.importOSMNodes("./data/nodes.csv");
+    CHECK_EQ(graph.nodeSet().size(), 25);
+    graph.importOSMEdges("./data/edges.csv");
+    CHECK_EQ(graph.streetSet().size(), 60);
+    graph.buildAdj();
+    CHECK_EQ(graph.adjMatrix()->size(), 60);
   }
 }
 

@@ -231,12 +231,11 @@ namespace dsm {
       while (!file.eof()) {
         std::getline(file, line);
         std::istringstream iss{line};
-        std::string id, lon, lat, streetCount, highway;
-        // osmid;y;x;street_count;highway;geometry
+        std::string id, lat, lon, highway;
+        // osmid;x;y;highway
         std::getline(iss, id, ';');
-        std::getline(iss, lon, ';');
         std::getline(iss, lat, ';');
-        std::getline(iss, streetCount, ';');
+        std::getline(iss, lon, ';');
         std::getline(iss, highway, ';');
         Id nodeId{static_cast<Id>(std::stoul(id))};
         m_nodes.insert_or_assign(nodeIndex, make_shared<Node<Id, Size>>(nodeIndex, std::make_pair(std::stod(lat), std::stod(lon))));
@@ -266,24 +265,15 @@ namespace dsm {
       while (!file.eof()) {
         std::getline(file, line);
         std::istringstream iss{line};
-        std::string sourceId, targetId, key, osmid, oneway, ref, name, highway, maxspeed, reversed, length, geometry, junction, access, bridge, lanes;
-        // u;v;key;osmid;oneway;ref;name;highway;maxspeed;reversed;length;geometry;junction;access;bridge;lanes
+        std::string sourceId, targetId, length, oneway, highway, maxspeed, bridge;
+        // u;v;length;oneway;highway;maxspeed;bridge
         std::getline(iss, sourceId, ';');
         std::getline(iss, targetId, ';');
-        std::getline(iss, key, ';');
-        std::getline(iss, osmid, ';');
+        std::getline(iss, length, ';');
         std::getline(iss, oneway, ';');
-        std::getline(iss, ref, ';');
-        std::getline(iss, name, ';');
         std::getline(iss, highway, ';');
         std::getline(iss, maxspeed, ';');
-        std::getline(iss, reversed, ';');
-        std::getline(iss, length, ';');
-        std::getline(iss, geometry, ';');
-        std::getline(iss, junction, ';');
-        std::getline(iss, access, ';');
         std::getline(iss, bridge, ';');
-        std::getline(iss, lanes, ';');
         try {
           std::stod(maxspeed);
         } catch (const std::invalid_argument& e) {
