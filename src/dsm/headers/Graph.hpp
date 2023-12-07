@@ -229,10 +229,13 @@ namespace dsm {
       while (!file.eof()) {
         std::getline(file, line);
         std::istringstream iss{line};
-        std::string id, lat, lon;
-        std::getline(iss, id, ',');
-        std::getline(iss, lat, ',');
-        std::getline(iss, lon, ',');
+        std::string id, lon, lat, streetCount, highway;
+        // osmid;y;x;street_count;highway;geometry
+        std::getline(iss, id, ';');
+        std::getline(iss, lon, ';');
+        std::getline(iss, lat, ';');
+        std::getline(iss, streetCount, ';');
+        std::getline(iss, highway, ';');
         Id nodeId{static_cast<Id>(std::stoul(id))};
         m_nodes.insert_or_assign(nodeId, make_shared<Node<Id, Size>>(nodeId, std::make_pair(std::stod(lat), std::stod(lon))));
       }
@@ -248,7 +251,48 @@ namespace dsm {
   void Graph<Id, Size>::importOSMEdges(const std::string& fileName) {
     std::string fileExt = fileName.substr(fileName.find_last_of(".") + 1);
     if (fileExt == "csv") {
-      return;
+      std::ifstream file{fileName};
+      if (!file.is_open()) {
+        std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                              "File not found"};
+        throw std::invalid_argument(errrorMsg);
+      }
+      std::string line;
+      std::getline(file, line);  // skip first line
+      Id streetId{0};
+      while (!file.eof()) {
+        std::getline(file, line);
+        std::istringstream iss{line};
+        std::string sourceId, targetId, key, osmid, oneway, ref, name, highway, maxspeed, reversed, length, geometry, junction, access, bridge, lanes;
+        // u;v;key;osmid;oneway;ref;name;highway;maxspeed;reversed;length;geometry;junction;access;bridge;lanes
+        std::getline(iss, sourceId, ';');
+        std::getline(iss, targetId, ';');
+        std::getline(iss, key, ';');
+        std::getline(iss, osmid, ';');
+        std::getline(iss, oneway, ';');
+        std::getline(iss, ref, ';');
+        std::getline(iss, name, ';');
+        std::getline(iss, highway, ';');
+        std::getline(iss, maxspeed, ';');
+        std::getline(iss, reversed, ';');
+        std::getline(iss, length, ';');
+        std::getline(iss, geometry, ';');
+        std::getline(iss, junction, ';');
+        std::getline(iss, access, ';');
+        std::getline(iss, bridge, ';');
+        std::getline(iss, lanes, ';');
+        m_streets.insert_or_assign(streetId,
+                                   make_shared<Street<Id, Size>>(streetId, 1, std::stod(maxspeed), std::stod(length),
+                                                                  std::make_pair(std::stoul(sourceId), std::stoul(targetId))));
+        ++streetId;
+        if (oneway == "True") {
+            continue;
+        }
+        m_streets.insert_or_assign(streetId,
+                                   make_shared<Street<Id, Size>>(streetId, 1, std::stod(maxspeed), std::stod(length),
+                                                                  std::make_pair(std::stoul(targetId), std::stoul(sourceId))));
+        ++streetId;
+      }
     } else {
       std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
                             "File extension not supported"};
