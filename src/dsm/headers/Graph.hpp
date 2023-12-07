@@ -22,6 +22,7 @@
 #include <utility>
 #include <string>
 #include <fstream>
+#include <sstream>
 
 #include "Node.hpp"
 #include "SparseMatrix.hpp"
@@ -65,6 +66,14 @@ namespace dsm {
     /// @throws std::invalid_argument if the file is not found, invalid or the format is not supported
     /// The matrix format is deduced from the file extension. Currently only .dsm files are supported.
     void importAdj(const std::string& fileName);
+    /// @brief Import the graph's nodes from a file
+    /// @param fileName The name of the file to import the nodes from.
+    /// @throws std::invalid_argument if the file is not found, invalid or the format is not supported
+    void importOSMNodes(const std::string& fileName);
+    /// @brief Import the graph's streets from a file
+    /// @param fileName The name of the file to import the streets from.
+    /// @throws std::invalid_argument if the file is not found, invalid or the format is not supported
+    void importOSMEdges(const std::string& fileName);
 
     /// @brief Add a node to the graph
     /// @param node, A std::shared_ptr to the node to add
@@ -197,6 +206,49 @@ namespace dsm {
         m_streets.insert_or_assign(index,
                                    make_shared<Street<Id, Size>>(index, std::make_pair(node1, node2)));
       }
+    } else {
+      std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                            "File extension not supported"};
+      throw std::invalid_argument(errrorMsg);
+    }
+  }
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Graph<Id, Size>::importOSMNodes(const std::string& fileName) {
+    std::string fileExt = fileName.substr(fileName.find_last_of(".") + 1);
+    if (fileExt == "csv") {
+      std::ifstream file{fileName};
+      if (!file.is_open()) {
+        std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                              "File not found"};
+        throw std::invalid_argument(errrorMsg);
+      }
+      std::string line;
+      std::getline(file, line);  // skip first line
+      while (!file.eof()) {
+        std::getline(file, line);
+        std::istringstream iss{line};
+        std::string id, lat, lon;
+        std::getline(iss, id, ',');
+        std::getline(iss, lat, ',');
+        std::getline(iss, lon, ',');
+        Id nodeId{static_cast<Id>(std::stoul(id))};
+        m_nodes.insert_or_assign(nodeId, make_shared<Node<Id, Size>>(nodeId, std::make_pair(std::stod(lat), std::stod(lon))));
+      }
+    } else {
+      std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                            "File extension not supported"};
+      throw std::invalid_argument(errrorMsg);
+    }
+  }
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Graph<Id, Size>::importOSMEdges(const std::string& fileName) {
+    std::string fileExt = fileName.substr(fileName.find_last_of(".") + 1);
+    if (fileExt == "csv") {
+      return;
     } else {
       std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
                             "File extension not supported"};
