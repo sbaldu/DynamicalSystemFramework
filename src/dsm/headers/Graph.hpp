@@ -48,6 +48,7 @@ namespace dsm {
     std::unordered_map<Id, shared<Node<Id, Size>>> m_nodes;
     std::unordered_map<Id, shared<Street<Id, Size>>> m_streets;
     shared<SparseMatrix<Id, bool>> m_adjacency;
+    std::unordered_map<Id, Id> m_nodeMapping;
 
   public:
     Graph();
@@ -226,6 +227,7 @@ namespace dsm {
       }
       std::string line;
       std::getline(file, line);  // skip first line
+      Id nodeIndex{0};
       while (!file.eof()) {
         std::getline(file, line);
         std::istringstream iss{line};
@@ -237,7 +239,9 @@ namespace dsm {
         std::getline(iss, streetCount, ';');
         std::getline(iss, highway, ';');
         Id nodeId{static_cast<Id>(std::stoul(id))};
-        m_nodes.insert_or_assign(nodeId, make_shared<Node<Id, Size>>(nodeId, std::make_pair(std::stod(lat), std::stod(lon))));
+        m_nodes.insert_or_assign(nodeIndex, make_shared<Node<Id, Size>>(nodeIndex, std::make_pair(std::stod(lat), std::stod(lon))));
+        m_nodeMapping.emplace(std::make_pair(nodeId, nodeIndex));
+        ++nodeIndex;
       }
     } else {
       std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
@@ -259,7 +263,6 @@ namespace dsm {
       }
       std::string line;
       std::getline(file, line);  // skip first line
-      Id streetId{0};
       while (!file.eof()) {
         std::getline(file, line);
         std::istringstream iss{line};
@@ -281,10 +284,15 @@ namespace dsm {
         std::getline(iss, access, ';');
         std::getline(iss, bridge, ';');
         std::getline(iss, lanes, ';');
+        try {
+          std::stod(maxspeed);
+        } catch (const std::invalid_argument& e) {
+          maxspeed = "30";
+        }
+        Id streetId = std::stoul(sourceId) + std::stoul(targetId)*m_nodes.size();
         m_streets.insert_or_assign(streetId,
                                    make_shared<Street<Id, Size>>(streetId, 1, std::stod(maxspeed), std::stod(length),
-                                                                  std::make_pair(std::stoul(sourceId), std::stoul(targetId))));
-        ++streetId;
+                                                                  std::make_pair(m_nodeMapping[std::stoul(sourceId)], m_nodeMapping[std::stoul(targetId)])));
       }
     } else {
       std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
