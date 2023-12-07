@@ -60,10 +60,12 @@ namespace dsm {
     /// @brief Build the graph's adjacency matrix
     void buildAdj();
 
-    /// @brief Import the graph's adjacency matrix from a file
+    /// @brief Import the graph's adjacency matrix from a file.
+    /// If the file is not of a supported format, it will read the file as a matrix with the first two elements being
+    /// the number of rows and columns and the following elements being the matrix elements.
     /// @param fileName, The name of the file to import the adjacency matrix from.
     /// @param isAdj A boolean value indicating if the file contains the adjacency matrix or the distance matrix.
-    /// @throws std::invalid_argument if the file is not found, invalid or the format is not supported
+    /// @throws std::invalid_argument if the file is not found or invalid
     /// The matrix format is deduced from the file extension. Currently only .dsm files are supported.
     void importMatrix(const std::string& fileName, bool isAdj = true);
 
@@ -202,6 +204,8 @@ namespace dsm {
         }
       }
     } else {
+      // default case: read the file as a matrix with the first two elements being the number of rows and columns and
+      // the following elements being the matrix elements
       std::ifstream file{fileName};
       if (!file.is_open()) {
         std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
