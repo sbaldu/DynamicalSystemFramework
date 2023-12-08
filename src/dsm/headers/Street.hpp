@@ -224,7 +224,7 @@ namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   double Street<Id, Size>::density() const {
-    return static_cast<double>(m_size) / m_capacity;
+    return static_cast<double>(m_queue.size()) / m_capacity;
   }
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)

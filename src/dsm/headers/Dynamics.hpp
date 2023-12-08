@@ -478,15 +478,7 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void FirstOrderDynamics<Id, Size, Delay>::setAgentSpeed(Size agentId) {
-    auto agentIt{std::find_if(this->m_agents.begin(), this->m_agents.end(), [agentId](auto agent) {
-      return agent.second->id() == agentId;
-    })};
-    if (agentIt == this->m_agents.end()) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                           "Agent " + std::to_string(agentId) + " not found"};
-      throw std::invalid_argument(errorMsg);
-    }
-    auto& agent{agentIt->second};
+    auto& agent = this->m_agents[agentId];
     auto& street{this->m_graph->streetSet()[agent->streetId().value()]};
     double speed{street->maxSpeed() * (1. - this->m_minSpeedRateo * street->density())};
     agent->setSpeed(speed);
@@ -545,6 +537,7 @@ namespace dsm {
         }
         Size nMoves = static_cast<Size>(possibleMoves.size());
         if (nMoves == 0) {
+          std::cout << "No possible moves" << std::endl;
           continue;
         }
         std::uniform_int_distribution<Size> moveDist{0, static_cast<Size>(possibleMoves.size() - 1)};
@@ -558,7 +551,7 @@ namespace dsm {
         auto& nextStreet{streetResult.value()};
 
         if (nextStreet->density() < 1) {
-          agent->setStreetId(iterator->first);
+          agent->setStreetId(nextStreet->id());
           this->setAgentSpeed(agent->id());
           agent->incrementDelay(nextStreet->length() / agent->speed());
           nextStreet->enqueue(*agent);
