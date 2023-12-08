@@ -537,7 +537,6 @@ namespace dsm {
         }
         Size nMoves = static_cast<Size>(possibleMoves.size());
         if (nMoves == 0) {
-          std::cout << "No possible moves" << std::endl;
           continue;
         }
         std::uniform_int_distribution<Size> moveDist{0, static_cast<Size>(possibleMoves.size() - 1)};
