@@ -12,3 +12,6 @@
 
 # valgrind generated files
 *vgcore.*
+
+# cache files
+*cache
