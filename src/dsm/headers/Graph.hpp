@@ -62,11 +62,14 @@ namespace dsm {
     /// @brief Build the graph's adjacency matrix
     void buildAdj();
 
-    /// @brief Import the graph's adjacency matrix from a file
+    /// @brief Import the graph's adjacency matrix from a file.
+    /// If the file is not of a supported format, it will read the file as a matrix with the first two elements being
+    /// the number of rows and columns and the following elements being the matrix elements.
     /// @param fileName, The name of the file to import the adjacency matrix from.
-    /// @throws std::invalid_argument if the file is not found, invalid or the format is not supported
+    /// @param isAdj A boolean value indicating if the file contains the adjacency matrix or the distance matrix.
+    /// @throws std::invalid_argument if the file is not found or invalid
     /// The matrix format is deduced from the file extension. Currently only .dsm files are supported.
-    void importAdj(const std::string& fileName);
+    void importMatrix(const std::string& fileName, bool isAdj = true);
     /// @brief Import the graph's nodes from a file
     /// @param fileName The name of the file to import the nodes from.
     /// @throws std::invalid_argument if the file is not found, invalid or the format is not supported
@@ -176,22 +179,22 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Graph<Id, Size>::importAdj(const std::string& fileName) {
+  void Graph<Id, Size>::importMatrix(const std::string& fileName, bool isAdj) {
     // check the file extension
     std::string fileExt = fileName.substr(fileName.find_last_of(".") + 1);
     if (fileExt == "dsm") {
-      std::ifstream file(fileName);
+      std::ifstream file{fileName};
       if (!file.is_open()) {
-        std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                              "File not found"};
-        throw std::invalid_argument(errrorMsg);
+        std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                             "File not found"};
+        throw std::invalid_argument(errorMsg);
       }
       Id rows, cols;
       file >> rows >> cols;
       if (rows != cols) {
-        std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                              "Adjacency matrix must be square"};
-        throw std::invalid_argument(errrorMsg);
+        std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                             "Adjacency matrix must be square"};
+        throw std::invalid_argument(errorMsg);
       }
       m_adjacency = make_shared<SparseMatrix<Id, bool>>(rows, cols);
       // each line has (should have) 3 elements
@@ -206,11 +209,50 @@ namespace dsm {
         m_nodes.insert_or_assign(node2, make_shared<Node<Id, Size>>(node2));
         m_streets.insert_or_assign(index,
                                    make_shared<Street<Id, Size>>(index, std::make_pair(node1, node2)));
+        if (!isAdj) {
+          m_streets[index]->setLength(val);
+        }
       }
     } else {
-      std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                            "File extension not supported"};
-      throw std::invalid_argument(errrorMsg);
+      // default case: read the file as a matrix with the first two elements being the number of rows and columns and
+      // the following elements being the matrix elements
+      std::ifstream file{fileName};
+      if (!file.is_open()) {
+        std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                             "File not found"};
+        throw std::invalid_argument(errorMsg);
+      }
+      Id rows, cols;
+      file >> rows >> cols;
+      if (rows != cols) {
+        std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                             "Adjacency matrix must be square"};
+        throw std::invalid_argument(errorMsg);
+      }
+      m_adjacency = make_shared<SparseMatrix<Id, bool>>(rows, cols);
+      Id index{0};
+      while (!file.eof()) {
+        double value;
+        file >> value;
+        if (value < 0) {
+          std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                               "Adjacency matrix elements must be positive"};
+          throw std::invalid_argument(errorMsg);
+        }
+        if (value > 0) {
+          m_adjacency->insert(index, true);
+          const Id node1{static_cast<Id>(index / rows)};
+          const Id node2{static_cast<Id>(index % cols)};
+          m_nodes.insert_or_assign(node1, make_shared<Node<Id, Size>>(node1));
+          m_nodes.insert_or_assign(node2, make_shared<Node<Id, Size>>(node2));
+          m_streets.insert_or_assign(index,
+                                     make_shared<Street<Id, Size>>(index, std::make_pair(node1, node2)));
+          if (!isAdj) {
+            m_streets[index]->setLength(value);
+          }
+        }
+        ++index;
+      }
     }
   }
 
