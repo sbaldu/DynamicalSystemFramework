@@ -16,7 +16,7 @@ using Itineary = dsm::Itinerary<uint16_t>;
 
 TEST_CASE("Dynamics") {
   auto graph = Graph{};
-  graph.importAdj("./data/matrix.dsm");
+  graph.importMatrix("./data/matrix.dsm");
   SUBCASE("Constructor") {
     /// GIVEN: a graph
     /// WHEN: we create a dynamics object
