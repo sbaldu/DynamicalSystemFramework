@@ -22,6 +22,7 @@
 #include <utility>
 #include <string>
 #include <fstream>
+#include <sstream>
 
 #include "Node.hpp"
 #include "SparseMatrix.hpp"
@@ -47,6 +48,7 @@ namespace dsm {
     std::unordered_map<Id, shared<Node<Id, Size>>> m_nodes;
     std::unordered_map<Id, shared<Street<Id, Size>>> m_streets;
     shared<SparseMatrix<Id, bool>> m_adjacency;
+    std::unordered_map<Id, Id> m_nodeMapping;
 
   public:
     Graph();
@@ -60,11 +62,22 @@ namespace dsm {
     /// @brief Build the graph's adjacency matrix
     void buildAdj();
 
-    /// @brief Import the graph's adjacency matrix from a file
+    /// @brief Import the graph's adjacency matrix from a file.
+    /// If the file is not of a supported format, it will read the file as a matrix with the first two elements being
+    /// the number of rows and columns and the following elements being the matrix elements.
     /// @param fileName, The name of the file to import the adjacency matrix from.
-    /// @throws std::invalid_argument if the file is not found, invalid or the format is not supported
+    /// @param isAdj A boolean value indicating if the file contains the adjacency matrix or the distance matrix.
+    /// @throws std::invalid_argument if the file is not found or invalid
     /// The matrix format is deduced from the file extension. Currently only .dsm files are supported.
-    void importAdj(const std::string& fileName);
+    void importMatrix(const std::string& fileName, bool isAdj = true);
+    /// @brief Import the graph's nodes from a file
+    /// @param fileName The name of the file to import the nodes from.
+    /// @throws std::invalid_argument if the file is not found, invalid or the format is not supported
+    void importOSMNodes(const std::string& fileName);
+    /// @brief Import the graph's streets from a file
+    /// @param fileName The name of the file to import the streets from.
+    /// @throws std::invalid_argument if the file is not found, invalid or the format is not supported
+    void importOSMEdges(const std::string& fileName);
 
     /// @brief Add a node to the graph
     /// @param node, A std::shared_ptr to the node to add
@@ -172,22 +185,22 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Graph<Id, Size>::importAdj(const std::string& fileName) {
+  void Graph<Id, Size>::importMatrix(const std::string& fileName, bool isAdj) {
     // check the file extension
     std::string fileExt = fileName.substr(fileName.find_last_of(".") + 1);
     if (fileExt == "dsm") {
-      std::ifstream file(fileName);
+      std::ifstream file{fileName};
       if (!file.is_open()) {
-        std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                              "File not found"};
-        throw std::invalid_argument(errrorMsg);
+        std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                             "File not found"};
+        throw std::invalid_argument(errorMsg);
       }
       Id rows, cols;
       file >> rows >> cols;
       if (rows != cols) {
-        std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                              "Adjacency matrix must be square"};
-        throw std::invalid_argument(errrorMsg);
+        std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                             "Adjacency matrix must be square"};
+        throw std::invalid_argument(errorMsg);
       }
       m_adjacency = make_shared<SparseMatrix<Id, bool>>(rows, cols);
       // each line has (should have) 3 elements
@@ -202,6 +215,135 @@ namespace dsm {
         m_nodes.insert_or_assign(node2, make_shared<Node<Id, Size>>(node2));
         m_streets.insert_or_assign(index,
                                    make_shared<Street<Id, Size>>(index, std::make_pair(node1, node2)));
+        if (!isAdj) {
+          m_streets[index]->setLength(val);
+        }
+      }
+    } else {
+      // default case: read the file as a matrix with the first two elements being the number of rows and columns and
+      // the following elements being the matrix elements
+      std::ifstream file{fileName};
+      if (!file.is_open()) {
+        std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                             "File not found"};
+        throw std::invalid_argument(errorMsg);
+      }
+      Id rows, cols;
+      file >> rows >> cols;
+      if (rows != cols) {
+        std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                             "Adjacency matrix must be square"};
+        throw std::invalid_argument(errorMsg);
+      }
+      m_adjacency = make_shared<SparseMatrix<Id, bool>>(rows, cols);
+      Id index{0};
+      while (!file.eof()) {
+        double value;
+        file >> value;
+        if (value < 0) {
+          std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                               "Adjacency matrix elements must be positive"};
+          throw std::invalid_argument(errorMsg);
+        }
+        if (value > 0) {
+          m_adjacency->insert(index, true);
+          const Id node1{static_cast<Id>(index / rows)};
+          const Id node2{static_cast<Id>(index % cols)};
+          m_nodes.insert_or_assign(node1, make_shared<Node<Id, Size>>(node1));
+          m_nodes.insert_or_assign(node2, make_shared<Node<Id, Size>>(node2));
+          m_streets.insert_or_assign(index,
+                                     make_shared<Street<Id, Size>>(index, std::make_pair(node1, node2)));
+          if (!isAdj) {
+            m_streets[index]->setLength(value);
+          }
+        }
+        ++index;
+      }
+    }
+  }
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Graph<Id, Size>::importOSMNodes(const std::string& fileName) {
+    std::string fileExt = fileName.substr(fileName.find_last_of(".") + 1);
+    if (fileExt == "csv") {
+      std::ifstream file{fileName};
+      if (!file.is_open()) {
+        std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                              "File not found"};
+        throw std::invalid_argument(errrorMsg);
+      }
+      std::string line;
+      std::getline(file, line);  // skip first line
+      Id nodeIndex{0};
+      while (!file.eof()) {
+        std::getline(file, line);
+        if (line.empty()) {
+          continue;
+        }
+        std::istringstream iss{line};
+        std::string id, lat, lon, highway;
+        // osmid;x;y;highway
+        std::getline(iss, id, ';');
+        std::getline(iss, lat, ';');
+        std::getline(iss, lon, ';');
+        std::getline(iss, highway, ';');
+        Id nodeId{static_cast<Id>(std::stoul(id))};
+        m_nodes.insert_or_assign(
+            nodeIndex,
+            make_shared<Node<Id, Size>>(nodeIndex, std::make_pair(std::stod(lat), std::stod(lon))));
+        m_nodeMapping.emplace(std::make_pair(nodeId, nodeIndex));
+        ++nodeIndex;
+      }
+    } else {
+      std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                            "File extension not supported"};
+      throw std::invalid_argument(errrorMsg);
+    }
+  }
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Graph<Id, Size>::importOSMEdges(const std::string& fileName) {
+    std::string fileExt = fileName.substr(fileName.find_last_of(".") + 1);
+    if (fileExt == "csv") {
+      std::ifstream file{fileName};
+      if (!file.is_open()) {
+        std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                              "File not found"};
+        throw std::invalid_argument(errrorMsg);
+      }
+      std::string line;
+      std::getline(file, line);  // skip first line
+      while (!file.eof()) {
+        std::getline(file, line);
+        if (line.empty()) {
+          continue;
+        }
+        std::istringstream iss{line};
+        std::string sourceId, targetId, length, oneway, highway, maxspeed, bridge;
+        // u;v;length;oneway;highway;maxspeed;bridge
+        std::getline(iss, sourceId, ';');
+        std::getline(iss, targetId, ';');
+        std::getline(iss, length, ';');
+        std::getline(iss, oneway, ';');
+        std::getline(iss, highway, ';');
+        std::getline(iss, maxspeed, ';');
+        std::getline(iss, bridge, ';');
+        try {
+          std::stod(maxspeed);
+        } catch (const std::invalid_argument& e) {
+          maxspeed = "30";
+        }
+        Id streetId = std::stoul(sourceId) + std::stoul(targetId) * m_nodes.size();
+        m_streets.insert_or_assign(
+            streetId,
+            make_shared<Street<Id, Size>>(
+                streetId,
+                1,
+                std::stod(maxspeed),
+                std::stod(length),
+                std::make_pair(m_nodeMapping[std::stoul(sourceId)], m_nodeMapping[std::stoul(targetId)])));
       }
     } else {
       std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
