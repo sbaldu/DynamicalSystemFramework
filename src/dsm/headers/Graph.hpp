@@ -176,14 +176,14 @@ namespace dsm {
       std::ifstream file{fileName};
       if (!file.is_open()) {
         std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                              "File not found"};
+                             "File not found"};
         throw std::invalid_argument(errorMsg);
       }
       Id rows, cols;
       file >> rows >> cols;
       if (rows != cols) {
         std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                              "Adjacency matrix must be square"};
+                             "Adjacency matrix must be square"};
         throw std::invalid_argument(errorMsg);
       }
       m_adjacency = make_shared<SparseMatrix<Id, bool>>(rows, cols);
@@ -209,14 +209,14 @@ namespace dsm {
       std::ifstream file{fileName};
       if (!file.is_open()) {
         std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                              "File not found"};
+                             "File not found"};
         throw std::invalid_argument(errorMsg);
       }
       Id rows, cols;
       file >> rows >> cols;
       if (rows != cols) {
         std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                              "Adjacency matrix must be square"};
+                             "Adjacency matrix must be square"};
         throw std::invalid_argument(errorMsg);
       }
       m_adjacency = make_shared<SparseMatrix<Id, bool>>(rows, cols);
@@ -226,7 +226,7 @@ namespace dsm {
         file >> value;
         if (value < 0) {
           std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                                "Adjacency matrix elements must be positive"};
+                               "Adjacency matrix elements must be positive"};
           throw std::invalid_argument(errorMsg);
         }
         if (value > 0) {
@@ -236,14 +236,14 @@ namespace dsm {
           m_nodes.insert_or_assign(node1, make_shared<Node<Id, Size>>(node1));
           m_nodes.insert_or_assign(node2, make_shared<Node<Id, Size>>(node2));
           m_streets.insert_or_assign(index,
-                                    make_shared<Street<Id, Size>>(index, std::make_pair(node1, node2)));
+                                     make_shared<Street<Id, Size>>(index, std::make_pair(node1, node2)));
           if (!isAdj) {
             m_streets[index]->setLength(value);
           }
         }
         ++index;
+      }
     }
-  }
   }
 
   template <typename Id, typename Size>
