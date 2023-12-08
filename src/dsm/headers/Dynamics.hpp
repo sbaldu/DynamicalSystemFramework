@@ -555,6 +555,8 @@ namespace dsm {
           agent->incrementDelay(nextStreet->length() / agent->speed());
           nextStreet->enqueue(*agent);
           node->dequeue();
+        } else {
+          break;
         }
       }
     }
