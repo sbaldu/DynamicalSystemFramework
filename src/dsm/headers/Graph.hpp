@@ -283,7 +283,9 @@ namespace dsm {
         std::getline(iss, lon, ';');
         std::getline(iss, highway, ';');
         Id nodeId{static_cast<Id>(std::stoul(id))};
-        m_nodes.insert_or_assign(nodeIndex, make_shared<Node<Id, Size>>(nodeIndex, std::make_pair(std::stod(lat), std::stod(lon))));
+        m_nodes.insert_or_assign(
+            nodeIndex,
+            make_shared<Node<Id, Size>>(nodeIndex, std::make_pair(std::stod(lat), std::stod(lon))));
         m_nodeMapping.emplace(std::make_pair(nodeId, nodeIndex));
         ++nodeIndex;
       }
@@ -327,10 +329,15 @@ namespace dsm {
         } catch (const std::invalid_argument& e) {
           maxspeed = "30";
         }
-        Id streetId = std::stoul(sourceId) + std::stoul(targetId)*m_nodes.size();
-        m_streets.insert_or_assign(streetId,
-                                   make_shared<Street<Id, Size>>(streetId, 1, std::stod(maxspeed), std::stod(length),
-                                                                  std::make_pair(m_nodeMapping[std::stoul(sourceId)], m_nodeMapping[std::stoul(targetId)])));
+        Id streetId = std::stoul(sourceId) + std::stoul(targetId) * m_nodes.size();
+        m_streets.insert_or_assign(
+            streetId,
+            make_shared<Street<Id, Size>>(
+                streetId,
+                1,
+                std::stod(maxspeed),
+                std::stod(length),
+                std::make_pair(m_nodeMapping[std::stoul(sourceId)], m_nodeMapping[std::stoul(targetId)])));
       }
     } else {
       std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
