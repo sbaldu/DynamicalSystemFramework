@@ -230,6 +230,9 @@ namespace dsm {
       Id nodeIndex{0};
       while (!file.eof()) {
         std::getline(file, line);
+        if (line.empty()) {
+          continue;
+        }
         std::istringstream iss{line};
         std::string id, lat, lon, highway;
         // osmid;x;y;highway
@@ -264,6 +267,9 @@ namespace dsm {
       std::getline(file, line);  // skip first line
       while (!file.eof()) {
         std::getline(file, line);
+        if (line.empty()) {
+          continue;
+        }
         std::istringstream iss{line};
         std::string sourceId, targetId, length, oneway, highway, maxspeed, bridge;
         // u;v;length;oneway;highway;maxspeed;bridge
