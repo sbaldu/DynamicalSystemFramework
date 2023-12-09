@@ -393,4 +393,24 @@ TEST_CASE("Dijkstra") {
     auto result = graph.shortestPath(1, 3);
     CHECK_FALSE(result.has_value());
   }
+
+  SUBCASE("equal length") {
+    Graph graph{};
+    graph.importMatrix("./data/rawMatrix.dat", false);
+    // check correct import
+    CHECK_EQ(graph.adjMatrix()->max_size(), 14400);
+    CHECK_EQ(graph.adjMatrix()->getRowDim(), 120);
+    CHECK_EQ(graph.adjMatrix()->getColDim(), 120);
+    CHECK_EQ(graph.adjMatrix()->size(), 436);
+    // check that the path exists
+    CHECK(graph.adjMatrix()->operator()(46, 58));
+    CHECK(graph.adjMatrix()->operator()(58, 70));
+    CHECK(graph.adjMatrix()->operator()(70, 82));
+    CHECK(graph.adjMatrix()->operator()(82, 94));
+    CHECK(graph.adjMatrix()->operator()(94, 106));
+    CHECK(graph.adjMatrix()->operator()(106, 118));
+
+    auto result = graph.shortestPath(46, 118);
+    CHECK(result.has_value());
+  }
 }

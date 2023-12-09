@@ -123,7 +123,7 @@ namespace dsm {
     /// @param destination The destination node
     /// @return A std::optional containing a std::shared_ptr to the street if it exists, otherwise
     /// std::nullopt
-    std::optional<shared<Street<Id, Size>>> street(Id source, Id destination);
+    std::optional<shared<Street<Id, Size>>> street(Id source, Id destination) const;
 
     /// @brief Get the shortest path between two nodes using dijkstra algorithm
     /// @param source, The source node
@@ -446,7 +446,7 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  std::optional<shared<Street<Id, Size>>> Graph<Id, Size>::street(Id source, Id destination) {
+  std::optional<shared<Street<Id, Size>>> Graph<Id, Size>::street(Id source, Id destination) const {
     auto streetIt =
         std::find_if(m_streets.begin(), m_streets.end(), [source, destination](const auto& street) -> bool {
           return street.second->nodePair().first == source &&
@@ -462,7 +462,7 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   std::optional<DijkstraResult<Id>> Graph<Id, Size>::shortestPath(const Node<Id, Size>& source,
                                                                   const Node<Id, Size>& destination) const {
-    return dijkstra(source.id(), destination.id());
+    return this->shortestPath(source.id(), destination.id());
   }
 
   template <typename Id, typename Size>
@@ -526,14 +526,8 @@ namespace dsm {
         if (visitedNodes.find(neighbour.first) != visitedNodes.end()) {
           continue;
         }
-
-        double streetLength{std::find_if(m_streets.cbegin(),
-                                         m_streets.cend(),
-                                         [source, &neighbour](const auto& street) -> bool {
-                                           return street.second->nodePair().first == source &&
-                                                  street.second->nodePair().second == neighbour.first;
-                                         })
-                                ->second->length()};
+        
+        double streetLength = this->street(source, neighbour.first).value()->length();
         // if current path is shorter than the previous one, update the distance
         if (streetLength + dist[source].second < dist[neighbour.first].second) {
           dist[neighbour.first].second = streetLength + dist[source].second;

@@ -138,7 +138,7 @@ TEST_CASE("Dynamics") {
     dynamics.evolve(false);
     CHECK_EQ(agents[0]->time(), 2);
     CHECK_EQ(agents[0]->delay(), 0);
-    CHECK_EQ(agents[0]->streetId().value(), 1);
+    CHECK_EQ(agents[0]->streetId().value(), 0);
     CHECK_EQ(agents[0]->speed(), 30);
   }
   SUBCASE("evolve without insertion") {
@@ -164,7 +164,7 @@ TEST_CASE("Dynamics") {
     auto agents = dynamics.agents();
     CHECK_EQ(agents[0]->time(), 2);
     CHECK_EQ(agents[0]->delay(), 0);
-    CHECK_EQ(agents[0]->streetId().value(), 1);
+    CHECK_EQ(agents[0]->streetId().value(), 0);
     CHECK_EQ(agents[0]->speed(), 30);
     dynamics.evolve(false);
     agents = dynamics.agents();
@@ -193,7 +193,7 @@ TEST_CASE("Dynamics") {
     auto agents = dynamics.agents();
     CHECK_EQ(agents[0]->time(), 2);
     CHECK_EQ(agents[0]->delay(), 0);
-    CHECK_EQ(agents[0]->streetId().value(), 1);
+    CHECK_EQ(agents[0]->streetId().value(), 0);
     CHECK_EQ(agents[0]->speed(), 30);
     dynamics.evolve(true);
     agents = dynamics.agents();

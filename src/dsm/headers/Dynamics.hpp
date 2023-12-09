@@ -183,13 +183,13 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   Dynamics<Id, Size, Delay>::Dynamics(const Graph<Id, Size>& graph)
-      : m_graph{std::make_unique<Graph<Id, Size>>(graph)} {}
+      : m_graph{std::make_shared<Graph<Id, Size>>(graph)} {}
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Dynamics<Id, Size, Delay>::setItineraries(std::span<Itinerary<Id>> itineraries) {
     std::ranges::for_each(itineraries, [this](const auto& itinerary) {
-      this->m_itineraries.insert(std::make_unique<Itinerary<Id>>(itinerary));
+      this->m_itineraries.insert(std::make_shared<Itinerary<Id>>(itinerary));
     });
   }
 
@@ -336,7 +336,7 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Dynamics<Id, Size, Delay>::addAgents(std::span<Agent<Id, Size, Delay>> agents) {
     std::ranges::for_each(
-        agents, [this](const auto& agent) -> void { this->m_agents.push_back(std::make_unique(agent)); });
+        agents, [this](const auto& agent) -> void { this->m_agents.push_back(std::make_shared(agent)); });
   }
 
   template <typename Id, typename Size, typename Delay>
@@ -397,7 +397,7 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Dynamics<Id, Size, Delay>::addItineraries(std::span<Itinerary<Id>> itineraries) {
     std::ranges::for_each(itineraries, [this](const auto& itinerary) -> void {
-      this->m_itineraries.push_back(std::make_unique<Itinerary<Id>>(itinerary));
+      this->m_itineraries.push_back(std::make_shared<Itinerary<Id>>(itinerary));
     });
   }
 
