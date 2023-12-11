@@ -454,6 +454,9 @@ namespace dsm {
     if (!unvisitedNodes.contains(source)) {
       return std::nullopt;
     }
+    if (!unvisitedNodes.contains(destination)) {
+      return std::nullopt;
+    }
 
     const size_t n_nodes{m_nodes.size()};
     auto adj{*m_adjacency};
@@ -467,9 +470,12 @@ namespace dsm {
     });
     dist[source] = std::make_pair(source, 0.);
 
-    std::vector<Id> prev(n_nodes);
-    prev[source] = std::numeric_limits<Id>::max();
-    double distance{};
+    std::vector<std::pair<Id, double>> prev(n_nodes);
+	std::for_each(prev.begin(), prev.end(), [](auto& pair) -> void {
+		  pair.first = std::numeric_limits<Id>::max();
+		  pair.second = std::numeric_limits<double>::max();
+		});
+    prev[source].second = 0.;
 
     while (unvisitedNodes.size() != 0) {
       source = std::min_element(unvisitedNodes.begin(),
@@ -478,7 +484,6 @@ namespace dsm {
                                   return dist[a.first].second < dist[b.first].second;
                                 })
                    ->first;
-      distance = dist[source].second;
       unvisitedNodes.erase(source);
       visitedNodes.insert(source);
 
@@ -499,7 +504,7 @@ namespace dsm {
         // if current path is shorter than the previous one, update the distance
         if (streetLength + dist[source].second < dist[neighbour.first].second) {
           dist[neighbour.first].second = streetLength + dist[source].second;
-          prev[neighbour.first] = source;
+          prev[neighbour.first] = std::make_pair(source, dist[neighbour.first].second);
         }
       }
 
@@ -509,7 +514,7 @@ namespace dsm {
     std::vector<Id> path{destination};
     Id previous{destination};
     while (true) {
-      previous = prev[previous];
+      previous = prev[previous].first;
       if (previous == std::numeric_limits<Id>::max()) {
         return std::nullopt;
       }
@@ -520,7 +525,7 @@ namespace dsm {
     }
 
     std::reverse(path.begin(), path.end());
-    return DijkstraResult<Id>(path, distance);
+    return DijkstraResult<Id>(path, prev[destination].second);
   }
 };  // namespace dsm
 
