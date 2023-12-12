@@ -448,7 +448,7 @@ namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   std::optional<DijkstraResult<Id>> Graph<Id, Size>::shortestPath(Id source, Id destination) const {
-	const Id sourceId{source};
+    const Id sourceId{source};
 
     std::unordered_map<Id, shared<Node<Id, Size>>> unvisitedNodes{m_nodes};
     if (!unvisitedNodes.contains(source) || !unvisitedNodes.contains(destination)) {
@@ -468,10 +468,10 @@ namespace dsm {
     dist[source] = std::make_pair(source, 0.);
 
     std::vector<std::pair<Id, double>> prev(n_nodes);
-	std::for_each(prev.begin(), prev.end(), [](auto& pair) -> void {
-		  pair.first = std::numeric_limits<Id>::max();
-		  pair.second = std::numeric_limits<double>::max();
-		});
+    std::for_each(prev.begin(), prev.end(), [](auto& pair) -> void {
+      pair.first = std::numeric_limits<Id>::max();
+      pair.second = std::numeric_limits<double>::max();
+    });
     prev[source].second = 0.;
 
     while (unvisitedNodes.size() != 0) {
@@ -516,9 +516,9 @@ namespace dsm {
         return std::nullopt;
       }
       path.push_back(previous);
-	  if (previous == sourceId) {
-		break;
-	  }
+      if (previous == sourceId) {
+        break;
+      }
     }
 
     std::reverse(path.begin(), path.end());
