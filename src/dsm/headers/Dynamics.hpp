@@ -353,7 +353,7 @@ namespace dsm {
     auto agentIt{std::find_if(
         m_agents.begin(), m_agents.end(), [agentId](auto agent) { return agent->id() == agentId; })};
     if (agentIt != m_agents.end()) {
-      m_agents.erase(agentIt);
+      this->m_agents.erase(agentIt);
     }
   }
 
