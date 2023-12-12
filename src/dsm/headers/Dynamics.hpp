@@ -127,7 +127,7 @@ namespace dsm {
     /// @brief Add a set of agents to the simulation
     /// @param nAgents The number of agents to add
     /// @throw std::runtime_error If there are no itineraries
-    void addRandomAgents(Size nAgents);
+    void addRandomAgents(Size nAgents, bool uniformly = false);
 
     /// @brief Add an itinerary
     /// @param itinerary, The itinerary
@@ -368,16 +368,37 @@ namespace dsm {
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>)
-  void Dynamics<Id, Size, Delay>::addRandomAgents(Size nAgents) {
+  void Dynamics<Id, Size, Delay>::addRandomAgents(Size nAgents, bool uniformly) {
     if (m_itineraries.empty()) {
       std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
                            "It is not possible to add random agents without itineraries"};
       throw std::runtime_error(errorMsg);
     }
     std::uniform_int_distribution<Size> itineraryDist{0, static_cast<Size>(m_itineraries.size() - 1)};
+    std::uniform_int_distribution<Size> streetDist{0, static_cast<Size>(this->m_graph->streetSet().size() - 1)};
     for (Size i{0}; i < nAgents; ++i) {
       Size itineraryId{itineraryDist(m_generator)};
-      this->addAgent(Agent<Id, Size, Delay>{static_cast<Size>(m_agents.size()), itineraryId});
+      if(uniformly) {
+        Size streetId{0};
+        do {
+          // I dunno why this works and the following doesn't
+          auto streetSet = this->m_graph->streetSet();
+          auto streetIt = streetSet.begin();
+          // auto streetIt = this->m_graph->streetSet().begin();
+          Size step = streetDist(m_generator);
+          std::advance(streetIt, step);
+          streetId = streetIt->first;
+        } while (this->m_graph->streetSet()[streetId]->density() == 1);
+        auto street{this->m_graph->streetSet()[streetId]};
+        this->addAgent(Agent<Id, Size, Delay>{static_cast<Size>(m_agents.size()), itineraryId, streetId});
+        auto agent{m_agents[m_agents.size() - 1]};
+        agent->setStreetId(streetId);
+        agent->setSpeed(street->maxSpeed());
+        agent->incrementDelay(street->length() / agent->speed());
+        street->enqueue(*agent);
+      } else {
+        this->addAgent(Agent<Id, Size, Delay>{static_cast<Size>(m_agents.size()), itineraryId});
+      }
     }
   }
 

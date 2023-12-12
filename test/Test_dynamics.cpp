@@ -64,6 +64,31 @@ TEST_CASE("Dynamics") {
     CHECK_EQ(itineraries[agents[2]->itineraryId()]->source(), itineary3.source());
     CHECK_EQ(itineraries[agents[2]->itineraryId()]->destination(), itineary3.destination());
   }
+  SUBCASE("addRandomAgents uniformly") {
+    /// GIVEN: a dynamics object
+    /// WHEN: we add many itineraries
+    /// THEN: the number of agents is the same as the number of itineraries
+    Dynamics dynamics(graph);
+    dynamics.setSeed(69);
+    Itineary itineary{0, 0, 2}, itineary2{1, 1, 2}, itineary3{2, 0, 1};
+    dynamics.addItinerary(itineary);
+    dynamics.addItinerary(itineary2);
+    dynamics.addItinerary(itineary3);
+    dynamics.addRandomAgents(3, true);
+    CHECK_EQ(dynamics.agents().size(), 3);
+    auto agents = dynamics.agents();
+    auto itineraries = dynamics.itineraries();
+    CHECK_EQ(itineraries[agents[0]->itineraryId()]->source(), itineary2.source());
+    CHECK_EQ(itineraries[agents[0]->itineraryId()]->destination(), itineary2.destination());
+    CHECK(agents[0]->streetId().has_value());
+    CHECK_EQ(agents[0]->streetId().value(), 3);
+    CHECK_EQ(itineraries[agents[1]->itineraryId()]->source(), itineary3.source());
+    CHECK_EQ(itineraries[agents[1]->itineraryId()]->destination(), itineary3.destination());
+    CHECK_EQ(agents[1]->streetId().value(), 8);
+    CHECK_EQ(itineraries[agents[2]->itineraryId()]->source(), itineary2.source());
+    CHECK_EQ(itineraries[agents[2]->itineraryId()]->destination(), itineary2.destination());
+    CHECK_EQ(agents[2]->streetId().value(), 1);
+  }
   SUBCASE("AddRandomAgents - exceptions") {
     /// GIVEN: a dynamics object
     /// WHEN: we add a random agent with a negative number of agents
