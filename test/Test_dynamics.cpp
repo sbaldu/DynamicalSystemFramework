@@ -156,8 +156,6 @@ TEST_CASE("Dynamics") {
     dynamics.addItinerary(itinerary);
     dynamics.addRandomAgents(1);
     dynamics.updatePaths();
-    // dynamics.evolve(false);
-    // dynamics.evolve(false);
     for (uint8_t i = 0; i < 2; ++i) {
       dynamics.evolve(false);
     }
@@ -185,8 +183,6 @@ TEST_CASE("Dynamics") {
     dynamics.addItinerary(itinerary);
     dynamics.addRandomAgents(1);
     dynamics.updatePaths();
-    // dynamics.evolve(false);
-    // dynamics.evolve(false);
     for (uint8_t i = 0; i < 2; ++i) {
       dynamics.evolve(true);
     }
