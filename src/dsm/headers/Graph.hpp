@@ -451,10 +451,7 @@ namespace dsm {
 	const Id sourceId{source};
 
     std::unordered_map<Id, shared<Node<Id, Size>>> unvisitedNodes{m_nodes};
-    if (!unvisitedNodes.contains(source)) {
-      return std::nullopt;
-    }
-    if (!unvisitedNodes.contains(destination)) {
+    if (!unvisitedNodes.contains(source) || !unvisitedNodes.contains(destination)) {
       return std::nullopt;
     }
 
