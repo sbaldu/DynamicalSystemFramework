@@ -124,10 +124,6 @@ namespace dsm {
     /// @param id, the id of the first agent to remove
     /// @param ids, the pack of ides of the agents to remove
     void removeAgents(T1 id, Tn... ids);
-    /// @brief Add a set of agents to the simulation
-    /// @param nAgents The number of agents to add
-    /// @throw std::runtime_error If there are no itineraries
-    void addRandomAgents(Size nAgents, bool uniformly = false);
 
     /// @brief Add an itinerary
     /// @param itinerary, The itinerary
@@ -366,41 +362,6 @@ namespace dsm {
     removeAgents(ids...);
   }
 
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>)
-  void Dynamics<Id, Size, Delay>::addRandomAgents(Size nAgents, bool uniformly) {
-    if (m_itineraries.empty()) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                           "It is not possible to add random agents without itineraries"};
-      throw std::runtime_error(errorMsg);
-    }
-    std::uniform_int_distribution<Size> itineraryDist{0, static_cast<Size>(m_itineraries.size() - 1)};
-    std::uniform_int_distribution<Size> streetDist{0, static_cast<Size>(this->m_graph->streetSet().size() - 1)};
-    for (Size i{0}; i < nAgents; ++i) {
-      Size itineraryId{itineraryDist(m_generator)};
-      if(uniformly) {
-        Size streetId{0};
-        do {
-          // I dunno why this works and the following doesn't
-          auto streetSet = this->m_graph->streetSet();
-          auto streetIt = streetSet.begin();
-          // auto streetIt = this->m_graph->streetSet().begin();
-          Size step = streetDist(m_generator);
-          std::advance(streetIt, step);
-          streetId = streetIt->first;
-        } while (this->m_graph->streetSet()[streetId]->density() == 1);
-        auto street{this->m_graph->streetSet()[streetId]};
-        this->addAgent(Agent<Id, Size, Delay>{static_cast<Size>(m_agents.size()), itineraryId, streetId});
-        auto agent{m_agents[m_agents.size() - 1]};
-        agent->setStreetId(streetId);
-        agent->setSpeed(street->maxSpeed());
-        agent->incrementDelay(street->length() / agent->speed());
-        street->enqueue(*agent);
-      } else {
-        this->addAgent(Agent<Id, Size, Delay>{static_cast<Size>(m_agents.size()), itineraryId});
-      }
-    }
-  }
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
@@ -496,6 +457,11 @@ namespace dsm {
     /// @param agentId The id of the agent
     /// @throw std::invalid_argument, If the agent is not found
     void setAgentSpeed(Size agentId);
+    /// @brief Add a set of agents to the simulation
+    /// @param nAgents The number of agents to add
+    /// @param uniformly If true, the agents are added uniformly on the streets
+    /// @throw std::runtime_error If there are no itineraries
+    void addRandomAgents(Size nAgents, bool uniformly = false);
 
     /// @brief Evolve the simulation
     void evolve(bool reinsert_agents = false);
@@ -513,6 +479,41 @@ namespace dsm {
     auto street{this->m_graph->streetSet()[agent->streetId().value()]};
     double speed{street->maxSpeed() * (1. - this->m_minSpeedRateo * street->density())};
     agent->setSpeed(speed);
+  }
+
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>)
+  void FirstOrderDynamics<Id, Size, Delay>::addRandomAgents(Size nAgents, bool uniformly) {
+    if (this->m_itineraries.empty()) {
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                           "It is not possible to add random agents without itineraries"};
+      throw std::runtime_error(errorMsg);
+    }
+    std::uniform_int_distribution<Size> itineraryDist{0, static_cast<Size>(this->m_itineraries.size() - 1)};
+    std::uniform_int_distribution<Size> streetDist{0, static_cast<Size>(this->m_graph->streetSet().size() - 1)};
+    for (Size i{0}; i < nAgents; ++i) {
+      Size itineraryId{itineraryDist(this->m_generator)};
+      if(uniformly) {
+        Size streetId{0};
+        do {
+          // I dunno why this works and the following doesn't
+          auto streetSet = this->m_graph->streetSet();
+          auto streetIt = streetSet.begin();
+          // auto streetIt = this->m_graph->streetSet().begin();
+          Size step = streetDist(this->m_generator);
+          std::advance(streetIt, step);
+          streetId = streetIt->first;
+        } while (this->m_graph->streetSet()[streetId]->density() == 1);
+        auto street{this->m_graph->streetSet()[streetId]};
+        this->addAgent(Agent<Id, Size, Delay>{static_cast<Size>(this->m_agents.size()), itineraryId, streetId});
+        auto agent{this->m_agents[this->m_agents.size() - 1]};
+        this->setAgentSpeed(agent->id());
+        agent->incrementDelay(street->length() / agent->speed());
+        street->enqueue(*agent);
+      } else {
+        this->addAgent(Agent<Id, Size, Delay>{static_cast<Size>(this->m_agents.size()), itineraryId});
+      }
+    }
   }
 
   template <typename Id, typename Size, typename Delay>
