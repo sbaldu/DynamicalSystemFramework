@@ -213,8 +213,7 @@ namespace dsm {
         const Id node2{static_cast<Id>(index % cols)};
         m_nodes.insert_or_assign(node1, make_shared<Node<Id, Size>>(node1));
         m_nodes.insert_or_assign(node2, make_shared<Node<Id, Size>>(node2));
-        m_streets.insert_or_assign(index,
-                                   make_shared<Street<Id, Size>>(index, std::make_pair(node1, node2)));
+        m_streets.emplace(index, make_shared<Street<Id, Size>>(index, std::make_pair(node1, node2)));
         if (!isAdj) {
           m_streets[index]->setLength(val);
         }
@@ -251,7 +250,7 @@ namespace dsm {
           const Id node2{static_cast<Id>(index % cols)};
           m_nodes.insert_or_assign(node1, make_shared<Node<Id, Size>>(node1));
           m_nodes.insert_or_assign(node2, make_shared<Node<Id, Size>>(node2));
-          m_streets.insert_or_assign(index,
+          m_streets.emplace(index,
                                      make_shared<Street<Id, Size>>(index, std::make_pair(node1, node2)));
           if (!isAdj) {
             m_streets[index]->setLength(value);

@@ -493,6 +493,7 @@ namespace dsm {
     std::uniform_int_distribution<Size> streetDist{0, static_cast<Size>(this->m_graph->streetSet().size() - 1)};
     for (Size i{0}; i < nAgents; ++i) {
       Size itineraryId{itineraryDist(this->m_generator)};
+      Size agentId{static_cast<Size>(this->m_agents.size())};
       if(uniformly) {
         Size streetId{0};
         do {
@@ -505,13 +506,13 @@ namespace dsm {
           streetId = streetIt->first;
         } while (this->m_graph->streetSet()[streetId]->density() == 1);
         auto street{this->m_graph->streetSet()[streetId]};
-        this->addAgent(Agent<Id, Size, Delay>{static_cast<Size>(this->m_agents.size()), itineraryId, streetId});
-        auto agent{this->m_agents[this->m_agents.size() - 1]};
-        this->setAgentSpeed(agent->id());
+        this->addAgent(Agent<Id, Size, Delay>{agentId, itineraryId, streetId});
+        auto agent{this->m_agents[agentId]};
+        this->setAgentSpeed(agentId);
         agent->incrementDelay(street->length() / agent->speed());
-        street->enqueue(*agent);
+        street->enqueue(agentId);
       } else {
-        this->addAgent(Agent<Id, Size, Delay>{static_cast<Size>(this->m_agents.size()), itineraryId});
+        this->addAgent(Agent<Id, Size, Delay>{agentId, itineraryId});
       }
     }
   }
@@ -521,7 +522,7 @@ namespace dsm {
   void FirstOrderDynamics<Id, Size, Delay>::evolve(bool reinsert_agents) {
     // move the first agent of each street
     for (auto& streetPair : this->m_graph->streetSet()) {
-      auto& street{streetPair.second};
+      auto street{streetPair.second};
       if (street->queue().empty()) {
         continue;
       }
@@ -537,7 +538,7 @@ namespace dsm {
       street->dequeue();
       destinationNode->enqueue(agent->id());
     }
-    // // move the agents from each node
+    // move the agents from each node
     for (auto& nodePair : this->m_graph->nodeSet()) {
       auto node{nodePair.second};
       while (!node->queue().empty()) {
@@ -556,20 +557,31 @@ namespace dsm {
         }
         SparseMatrix<Id, bool> possibleMoves;
         if (agent->streetId().has_value()) {
-          const auto street = this->m_graph->streetSet()[agent->streetId().value()];
+          auto street = this->m_graph->streetSet()[agent->streetId().value()];
           possibleMoves =
               this->m_itineraries[agent->itineraryId()]->path().getRow(street->nodePair().second);
+              std::cout << std::to_string(__LINE__) << "\n";
+              std::cout << "Street id: " << street->id() << "\n";
+              std::cout << "Street node pair: " << street->nodePair().first << " " << street->nodePair().second << "\n";
           if (this->m_uniformDist(this->m_generator) < this->m_errorProbability) {
             possibleMoves = this->m_graph->adjMatrix()->getRow(street->nodePair().second);
+            std::cout << std::to_string(__LINE__) << "\n";
           }
         } else {
           possibleMoves = this->m_itineraries[agent->itineraryId()]->path().getRow(node->id());
+          std::cout << std::to_string(__LINE__) << "\n";
           if (this->m_uniformDist(this->m_generator) < this->m_errorProbability) {
             possibleMoves = this->m_graph->adjMatrix()->getRow(node->id());
+            std::cout << std::to_string(__LINE__) << "\n";
           }
         }
-        Size nMoves = static_cast<Size>(possibleMoves.size());
-        if (nMoves == 0) {
+        // print possible moves
+        // std::cout << "Possible moves from " << node->id() << ": ";
+        // for (auto const& move : possibleMoves) {
+        //   std::cout << move.first << " ";
+        // }
+        // std::cout << "\n";
+        if (static_cast<Size>(possibleMoves.size()) == 0) {
           continue;
         }
         std::uniform_int_distribution<Size> moveDist{0, static_cast<Size>(possibleMoves.size() - 1)};
@@ -578,15 +590,17 @@ namespace dsm {
         std::advance(iterator, p);
         const auto& streetResult{this->m_graph->street(node->id(), iterator->first)};
         if (!streetResult.has_value()) {
+          std::cout << "No street found between " << node->id() << " and " << iterator->first << "\n";
+          std::cout << "Itinerary is the number " << agent->itineraryId() << "\n";
           continue;
         }
-        auto& nextStreet{streetResult.value()};
+        auto nextStreet{streetResult.value()};
 
         if (nextStreet->density() < 1) {
           agent->setStreetId(nextStreet->id());
           this->setAgentSpeed(agent->id());
           agent->incrementDelay(nextStreet->length() / agent->speed());
-          nextStreet->enqueue(*agent);
+          nextStreet->enqueue(agent->id());
           node->dequeue();
         } else {
           break;
