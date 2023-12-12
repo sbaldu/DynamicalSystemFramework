@@ -468,8 +468,13 @@ namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   std::optional<DijkstraResult<Id>> Graph<Id, Size>::shortestPath(Id source, Id destination) const {
+	const Id sourceId{source};
+
     std::unordered_map<Id, shared<Node<Id, Size>>> unvisitedNodes{m_nodes};
     if (!unvisitedNodes.contains(source)) {
+      return std::nullopt;
+    }
+    if (!unvisitedNodes.contains(destination)) {
       return std::nullopt;
     }
 
@@ -485,9 +490,12 @@ namespace dsm {
     });
     dist[source] = std::make_pair(source, 0.);
 
-    std::vector<Id> prev(n_nodes);
-    prev[source] = std::numeric_limits<Id>::max();
-    double distance{};
+    std::vector<std::pair<Id, double>> prev(n_nodes);
+	std::for_each(prev.begin(), prev.end(), [](auto& pair) -> void {
+		  pair.first = std::numeric_limits<Id>::max();
+		  pair.second = std::numeric_limits<double>::max();
+		});
+    prev[source].second = 0.;
 
     while (unvisitedNodes.size() != 0) {
       source = std::min_element(unvisitedNodes.begin(),
@@ -496,31 +504,10 @@ namespace dsm {
                                   return dist[a.first].second < dist[b.first].second;
                                 })
                    ->first;
-      distance = dist[source].second;
       unvisitedNodes.erase(source);
       visitedNodes.insert(source);
 
-      // if the destination is reached, return the path
-      if (source == destination) {
-        std::vector<Id> path{source};
-        Id previous{source};
-        while (true) {
-          previous = prev[previous];
-          if (previous == std::numeric_limits<Id>::max()) {
-            break;
-          }
-          path.push_back(previous);
-        }
-        std::reverse(path.begin(), path.end());
-        return DijkstraResult<Id>(path, distance);
-      }
-
       const auto& neighbors{adj.getRow(source)};
-      // if the node is isolated, stop the algorithm
-      if (neighbors.size() == 0) {
-        return std::nullopt;
-      }
-
       for (const auto& neighbour : neighbors) {
         // if the node has already been visited, skip it
         if (visitedNodes.find(neighbour.first) != visitedNodes.end()) {
@@ -531,14 +518,28 @@ namespace dsm {
         // if current path is shorter than the previous one, update the distance
         if (streetLength + dist[source].second < dist[neighbour.first].second) {
           dist[neighbour.first].second = streetLength + dist[source].second;
-          prev[neighbour.first] = source;
+          prev[neighbour.first] = std::make_pair(source, dist[neighbour.first].second);
         }
       }
 
       adj.emptyColumn(source);
     }
 
-    return std::nullopt;
+    std::vector<Id> path{destination};
+    Id previous{destination};
+    while (true) {
+      previous = prev[previous].first;
+      if (previous == std::numeric_limits<Id>::max()) {
+        return std::nullopt;
+      }
+      path.push_back(previous);
+	  if (previous == sourceId) {
+		break;
+	  }
+    }
+
+    std::reverse(path.begin(), path.end());
+    return DijkstraResult<Id>(path, prev[destination].second);
   }
 };  // namespace dsm
 
