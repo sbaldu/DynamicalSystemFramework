@@ -33,7 +33,6 @@ namespace dsm {
     double m_len;
     double m_maxSpeed;
     Id m_id;
-    Size m_size;
     Size m_capacity;
 
   public:
@@ -88,9 +87,6 @@ namespace dsm {
     /// @brief Get the street's id
     /// @return Id, The street's id
     Id id() const;
-    /// @brief Get the street's size
-    /// @return Size, The street's size
-    Size size() const;
     /// @brief Get the street's capacity
     /// @return Size, The street's capacity
     Size capacity() const;
@@ -110,10 +106,8 @@ namespace dsm {
     /// @return double, The street's speed limit
     double maxSpeed() const;
     /// @brief Add an agent to the street's queue
-    /// @param agent, The agent to add
-    template <typename Delay>
-      requires is_numeric_v<Delay>
-    void enqueue(const Agent<Id, Size, Delay>& agent);
+    /// @param agentId The id of the agent to add to the street's queue
+    void enqueue(Id agentId);
     /// @brief Remove an agent from the street's queue
     std::optional<Id> dequeue();
   };
@@ -121,7 +115,7 @@ namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   Street<Id, Size>::Street(Id index, std::pair<Id, Id> pair)
-      : m_nodePair{std::move(pair)}, m_maxSpeed{30.}, m_id{index}, m_size{0}, m_capacity{1} {}
+      : m_nodePair{std::move(pair)}, m_maxSpeed{30.}, m_id{index}, m_capacity{1} {}
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
@@ -130,13 +124,12 @@ namespace dsm {
         m_len{len},
         m_maxSpeed{30.},
         m_id{id},
-        m_size{0},
         m_capacity{capacity} {}
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   Street<Id, Size>::Street(Id id, Size capacity, double len, double maxSpeed, std::pair<Id, Id> nodePair)
-      : m_nodePair{std::move(nodePair)}, m_len{len}, m_id{id}, m_size{0}, m_capacity{capacity} {
+      : m_nodePair{std::move(nodePair)}, m_len{len}, m_id{id}, m_capacity{capacity} {
     this->setMaxSpeed(maxSpeed);
   }
 
@@ -198,11 +191,6 @@ namespace dsm {
   }
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  Size Street<Id, Size>::size() const {
-    return m_size;
-  }
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   Size Street<Id, Size>::capacity() const {
     return m_capacity;
   }
@@ -234,27 +222,24 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  template <typename Delay>
-    requires is_numeric_v<Delay>
-  void Street<Id, Size>::enqueue(const Agent<Id, Size, Delay>& agent) {
-    if (m_size < m_capacity) {
-      m_queue.push(agent.id());
-      ++m_size;
+  void Street<Id, Size>::enqueue(Id agentId) {
+    if (m_queue.size() == m_capacity) {
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                           "The street's queue is full."};
+      throw std::runtime_error(errorMsg);
     }
+    m_queue.push(agentId);
   }
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   std::optional<Id> Street<Id, Size>::dequeue() {
-    if (m_size > 0) {
-      Id res{m_queue.front()};
-      m_queue.pop();
-      --m_size;
-
-      return res;
+    if(m_queue.empty()) {
+      return std::nullopt;
     }
-
-    return std::nullopt;
+    Id id = m_queue.front();
+    m_queue.pop();
+    return id;
   }
 
 };  // namespace dsm
