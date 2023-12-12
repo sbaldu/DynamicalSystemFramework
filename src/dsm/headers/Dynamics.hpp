@@ -246,6 +246,7 @@ namespace dsm {
     for (auto& itineraryPair : m_itineraries) {
       auto& itinerary{itineraryPair.second};
       SparseMatrix<Id, bool> path{dimension, dimension};
+      // cycle over the nodes
       for (Size i{0}; i < dimension; ++i) {
         if (i == itinerary->destination()) {
           continue;
@@ -254,8 +255,12 @@ namespace dsm {
         if (!result.has_value()) {
           continue;
         }
+        // save the minimum distance between i and the destination 
         auto minDistance{result.value().distance()};
         for (auto const& node : m_graph->adjMatrix()->getRow(i)) {
+          // init distance from a neighbor node to the destination to zero
+          double distance{0.};
+
           auto streetResult = m_graph->street(i, node.first);
           if (!streetResult.has_value()) {
             continue;
@@ -264,14 +269,17 @@ namespace dsm {
           // TimePoint expectedTravelTime{
           //     streetLength};  // / street->maxSpeed()};  // TODO: change into input velocity
           result = m_graph->shortestPath(node.first, itinerary->destination());
-          if (!result.has_value()) {
+          if (result.has_value()) {
+            // if the shortest path exists, save the distance
+            distance = result.value().distance();
+          } else if (node.first != itinerary->destination()) {
+            // if the node is the destination, the distance is zero, otherwise the iteration is skipped
             continue;
           }
-          auto distance = result.value().distance();
 
           // if (!(distance > minDistance + expectedTravelTime)) {
           if (!(distance > minDistance + streetLength)) {
-            path.insert(i, node.first, 1);
+            path.insert(i, node.first, true);
           }
         }
         itinerary->setPath(path);
