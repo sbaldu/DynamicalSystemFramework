@@ -525,7 +525,7 @@ namespace dsm {
       if (street->queue().empty()) {
         continue;
       }
-      auto& agent = this->m_agents[street->queue().front()];
+      auto agent = this->m_agents[street->queue().front()];
       if (agent->delay() > 0) {
         continue;
       }
