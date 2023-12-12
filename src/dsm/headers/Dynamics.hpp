@@ -488,8 +488,8 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void FirstOrderDynamics<Id, Size, Delay>::setAgentSpeed(Size agentId) {
-    auto& agent = this->m_agents[agentId];
-    auto& street{this->m_graph->streetSet()[agent->streetId().value()]};
+    auto agent = this->m_agents[agentId];
+    auto street{this->m_graph->streetSet()[agent->streetId().value()]};
     double speed{street->maxSpeed() * (1. - this->m_minSpeedRateo * street->density())};
     agent->setSpeed(speed);
   }
@@ -515,11 +515,11 @@ namespace dsm {
       street->dequeue();
       destinationNode->enqueue(agent->id());
     }
-    // move the agents from each node
+    // // move the agents from each node
     for (auto& nodePair : this->m_graph->nodeSet()) {
-      auto& node{nodePair.second};
+      auto node{nodePair.second};
       while (!node->queue().empty()) {
-        auto& agent = this->m_agents[node->queue().front()];
+        auto agent = this->m_agents[node->queue().front()];
         if (node->id() == this->m_itineraries[agent->itineraryId()]->destination()) {
           this->m_travelTimes.push_back(agent->time());
           node->dequeue();
@@ -534,7 +534,7 @@ namespace dsm {
         }
         SparseMatrix<Id, bool> possibleMoves;
         if (agent->streetId().has_value()) {
-          const auto& street = this->m_graph->streetSet()[agent->streetId().value()];
+          const auto street = this->m_graph->streetSet()[agent->streetId().value()];
           possibleMoves =
               this->m_itineraries[agent->itineraryId()]->path().getRow(street->nodePair().second);
           if (this->m_uniformDist(this->m_generator) < this->m_errorProbability) {
@@ -573,14 +573,15 @@ namespace dsm {
     }
     // cycle over agents and put them in the src node
     for (auto& agentPair : this->m_agents) {
-      auto& agent{agentPair.second};
-      if (agent->delay() == 0 && agent->time() == 0) {
-        auto& srcNode{this->m_graph->nodeSet()[this->m_itineraries[agent->itineraryId()]->source()]};
-        if (srcNode->isFull()) {
-          continue;
-        }
-        srcNode->enqueue(agent->id());
+      auto agent{agentPair.second};
+      if (agent->streetId().has_value()) {
+        continue;
       }
+      auto srcNode{this->m_graph->nodeSet()[this->m_itineraries[agent->itineraryId()]->source()]};
+      if (srcNode->isFull()) {
+        continue;
+      }
+      srcNode->enqueue(agent->id());
     }
     // decrement all agent delays
     std::ranges::for_each(this->m_agents, [](auto& agent) {
