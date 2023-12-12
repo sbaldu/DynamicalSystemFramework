@@ -426,14 +426,16 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>)
   double Dynamics<Id, Size, Delay>::meanSpeed() const {
-    if (m_agents.size() == 0) {
+    // count agents which have street not nullopt
+    Size nAgents{std::ranges::count_if(m_agents, [](const auto& agent) { return agent.second->streetId().has_value(); })};
+    if (m_agents.size() == 0 || nAgents == 0) {
       return 0.;
     }
-    return std::accumulate(m_agents.cbegin(),
+    double meanSpeed{std::accumulate(m_agents.cbegin(),
                            m_agents.cend(),
                            0.,
-                           [](double sum, const auto& agent) { return sum + agent.second->speed(); }) /
-           m_agents.size();
+                           [](double sum, const auto& agent) { return sum + agent.second->speed(); })};
+    return static_cast<double>(meanSpeed / nAgents);
   }
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>)
@@ -505,6 +507,7 @@ namespace dsm {
       if (agent->delay() > 0) {
         continue;
       }
+      agent->setSpeed(0.);
       auto destinationNode{this->m_graph->nodeSet()[street->nodePair().second]};
       if (destinationNode->isFull()) {
         continue;
