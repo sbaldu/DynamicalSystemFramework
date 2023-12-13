@@ -346,10 +346,13 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Dynamics<Id, Size, Delay>::removeAgent(Size agentId) {
-    auto agentIt{std::find_if(
-        m_agents.begin(), m_agents.end(), [agentId](auto agent) { return agent->id() == agentId; })};
-    if (agentIt != m_agents.end()) {
-      this->m_agents.erase(agentIt);
+    try {
+      this->m_agents.erase(agentId);
+    }
+    catch (std::out_of_range& e) {
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                           "Agent " + std::to_string(agentId) + " not found"};
+      throw std::invalid_argument(errorMsg);
     }
   }
 
@@ -514,6 +517,7 @@ namespace dsm {
       } else {
         this->addAgent(Agent<Id, Size, Delay>{agentId, itineraryId});
       }
+      std::cout << "Added agent " << agentId << " with itinerary " << itineraryId << " StreetId: " << this->m_agents[agentId]->streetId().value_or(-1) << std::endl;
     }
   }
 
@@ -542,19 +546,20 @@ namespace dsm {
     for (auto& nodePair : this->m_graph->nodeSet()) {
       auto node{nodePair.second};
       while (!node->queue().empty()) {
-        auto agent = this->m_agents[node->queue().front()];
-        if (node->id() == this->m_itineraries[agent->itineraryId()]->destination()) {
-          this->m_travelTimes.push_back(agent->time());
+        Id agentId{node->queue().front()};
+        if (node->id() == this->m_itineraries[this->m_agents[agentId]->itineraryId()]->destination()) {
+          this->m_travelTimes.push_back(this->m_agents[agentId]->time());
           node->dequeue();
           if (reinsert_agents) {
-            auto newAgent = Agent<Id, Size, Delay>(agent->id(), agent->itineraryId());
-            this->removeAgent(agent->id());
+            auto newAgent = Agent<Id, Size, Delay>(this->m_agents[agentId]->id(), this->m_agents[agentId]->itineraryId());
+            this->removeAgent(agentId);
             this->addAgent(newAgent);
           } else {
-            this->removeAgent(agent->id());
+            this->removeAgent(agentId);
           }
           continue;
         }
+        auto agent = this->m_agents[agentId];
         auto possibleMoves{this->m_itineraries[agent->itineraryId()]->path().getRow(node->id())};
         if (this->m_uniformDist(this->m_generator) < this->m_errorProbability) {
           possibleMoves = this->m_graph->adjMatrix()->getRow(node->id());
