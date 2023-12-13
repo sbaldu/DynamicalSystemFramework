@@ -50,6 +50,12 @@ namespace dsm {
     shared<SparseMatrix<Id, bool>> m_adjacency;
     std::unordered_map<Id, Id> m_nodeMapping;
 
+    struct NodeInfo {
+      Id id;
+      Id previous;
+      double distance;
+    };
+
   public:
     Graph();
     /// @brief Construct a new Graph object
@@ -459,26 +465,20 @@ namespace dsm {
     auto adj{*m_adjacency};
 
     std::unordered_set<Id> visitedNodes;
-    std::vector<std::pair<Id, double>> dist(n_nodes);
-    std::for_each(dist.begin(), dist.end(), [count = 0](auto& element) mutable -> void {
-      element.first = count;
-      element.second = std::numeric_limits<double>::max();
+    std::vector<NodeInfo> dist_prev(n_nodes);
+    std::for_each(dist_prev.begin(), dist_prev.end(), [count = 0](auto& node) mutable -> void {
+      node.id = count;
+      node.distance = std::numeric_limits<double>::max();
+      node.previous = std::numeric_limits<Id>::max();
       ++count;
     });
-    dist[source] = std::make_pair(source, 0.);
-
-    std::vector<std::pair<Id, double>> prev(n_nodes);
-    std::for_each(prev.begin(), prev.end(), [](auto& pair) -> void {
-      pair.first = std::numeric_limits<Id>::max();
-      pair.second = std::numeric_limits<double>::max();
-    });
-    prev[source].second = 0.;
+    dist_prev[source].distance = 0.;
 
     while (unvisitedNodes.size() != 0) {
       source = std::min_element(unvisitedNodes.begin(),
                                 unvisitedNodes.end(),
-                                [&dist](const auto& a, const auto& b) -> bool {
-                                  return dist[a.first].second < dist[b.first].second;
+                                [&dist_prev](const auto& a, const auto& b) -> bool {
+                                  return dist_prev[a.first].distance < dist_prev[b.first].distance;
                                 })
                    ->first;
       unvisitedNodes.erase(source);
@@ -499,9 +499,9 @@ namespace dsm {
                                          })
                                 ->second->length()};
         // if current path is shorter than the previous one, update the distance
-        if (streetLength + dist[source].second < dist[neighbour.first].second) {
-          dist[neighbour.first].second = streetLength + dist[source].second;
-          prev[neighbour.first] = std::make_pair(source, dist[neighbour.first].second);
+        if (streetLength + dist_prev[source].distance < dist_prev[neighbour.first].distance) {
+          dist_prev[neighbour.first].distance = streetLength + dist_prev[source].distance;
+          dist_prev[neighbour.first].previous = source;
         }
       }
 
@@ -511,7 +511,7 @@ namespace dsm {
     std::vector<Id> path{destination};
     Id previous{destination};
     while (true) {
-      previous = prev[previous].first;
+      previous = dist_prev[previous].previous;
       if (previous == std::numeric_limits<Id>::max()) {
         return std::nullopt;
       }
@@ -522,7 +522,7 @@ namespace dsm {
     }
 
     std::reverse(path.begin(), path.end());
-    return DijkstraResult<Id>(path, prev[destination].second);
+    return DijkstraResult<Id>(path, dist_prev[destination].distance);
   }
 };  // namespace dsm
 
