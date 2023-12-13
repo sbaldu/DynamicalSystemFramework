@@ -548,32 +548,16 @@ namespace dsm {
           node->dequeue();
           if (reinsert_agents) {
             auto newAgent = Agent<Id, Size, Delay>(agent->id(), agent->itineraryId());
-            this->m_agents.erase(agent->id());
+            this->removeAgent(agent->id());
             this->addAgent(newAgent);
           } else {
-            this->m_agents.erase(agent->id());
+            this->removeAgent(agent->id());
           }
           continue;
         }
-        SparseMatrix<Id, bool> possibleMoves;
-        if (agent->streetId().has_value()) {
-          auto street = this->m_graph->streetSet()[agent->streetId().value()];
-          possibleMoves =
-              this->m_itineraries[agent->itineraryId()]->path().getRow(street->nodePair().second);
-              std::cout << std::to_string(__LINE__) << "\n";
-              std::cout << "Street id: " << street->id() << "\n";
-              std::cout << "Street node pair: " << street->nodePair().first << " " << street->nodePair().second << "\n";
-          if (this->m_uniformDist(this->m_generator) < this->m_errorProbability) {
-            possibleMoves = this->m_graph->adjMatrix()->getRow(street->nodePair().second);
-            std::cout << std::to_string(__LINE__) << "\n";
-          }
-        } else {
-          possibleMoves = this->m_itineraries[agent->itineraryId()]->path().getRow(node->id());
-          std::cout << std::to_string(__LINE__) << "\n";
-          if (this->m_uniformDist(this->m_generator) < this->m_errorProbability) {
-            possibleMoves = this->m_graph->adjMatrix()->getRow(node->id());
-            std::cout << std::to_string(__LINE__) << "\n";
-          }
+        auto possibleMoves{this->m_itineraries[agent->itineraryId()]->path().getRow(node->id())};
+        if (this->m_uniformDist(this->m_generator) < this->m_errorProbability) {
+          possibleMoves = this->m_graph->adjMatrix()->getRow(node->id());
         }
         // print possible moves
         // std::cout << "Possible moves from " << node->id() << ": ";
@@ -590,8 +574,6 @@ namespace dsm {
         std::advance(iterator, p);
         const auto& streetResult{this->m_graph->street(node->id(), iterator->first)};
         if (!streetResult.has_value()) {
-          std::cout << "No street found between " << node->id() << " and " << iterator->first << "\n";
-          std::cout << "Itinerary is the number " << agent->itineraryId() << "\n";
           continue;
         }
         auto nextStreet{streetResult.value()};
