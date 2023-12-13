@@ -38,10 +38,8 @@ TEST_CASE("Dynamics") {
     dynamics.addItinerary(itineary);
     dynamics.addRandomAgents(1);
     CHECK_EQ(dynamics.agents().size(), 1);
-    auto agents = dynamics.agents();
-    auto itineraries = dynamics.itineraries();
-    CHECK_EQ(itineraries[agents[0]->itineraryId()]->source(), itineary.source());
-    CHECK_EQ(itineraries[agents[0]->itineraryId()]->destination(), itineary.destination());
+    CHECK_EQ(dynamics.itineraries().at(dynamics.agents().at(0)->itineraryId())->source(), itineary.source());
+    CHECK_EQ(dynamics.itineraries().at(dynamics.agents().at(0)->itineraryId())->destination(), itineary.destination());
   }
   SUBCASE("AddRandomAgents with many itineraries") {
     /// GIVEN: a dynamics object
@@ -55,14 +53,12 @@ TEST_CASE("Dynamics") {
     dynamics.addItinerary(itineary3);
     dynamics.addRandomAgents(3);
     CHECK_EQ(dynamics.agents().size(), 3);
-    auto agents = dynamics.agents();
-    auto itineraries = dynamics.itineraries();
-    CHECK_EQ(itineraries[agents[0]->itineraryId()]->source(), itineary2.source());
-    CHECK_EQ(itineraries[agents[0]->itineraryId()]->destination(), itineary2.destination());
-    CHECK_EQ(itineraries[agents[1]->itineraryId()]->source(), itineary.source());
-    CHECK_EQ(itineraries[agents[1]->itineraryId()]->destination(), itineary.destination());
-    CHECK_EQ(itineraries[agents[2]->itineraryId()]->source(), itineary3.source());
-    CHECK_EQ(itineraries[agents[2]->itineraryId()]->destination(), itineary3.destination());
+    CHECK_EQ(dynamics.itineraries().at(dynamics.agents().at(0)->itineraryId())->source(), itineary2.source());
+    CHECK_EQ(dynamics.itineraries().at(dynamics.agents().at(0)->itineraryId())->destination(), itineary2.destination());
+    CHECK_EQ(dynamics.itineraries().at(dynamics.agents().at(1)->itineraryId())->source(), itineary.source());
+    CHECK_EQ(dynamics.itineraries().at(dynamics.agents().at(1)->itineraryId())->destination(), itineary.destination());
+    CHECK_EQ(dynamics.itineraries().at(dynamics.agents().at(2)->itineraryId())->source(), itineary3.source());
+    CHECK_EQ(dynamics.itineraries().at(dynamics.agents().at(2)->itineraryId())->destination(), itineary3.destination());
   }
   SUBCASE("addRandomAgents uniformly") {
     /// GIVEN: a dynamics object
@@ -76,18 +72,16 @@ TEST_CASE("Dynamics") {
     dynamics.addItinerary(itineary3);
     dynamics.addRandomAgents(3, true);
     CHECK_EQ(dynamics.agents().size(), 3);
-    auto agents = dynamics.agents();
-    auto itineraries = dynamics.itineraries();
-    CHECK_EQ(itineraries[agents[0]->itineraryId()]->source(), itineary2.source());
-    CHECK_EQ(itineraries[agents[0]->itineraryId()]->destination(), itineary2.destination());
-    CHECK(agents[0]->streetId().has_value());
-    CHECK_EQ(agents[0]->streetId().value(), 3);
-    CHECK_EQ(itineraries[agents[1]->itineraryId()]->source(), itineary3.source());
-    CHECK_EQ(itineraries[agents[1]->itineraryId()]->destination(), itineary3.destination());
-    CHECK_EQ(agents[1]->streetId().value(), 8);
-    CHECK_EQ(itineraries[agents[2]->itineraryId()]->source(), itineary2.source());
-    CHECK_EQ(itineraries[agents[2]->itineraryId()]->destination(), itineary2.destination());
-    CHECK_EQ(agents[2]->streetId().value(), 1);
+    CHECK_EQ(dynamics.itineraries().at(dynamics.agents().at(0)->itineraryId())->source(), itineary2.source());
+    CHECK_EQ(dynamics.itineraries().at(dynamics.agents().at(0)->itineraryId())->destination(), itineary2.destination());
+    CHECK(dynamics.agents().at(0)->streetId().has_value());
+    CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 3);
+    CHECK_EQ(dynamics.itineraries().at(dynamics.agents().at(1)->itineraryId())->source(), itineary3.source());
+    CHECK_EQ(dynamics.itineraries().at(dynamics.agents().at(1)->itineraryId())->destination(), itineary3.destination());
+    CHECK_EQ(dynamics.agents().at(1)->streetId().value(), 8);
+    CHECK_EQ(dynamics.itineraries().at(dynamics.agents().at(2)->itineraryId())->source(), itineary2.source());
+    CHECK_EQ(dynamics.itineraries().at(dynamics.agents().at(2)->itineraryId())->destination(), itineary2.destination());
+    CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 1);
   }
   SUBCASE("AddRandomAgents - exceptions") {
     /// GIVEN: a dynamics object
@@ -111,8 +105,7 @@ TEST_CASE("Dynamics") {
     dynamics.addItinerary(itinerary);
     dynamics.updatePaths();
     CHECK_EQ(dynamics.itineraries().size(), 1);
-    auto itineraries = dynamics.itineraries();
-    CHECK(itineraries[0]->path()(0, 1));
+    CHECK(dynamics.itineraries().at(0)->path()(0, 1));
   }
   SUBCASE("updatePaths - equal length") {
     /// GIVEN: a dynamics object
@@ -129,15 +122,14 @@ TEST_CASE("Dynamics") {
     Itineary itinerary{0, 0, 2};
     dynamics.addItinerary(itinerary);
     dynamics.updatePaths();
-    auto itineraries = dynamics.itineraries();
-    CHECK_EQ(itineraries.size(), 1);
-    CHECK_EQ(itineraries[0]->path().size(), 4);
-    CHECK_EQ(itineraries[0]->path().getRowDim(), 4);
-    CHECK_EQ(itineraries[0]->path().getColDim(), 4);
-    CHECK(itineraries[0]->path()(0, 1));
-    CHECK(itineraries[0]->path()(1, 2));
-    CHECK(itineraries[0]->path()(0, 3));
-    CHECK(itineraries[0]->path()(3, 2));
+    CHECK_EQ(dynamics.itineraries().size(), 1);
+    CHECK_EQ(dynamics.itineraries().at(0)->path().size(), 4);
+    CHECK_EQ(dynamics.itineraries().at(0)->path().getRowDim(), 4);
+    CHECK_EQ(dynamics.itineraries().at(0)->path().getColDim(), 4);
+    CHECK(dynamics.itineraries().at(0)->path()(0, 1));
+    CHECK(dynamics.itineraries().at(0)->path()(1, 2));
+    CHECK(dynamics.itineraries().at(0)->path()(0, 3));
+    CHECK(dynamics.itineraries().at(0)->path()(3, 2));
   }
   SUBCASE("evolve with one agent") {
     /// GIVEN: a dynamics object
@@ -156,15 +148,14 @@ TEST_CASE("Dynamics") {
     dynamics.addRandomAgents(1);
     dynamics.updatePaths();
     dynamics.evolve(false);
-    auto agents = dynamics.agents();
-    CHECK_EQ(agents[0]->time(), 1);
-    CHECK_EQ(agents[0]->delay(), 0);
-    CHECK_FALSE(agents[0]->streetId().has_value());
+    CHECK_EQ(dynamics.agents().at(0)->time(), 1);
+    CHECK_EQ(dynamics.agents().at(0)->delay(), 0);
+    CHECK_FALSE(dynamics.agents().at(0)->streetId().has_value());
     dynamics.evolve(false);
-    CHECK_EQ(agents[0]->time(), 2);
-    CHECK_EQ(agents[0]->delay(), 0);
-    CHECK_EQ(agents[0]->streetId().value(), 0);
-    CHECK_EQ(agents[0]->speed(), 30);
+    CHECK_EQ(dynamics.agents().at(0)->time(), 2);
+    CHECK_EQ(dynamics.agents().at(0)->delay(), 0);
+    CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 0);
+    CHECK_EQ(dynamics.agents().at(0)->speed(), 30);
   }
   SUBCASE("evolve without insertion") {
     /// GIVEN: a dynamics object
@@ -184,14 +175,12 @@ TEST_CASE("Dynamics") {
     for (uint8_t i = 0; i < 2; ++i) {
       dynamics.evolve(false);
     }
-    auto agents = dynamics.agents();
-    CHECK_EQ(agents[0]->time(), 2);
-    CHECK_EQ(agents[0]->delay(), 0);
-    CHECK_EQ(agents[0]->streetId().value(), 0);
-    CHECK_EQ(agents[0]->speed(), 30);
+    CHECK_EQ(dynamics.agents().at(0)->time(), 2);
+    CHECK_EQ(dynamics.agents().at(0)->delay(), 0);
+    CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 0);
+    CHECK_EQ(dynamics.agents().at(0)->speed(), 30);
     dynamics.evolve(false);
-    agents = dynamics.agents();
-    CHECK_EQ(agents.size(), 0);
+    CHECK_EQ(dynamics.agents().size(), 0);
   }
   SUBCASE("evolve with reinsertion") {
     /// GIVEN: a dynamics object
@@ -211,17 +200,15 @@ TEST_CASE("Dynamics") {
     for (uint8_t i = 0; i < 2; ++i) {
       dynamics.evolve(true);
     }
-    auto agents = dynamics.agents();
-    CHECK_EQ(agents[0]->time(), 2);
-    CHECK_EQ(agents[0]->delay(), 0);
-    CHECK_EQ(agents[0]->streetId().value(), 0);
-    CHECK_EQ(agents[0]->speed(), 30);
+    CHECK_EQ(dynamics.agents().at(0)->time(), 2);
+    CHECK_EQ(dynamics.agents().at(0)->delay(), 0);
+    CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 0);
+    CHECK_EQ(dynamics.agents().at(0)->speed(), 30);
     dynamics.evolve(true);
-    agents = dynamics.agents();
-    CHECK_EQ(agents.size(), 1);
-    CHECK_EQ(agents[0]->time(), 1);
-    CHECK_EQ(agents[0]->delay(), 0);
-    CHECK_FALSE(agents[0]->streetId().has_value());
-    CHECK_EQ(agents[0]->speed(), 0.);
+    CHECK_EQ(dynamics.agents().size(), 1);
+    CHECK_EQ(dynamics.agents().at(0)->time(), 1);
+    CHECK_EQ(dynamics.agents().at(0)->delay(), 0);
+    CHECK_FALSE(dynamics.agents().at(0)->streetId().has_value());
+    CHECK_EQ(dynamics.agents().at(0)->speed(), 0.);
   }
 }
