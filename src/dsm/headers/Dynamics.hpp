@@ -345,14 +345,13 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Dynamics<Id, Size, Delay>::removeAgent(Size agentId) {
-    try {
-      this->m_agents.erase(agentId);
-    }
-    catch (std::out_of_range& e) {
+    auto agentIt{m_agents.find(agentId)};
+    if (agentIt == m_agents.end()) {
       std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
                            "Agent " + std::to_string(agentId) + " not found"};
       throw std::invalid_argument(errorMsg);
     }
+    m_agents.erase(agentIt);
   }
 
   template <typename Id, typename Size, typename Delay>
@@ -563,12 +562,6 @@ namespace dsm {
         if (this->m_uniformDist(this->m_generator) < this->m_errorProbability) {
           possibleMoves = this->m_graph->adjMatrix()->getRow(node->id());
         }
-        // print possible moves
-        // std::cout << "Possible moves from " << node->id() << ": ";
-        // for (auto const& move : possibleMoves) {
-        //   std::cout << move.first << " ";
-        // }
-        // std::cout << "\n";
         if (static_cast<Size>(possibleMoves.size()) == 0) {
           continue;
         }
