@@ -557,10 +557,8 @@ namespace dsm {
             Agent<Id, Size, Delay> newAgent{this->m_agents[agentId]->id(), this->m_agents[agentId]->itineraryId()};
             this->removeAgent(agentId);
             this->addAgent(newAgent);
-            std:: cout << "Agent " << agentId << " has reached its destination and has been reinserted" << std::endl;
           } else {
             this->removeAgent(agentId);
-            std:: cout << "Agent " << agentId << " has reached its destination and has been reinserted" << std::endl;
           }
           continue;
         }
