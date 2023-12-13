@@ -491,9 +491,16 @@ namespace dsm {
     }
     std::uniform_int_distribution<Size> itineraryDist{0, static_cast<Size>(this->m_itineraries.size() - 1)};
     std::uniform_int_distribution<Size> streetDist{0, static_cast<Size>(this->m_graph->streetSet().size() - 1)};
-    Size agentId{static_cast<Size>(this->m_agents.size())};
     for (Size i{0}; i < nAgents; ++i) {
       Size itineraryId{itineraryDist(this->m_generator)};
+      // find the max of m_agents keys
+
+      Size agentId{0};
+      if (!this->m_agents.empty()) {
+        agentId = std::max_element(this->m_agents.cbegin(), this->m_agents.cend(), [](const auto& a, const auto& b) {
+          return a.first < b.first;
+        })->first + 1;
+      }
       if(uniformly) {
         Size streetId{0};
         do {
@@ -514,7 +521,6 @@ namespace dsm {
       } else {
         this->addAgent(Agent<Id, Size, Delay>{agentId, itineraryId});
       }
-      std::cout << "Added agent " << agentId << " with itinerary " << itineraryId << " StreetId: " << this->m_agents[agentId]->streetId().value_or(-1) << std::endl;
       ++agentId;
     }
   }
