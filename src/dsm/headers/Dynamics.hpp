@@ -312,13 +312,13 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Dynamics<Id, Size, Delay>::addAgent(const Agent<Id, Size, Delay>& agent) {
-    m_agents.emplace(agent.id(), std::make_shared<Agent<Id, Size, Delay>>(agent));
+    m_agents.insert(std::make_pair(agent.id(), std::make_shared<Agent<Id, Size, Delay>>(agent)));
   }
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Dynamics<Id, Size, Delay>::addAgent(std::shared_ptr<Agent<Id, Size, Delay>> agent) {
-    m_agents.emplace(agent->id(), agent);
+    m_agents.insert(std::make_pair(agent->id(), std::move(agent)));
   }
 
   template <typename Id, typename Size, typename Delay>
@@ -494,9 +494,9 @@ namespace dsm {
     }
     std::uniform_int_distribution<Size> itineraryDist{0, static_cast<Size>(this->m_itineraries.size() - 1)};
     std::uniform_int_distribution<Size> streetDist{0, static_cast<Size>(this->m_graph->streetSet().size() - 1)};
+    Size agentId{static_cast<Size>(this->m_agents.size())};
     for (Size i{0}; i < nAgents; ++i) {
       Size itineraryId{itineraryDist(this->m_generator)};
-      Size agentId{static_cast<Size>(this->m_agents.size())};
       if(uniformly) {
         Size streetId{0};
         do {
@@ -509,8 +509,8 @@ namespace dsm {
           streetId = streetIt->first;
         } while (this->m_graph->streetSet()[streetId]->density() == 1);
         auto street{this->m_graph->streetSet()[streetId]};
-        this->addAgent(Agent<Id, Size, Delay>{agentId, itineraryId, streetId});
-        auto agent{this->m_agents[agentId]};
+        auto agent = std::make_shared<Agent<Id, Size, Delay>>(agentId, itineraryId, streetId);
+        this->addAgent(agent);
         this->setAgentSpeed(agentId);
         agent->incrementDelay(street->length() / agent->speed());
         street->enqueue(agentId);
@@ -518,6 +518,7 @@ namespace dsm {
         this->addAgent(Agent<Id, Size, Delay>{agentId, itineraryId});
       }
       std::cout << "Added agent " << agentId << " with itinerary " << itineraryId << " StreetId: " << this->m_agents[agentId]->streetId().value_or(-1) << std::endl;
+      ++agentId;
     }
   }
 
@@ -530,17 +531,17 @@ namespace dsm {
       if (street->queue().empty()) {
         continue;
       }
-      auto agent = this->m_agents[street->queue().front()];
-      if (agent->delay() > 0) {
+      Id agentId{street->queue().front()};
+      if (this->m_agents[agentId]->delay() > 0) {
         continue;
       }
-      agent->setSpeed(0.);
+      this->m_agents[agentId]->setSpeed(0.);
       auto destinationNode{this->m_graph->nodeSet()[street->nodePair().second]};
       if (destinationNode->isFull()) {
         continue;
       }
       street->dequeue();
-      destinationNode->enqueue(agent->id());
+      destinationNode->enqueue(agentId);
     }
     // move the agents from each node
     for (auto& nodePair : this->m_graph->nodeSet()) {
@@ -551,11 +552,13 @@ namespace dsm {
           this->m_travelTimes.push_back(this->m_agents[agentId]->time());
           node->dequeue();
           if (reinsert_agents) {
-            auto newAgent = Agent<Id, Size, Delay>(this->m_agents[agentId]->id(), this->m_agents[agentId]->itineraryId());
+            Agent<Id, Size, Delay> newAgent{this->m_agents[agentId]->id(), this->m_agents[agentId]->itineraryId()};
             this->removeAgent(agentId);
             this->addAgent(newAgent);
+            std:: cout << "Agent " << agentId << " has reached its destination and has been reinserted" << std::endl;
           } else {
             this->removeAgent(agentId);
+            std:: cout << "Agent " << agentId << " has reached its destination and has been reinserted" << std::endl;
           }
           continue;
         }
