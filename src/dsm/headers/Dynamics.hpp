@@ -179,7 +179,7 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   Dynamics<Id, Size, Delay>::Dynamics(const Graph<Id, Size>& graph)
-      : m_graph{std::make_shared<Graph<Id, Size>>(graph)} {}
+      : m_time{0}, m_graph{std::make_shared<Graph<Id, Size>>(graph)}, m_errorProbability{0.}, m_minSpeedRateo{0.} {}
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
@@ -240,7 +240,7 @@ namespace dsm {
   void Dynamics<Id, Size, Delay>::updatePaths() {
     const Size dimension = m_graph->adjMatrix()->getRowDim();
     for (auto& itineraryPair : m_itineraries) {
-      auto& itinerary{itineraryPair.second};
+      auto itinerary{itineraryPair.second};
       SparseMatrix<Id, bool> path{dimension, dimension};
       // cycle over the nodes
       for (Size i{0}; i < dimension; ++i) {
@@ -300,7 +300,7 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   const std::unordered_map<Id, std::shared_ptr<Agent<Id, Size, Delay>>>& Dynamics<Id, Size, Delay>::agents()
       const {
-    return m_agents;
+    return this->m_agents;
   }
 
   template <typename Id, typename Size, typename Delay>
@@ -312,13 +312,13 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Dynamics<Id, Size, Delay>::addAgent(const Agent<Id, Size, Delay>& agent) {
-    m_agents.insert(std::make_pair(agent.id(), std::make_shared<Agent<Id, Size, Delay>>(agent)));
+    this->m_agents.insert(std::make_pair(agent.id(), std::make_shared<Agent<Id, Size, Delay>>(agent)));
   }
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Dynamics<Id, Size, Delay>::addAgent(std::shared_ptr<Agent<Id, Size, Delay>> agent) {
-    m_agents.insert(std::make_pair(agent->id(), std::move(agent)));
+    this->m_agents.insert(std::make_pair(agent->id(), std::move(agent)));
   }
 
   template <typename Id, typename Size, typename Delay>
@@ -412,12 +412,12 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>)
   double Dynamics<Id, Size, Delay>::meanSpeed() const {
     // count agents which have street not nullopt
-    Size nAgents{static_cast<Size>(std::ranges::count_if(m_agents, [](const auto& agent) { return agent.second->streetId().has_value(); }))};
-    if (m_agents.size() == 0 || nAgents == 0) {
+    Size nAgents{static_cast<Size>(std::ranges::count_if(this->m_agents, [](const auto& agent) { return agent.second->streetId().has_value(); }))};
+    if (this->m_agents.size() == 0 || nAgents == 0) {
       return 0.;
     }
-    double meanSpeed{std::accumulate(m_agents.cbegin(),
-                           m_agents.cend(),
+    double meanSpeed{std::accumulate(this->m_agents.cbegin(),
+                           this->m_agents.cend(),
                            0.,
                            [](double sum, const auto& agent) { return sum + agent.second->speed(); })};
     return static_cast<double>(meanSpeed / nAgents);
@@ -425,11 +425,11 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>)
   double Dynamics<Id, Size, Delay>::meanDensity() const {
-    if (m_graph->streetSet().size() == 0) {
+    if (this->m_graph->streetSet().size() == 0) {
       return 0.;
     }
-    return std::accumulate(m_graph->streetSet().cbegin(),
-                           m_graph->streetSet().cend(),
+    return std::accumulate(this->m_graph->streetSet().cbegin(),
+                           this->m_graph->streetSet().cend(),
                            0.,
                            [](double sum, const auto& street) { return sum + street.second->density(); }) /
            m_graph->streetSet().size();
@@ -442,10 +442,10 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>)
   double Dynamics<Id, Size, Delay>::meanTravelTime() const {
-    if (m_travelTimes.size() == 0) {
+    if (this->m_travelTimes.size() == 0) {
       return 0.;
     }
-    return std::accumulate(m_travelTimes.cbegin(), m_travelTimes.cend(), 0.) / m_travelTimes.size();
+    return std::accumulate(this->m_travelTimes.cbegin(), this->m_travelTimes.cend(), 0.) / this->m_travelTimes.size();
   }
 
   template <typename Id, typename Size, typename Delay>
@@ -540,8 +540,7 @@ namespace dsm {
       if (destinationNode->isFull()) {
         continue;
       }
-      street->dequeue();
-      destinationNode->enqueue(agentId);
+      destinationNode->enqueue(street->dequeue().value());
     }
     // move the agents from each node
     for (auto& nodePair : this->m_graph->nodeSet()) {
@@ -549,8 +548,8 @@ namespace dsm {
       while (!node->queue().empty()) {
         Id agentId{node->queue().front()};
         if (node->id() == this->m_itineraries[this->m_agents[agentId]->itineraryId()]->destination()) {
+          agentId = node->dequeue().value();
           this->m_travelTimes.push_back(this->m_agents[agentId]->time());
-          node->dequeue();
           if (reinsert_agents) {
             Agent<Id, Size, Delay> newAgent{this->m_agents[agentId]->id(), this->m_agents[agentId]->itineraryId()};
             this->removeAgent(agentId);
@@ -587,11 +586,11 @@ namespace dsm {
         auto nextStreet{streetResult.value()};
 
         if (nextStreet->density() < 1) {
+          agentId = node->dequeue().value();
           agent->setStreetId(nextStreet->id());
           this->setAgentSpeed(agent->id());
           agent->incrementDelay(nextStreet->length() / agent->speed());
           nextStreet->enqueue(agent->id());
-          node->dequeue();
         } else {
           break;
         }
