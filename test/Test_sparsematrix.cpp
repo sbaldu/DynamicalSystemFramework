@@ -173,7 +173,7 @@ TEST_CASE("Boolean Matrix") {
     CHECK_THROWS(m.getRow(-1));
     CHECK_THROWS(m.getRow(4));
   }
-  SUBCASE("Get row") {
+  SUBCASE("getRow") {
     /*This test tests if the getRow function works correctly
     The getRow function should return a vector containing the elements of the
     row
@@ -193,6 +193,26 @@ TEST_CASE("Boolean Matrix") {
     CHECK(!row(1));
     CHECK(row(2));
   }
+  SUBCASE("getRow with keepIndex true") {
+    /*This test tests if the getRow function works correctly
+    The getRow function should return a vector containing the elements of the
+    row
+    GIVEN: the getRow function is called
+    WHEN: the function is called on a matrix
+    THEN: the function should return a vector (SparseMatrix) containing the
+    elements of the row
+    */
+    SparseMatrix<uint32_t, bool> m(3, 3);
+    // Create a row
+    m.insert(0, 0, true);
+    m.insert(0, 2, true);
+    auto row = m.getRow(0, true);
+    // verify attributes and values
+    CHECK(row.size() == 2);
+    CHECK(row(0));
+    CHECK(!row(1));
+    CHECK(row(2));
+  }
   SUBCASE("getColumn - exceptions") {
     /*This test tests if the getColumn function throws exceptions correctly
     The getColumn function should throw an exception if the column is out of
@@ -204,7 +224,7 @@ TEST_CASE("Boolean Matrix") {
     SparseMatrix<uint32_t, bool> m(3, 6);
     CHECK_THROWS(m.getCol(6));
   }
-  SUBCASE("Get column") {
+  SUBCASE("getCol") {
     /*This test tests if the getCol function works correctly
     The getCol function should return a vector containing the elements of the
     column
@@ -223,6 +243,26 @@ TEST_CASE("Boolean Matrix") {
     CHECK(col(0));
     CHECK(!col(1));
     CHECK(col(2));
+  }
+  SUBCASE("getCol with keepIndex true") {
+    /*This test tests if the getCol function works correctly
+    The getCol function should return a vector containing the elements of the
+    column
+    GIVEN: the getCol function is called
+    WHEN: the function is called on a matrix
+    THEN: the function should return a vector (SparseMatrix) containingthe
+    elements of the column
+    */
+    SparseMatrix<uint32_t, bool> m(3, 3);
+    // Create a column
+    m.insert(0, 0, true);
+    m.insert(2, 0, true);
+    auto col = m.getCol(0, true);
+    // verify attributes and values
+    CHECK(col.size() == 2);
+    CHECK(col(0));
+    CHECK(!col(1));
+    CHECK(col(6));
   }
   SUBCASE("Get row dimension") {
     /*This test tests if the getRowDim function works correctly

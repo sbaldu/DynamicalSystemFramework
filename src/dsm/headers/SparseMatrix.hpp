@@ -142,13 +142,13 @@ namespace dsm {
     /// @param index row index
     /// @return a row vector
     /// @throw std::out_of_range if the index is out of range
-    SparseMatrix getRow(Index index) const;
+    SparseMatrix getRow(Index index, bool keepIndex = false) const;
 
     /// @brief get a column as a column vector
     /// @param index column index
     /// @return a column vector
     /// @throw std::out_of_range if the index is out of range
-    SparseMatrix getCol(Index index) const;
+    SparseMatrix getCol(Index index, bool keepIndex = false) const;
 
     /// @brief get a matrix of double with every row normalized to 1
     /// @return a matrix of double
@@ -544,16 +544,19 @@ namespace dsm {
 
   template <typename Index, typename T>
     requires std::unsigned_integral<Index>
-  SparseMatrix<Index, T> SparseMatrix<Index, T>::getRow(Index index) const {
+  SparseMatrix<Index, T> SparseMatrix<Index, T>::getRow(Index index, bool keepIndex) const {
     if (index >= _rows) {
       std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
                            "Index out of range"};
       throw std::out_of_range(errorMsg);
     }
     SparseMatrix row(1, _cols);
+    if (keepIndex) {
+      row.reshape(_rows, _cols);
+    }
     for (auto& it : _matrix) {
       if (it.first / _cols == index) {
-        row.insert(it.first % _cols, it.second);
+        keepIndex ? row.insert(it.first, it.second) : row.insert(it.first % _cols, it.second);
       }
     }
     return row;
@@ -561,16 +564,19 @@ namespace dsm {
 
   template <typename Index, typename T>
     requires std::unsigned_integral<Index>
-  SparseMatrix<Index, T> SparseMatrix<Index, T>::getCol(Index index) const {
+  SparseMatrix<Index, T> SparseMatrix<Index, T>::getCol(Index index, bool keepIndex) const {
     if (index >= _cols) {
       std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
                            "Index out of range"};
       throw std::out_of_range(errorMsg);
     }
     SparseMatrix col(_rows, 1);
+    if (keepIndex) {
+      col.reshape(_rows, _cols);
+    }
     for (auto& it : _matrix) {
       if (it.first % _cols == index) {
-        col.insert(it.first / _cols, it.second);
+        keepIndex ? col.insert(it.first, it.second) : col.insert(it.first / _cols, it.second);
       }
     }
     return col;
