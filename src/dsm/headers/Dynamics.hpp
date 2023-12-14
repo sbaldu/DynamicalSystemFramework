@@ -49,17 +49,17 @@ namespace dsm {
 
     /// @brief Evolve the streets
     /// @details If possible, removes the first agent of each street queue, putting it in the destination node.
-    void m_evolveStreets();
+    virtual void m_evolveStreets();
     /// @brief Evolve the nodes
     /// @details If possible, removes all agents from each node, putting them in the next street.
     /// If the error probability is not zero, the agents can move to a random street.
     /// If the agent is in the destination node, it is removed from the simulation (and then reinserted if reinsert_agents is true)
     /// @param reinsert_agents If true, the agents are reinserted in the simulation after they reach their destination
-    void m_evolveNodes(bool reinsert_agents);
+    virtual void m_evolveNodes(bool reinsert_agents);
     /// @brief Evolve the agents.
     /// @details Puts all new agents on a street, if possible, decrements all delays
     /// and increments all travel times.
-    void m_evolveAgents();
+    virtual void m_evolveAgents();
 
   public:
     Dynamics() = delete;
@@ -87,7 +87,7 @@ namespace dsm {
     virtual void setAgentSpeed(Size agentId) = 0;
 
     /// @brief Update the paths of the itineraries based on the actual travel times
-    void updatePaths();
+    virtual void updatePaths();
     /// @brief Evolve the simulation
     /// @details Evolve the simulation by moving the agents and updating the travel times.
     /// In particular:
@@ -97,7 +97,7 @@ namespace dsm {
     /// If the agent is in the destination node, it is removed from the simulation (and then reinserted if reinsert_agents is true)
     /// - Cycle over agents and update their times
     /// @param reinsert_agents If true, the agents are reinserted in the simulation after they reach their destination
-    void evolve(bool reinsert_agents = false);
+    virtual void evolve(bool reinsert_agents = false);
 
     /// @brief Get the graph
     /// @return const Graph<Id, Size>&, The graph
@@ -136,7 +136,7 @@ namespace dsm {
     /// @param nAgents The number of agents to add
     /// @param uniformly If true, the agents are added uniformly on the streets
     /// @throw std::runtime_error If there are no itineraries
-    void addRandomAgents(Size nAgents, bool uniformly = false);
+    virtual void addRandomAgents(Size nAgents, bool uniformly = false);
 
     /// @brief Remove an agent from the simulation
     /// @param agentId the id of the agent to remove
