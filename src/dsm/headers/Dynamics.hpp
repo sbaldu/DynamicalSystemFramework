@@ -50,6 +50,11 @@ namespace dsm {
     /// @brief Evolve the streets
     /// @details If possible, removes the first agent of each street queue, putting it in the destination node.
     void m_evolveStreets();
+    /// @brief Evolve the nodes
+    /// @details If possible, removes all agents from each node, putting them in the next street.
+    /// If the error probability is not zero, the agents can move to a random street.
+    /// If the agent is in the destination node, it is removed from the simulation (and then reinserted if reinsert_agents is true)
+    /// @param reinsert_agents If true, the agents are reinserted in the simulation after they reach their destination
     void m_evolveNodes(bool reinsert_agents);
     /// @brief Evolve the agents.
     /// @details Puts all new agents on a street, if possible, decrements all delays
