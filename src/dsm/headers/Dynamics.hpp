@@ -47,6 +47,15 @@ namespace dsm {
     std::uniform_real_distribution<double> m_uniformDist{0., 1.};
     std::vector<unsigned int> m_travelTimes;
 
+    /// @brief Evolve the streets
+    /// @details If possible, removes the first agent of each street queue, putting it in the destination node.
+    void m_evolveStreets();
+    void m_evolveNodes(bool reinsert_agents);
+    /// @brief Evolve the agents.
+    /// @details Puts all new agents on a street, if possible, decrements all delays
+    /// and increments all travel times.
+    void m_evolveAgents();
+
   public:
     Dynamics() = delete;
     /// @brief Construct a new Dynamics object
@@ -68,18 +77,22 @@ namespace dsm {
     /// @throw std::invalid_argument, If the error probability is not between 0 and 1
     void setErrorProbability(double errorProbability);
     /// @brief Set the speed of an agent
-    /// @tparam Tid The type of the agent's id
-    /// @tparam F The type of the function to call
-    /// @tparam ...Tn The types of the arguments of the function
-    /// @param agentId The id of the agent
-    /// @param f The function to call
-    /// @param ...args The arguments of the function
-    /// @throw std::invalid_argument, If the agent is not found
-    // template <typename Tid, typename F, typename... Tn>
-    //   requires std::is_invocable_v<F, Tn...>
-    // void setAgentSpeed(Tid agentId, F f, Tn... args);
+    /// @details This is a pure-virtual function, it must be implemented in the derived classes
+    /// @param agentId The id of the agent 
+    virtual void setAgentSpeed(Size agentId) = 0;
+
     /// @brief Update the paths of the itineraries based on the actual travel times
     void updatePaths();
+    /// @brief Evolve the simulation
+    /// @details Evolve the simulation by moving the agents and updating the travel times.
+    /// In particular:
+    /// - Move the first agent of each street queue, if possible, putting it in the next node
+    /// - Move the agents from each node, if possible, putting them in the next street and giving them a speed.
+    /// If the error probability is not zero, the agents can move to a random street.
+    /// If the agent is in the destination node, it is removed from the simulation (and then reinserted if reinsert_agents is true)
+    /// - Cycle over agents and update their times
+    /// @param reinsert_agents If true, the agents are reinserted in the simulation after they reach their destination
+    void evolve(bool reinsert_agents = false);
 
     /// @brief Get the graph
     /// @return const Graph<Id, Size>&, The graph
@@ -114,6 +127,11 @@ namespace dsm {
     /// @brief Add a set of agents to the simulation
     /// @param agents, Generic container of agents, represented by an std::span
     void addAgents(std::span<Agent<Id, Size, Delay>> agents);
+    /// @brief Add a set of agents to the simulation
+    /// @param nAgents The number of agents to add
+    /// @param uniformly If true, the agents are added uniformly on the streets
+    /// @throw std::runtime_error If there are no itineraries
+    void addRandomAgents(Size nAgents, bool uniformly = false);
 
     /// @brief Remove an agent from the simulation
     /// @param agentId the id of the agent to remove
@@ -182,6 +200,98 @@ namespace dsm {
       : m_time{0}, m_graph{std::make_unique<Graph<Id, Size>>(graph)}, m_errorProbability{0.}, m_minSpeedRateo{0.} {}
 
   template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
+  void Dynamics<Id, Size, Delay>::m_evolveStreets() {
+    for (auto& streetPair : this->m_graph->streetSet()) {
+      auto street{streetPair.second};
+      if (street->queue().empty()) {
+        continue;
+      }
+      Id agentId{street->queue().front()};
+      if (this->m_agents[agentId]->delay() > 0) {
+        continue;
+      }
+      this->m_agents[agentId]->setSpeed(0.);
+      auto destinationNode{this->m_graph->nodeSet()[street->nodePair().second]};
+      if (destinationNode->isFull()) {
+        continue;
+      }
+      destinationNode->enqueue(street->dequeue().value());
+    }
+  }
+
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
+  void Dynamics<Id, Size, Delay>::m_evolveNodes(bool reinsert_agents) {
+    for (auto& nodePair : this->m_graph->nodeSet()) {
+      auto node{nodePair.second};
+      while (!node->queue().empty()) {
+        Id agentId{node->queue().front()};
+        if (node->id() == this->m_itineraries[this->m_agents[agentId]->itineraryId()]->destination()) {
+          agentId = node->dequeue().value();
+          this->m_travelTimes.push_back(this->m_agents[agentId]->time());
+          if (reinsert_agents) {
+            Agent<Id, Size, Delay> newAgent{this->m_agents[agentId]->id(), this->m_agents[agentId]->itineraryId()};
+            this->removeAgent(agentId);
+            this->addAgent(newAgent);
+          } else {
+            this->removeAgent(agentId);
+          }
+          continue;
+        }
+        auto possibleMoves{this->m_itineraries[this->m_agents[agentId]->itineraryId()]->path().getRow(node->id())};
+        if (this->m_uniformDist(this->m_generator) < this->m_errorProbability) {
+          possibleMoves = this->m_graph->adjMatrix()->getRow(node->id());
+        }
+        if (static_cast<Size>(possibleMoves.size()) == 0) {
+          continue;
+        }
+        std::uniform_int_distribution<Size> moveDist{0, static_cast<Size>(possibleMoves.size() - 1)};
+        const auto p{moveDist(this->m_generator)};
+        auto iterator = possibleMoves.begin();
+        std::advance(iterator, p);
+        const auto& streetResult{this->m_graph->street(node->id(), iterator->first)};
+        if (!streetResult.has_value()) {
+          continue;
+        }
+        auto nextStreet{streetResult.value()};
+
+        if (nextStreet->density() < 1) {
+          agentId = node->dequeue().value();
+          this->m_agents[agentId]->setStreetId(nextStreet->id());
+          this->setAgentSpeed(this->m_agents[agentId]->id());
+          this->m_agents[agentId]->incrementDelay(nextStreet->length() / this->m_agents[agentId]->speed());
+          nextStreet->enqueue(this->m_agents[agentId]->id());
+        } else {
+          break;
+        }
+      }
+    }
+  }
+
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
+  void Dynamics<Id, Size, Delay>::m_evolveAgents() {
+    for (auto& agentPair : this->m_agents) {
+      if (agentPair.second->streetId().has_value()) {
+        continue;
+      }
+      auto srcNode{this->m_graph->nodeSet()[this->m_itineraries[agentPair.second->itineraryId()]->source()]};
+      if (srcNode->isFull()) {
+        continue;
+      }
+      srcNode->enqueue(agentPair.second->id());
+    }
+    // decrement all agent delays
+    std::ranges::for_each(this->m_agents, [](auto& agent) {
+      if (agent.second->delay() > 0) {
+        agent.second->decrementDelay();
+      };
+      agent.second->incrementTime();
+    });
+  }
+
+  template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Dynamics<Id, Size, Delay>::setItineraries(std::span<Itinerary<Id>> itineraries) {
     std::ranges::for_each(itineraries, [this](const auto& itinerary) {
@@ -216,24 +326,6 @@ namespace dsm {
     }
     m_errorProbability = errorProbability;
   }
-
-  // template <typename Id, typename Size, typename Delay>
-  //   requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
-  // template <typename Tid, typename F, typename... Tn>
-  //   requires std::is_invocable_v<F, Tn...>
-  // void Dynamics<Id, Size, Delay>::setAgentSpeed(Tid agentId, F f, Tn... args) {
-  //   auto agentIt{std::find_if(
-  //       m_agents.begin(), m_agents.end(), [agentId](auto agent) { return agent->id() == agentId; })};
-  //   if (agentIt == m_agents.end()) {
-  //     std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-  //                          "Agent " + std::to_string(agentId) + " not found"};
-  //     throw std::invalid_argument(errorMsg);
-  //   }
-  //   auto& agent{*agentIt};
-  //   auto& street{this->m_graph->street(agent->position())};
-  //   double speed{f(args...)};
-  //   agentIt->setSpeed(speed);
-  // }
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>)
@@ -281,6 +373,20 @@ namespace dsm {
       }
     }
   }
+
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Dynamics<Id, Size, Delay>::evolve(bool reinsert_agents) {
+    // move the first agent of each street queue, if possible, putting it in the next node
+    this->m_evolveStreets();
+    // move all the agents from each node, if possible
+    this->m_evolveNodes(reinsert_agents);
+    // cycle over agents and update their times
+    this->m_evolveAgents();
+    // increment time simulation
+    ++this->m_time;
+  }
+
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
@@ -340,6 +446,50 @@ namespace dsm {
   void Dynamics<Id, Size, Delay>::addAgents(std::span<Agent<Id, Size, Delay>> agents) {
     std::ranges::for_each(
         agents, [this](const auto& agent) -> void { this->m_agents.push_back(std::make_unique(agent)); });
+  }
+
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>)
+  void Dynamics<Id, Size, Delay>::addRandomAgents(Size nAgents, bool uniformly) {
+    if (this->m_itineraries.empty()) {
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                           "It is not possible to add random agents without itineraries"};
+      throw std::runtime_error(errorMsg);
+    }
+    std::uniform_int_distribution<Size> itineraryDist{0, static_cast<Size>(this->m_itineraries.size() - 1)};
+    std::uniform_int_distribution<Size> streetDist{0, static_cast<Size>(this->m_graph->streetSet().size() - 1)};
+    for (Size i{0}; i < nAgents; ++i) {
+      Size itineraryId{itineraryDist(this->m_generator)};
+      // find the max of m_agents keys
+
+      Size agentId{0};
+      if (!this->m_agents.empty()) {
+        agentId = std::max_element(this->m_agents.cbegin(), this->m_agents.cend(), [](const auto& a, const auto& b) {
+          return a.first < b.first;
+        })->first + 1;
+      }
+      if(uniformly) {
+        Size streetId{0};
+        do {
+          // I dunno why this works and the following doesn't
+          auto streetSet = this->m_graph->streetSet();
+          auto streetIt = streetSet.begin();
+          // auto streetIt = this->m_graph->streetSet().begin();
+          Size step = streetDist(this->m_generator);
+          std::advance(streetIt, step);
+          streetId = streetIt->first;
+        } while (this->m_graph->streetSet()[streetId]->density() == 1);
+        auto street{this->m_graph->streetSet()[streetId]};
+        Agent<Id, Size, Delay> agent{agentId, itineraryId, streetId};
+        this->addAgent(agent);
+        this->setAgentSpeed(agentId);
+        this->m_agents[agentId]->incrementDelay(street->length() / this->m_agents[agentId]->speed());
+        street->enqueue(agentId);
+      } else {
+        this->addAgent(Agent<Id, Size, Delay>{agentId, itineraryId});
+      }
+      ++agentId;
+    }
   }
 
   template <typename Id, typename Size, typename Delay>
@@ -458,14 +608,6 @@ namespace dsm {
     /// @param agentId The id of the agent
     /// @throw std::invalid_argument, If the agent is not found
     void setAgentSpeed(Size agentId);
-    /// @brief Add a set of agents to the simulation
-    /// @param nAgents The number of agents to add
-    /// @param uniformly If true, the agents are added uniformly on the streets
-    /// @throw std::runtime_error If there are no itineraries
-    void addRandomAgents(Size nAgents, bool uniformly = false);
-
-    /// @brief Evolve the simulation
-    void evolve(bool reinsert_agents = false);
   };
 
   template <typename Id, typename Size, typename Delay>
@@ -481,135 +623,7 @@ namespace dsm {
     this->m_agents[agentId]->setSpeed(speed);
   }
 
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>)
-  void FirstOrderDynamics<Id, Size, Delay>::addRandomAgents(Size nAgents, bool uniformly) {
-    if (this->m_itineraries.empty()) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                           "It is not possible to add random agents without itineraries"};
-      throw std::runtime_error(errorMsg);
-    }
-    std::uniform_int_distribution<Size> itineraryDist{0, static_cast<Size>(this->m_itineraries.size() - 1)};
-    std::uniform_int_distribution<Size> streetDist{0, static_cast<Size>(this->m_graph->streetSet().size() - 1)};
-    for (Size i{0}; i < nAgents; ++i) {
-      Size itineraryId{itineraryDist(this->m_generator)};
-      // find the max of m_agents keys
-
-      Size agentId{0};
-      if (!this->m_agents.empty()) {
-        agentId = std::max_element(this->m_agents.cbegin(), this->m_agents.cend(), [](const auto& a, const auto& b) {
-          return a.first < b.first;
-        })->first + 1;
-      }
-      if(uniformly) {
-        Size streetId{0};
-        do {
-          // I dunno why this works and the following doesn't
-          auto streetSet = this->m_graph->streetSet();
-          auto streetIt = streetSet.begin();
-          // auto streetIt = this->m_graph->streetSet().begin();
-          Size step = streetDist(this->m_generator);
-          std::advance(streetIt, step);
-          streetId = streetIt->first;
-        } while (this->m_graph->streetSet()[streetId]->density() == 1);
-        auto street{this->m_graph->streetSet()[streetId]};
-        Agent<Id, Size, Delay> agent{agentId, itineraryId, streetId};
-        this->addAgent(agent);
-        this->setAgentSpeed(agentId);
-        this->m_agents[agentId]->incrementDelay(street->length() / this->m_agents[agentId]->speed());
-        street->enqueue(agentId);
-      } else {
-        this->addAgent(Agent<Id, Size, Delay>{agentId, itineraryId});
-      }
-      ++agentId;
-    }
-  }
-
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>)
-  void FirstOrderDynamics<Id, Size, Delay>::evolve(bool reinsert_agents) {
-    // move the first agent of each street
-    for (auto& streetPair : this->m_graph->streetSet()) {
-      auto street{streetPair.second};
-      if (street->queue().empty()) {
-        continue;
-      }
-      Id agentId{street->queue().front()};
-      if (this->m_agents[agentId]->delay() > 0) {
-        continue;
-      }
-      this->m_agents[agentId]->setSpeed(0.);
-      auto destinationNode{this->m_graph->nodeSet()[street->nodePair().second]};
-      if (destinationNode->isFull()) {
-        continue;
-      }
-      destinationNode->enqueue(street->dequeue().value());
-    }
-    // move the agents from each node
-    for (auto& nodePair : this->m_graph->nodeSet()) {
-      auto node{nodePair.second};
-      while (!node->queue().empty()) {
-        Id agentId{node->queue().front()};
-        if (node->id() == this->m_itineraries[this->m_agents[agentId]->itineraryId()]->destination()) {
-          agentId = node->dequeue().value();
-          this->m_travelTimes.push_back(this->m_agents[agentId]->time());
-          if (reinsert_agents) {
-            Agent<Id, Size, Delay> newAgent{this->m_agents[agentId]->id(), this->m_agents[agentId]->itineraryId()};
-            this->removeAgent(agentId);
-            this->addAgent(newAgent);
-          } else {
-            this->removeAgent(agentId);
-          }
-          continue;
-        }
-        auto possibleMoves{this->m_itineraries[this->m_agents[agentId]->itineraryId()]->path().getRow(node->id())};
-        if (this->m_uniformDist(this->m_generator) < this->m_errorProbability) {
-          possibleMoves = this->m_graph->adjMatrix()->getRow(node->id());
-        }
-        if (static_cast<Size>(possibleMoves.size()) == 0) {
-          continue;
-        }
-        std::uniform_int_distribution<Size> moveDist{0, static_cast<Size>(possibleMoves.size() - 1)};
-        const auto p{moveDist(this->m_generator)};
-        auto iterator = possibleMoves.begin();
-        std::advance(iterator, p);
-        const auto& streetResult{this->m_graph->street(node->id(), iterator->first)};
-        if (!streetResult.has_value()) {
-          continue;
-        }
-        auto nextStreet{streetResult.value()};
-
-        if (nextStreet->density() < 1) {
-          agentId = node->dequeue().value();
-          this->m_agents[agentId]->setStreetId(nextStreet->id());
-          this->setAgentSpeed(this->m_agents[agentId]->id());
-          this->m_agents[agentId]->incrementDelay(nextStreet->length() / this->m_agents[agentId]->speed());
-          nextStreet->enqueue(this->m_agents[agentId]->id());
-        } else {
-          break;
-        }
-      }
-    }
-    // cycle over agents and put them in the src node
-    for (auto& agentPair : this->m_agents) {
-      if (agentPair.second->streetId().has_value()) {
-        continue;
-      }
-      auto srcNode{this->m_graph->nodeSet()[this->m_itineraries[agentPair.second->itineraryId()]->source()]};
-      if (srcNode->isFull()) {
-        continue;
-      }
-      srcNode->enqueue(agentPair.second->id());
-    }
-    // decrement all agent delays
-    std::ranges::for_each(this->m_agents, [](auto& agent) {
-      if (agent.second->delay() > 0) {
-        agent.second->decrementDelay();
-      };
-      agent.second->incrementTime();
-    });
-    ++this->m_time;
-  }
+  
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
