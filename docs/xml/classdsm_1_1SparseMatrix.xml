@@ -77,7 +77,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/SparseMatrix.hpp" line="34" column="5" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="289" bodyend="290"/>
+        <location file="src/dsm/headers/SparseMatrix.hpp" line="34" column="5" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="295" bodyend="296"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a4a1ad35ac8a796355028883826a44f1a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
@@ -126,7 +126,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/SparseMatrix.hpp" line="40" column="5" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="294" bodyend="295"/>
+        <location file="src/dsm/headers/SparseMatrix.hpp" line="40" column="5" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="300" bodyend="301"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a0d36e25ae348dc66c6e90e80ecc41c55" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
@@ -163,7 +163,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/SparseMatrix.hpp" line="45" column="5" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="299" bodyend="300"/>
+        <location file="src/dsm/headers/SparseMatrix.hpp" line="45" column="5" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="305" bodyend="306"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a492040f03e7ca8642aa2fde70cd42c73" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -224,7 +224,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/SparseMatrix.hpp" line="52" column="10" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="304" bodyend="311"/>
+        <location file="src/dsm/headers/SparseMatrix.hpp" line="52" column="10" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="310" bodyend="317"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a3efa1838bd32378023f615302bdcd686" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -273,7 +273,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/SparseMatrix.hpp" line="58" column="10" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="315" bodyend="322"/>
+        <location file="src/dsm/headers/SparseMatrix.hpp" line="58" column="10" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="321" bodyend="328"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1SparseMatrix_1abb586ab0a9fbc5f2b035af3b6313a019" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -334,7 +334,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/SparseMatrix.hpp" line="66" column="10" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="326" bodyend="333"/>
+        <location file="src/dsm/headers/SparseMatrix.hpp" line="66" column="10" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="332" bodyend="339"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a655c2acdb2c8b3731719fdd7a0dccb1c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -383,7 +383,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/SparseMatrix.hpp" line="73" column="10" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="337" bodyend="344"/>
+        <location file="src/dsm/headers/SparseMatrix.hpp" line="73" column="10" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="343" bodyend="350"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1SparseMatrix_1af0877cdba2a13b6ebffce8160f1a702f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -435,7 +435,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/SparseMatrix.hpp" line="79" column="10" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="348" bodyend="364"/>
+        <location file="src/dsm/headers/SparseMatrix.hpp" line="79" column="10" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="354" bodyend="370"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1SparseMatrix_1aa6fa072085421ac384ccc51643a5ad71" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -492,7 +492,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/SparseMatrix.hpp" line="86" column="10" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="368" bodyend="380"/>
+        <location file="src/dsm/headers/SparseMatrix.hpp" line="86" column="10" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="374" bodyend="386"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a33dbc949d34d34a1357fc42db61c15e5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -537,7 +537,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/SparseMatrix.hpp" line="92" column="10" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="384" bodyend="396"/>
+        <location file="src/dsm/headers/SparseMatrix.hpp" line="92" column="10" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="390" bodyend="402"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1SparseMatrix_1ab90fbdc9bef8a76372794f6c5663e379" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -574,7 +574,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/SparseMatrix.hpp" line="97" column="10" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="400" bodyend="419"/>
+        <location file="src/dsm/headers/SparseMatrix.hpp" line="97" column="10" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="406" bodyend="425"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a1c2500e9a378261858f9080168cd8a70" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -611,7 +611,43 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/SparseMatrix.hpp" line="102" column="10" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="423" bodyend="442"/>
+        <location file="src/dsm/headers/SparseMatrix.hpp" line="102" column="10" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="429" bodyend="448"/>
+      </memberdef>
+      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a7ac8dfc1d51aba4ace05654ae2c9f97f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>requires std::unsigned_integral&lt; Index &gt; void dsm::SparseMatrix&lt; Index, T &gt;::emptyRow</definition>
+        <argsstring>(Index index)</argsstring>
+        <name>emptyRow</name>
+        <param>
+          <type>Index</type>
+          <declname>index</declname>
+        </param>
+        <briefdescription>
+<para>set to 0 all the elements in a row </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/dsm/headers/SparseMatrix.hpp" line="105" column="10" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="452" bodyend="456"/>
+      </memberdef>
+      <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a98fac46d4cc33677ca2c7327d42060a6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>requires std::unsigned_integral&lt; Index &gt; void dsm::SparseMatrix&lt; Index, T &gt;::emptyColumn</definition>
+        <argsstring>(Index index)</argsstring>
+        <name>emptyColumn</name>
+        <param>
+          <type>Index</type>
+          <declname>index</declname>
+        </param>
+        <briefdescription>
+<para>set to 0 all the elements in a column </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="src/dsm/headers/SparseMatrix.hpp" line="108" column="10" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="460" bodyend="464"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a48287852ed2a75ec39a20ba62603965f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -625,7 +661,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/SparseMatrix.hpp" line="105" column="10" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="446" bodyend="450"/>
+        <location file="src/dsm/headers/SparseMatrix.hpp" line="111" column="10" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="468" bodyend="472"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a57384e33f75162bf97d464f1a73b7275" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -676,7 +712,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/SparseMatrix.hpp" line="112" column="10" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="454" bodyend="461"/>
+        <location file="src/dsm/headers/SparseMatrix.hpp" line="118" column="10" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="476" bodyend="483"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1SparseMatrix_1ab553af75991a9a071706d9c7442bee42" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -715,7 +751,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/SparseMatrix.hpp" line="118" column="10" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="465" bodyend="472"/>
+        <location file="src/dsm/headers/SparseMatrix.hpp" line="124" column="10" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="487" bodyend="494"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a9678cdb744ee265b8287384381bc970d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="classdsm_1_1SparseMatrix" kindref="compound">SparseMatrix</ref>&lt; Index, int &gt;</type>
@@ -741,7 +777,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/SparseMatrix.hpp" line="123" column="18" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="476" bodyend="487"/>
+        <location file="src/dsm/headers/SparseMatrix.hpp" line="129" column="18" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="498" bodyend="509"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a481674fb8b567fe33c53eeb969fe8bd6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="classdsm_1_1SparseMatrix" kindref="compound">SparseMatrix</ref>&lt; Index, double &gt;</type>
@@ -767,7 +803,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/SparseMatrix.hpp" line="128" column="18" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="491" bodyend="502"/>
+        <location file="src/dsm/headers/SparseMatrix.hpp" line="134" column="18" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="513" bodyend="524"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1SparseMatrix_1aeaa3dc462bf0c6786b067ff27be7c837" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="classdsm_1_1SparseMatrix" kindref="compound">SparseMatrix</ref>&lt; Index, int &gt;</type>
@@ -793,7 +829,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/SparseMatrix.hpp" line="133" column="18" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="506" bodyend="521"/>
+        <location file="src/dsm/headers/SparseMatrix.hpp" line="139" column="18" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="528" bodyend="543"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a2db82a51ef907957266444c5ca561eaa" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="classdsm_1_1SparseMatrix" kindref="compound">SparseMatrix</ref></type>
@@ -832,7 +868,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/SparseMatrix.hpp" line="139" column="18" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="525" bodyend="538"/>
+        <location file="src/dsm/headers/SparseMatrix.hpp" line="145" column="18" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="547" bodyend="560"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a8b8775939be49a5ccf8cfc3346e3c051" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="classdsm_1_1SparseMatrix" kindref="compound">SparseMatrix</ref></type>
@@ -871,7 +907,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/SparseMatrix.hpp" line="145" column="18" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="542" bodyend="555"/>
+        <location file="src/dsm/headers/SparseMatrix.hpp" line="151" column="18" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="564" bodyend="577"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a7c22bd85d2453b5e750ca3cad4fe0e95" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="classdsm_1_1SparseMatrix" kindref="compound">SparseMatrix</ref>&lt; Index, double &gt;</type>
@@ -888,7 +924,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/SparseMatrix.hpp" line="149" column="18" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="559" bodyend="573"/>
+        <location file="src/dsm/headers/SparseMatrix.hpp" line="155" column="18" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="581" bodyend="595"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1SparseMatrix_1ab4594b100f9f4c3306e04cccff7e1b00" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="classdsm_1_1SparseMatrix" kindref="compound">SparseMatrix</ref>&lt; Index, double &gt;</type>
@@ -905,7 +941,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/SparseMatrix.hpp" line="153" column="18" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="577" bodyend="591"/>
+        <location file="src/dsm/headers/SparseMatrix.hpp" line="159" column="18" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="599" bodyend="613"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1SparseMatrix_1ad11afd5ce431d2b966ce8a6dd43fb010" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>Index</type>
@@ -922,7 +958,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/SparseMatrix.hpp" line="157" column="11" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="595" bodyend="597"/>
+        <location file="src/dsm/headers/SparseMatrix.hpp" line="163" column="11" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="617" bodyend="619"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a7a26cbcb48add01159687a2dce0af1fb" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>Index</type>
@@ -939,7 +975,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/SparseMatrix.hpp" line="161" column="11" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="601" bodyend="603"/>
+        <location file="src/dsm/headers/SparseMatrix.hpp" line="167" column="11" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="623" bodyend="625"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a31c1ecaf62652757d8e02527a5f25a80" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>Index</type>
@@ -956,7 +992,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/SparseMatrix.hpp" line="165" column="11" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="607" bodyend="609"/>
+        <location file="src/dsm/headers/SparseMatrix.hpp" line="171" column="11" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="629" bodyend="631"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1SparseMatrix_1ad89567696887d9dfbee87795c0c6285d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>Index</type>
@@ -973,7 +1009,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/SparseMatrix.hpp" line="169" column="11" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="613" bodyend="615"/>
+        <location file="src/dsm/headers/SparseMatrix.hpp" line="175" column="11" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="635" bodyend="637"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1SparseMatrix_1aa726011b476e3da1b31bfb20a0ff7174" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -987,7 +1023,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/SparseMatrix.hpp" line="172" column="10" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="619" bodyend="621"/>
+        <location file="src/dsm/headers/SparseMatrix.hpp" line="178" column="10" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="641" bodyend="643"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a51334882e61e39a865b22cc157168647" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1009,7 +1045,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/SparseMatrix.hpp" line="175" column="10" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="625" bodyend="636"/>
+        <location file="src/dsm/headers/SparseMatrix.hpp" line="181" column="10" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="647" bodyend="658"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a63f514cfb61078375437e060e338de7c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1027,7 +1063,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/SparseMatrix.hpp" line="178" column="10" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="640" bodyend="650"/>
+        <location file="src/dsm/headers/SparseMatrix.hpp" line="184" column="10" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="662" bodyend="672"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1SparseMatrix_1ad7e1eaa769a97ef872b41f6e6470400d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>std::unordered_map&lt; Index, T &gt;::const_iterator</type>
@@ -1044,7 +1080,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/SparseMatrix.hpp" line="182" column="50" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="654" bodyend="656"/>
+        <location file="src/dsm/headers/SparseMatrix.hpp" line="188" column="50" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="676" bodyend="678"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a2bef1265fcc398018886e922e9dc8a32" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>std::unordered_map&lt; Index, T &gt;::const_iterator</type>
@@ -1061,7 +1097,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/SparseMatrix.hpp" line="186" column="50" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="660" bodyend="662"/>
+        <location file="src/dsm/headers/SparseMatrix.hpp" line="192" column="50" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="682" bodyend="684"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1SparseMatrix_1ac03d4bdbd9b86a1b6cc195b26517e5a9" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>const T &amp;</type>
@@ -1112,7 +1148,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/SparseMatrix.hpp" line="193" column="13" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="666" bodyend="674"/>
+        <location file="src/dsm/headers/SparseMatrix.hpp" line="199" column="13" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="688" bodyend="696"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a1c7de44b13b5549ed9b9e2da9412ea64" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>T &amp;</type>
@@ -1163,7 +1199,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/SparseMatrix.hpp" line="200" column="7" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="678" bodyend="686"/>
+        <location file="src/dsm/headers/SparseMatrix.hpp" line="206" column="7" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="700" bodyend="708"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1SparseMatrix_1ad379e300d6b825983ace5fbad5332ca3" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>const T &amp;</type>
@@ -1202,7 +1238,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/SparseMatrix.hpp" line="206" column="13" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="690" bodyend="698"/>
+        <location file="src/dsm/headers/SparseMatrix.hpp" line="212" column="13" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="712" bodyend="720"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1SparseMatrix_1af32c5e52810f45bce04c54b1678b9dd8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>T &amp;</type>
@@ -1241,7 +1277,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/SparseMatrix.hpp" line="212" column="7" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="702" bodyend="710"/>
+        <location file="src/dsm/headers/SparseMatrix.hpp" line="218" column="7" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="724" bodyend="732"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1SparseMatrix_1aabd47e611ef8e2456b6e7307c3252890" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -1288,7 +1324,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/SparseMatrix.hpp" line="220" column="18" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="220" bodyend="238"/>
+        <location file="src/dsm/headers/SparseMatrix.hpp" line="226" column="18" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="226" bodyend="244"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1SparseMatrix_1ab75404692818cf899304cac8704e185d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -1335,7 +1371,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/SparseMatrix.hpp" line="246" column="18" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="246" bodyend="264"/>
+        <location file="src/dsm/headers/SparseMatrix.hpp" line="252" column="18" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="252" bodyend="270"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1SparseMatrix_1ac89861a861a1d84076882380e6474d46" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="classdsm_1_1SparseMatrix" kindref="compound">SparseMatrix</ref></type>
@@ -1352,7 +1388,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/SparseMatrix.hpp" line="268" column="18" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="714" bodyend="720"/>
+        <location file="src/dsm/headers/SparseMatrix.hpp" line="274" column="18" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="736" bodyend="742"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a09f78d83dc057aaa6865ac6cd91ab43b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -1399,7 +1435,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/SparseMatrix.hpp" line="276" column="18"/>
+        <location file="src/dsm/headers/SparseMatrix.hpp" line="282" column="18"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a5c6f729555f6b6f051a4b13cb747041a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -1446,7 +1482,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/SparseMatrix.hpp" line="284" column="18"/>
+        <location file="src/dsm/headers/SparseMatrix.hpp" line="290" column="18"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a09325308f2fbf11ffbc2b9043f4fb0b9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -1471,7 +1507,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/SparseMatrix.hpp" line="726" column="29" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="726" bodyend="737"/>
+        <location file="src/dsm/headers/SparseMatrix.hpp" line="748" column="29" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="748" bodyend="759"/>
       </memberdef>
       <memberdef kind="function" id="classdsm_1_1SparseMatrix_1a9ed7c96e2f7cf29f78e5cf9648570ac1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -1496,7 +1532,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="src/dsm/headers/SparseMatrix.hpp" line="743" column="29" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="743" bodyend="754"/>
+        <location file="src/dsm/headers/SparseMatrix.hpp" line="765" column="29" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="765" bodyend="776"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -1522,7 +1558,7 @@
 </parameterlist>
 </para>
     </detaileddescription>
-    <location file="src/dsm/headers/SparseMatrix.hpp" line="28" column="3" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="28" bodyend="285"/>
+    <location file="src/dsm/headers/SparseMatrix.hpp" line="28" column="3" bodyfile="src/dsm/headers/SparseMatrix.hpp" bodystart="28" bodyend="291"/>
     <listofallmembers>
       <member refid="classdsm_1_1SparseMatrix_1a85714cae09568767fa0c8fc3035b8b89" prot="private" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>_cols</name></member>
       <member refid="classdsm_1_1SparseMatrix_1ac3844e70ee4f66e99fbb614f98b401fa" prot="private" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>_defaultReturn</name></member>
@@ -1532,6 +1568,8 @@
       <member refid="classdsm_1_1SparseMatrix_1a48287852ed2a75ec39a20ba62603965f" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>clear</name></member>
       <member refid="classdsm_1_1SparseMatrix_1a57384e33f75162bf97d464f1a73b7275" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>contains</name></member>
       <member refid="classdsm_1_1SparseMatrix_1ab553af75991a9a071706d9c7442bee42" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>contains</name></member>
+      <member refid="classdsm_1_1SparseMatrix_1a98fac46d4cc33677ca2c7327d42060a6" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>emptyColumn</name></member>
+      <member refid="classdsm_1_1SparseMatrix_1a7ac8dfc1d51aba4ace05654ae2c9f97f" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>emptyRow</name></member>
       <member refid="classdsm_1_1SparseMatrix_1a2bef1265fcc398018886e922e9dc8a32" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>end</name></member>
       <member refid="classdsm_1_1SparseMatrix_1aa6fa072085421ac384ccc51643a5ad71" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>erase</name></member>
       <member refid="classdsm_1_1SparseMatrix_1a33dbc949d34d34a1357fc42db61c15e5" prot="public" virt="non-virtual"><scope>dsm::SparseMatrix</scope><name>erase</name></member>

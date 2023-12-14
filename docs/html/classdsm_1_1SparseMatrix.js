@@ -7,6 +7,8 @@ var classdsm_1_1SparseMatrix =
     [ "clear", "classdsm_1_1SparseMatrix.html#a48287852ed2a75ec39a20ba62603965f", null ],
     [ "contains", "classdsm_1_1SparseMatrix.html#ab553af75991a9a071706d9c7442bee42", null ],
     [ "contains", "classdsm_1_1SparseMatrix.html#a57384e33f75162bf97d464f1a73b7275", null ],
+    [ "emptyColumn", "classdsm_1_1SparseMatrix.html#a98fac46d4cc33677ca2c7327d42060a6", null ],
+    [ "emptyRow", "classdsm_1_1SparseMatrix.html#a7ac8dfc1d51aba4ace05654ae2c9f97f", null ],
     [ "end", "classdsm_1_1SparseMatrix.html#a2bef1265fcc398018886e922e9dc8a32", null ],
     [ "erase", "classdsm_1_1SparseMatrix.html#aa6fa072085421ac384ccc51643a5ad71", null ],
     [ "erase", "classdsm_1_1SparseMatrix.html#a33dbc949d34d34a1357fc42db61c15e5", null ],

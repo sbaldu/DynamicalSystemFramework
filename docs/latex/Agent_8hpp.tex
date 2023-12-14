@@ -8,33 +8,31 @@ Defines the Agent class.
 {\ttfamily \#include \char`\"{}Itinerary.\+hpp\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}Sparse\+Matrix.\+hpp\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}../utility/\+Type\+Traits/is\+\_\+numeric.\+hpp\char`\"{}}\newline
+{\ttfamily \#include $<$concepts$>$}\newline
 {\ttfamily \#include $<$stdexcept$>$}\newline
 {\ttfamily \#include $<$string$>$}\newline
 {\ttfamily \#include $<$limits$>$}\newline
-Include dependency graph for Agent.\+hpp\+:
-\nopagebreak
-\begin{figure}[H]
-\begin{center}
-\leavevmode
-\includegraphics[width=350pt]{Agent_8hpp__incl}
-\end{center}
-\end{figure}
-This graph shows which files directly or indirectly include this file\+:
-\nopagebreak
-\begin{figure}[H]
-\begin{center}
-\leavevmode
-\includegraphics[width=292pt]{Agent_8hpp__dep__incl}
-\end{center}
-\end{figure}
+{\ttfamily \#include $<$optional$>$}\newline
 \doxysubsection*{Classes}
 \begin{DoxyCompactItemize}
 \item 
-class \mbox{\hyperlink{classdsm_1_1Agent}{dsm\+::\+Agent$<$ Id $>$}}
+class \mbox{\hyperlink{classdsm_1_1Agent}{dsm\+::\+Agent$<$ Id, Size, Delay $>$}}
 \begin{DoxyCompactList}\small\item\em The \mbox{\hyperlink{classdsm_1_1Agent}{Agent}} class represents an agent in the network. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{Agent_8hpp_a76566af5379cba731a8b2ab784c1fec5}\label{Agent_8hpp_a76566af5379cba731a8b2ab784c1fec5}} 
+{\footnotesize template$<$typename Id , typename Size , typename Delay $>$ }\\{\bfseries dsm\+::requires} (std\+::unsigned\+\_\+integral$<$ Id $>$ \&\&std\+::unsigned\+\_\+integral$<$ Size $>$ \&\&is\+\_\+numeric\+\_\+v$<$ Delay $>$) Agent$<$ Id
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{Agent_8hpp_a0320c90f75b8c4b4d54b39296041e96d}\label{Agent_8hpp_a0320c90f75b8c4b4d54b39296041e96d}} 
+{\bfseries dsm\+::\+Size}
+\end{DoxyCompactItemize}
 
 
 \doxysubsection{Detailed Description}
 Defines the Agent class. 
 
-This file contains the definition of the Agent class. The Agent class represents an agent in the network. It is templated by the type of the agent\textquotesingle{}s id. The agent\textquotesingle{}s id must be an unsigned integral type. 
+This file contains the definition of the Agent class. The Agent class represents an agent in the network. It is templated by the type of the agent\textquotesingle{}s id and the size of agents, which must both be unsigned integrals. It is also templated by the Delay type, which must be a numeric (see utility/\+Type\+Traits/is\+\_\+numeric.\+hpp) and represents the spatial or temporal (depending on the type of the template) distance between the agent and the one in front of it. 

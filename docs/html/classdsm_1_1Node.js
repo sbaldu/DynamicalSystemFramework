@@ -1,12 +1,17 @@
 var classdsm_1_1Node =
 [
-    [ "Node", "classdsm_1_1Node.html#a75d2959b0ca30715dc3086b68aaa6b61", null ],
-    [ "Node", "classdsm_1_1Node.html#a892ce1333095c40e25e5018f33514ae6", null ],
-    [ "Node", "classdsm_1_1Node.html#adb1781f3464d8ac34c5f52c90858459c", null ],
-    [ "Node", "classdsm_1_1Node.html#a92106f14d03da91df50ab229733f59a5", null ],
-    [ "coords", "classdsm_1_1Node.html#a95872f94b4428c666566b9dd2855f4e9", null ],
-    [ "id", "classdsm_1_1Node.html#af11c9fd77141a161613842965c62e273", null ],
-    [ "queue", "classdsm_1_1Node.html#a99f5fd6d030ac5823e00c5b8c8aff704", null ],
-    [ "setCoords", "classdsm_1_1Node.html#acdec7de88a46ad7edc2e561b8e2014a6", null ],
-    [ "setQueue", "classdsm_1_1Node.html#a6337227506949168f1cb561175effa21", null ]
+    [ "Node", "classdsm_1_1Node.html#ad404de042b6678460f480079e9696d32", null ],
+    [ "Node", "classdsm_1_1Node.html#a76d57edf2859550fff5e89f483116ed4", null ],
+    [ "Node", "classdsm_1_1Node.html#ad3893b91bf69128f6ed0afac9b5631d6", null ],
+    [ "Node", "classdsm_1_1Node.html#a22d01d32d994b2e0ba3e052a628229d0", null ],
+    [ "capacity", "classdsm_1_1Node.html#a74af84dd8e2a67c7a79cecf952443e7a", null ],
+    [ "coords", "classdsm_1_1Node.html#a7f004b4856ea1db25fdfc6beff7b553c", null ],
+    [ "dequeue", "classdsm_1_1Node.html#ae9b7659124166acf8a004edc32a62d6d", null ],
+    [ "enqueue", "classdsm_1_1Node.html#a832d6b67db630a3ca9e39759d97d8f87", null ],
+    [ "id", "classdsm_1_1Node.html#a556b11a3863cf561bcd7c82612a66047", null ],
+    [ "isFull", "classdsm_1_1Node.html#a26f717c9f122173d69aa6734d41f42c3", null ],
+    [ "queue", "classdsm_1_1Node.html#abf3716ce53146e89b20679728d13c2c8", null ],
+    [ "setCapacity", "classdsm_1_1Node.html#a358d7185ca6bf337726ca8c1e03028a7", null ],
+    [ "setCoords", "classdsm_1_1Node.html#a2c641803c500a006e2cca5bf17278e3c", null ],
+    [ "setQueue", "classdsm_1_1Node.html#a32b6910b5b8bd791c4f5d1f066ca02fc", null ]
 ];

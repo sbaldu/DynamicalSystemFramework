@@ -1,5 +1,5 @@
-\hypertarget{classdsm_1_1Dynamics}{}\doxysection{dsm\+::Dynamics$<$ Id, Size $>$ Class Template Reference}
-\label{classdsm_1_1Dynamics}\index{dsm::Dynamics$<$ Id, Size $>$@{dsm::Dynamics$<$ Id, Size $>$}}
+\hypertarget{classdsm_1_1Dynamics}{}\doxysection{dsm\+::Dynamics$<$ Id, Size, Delay $>$ Class Template Reference}
+\label{classdsm_1_1Dynamics}\index{dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}}
 
 
 The \mbox{\hyperlink{classdsm_1_1Dynamics}{Dynamics}} class represents the dynamics of the network.  
@@ -12,64 +12,129 @@ The \mbox{\hyperlink{classdsm_1_1Dynamics}{Dynamics}} class represents the dynam
 \doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\hyperlink{classdsm_1_1Dynamics_a59f53f340d368c4c71098730f017d0e9}{Dynamics}} (const \mbox{\hyperlink{classdsm_1_1Graph}{Graph}}$<$ Id, Size $>$ \&\mbox{\hyperlink{classdsm_1_1Dynamics_a49051e77e87274796dcefa1d6beb5c78}{graph}})
+\mbox{\hyperlink{classdsm_1_1Dynamics_a8572f4b8b2bba7d4288d54974a8d5554}{Dynamics}} (const \mbox{\hyperlink{classdsm_1_1Graph}{Graph}}$<$ Id, Size $>$ \&\mbox{\hyperlink{classdsm_1_1Dynamics_aaca095b19606865b51579a9f2ee9b234}{graph}})
 \begin{DoxyCompactList}\small\item\em Construct a new \mbox{\hyperlink{classdsm_1_1Dynamics}{Dynamics}} object. \end{DoxyCompactList}\item 
-void \mbox{\hyperlink{classdsm_1_1Dynamics_a723b42376bd009e001ab463b56275d27}{set\+Itineraries}} (const std\+::vector$<$ \mbox{\hyperlink{classdsm_1_1Itinerary}{Itinerary}}$<$ Id $>$$>$ \&itineraries)
+void \mbox{\hyperlink{classdsm_1_1Dynamics_a504e2a0d5a3028aa408eb8771bdc2752}{set\+Itineraries}} (std\+::span$<$ \mbox{\hyperlink{classdsm_1_1Itinerary}{Itinerary}}$<$ Id $>$$>$ itineraries)
 \begin{DoxyCompactList}\small\item\em Set the itineraries. \end{DoxyCompactList}\item 
-void \mbox{\hyperlink{classdsm_1_1Dynamics_afd018f2aee17fc397919c3c518c4c451}{set\+Agents}} (const std\+::vector$<$ \mbox{\hyperlink{classdsm_1_1Agent}{Agent}}$<$ Id $>$$>$ \&agents)
-\begin{DoxyCompactList}\small\item\em Set the agents. \end{DoxyCompactList}\item 
-const \mbox{\hyperlink{classdsm_1_1Graph}{Graph}}$<$ Id, Size $>$ \& \mbox{\hyperlink{classdsm_1_1Dynamics_a49051e77e87274796dcefa1d6beb5c78}{graph}} () const
+void \mbox{\hyperlink{classdsm_1_1Dynamics_ae424b81d7e9f6703f28a162256d9fbc1}{set\+Seed}} (unsigned int seed)
+\begin{DoxyCompactList}\small\item\em Set the seed for the graph\textquotesingle{}s random number generator. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdsm_1_1Dynamics_a46887e5a88c7786a92d1dc22d407fe64}{set\+Min\+Speed\+Rateo}} (double min\+Speed\+Rateo)
+\begin{DoxyCompactList}\small\item\em Set the minim speed rateo, i.\+e. the minim speed with respect to the speed limit. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdsm_1_1Dynamics_ad683bd08176b43f20aa300eaacefa199}{set\+Error\+Probability}} (double error\+Probability)
+\begin{DoxyCompactList}\small\item\em Set the error probability. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{classdsm_1_1Dynamics_a95544d85b7d1b176763ab90457923180}{set\+Agent\+Speed}} (Size agent\+Id)=0
+\begin{DoxyCompactList}\small\item\em Set the speed of an agent. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classdsm_1_1Dynamics_ab7f1056b608e79cab06bce0955627309}\label{classdsm_1_1Dynamics_ab7f1056b608e79cab06bce0955627309}} 
+void \mbox{\hyperlink{classdsm_1_1Dynamics_ab7f1056b608e79cab06bce0955627309}{update\+Paths}} ()
+\begin{DoxyCompactList}\small\item\em Update the paths of the itineraries based on the actual travel times. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdsm_1_1Dynamics_ac2eddc5d43aa3e3a7a6a8a057ad7a6cf}{evolve}} (bool reinsert\+\_\+agents=false)
+\begin{DoxyCompactList}\small\item\em Evolve the simulation. \end{DoxyCompactList}\item 
+const \mbox{\hyperlink{classdsm_1_1Graph}{Graph}}$<$ Id, Size $>$ \& \mbox{\hyperlink{classdsm_1_1Dynamics_aaca095b19606865b51579a9f2ee9b234}{graph}} () const
 \begin{DoxyCompactList}\small\item\em Get the graph. \end{DoxyCompactList}\item 
-const std\+::vector$<$ shared$<$ \mbox{\hyperlink{classdsm_1_1Itinerary}{Itinerary}}$<$ Id $>$ $>$ $>$ \& \mbox{\hyperlink{classdsm_1_1Dynamics_ab2fb900ecccea3df506cd69bd7c986fc}{itineraries}} () const
+const std\+::unordered\+\_\+map$<$ Id, std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{classdsm_1_1Itinerary}{Itinerary}}$<$ Id $>$ $>$ $>$ \& \mbox{\hyperlink{classdsm_1_1Dynamics_ae572254a63a9fe0caeae65e5c8f6313d}{itineraries}} () const
 \begin{DoxyCompactList}\small\item\em Get the itineraries. \end{DoxyCompactList}\item 
-const std\+::vector$<$ shared$<$ \mbox{\hyperlink{classdsm_1_1Agent}{Agent}}$<$ Id $>$ $>$ $>$ \& \mbox{\hyperlink{classdsm_1_1Dynamics_a781f969dab89782d0957838fca051ef6}{agents}} () const
+const std\+::unordered\+\_\+map$<$ Id, std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{classdsm_1_1Agent}{Agent}}$<$ Id, Size, Delay $>$ $>$ $>$ \& \mbox{\hyperlink{classdsm_1_1Dynamics_a78400c79a28ad0a85eccebc64e42f4ef}{agents}} () const
 \begin{DoxyCompactList}\small\item\em Get the agents. \end{DoxyCompactList}\item 
-Time\+Point \mbox{\hyperlink{classdsm_1_1Dynamics_ad4537a702beb3202cf5018ac56ecf173}{time}} () const
+Time\+Point \mbox{\hyperlink{classdsm_1_1Dynamics_a39a8c7d2ef6e881b204aa46ec13a9020}{time}} () const
 \begin{DoxyCompactList}\small\item\em Get the time. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{classdsm_1_1Dynamics_a8c8801f9f520f2007335d5064c8ffaf4}\label{classdsm_1_1Dynamics_a8c8801f9f520f2007335d5064c8ffaf4}} 
-void {\bfseries add\+Agent} (const \mbox{\hyperlink{classdsm_1_1Agent}{Agent}}$<$ Id $>$ \&agent)
+void \mbox{\hyperlink{classdsm_1_1Dynamics_a5b2994e9266359e688fcaa362665a7ef}{add\+Agent}} (const \mbox{\hyperlink{classdsm_1_1Agent}{Agent}}$<$ Id, Size, Delay $>$ \&agent)
+\begin{DoxyCompactList}\small\item\em Add an agent to the simulation. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdsm_1_1Dynamics_a9fe41197bd8816d70c1ea91f0562a1c7}{add\+Agent}} (std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{classdsm_1_1Agent}{Agent}}$<$ Id, Size, Delay $>$$>$ agent)
+\begin{DoxyCompactList}\small\item\em Add an agent to the simulation. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename... Tn$>$ }\\\mbox{\hyperlink{classdsm_1_1Dynamics_ab9d0a67e68cf27810c618046b2a6680e}{requires}} (is\+\_\+agent\+\_\+v$<$ Tn $>$ \&\&...) void \mbox{\hyperlink{classdsm_1_1Dynamics_af94e4ee5e0150cef5743fc29757b333b}{add\+Agents}}(Tn... agents)
+\begin{DoxyCompactList}\small\item\em Add a pack of agents to the simulation. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T1 , typename... Tn$>$ }\\\mbox{\hyperlink{classdsm_1_1Dynamics_a4d84796cc1b97f06774203428e680b05}{requires}} (is\+\_\+agent\+\_\+v$<$ T1 $>$ \&\&(is\+\_\+agent\+\_\+v$<$ Tn $>$ \&\&...)) void \mbox{\hyperlink{classdsm_1_1Dynamics_af94e4ee5e0150cef5743fc29757b333b}{add\+Agents}}(T1 agent
+\begin{DoxyCompactList}\small\item\em Add a pack of agents to the simulation. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdsm_1_1Dynamics_af94e4ee5e0150cef5743fc29757b333b}{add\+Agents}} (std\+::span$<$ \mbox{\hyperlink{classdsm_1_1Agent}{Agent}}$<$ Id, Size, Delay $>$$>$ agents)
+\begin{DoxyCompactList}\small\item\em Add a set of agents to the simulation. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdsm_1_1Dynamics_a93b4e45650b44243c8537c3e8f12ef0f}{add\+Random\+Agents}} (Size n\+Agents, bool uniformly=false)
+\begin{DoxyCompactList}\small\item\em Add a set of agents to the simulation. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdsm_1_1Dynamics_a5263eec8314818f852a61de586696352}{remove\+Agent}} (Size agent\+Id)
+\begin{DoxyCompactList}\small\item\em Remove an agent from the simulation. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T1 , typename... Tn$>$ }\\\mbox{\hyperlink{classdsm_1_1Dynamics_a5e00a7ef53049c2c8a5ead72bdcaeb8f}{requires}} (std\+::is\+\_\+convertible\+\_\+v$<$ T1, Size $>$ \&\&(std\+::is\+\_\+convertible\+\_\+v$<$ Tn, Size $>$ \&\&...)) void remove\+Agents(T1 id
+\begin{DoxyCompactList}\small\item\em Remove a pack of agents from the simulation. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdsm_1_1Dynamics_a6ec161c6f02718754f67afcfdebed7da}{add\+Itinerary}} (const \mbox{\hyperlink{classdsm_1_1Itinerary}{Itinerary}}$<$ Id $>$ \&itinerary)
+\begin{DoxyCompactList}\small\item\em Add an itinerary. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdsm_1_1Dynamics_a6791cfe3b6f4c79a090d0d8f6cfd424e}{add\+Itinerary}} (std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{classdsm_1_1Itinerary}{Itinerary}}$<$ Id $>$$>$ itinerary)
+\begin{DoxyCompactList}\small\item\em Add an itinerary. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classdsm_1_1Dynamics_a3bbbe6a1cc5d090f7e1ff9f304763a8f}\label{classdsm_1_1Dynamics_a3bbbe6a1cc5d090f7e1ff9f304763a8f}} 
+{\footnotesize template$<$typename... Tn$>$ }\\{\bfseries requires} (is\+\_\+itinerary\+\_\+v$<$ Tn $>$ \&\&...) void \mbox{\hyperlink{classdsm_1_1Dynamics_ac8cf5f50197e63e78b864ac23ab46179}{add\+Itineraries}}(Tn... itineraries)
 \item 
-\mbox{\Hypertarget{classdsm_1_1Dynamics_a7ad7199abf7d8ed99135bc660285922c}\label{classdsm_1_1Dynamics_a7ad7199abf7d8ed99135bc660285922c}} 
-void {\bfseries add\+Agent} (shared$<$ \mbox{\hyperlink{classdsm_1_1Agent}{Agent}}$<$ Id $>$$>$ agent)
-\item 
-\mbox{\Hypertarget{classdsm_1_1Dynamics_a02d74f9c1a402ff683e79aea03242f48}\label{classdsm_1_1Dynamics_a02d74f9c1a402ff683e79aea03242f48}} 
-{\footnotesize template$<$typename... Tn$>$ }\\{\bfseries requires} (is\+\_\+agent\+\_\+v$<$ Tn $>$ \&\&...) void add\+Agents(Tn... agents)
-\item 
-\mbox{\Hypertarget{classdsm_1_1Dynamics_a26fe9a43e26b4b473342dc1636ae05c5}\label{classdsm_1_1Dynamics_a26fe9a43e26b4b473342dc1636ae05c5}} 
-{\footnotesize template$<$typename T1 , typename... Tn$>$ }\\{\bfseries requires} (is\+\_\+agent\+\_\+v$<$ T1 $>$ \&\&(is\+\_\+agent\+\_\+v$<$ Tn $>$ \&\&...)) void add\+Agents(T1 agent
-\item 
-\mbox{\Hypertarget{classdsm_1_1Dynamics_a858a95495f44253e8feb944db5257dfb}\label{classdsm_1_1Dynamics_a858a95495f44253e8feb944db5257dfb}} 
-void {\bfseries add\+Itinerary} (const \mbox{\hyperlink{classdsm_1_1Itinerary}{Itinerary}}$<$ Id $>$ \&itinerary)
-\item 
-\mbox{\Hypertarget{classdsm_1_1Dynamics_a9ecaf5d8a5f9a6cce0c1e5d1d2844fe6}\label{classdsm_1_1Dynamics_a9ecaf5d8a5f9a6cce0c1e5d1d2844fe6}} 
-void {\bfseries add\+Itinerary} (shared$<$ \mbox{\hyperlink{classdsm_1_1Itinerary}{Itinerary}}$<$ Id $>$$>$ itinerary)
-\item 
-\mbox{\Hypertarget{classdsm_1_1Dynamics_aaefff5f8394a7e60a51f4ad1aa77ef8d}\label{classdsm_1_1Dynamics_aaefff5f8394a7e60a51f4ad1aa77ef8d}} 
-{\footnotesize template$<$typename... Tn$>$ }\\{\bfseries requires} (is\+\_\+agent\+\_\+v$<$ Tn $>$ \&\&...) void add\+Itineraries(Tn... itineraries)
-\item 
-\mbox{\Hypertarget{classdsm_1_1Dynamics_a34b1eed5c909e40fe76de8947363d755}\label{classdsm_1_1Dynamics_a34b1eed5c909e40fe76de8947363d755}} 
-{\footnotesize template$<$typename T1 , typename... Tn$>$ }\\{\bfseries requires} (is\+\_\+agent\+\_\+v$<$ T1 $>$ \&\&(is\+\_\+agent\+\_\+v$<$ Tn $>$ \&\&...)) void add\+Itineraries(T1 itinerary
-\item 
-\mbox{\Hypertarget{classdsm_1_1Dynamics_a23277afc2d227d58689b62163c0ad7c3}\label{classdsm_1_1Dynamics_a23277afc2d227d58689b62163c0ad7c3}} 
-void {\bfseries reset\+Time} ()
-\item 
-\mbox{\Hypertarget{classdsm_1_1Dynamics_ab4524976ea35dc467dfc15e4ac6041a7}\label{classdsm_1_1Dynamics_ab4524976ea35dc467dfc15e4ac6041a7}} 
-{\footnotesize template$<$typename F , typename... Tn$>$ }\\requires std\+::is\+\_\+invocable\+\_\+v$<$ F, Tn... $>$ void {\bfseries evolve} (F f, Tn... args)
-\end{DoxyCompactItemize}
+{\footnotesize template$<$typename T1 , typename... Tn$>$ }\\\mbox{\hyperlink{classdsm_1_1Dynamics_a109e6e51999da10bd03dc08ca2bda55c}{requires}} (is\+\_\+itinerary\+\_\+v$<$ T1 $>$ \&\&(is\+\_\+itinerary\+\_\+v$<$ Tn $>$ \&\&...)) void \mbox{\hyperlink{classdsm_1_1Dynamics_ac8cf5f50197e63e78b864ac23ab46179}{add\+Itineraries}}(T1 itinerary
+\begin{DoxyCompactList}\small\item\em Add a pack of itineraries. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdsm_1_1Dynamics_ac8cf5f50197e63e78b864ac23ab46179}{add\+Itineraries}} (std\+::span$<$ \mbox{\hyperlink{classdsm_1_1Itinerary}{Itinerary}}$<$ Id $>$$>$ itineraries)
+\begin{DoxyCompactList}\small\item\em Add a set of itineraries. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classdsm_1_1Dynamics_a647fbd791a38d426b5a57ca6bce0df57}\label{classdsm_1_1Dynamics_a647fbd791a38d426b5a57ca6bce0df57}} 
+void \mbox{\hyperlink{classdsm_1_1Dynamics_a647fbd791a38d426b5a57ca6bce0df57}{reset\+Time}} ()
+\begin{DoxyCompactList}\small\item\em Reset the simulation time. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classdsm_1_1Dynamics_a2d2fae3da76e39d43ef23ede0b9c2f1e}{move\+Agent}} (Size agent\+Id)
+\begin{DoxyCompactList}\small\item\em Move an agent. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename F , typename... Tn$>$ }\\\mbox{\hyperlink{classdsm_1_1Dynamics_ab9d0a67e68cf27810c618046b2a6680e}{requires}} std\+::is\+\_\+invocable\+\_\+v$<$ F, Tn... $>$ void \mbox{\hyperlink{classdsm_1_1Dynamics_a98044cdb7f035d58b23f5b5ed3d6acd1}{evolve}} (F f, Tn... args)
+\begin{DoxyCompactList}\small\item\em Evolve the simulation. \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{classdsm_1_1Dynamics_ab8dd0a0617d83cebcc99cf7da9a1a804}{mean\+Speed}} () const
+\begin{DoxyCompactList}\small\item\em Get the mean speed of the agents. \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{classdsm_1_1Dynamics_ad589842e58ca1e8949c07ea3c31f837e}{mean\+Density}} () const
+\begin{DoxyCompactList}\small\item\em Get the mean density of the streets. \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{classdsm_1_1Dynamics_a67ef5b638a8c64cd74f3dfa220a652ce}{mean\+Flow}} () const
+\begin{DoxyCompactList}\small\item\em Get the mean flow of the streets. \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{classdsm_1_1Dynamics_a860fe4fdd0829efa83006c160e8e3876}{mean\+Travel\+Time}} () const
+\begin{DoxyCompactList}\small\item\em Get the mean travel time of the agents. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsection*{Public Attributes}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\Hypertarget{classdsm_1_1Dynamics_a7a995b331a6d7684a3fb70aa3f15cf53}\label{classdsm_1_1Dynamics_a7a995b331a6d7684a3fb70aa3f15cf53}} 
+\mbox{\Hypertarget{classdsm_1_1Dynamics_a2100eaecbeae07b0e4ef5cb77b4d86bf}\label{classdsm_1_1Dynamics_a2100eaecbeae07b0e4ef5cb77b4d86bf}} 
 Tn {\bfseries agents}
 \item 
-\mbox{\Hypertarget{classdsm_1_1Dynamics_a33dba554aa72d59c1c8fa9f8badde173}\label{classdsm_1_1Dynamics_a33dba554aa72d59c1c8fa9f8badde173}} 
+\mbox{\Hypertarget{classdsm_1_1Dynamics_ac1fdf8dcae5e803dd03dcb92050e95f3}\label{classdsm_1_1Dynamics_ac1fdf8dcae5e803dd03dcb92050e95f3}} 
+Tn {\bfseries ids}
+\item 
+\mbox{\Hypertarget{classdsm_1_1Dynamics_a0ef3652b30be7c90e2653288af1d75f1}\label{classdsm_1_1Dynamics_a0ef3652b30be7c90e2653288af1d75f1}} 
 Tn {\bfseries itineraries}
+\end{DoxyCompactItemize}
+\doxysubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{classdsm_1_1Dynamics_a6496a7873fe94ac7220e60c0b150cb3a}{m\+\_\+evolve\+Streets}} ()
+\begin{DoxyCompactList}\small\item\em Evolve the streets. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdsm_1_1Dynamics_af8335b84663b96c7daf9c667408cc59c}{m\+\_\+evolve\+Nodes}} (bool reinsert\+\_\+agents)
+\begin{DoxyCompactList}\small\item\em Evolve the nodes. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classdsm_1_1Dynamics_a84f2e9f7656f704ea1599dc275c48107}{m\+\_\+evolve\+Agents}} ()
+\begin{DoxyCompactList}\small\item\em Evolve the agents. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classdsm_1_1Dynamics_ae542b0b2c922ddbaf77620d075e12ea3}\label{classdsm_1_1Dynamics_ae542b0b2c922ddbaf77620d075e12ea3}} 
+std\+::unordered\+\_\+map$<$ Id, std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{classdsm_1_1Itinerary}{Itinerary}}$<$ Id $>$ $>$ $>$ {\bfseries m\+\_\+itineraries}
+\item 
+\mbox{\Hypertarget{classdsm_1_1Dynamics_a62289a3c2f2fbf7e0d754b9a255e8e4d}\label{classdsm_1_1Dynamics_a62289a3c2f2fbf7e0d754b9a255e8e4d}} 
+std\+::unordered\+\_\+map$<$ Id, std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{classdsm_1_1Agent}{Agent}}$<$ Id, Size, Delay $>$ $>$ $>$ {\bfseries m\+\_\+agents}
+\item 
+\mbox{\Hypertarget{classdsm_1_1Dynamics_afe55e00bd1c9e4aad44838b9c936c990}\label{classdsm_1_1Dynamics_afe55e00bd1c9e4aad44838b9c936c990}} 
+Time\+Point {\bfseries m\+\_\+time}
+\item 
+\mbox{\Hypertarget{classdsm_1_1Dynamics_a9ec3d59e2978d295ec11eba6961be1b6}\label{classdsm_1_1Dynamics_a9ec3d59e2978d295ec11eba6961be1b6}} 
+std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{classdsm_1_1Graph}{Graph}}$<$ Id, Size $>$ $>$ {\bfseries m\+\_\+graph}
+\item 
+\mbox{\Hypertarget{classdsm_1_1Dynamics_ace9ced4a0e68546ec4749e0f23b4f3db}\label{classdsm_1_1Dynamics_ace9ced4a0e68546ec4749e0f23b4f3db}} 
+double {\bfseries m\+\_\+error\+Probability}
+\item 
+\mbox{\Hypertarget{classdsm_1_1Dynamics_af554b6c2c1f960d494b233ee7797035a}\label{classdsm_1_1Dynamics_af554b6c2c1f960d494b233ee7797035a}} 
+double {\bfseries m\+\_\+min\+Speed\+Rateo}
+\item 
+\mbox{\Hypertarget{classdsm_1_1Dynamics_ac978d779ea4624c4cec9f84612996fb6}\label{classdsm_1_1Dynamics_ac978d779ea4624c4cec9f84612996fb6}} 
+std\+::mt19937\+\_\+64 {\bfseries m\+\_\+generator} \{std\+::random\+\_\+device\{\}()\}
+\item 
+\mbox{\Hypertarget{classdsm_1_1Dynamics_ae31a891e1512af4e0b4957f28f87dfad}\label{classdsm_1_1Dynamics_ae31a891e1512af4e0b4957f28f87dfad}} 
+std\+::uniform\+\_\+real\+\_\+distribution$<$ double $>$ {\bfseries m\+\_\+uniform\+Dist} \{0., 1.\}
+\item 
+\mbox{\Hypertarget{classdsm_1_1Dynamics_a4154e08332de563f3b5d7f1de7b9642d}\label{classdsm_1_1Dynamics_a4154e08332de563f3b5d7f1de7b9642d}} 
+std\+::vector$<$ unsigned int $>$ {\bfseries m\+\_\+travel\+Times}
 \end{DoxyCompactItemize}
 
 
 \doxysubsection{Detailed Description}
-\subsubsection*{template$<$typename Id, typename Size$>$\newline
-class dsm\+::\+Dynamics$<$ Id, Size $>$}
+\subsubsection*{template$<$typename Id, typename Size, typename Delay$>$\newline
+class dsm\+::\+Dynamics$<$ Id, Size, Delay $>$}
 
 The \mbox{\hyperlink{classdsm_1_1Dynamics}{Dynamics}} class represents the dynamics of the network. 
 
@@ -83,12 +148,12 @@ The \mbox{\hyperlink{classdsm_1_1Dynamics}{Dynamics}} class represents the dynam
 
 
 \doxysubsection{Constructor \& Destructor Documentation}
-\mbox{\Hypertarget{classdsm_1_1Dynamics_a59f53f340d368c4c71098730f017d0e9}\label{classdsm_1_1Dynamics_a59f53f340d368c4c71098730f017d0e9}} 
-\index{dsm::Dynamics$<$ Id, Size $>$@{dsm::Dynamics$<$ Id, Size $>$}!Dynamics@{Dynamics}}
-\index{Dynamics@{Dynamics}!dsm::Dynamics$<$ Id, Size $>$@{dsm::Dynamics$<$ Id, Size $>$}}
+\mbox{\Hypertarget{classdsm_1_1Dynamics_a8572f4b8b2bba7d4288d54974a8d5554}\label{classdsm_1_1Dynamics_a8572f4b8b2bba7d4288d54974a8d5554}} 
+\index{dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}!Dynamics@{Dynamics}}
+\index{Dynamics@{Dynamics}!dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}}
 \doxysubsubsection{\texorpdfstring{Dynamics()}{Dynamics()}}
-{\footnotesize\ttfamily template$<$typename Id , typename Size $>$ \\
-\mbox{\hyperlink{classdsm_1_1Dynamics}{dsm\+::\+Dynamics}}$<$ Id, Size $>$\+::\mbox{\hyperlink{classdsm_1_1Dynamics}{Dynamics}} (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classdsm_1_1Graph}{Graph}}$<$ Id, Size $>$ \&}]{graph }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily template$<$typename Id , typename Size , typename Delay $>$ \\
+\mbox{\hyperlink{classdsm_1_1Dynamics}{dsm\+::\+Dynamics}}$<$ Id, Size, Delay $>$\+::\mbox{\hyperlink{classdsm_1_1Dynamics}{Dynamics}} (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classdsm_1_1Graph}{Graph}}$<$ Id, Size $>$ \&}]{graph }\end{DoxyParamCaption})}
 
 
 
@@ -96,76 +161,474 @@ Construct a new \mbox{\hyperlink{classdsm_1_1Dynamics}{Dynamics}} object.
 
 
 \begin{DoxyParams}{Parameters}
-{\em graph} & The graph representing the network \\
+{\em graph,The} & graph representing the network \\
 \hline
 \end{DoxyParams}
 
 
 \doxysubsection{Member Function Documentation}
-\mbox{\Hypertarget{classdsm_1_1Dynamics_a781f969dab89782d0957838fca051ef6}\label{classdsm_1_1Dynamics_a781f969dab89782d0957838fca051ef6}} 
-\index{dsm::Dynamics$<$ Id, Size $>$@{dsm::Dynamics$<$ Id, Size $>$}!agents@{agents}}
-\index{agents@{agents}!dsm::Dynamics$<$ Id, Size $>$@{dsm::Dynamics$<$ Id, Size $>$}}
+\mbox{\Hypertarget{classdsm_1_1Dynamics_a5b2994e9266359e688fcaa362665a7ef}\label{classdsm_1_1Dynamics_a5b2994e9266359e688fcaa362665a7ef}} 
+\index{dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}!addAgent@{addAgent}}
+\index{addAgent@{addAgent}!dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}}
+\doxysubsubsection{\texorpdfstring{addAgent()}{addAgent()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily template$<$typename Id , typename Size , typename Delay $>$ \\
+void \mbox{\hyperlink{classdsm_1_1Dynamics}{dsm\+::\+Dynamics}}$<$ Id, Size, Delay $>$\+::add\+Agent (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classdsm_1_1Agent}{Agent}}$<$ Id, Size, Delay $>$ \&}]{agent }\end{DoxyParamCaption})}
+
+
+
+Add an agent to the simulation. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em agent,The} & agent \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classdsm_1_1Dynamics_a9fe41197bd8816d70c1ea91f0562a1c7}\label{classdsm_1_1Dynamics_a9fe41197bd8816d70c1ea91f0562a1c7}} 
+\index{dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}!addAgent@{addAgent}}
+\index{addAgent@{addAgent}!dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}}
+\doxysubsubsection{\texorpdfstring{addAgent()}{addAgent()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily template$<$typename Id , typename Size , typename Delay $>$ \\
+void \mbox{\hyperlink{classdsm_1_1Dynamics}{dsm\+::\+Dynamics}}$<$ Id, Size, Delay $>$\+::add\+Agent (\begin{DoxyParamCaption}\item[{std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{classdsm_1_1Agent}{Agent}}$<$ Id, Size, Delay $>$$>$}]{agent }\end{DoxyParamCaption})}
+
+
+
+Add an agent to the simulation. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em agent,Unique} & pointer to the agent \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classdsm_1_1Dynamics_af94e4ee5e0150cef5743fc29757b333b}\label{classdsm_1_1Dynamics_af94e4ee5e0150cef5743fc29757b333b}} 
+\index{dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}!addAgents@{addAgents}}
+\index{addAgents@{addAgents}!dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}}
+\doxysubsubsection{\texorpdfstring{addAgents()}{addAgents()}}
+{\footnotesize\ttfamily template$<$typename Id , typename Size , typename Delay $>$ \\
+void \mbox{\hyperlink{classdsm_1_1Dynamics}{dsm\+::\+Dynamics}}$<$ Id, Size, Delay $>$\+::add\+Agents (\begin{DoxyParamCaption}\item[{std\+::span$<$ \mbox{\hyperlink{classdsm_1_1Agent}{Agent}}$<$ Id, Size, Delay $>$$>$}]{agents }\end{DoxyParamCaption})}
+
+
+
+Add a set of agents to the simulation. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em agents,Generic} & container of agents, represented by an std\+::span \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classdsm_1_1Dynamics_ac8cf5f50197e63e78b864ac23ab46179}\label{classdsm_1_1Dynamics_ac8cf5f50197e63e78b864ac23ab46179}} 
+\index{dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}!addItineraries@{addItineraries}}
+\index{addItineraries@{addItineraries}!dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}}
+\doxysubsubsection{\texorpdfstring{addItineraries()}{addItineraries()}}
+{\footnotesize\ttfamily template$<$typename Id , typename Size , typename Delay $>$ \\
+void \mbox{\hyperlink{classdsm_1_1Dynamics}{dsm\+::\+Dynamics}}$<$ Id, Size, Delay $>$\+::add\+Itineraries (\begin{DoxyParamCaption}\item[{std\+::span$<$ \mbox{\hyperlink{classdsm_1_1Itinerary}{Itinerary}}$<$ Id $>$$>$}]{itineraries }\end{DoxyParamCaption})}
+
+
+
+Add a set of itineraries. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em itineraries,Generic} & container of itineraries, represented by an std\+::span \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classdsm_1_1Dynamics_a6ec161c6f02718754f67afcfdebed7da}\label{classdsm_1_1Dynamics_a6ec161c6f02718754f67afcfdebed7da}} 
+\index{dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}!addItinerary@{addItinerary}}
+\index{addItinerary@{addItinerary}!dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}}
+\doxysubsubsection{\texorpdfstring{addItinerary()}{addItinerary()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily template$<$typename Id , typename Size , typename Delay $>$ \\
+void \mbox{\hyperlink{classdsm_1_1Dynamics}{dsm\+::\+Dynamics}}$<$ Id, Size, Delay $>$\+::add\+Itinerary (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classdsm_1_1Itinerary}{Itinerary}}$<$ Id $>$ \&}]{itinerary }\end{DoxyParamCaption})}
+
+
+
+Add an itinerary. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em itinerary,The} & itinerary \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classdsm_1_1Dynamics_a6791cfe3b6f4c79a090d0d8f6cfd424e}\label{classdsm_1_1Dynamics_a6791cfe3b6f4c79a090d0d8f6cfd424e}} 
+\index{dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}!addItinerary@{addItinerary}}
+\index{addItinerary@{addItinerary}!dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}}
+\doxysubsubsection{\texorpdfstring{addItinerary()}{addItinerary()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily template$<$typename Id , typename Size , typename Delay $>$ \\
+void \mbox{\hyperlink{classdsm_1_1Dynamics}{dsm\+::\+Dynamics}}$<$ Id, Size, Delay $>$\+::add\+Itinerary (\begin{DoxyParamCaption}\item[{std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{classdsm_1_1Itinerary}{Itinerary}}$<$ Id $>$$>$}]{itinerary }\end{DoxyParamCaption})}
+
+
+
+Add an itinerary. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em itinerary,Unique} & pointer to the itinerary \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classdsm_1_1Dynamics_a93b4e45650b44243c8537c3e8f12ef0f}\label{classdsm_1_1Dynamics_a93b4e45650b44243c8537c3e8f12ef0f}} 
+\index{dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}!addRandomAgents@{addRandomAgents}}
+\index{addRandomAgents@{addRandomAgents}!dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}}
+\doxysubsubsection{\texorpdfstring{addRandomAgents()}{addRandomAgents()}}
+{\footnotesize\ttfamily template$<$typename Id , typename Size , typename Delay $>$ \\
+void \mbox{\hyperlink{classdsm_1_1Dynamics}{dsm\+::\+Dynamics}}$<$ Id, Size, Delay $>$\+::add\+Random\+Agents (\begin{DoxyParamCaption}\item[{Size}]{n\+Agents,  }\item[{bool}]{uniformly = {\ttfamily false} }\end{DoxyParamCaption})}
+
+
+
+Add a set of agents to the simulation. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em n\+Agents} & The number of agents to add \\
+\hline
+{\em uniformly} & If true, the agents are added uniformly on the streets \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em std\+::runtime\+\_\+error} & If there are no itineraries \\
+\hline
+\end{DoxyExceptions}
+\mbox{\Hypertarget{classdsm_1_1Dynamics_a78400c79a28ad0a85eccebc64e42f4ef}\label{classdsm_1_1Dynamics_a78400c79a28ad0a85eccebc64e42f4ef}} 
+\index{dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}!agents@{agents}}
+\index{agents@{agents}!dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}}
 \doxysubsubsection{\texorpdfstring{agents()}{agents()}}
-{\footnotesize\ttfamily template$<$typename Id , typename Size $>$ \\
-const std\+::vector$<$shared$<$\mbox{\hyperlink{classdsm_1_1Agent}{Agent}}$<$Id$>$ $>$ $>$\& \mbox{\hyperlink{classdsm_1_1Dynamics}{dsm\+::\+Dynamics}}$<$ Id, Size $>$\+::agents (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+{\footnotesize\ttfamily template$<$typename Id , typename Size , typename Delay $>$ \\
+const std\+::unordered\+\_\+map$<$Id, std\+::unique\+\_\+ptr$<$\mbox{\hyperlink{classdsm_1_1Agent}{Agent}}$<$Id, Size, Delay$>$ $>$ $>$\& \mbox{\hyperlink{classdsm_1_1Dynamics}{dsm\+::\+Dynamics}}$<$ Id, Size, Delay $>$\+::agents (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
 
 
 
 Get the agents. 
 
 \begin{DoxyReturn}{Returns}
-const std\+::vector$<$Agent$<$\+Id$>$$>$\& The agents 
+const std\+::vector$<$Agent$<$\+Id$>$$>$\&, The agents 
 \end{DoxyReturn}
-\mbox{\Hypertarget{classdsm_1_1Dynamics_a49051e77e87274796dcefa1d6beb5c78}\label{classdsm_1_1Dynamics_a49051e77e87274796dcefa1d6beb5c78}} 
-\index{dsm::Dynamics$<$ Id, Size $>$@{dsm::Dynamics$<$ Id, Size $>$}!graph@{graph}}
-\index{graph@{graph}!dsm::Dynamics$<$ Id, Size $>$@{dsm::Dynamics$<$ Id, Size $>$}}
+\mbox{\Hypertarget{classdsm_1_1Dynamics_ac2eddc5d43aa3e3a7a6a8a057ad7a6cf}\label{classdsm_1_1Dynamics_ac2eddc5d43aa3e3a7a6a8a057ad7a6cf}} 
+\index{dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}!evolve@{evolve}}
+\index{evolve@{evolve}!dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}}
+\doxysubsubsection{\texorpdfstring{evolve()}{evolve()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily template$<$typename Id , typename Size , typename Delay $>$ \\
+void \mbox{\hyperlink{classdsm_1_1Dynamics}{dsm\+::\+Dynamics}}$<$ Id, Size, Delay $>$\+::evolve (\begin{DoxyParamCaption}\item[{bool}]{reinsert\+\_\+agents = {\ttfamily false} }\end{DoxyParamCaption})}
+
+
+
+Evolve the simulation. 
+
+Evolve the simulation by moving the agents and updating the travel times. In particular\+:
+\begin{DoxyItemize}
+\item Move the first agent of each street queue, if possible, putting it in the next node
+\item Move the agents from each node, if possible, putting them in the next street and giving them a speed. If the error probability is not zero, the agents can move to a random street. If the agent is in the destination node, it is removed from the simulation (and then reinserted if reinsert\+\_\+agents is true)
+\item Cycle over agents and update their times 
+\begin{DoxyParams}{Parameters}
+{\em reinsert\+\_\+agents} & If true, the agents are reinserted in the simulation after they reach their destination \\
+\hline
+\end{DoxyParams}
+
+\end{DoxyItemize}\mbox{\Hypertarget{classdsm_1_1Dynamics_a98044cdb7f035d58b23f5b5ed3d6acd1}\label{classdsm_1_1Dynamics_a98044cdb7f035d58b23f5b5ed3d6acd1}} 
+\index{dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}!evolve@{evolve}}
+\index{evolve@{evolve}!dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}}
+\doxysubsubsection{\texorpdfstring{evolve()}{evolve()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily template$<$typename Id , typename Size , typename Delay $>$ \\
+template$<$typename F , typename... Tn$>$ \\
+typename Tn \mbox{\hyperlink{classdsm_1_1Dynamics_ab9d0a67e68cf27810c618046b2a6680e}{requires}} std\+::is\+\_\+invocable\+\_\+v$<$ F, Tn... $>$ void \mbox{\hyperlink{classdsm_1_1Dynamics}{dsm\+::\+Dynamics}}$<$ Id, Size, Delay $>$\+::evolve (\begin{DoxyParamCaption}\item[{F}]{f,  }\item[{Tn...}]{args }\end{DoxyParamCaption})}
+
+
+
+Evolve the simulation. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em F} & The type of the function to call \\
+\hline
+{\em ...\+Tn} & The types of the arguments of the function \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em f} & The function to call \\
+\hline
+{\em ...\+args} & The arguments of the function \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classdsm_1_1Dynamics_aaca095b19606865b51579a9f2ee9b234}\label{classdsm_1_1Dynamics_aaca095b19606865b51579a9f2ee9b234}} 
+\index{dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}!graph@{graph}}
+\index{graph@{graph}!dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}}
 \doxysubsubsection{\texorpdfstring{graph()}{graph()}}
-{\footnotesize\ttfamily template$<$typename Id , typename Size $>$ \\
-Size \& \mbox{\hyperlink{classdsm_1_1Dynamics}{dsm\+::\+Dynamics}}$<$ Id, Size $>$\+::graph (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+{\footnotesize\ttfamily template$<$typename Id , typename Size , typename Delay $>$ \\
+Size \& \mbox{\hyperlink{classdsm_1_1Dynamics}{dsm\+::\+Dynamics}}$<$ Id, Size, Delay $>$\+::graph (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
 
 
 
 Get the graph. 
 
 \begin{DoxyReturn}{Returns}
-const Graph$<$\+Id, Size$>$\& The graph 
+const Graph$<$\+Id, Size$>$\&, The graph 
 \end{DoxyReturn}
-\mbox{\Hypertarget{classdsm_1_1Dynamics_ab2fb900ecccea3df506cd69bd7c986fc}\label{classdsm_1_1Dynamics_ab2fb900ecccea3df506cd69bd7c986fc}} 
-\index{dsm::Dynamics$<$ Id, Size $>$@{dsm::Dynamics$<$ Id, Size $>$}!itineraries@{itineraries}}
-\index{itineraries@{itineraries}!dsm::Dynamics$<$ Id, Size $>$@{dsm::Dynamics$<$ Id, Size $>$}}
+\mbox{\Hypertarget{classdsm_1_1Dynamics_ae572254a63a9fe0caeae65e5c8f6313d}\label{classdsm_1_1Dynamics_ae572254a63a9fe0caeae65e5c8f6313d}} 
+\index{dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}!itineraries@{itineraries}}
+\index{itineraries@{itineraries}!dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}}
 \doxysubsubsection{\texorpdfstring{itineraries()}{itineraries()}}
-{\footnotesize\ttfamily template$<$typename Id , typename Size $>$ \\
-const std\+::vector$<$shared$<$\mbox{\hyperlink{classdsm_1_1Itinerary}{Itinerary}}$<$Id$>$ $>$ $>$\& \mbox{\hyperlink{classdsm_1_1Dynamics}{dsm\+::\+Dynamics}}$<$ Id, Size $>$\+::itineraries (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+{\footnotesize\ttfamily template$<$typename Id , typename Size , typename Delay $>$ \\
+const std\+::unordered\+\_\+map$<$Id, std\+::unique\+\_\+ptr$<$\mbox{\hyperlink{classdsm_1_1Itinerary}{Itinerary}}$<$Id$>$ $>$ $>$\& \mbox{\hyperlink{classdsm_1_1Dynamics}{dsm\+::\+Dynamics}}$<$ Id, Size, Delay $>$\+::itineraries (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
 
 
 
 Get the itineraries. 
 
 \begin{DoxyReturn}{Returns}
-const std\+::vector$<$Itinerary$<$\+Id$>$$>$\& The itineraries 
+const std\+::vector$<$Itinerary$<$\+Id$>$$>$\&, The itineraries 
 \end{DoxyReturn}
-\mbox{\Hypertarget{classdsm_1_1Dynamics_afd018f2aee17fc397919c3c518c4c451}\label{classdsm_1_1Dynamics_afd018f2aee17fc397919c3c518c4c451}} 
-\index{dsm::Dynamics$<$ Id, Size $>$@{dsm::Dynamics$<$ Id, Size $>$}!setAgents@{setAgents}}
-\index{setAgents@{setAgents}!dsm::Dynamics$<$ Id, Size $>$@{dsm::Dynamics$<$ Id, Size $>$}}
-\doxysubsubsection{\texorpdfstring{setAgents()}{setAgents()}}
-{\footnotesize\ttfamily template$<$typename Id , typename Size $>$ \\
-void \mbox{\hyperlink{classdsm_1_1Dynamics}{dsm\+::\+Dynamics}}$<$ Id, Size $>$\+::set\+Agents (\begin{DoxyParamCaption}\item[{const std\+::vector$<$ \mbox{\hyperlink{classdsm_1_1Agent}{Agent}}$<$ Id $>$$>$ \&}]{agents }\end{DoxyParamCaption})}
+\mbox{\Hypertarget{classdsm_1_1Dynamics_a84f2e9f7656f704ea1599dc275c48107}\label{classdsm_1_1Dynamics_a84f2e9f7656f704ea1599dc275c48107}} 
+\index{dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}!m\_evolveAgents@{m\_evolveAgents}}
+\index{m\_evolveAgents@{m\_evolveAgents}!dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}}
+\doxysubsubsection{\texorpdfstring{m\_evolveAgents()}{m\_evolveAgents()}}
+{\footnotesize\ttfamily template$<$typename Id , typename Size , typename Delay $>$ \\
+void \mbox{\hyperlink{classdsm_1_1Dynamics}{dsm\+::\+Dynamics}}$<$ Id, Size, Delay $>$\+::m\+\_\+evolve\+Agents (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
 
 
 
-Set the agents. 
+Evolve the agents. 
+
+Puts all new agents on a street, if possible, decrements all delays and increments all travel times. \mbox{\Hypertarget{classdsm_1_1Dynamics_af8335b84663b96c7daf9c667408cc59c}\label{classdsm_1_1Dynamics_af8335b84663b96c7daf9c667408cc59c}} 
+\index{dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}!m\_evolveNodes@{m\_evolveNodes}}
+\index{m\_evolveNodes@{m\_evolveNodes}!dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}}
+\doxysubsubsection{\texorpdfstring{m\_evolveNodes()}{m\_evolveNodes()}}
+{\footnotesize\ttfamily template$<$typename Id , typename Size , typename Delay $>$ \\
+void \mbox{\hyperlink{classdsm_1_1Dynamics}{dsm\+::\+Dynamics}}$<$ Id, Size, Delay $>$\+::m\+\_\+evolve\+Nodes (\begin{DoxyParamCaption}\item[{bool}]{reinsert\+\_\+agents }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+Evolve the nodes. 
+
+If possible, removes all agents from each node, putting them in the next street. If the error probability is not zero, the agents can move to a random street. If the agent is in the destination node, it is removed from the simulation (and then reinserted if reinsert\+\_\+agents is true) 
+\begin{DoxyParams}{Parameters}
+{\em reinsert\+\_\+agents} & If true, the agents are reinserted in the simulation after they reach their destination \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classdsm_1_1Dynamics_a6496a7873fe94ac7220e60c0b150cb3a}\label{classdsm_1_1Dynamics_a6496a7873fe94ac7220e60c0b150cb3a}} 
+\index{dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}!m\_evolveStreets@{m\_evolveStreets}}
+\index{m\_evolveStreets@{m\_evolveStreets}!dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}}
+\doxysubsubsection{\texorpdfstring{m\_evolveStreets()}{m\_evolveStreets()}}
+{\footnotesize\ttfamily template$<$typename Id , typename Size , typename Delay $>$ \\
+void \mbox{\hyperlink{classdsm_1_1Dynamics}{dsm\+::\+Dynamics}}$<$ Id, Size, Delay $>$\+::m\+\_\+evolve\+Streets (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+Evolve the streets. 
+
+If possible, removes the first agent of each street queue, putting it in the destination node. \mbox{\Hypertarget{classdsm_1_1Dynamics_ad589842e58ca1e8949c07ea3c31f837e}\label{classdsm_1_1Dynamics_ad589842e58ca1e8949c07ea3c31f837e}} 
+\index{dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}!meanDensity@{meanDensity}}
+\index{meanDensity@{meanDensity}!dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}}
+\doxysubsubsection{\texorpdfstring{meanDensity()}{meanDensity()}}
+{\footnotesize\ttfamily template$<$typename Id , typename Size , typename Delay $>$ \\
+double \mbox{\hyperlink{classdsm_1_1Dynamics}{dsm\+::\+Dynamics}}$<$ Id, Size, Delay $>$\+::mean\+Density (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Get the mean density of the streets. 
+
+\begin{DoxyReturn}{Returns}
+double, The mean density of the streets 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdsm_1_1Dynamics_a67ef5b638a8c64cd74f3dfa220a652ce}\label{classdsm_1_1Dynamics_a67ef5b638a8c64cd74f3dfa220a652ce}} 
+\index{dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}!meanFlow@{meanFlow}}
+\index{meanFlow@{meanFlow}!dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}}
+\doxysubsubsection{\texorpdfstring{meanFlow()}{meanFlow()}}
+{\footnotesize\ttfamily template$<$typename Id , typename Size , typename Delay $>$ \\
+double \mbox{\hyperlink{classdsm_1_1Dynamics}{dsm\+::\+Dynamics}}$<$ Id, Size, Delay $>$\+::mean\+Flow (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Get the mean flow of the streets. 
+
+\begin{DoxyReturn}{Returns}
+double, The mean flow of the streets 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdsm_1_1Dynamics_ab8dd0a0617d83cebcc99cf7da9a1a804}\label{classdsm_1_1Dynamics_ab8dd0a0617d83cebcc99cf7da9a1a804}} 
+\index{dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}!meanSpeed@{meanSpeed}}
+\index{meanSpeed@{meanSpeed}!dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}}
+\doxysubsubsection{\texorpdfstring{meanSpeed()}{meanSpeed()}}
+{\footnotesize\ttfamily template$<$typename Id , typename Size , typename Delay $>$ \\
+double \mbox{\hyperlink{classdsm_1_1Dynamics}{dsm\+::\+Dynamics}}$<$ Id, Size, Delay $>$\+::mean\+Speed (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Get the mean speed of the agents. 
+
+\begin{DoxyReturn}{Returns}
+double, The mean speed of the agents 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdsm_1_1Dynamics_a860fe4fdd0829efa83006c160e8e3876}\label{classdsm_1_1Dynamics_a860fe4fdd0829efa83006c160e8e3876}} 
+\index{dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}!meanTravelTime@{meanTravelTime}}
+\index{meanTravelTime@{meanTravelTime}!dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}}
+\doxysubsubsection{\texorpdfstring{meanTravelTime()}{meanTravelTime()}}
+{\footnotesize\ttfamily template$<$typename Id , typename Size , typename Delay $>$ \\
+double \mbox{\hyperlink{classdsm_1_1Dynamics}{dsm\+::\+Dynamics}}$<$ Id, Size, Delay $>$\+::mean\+Travel\+Time (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Get the mean travel time of the agents. 
+
+\begin{DoxyReturn}{Returns}
+double, The mean travel time of the agents 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdsm_1_1Dynamics_a2d2fae3da76e39d43ef23ede0b9c2f1e}\label{classdsm_1_1Dynamics_a2d2fae3da76e39d43ef23ede0b9c2f1e}} 
+\index{dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}!moveAgent@{moveAgent}}
+\index{moveAgent@{moveAgent}!dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}}
+\doxysubsubsection{\texorpdfstring{moveAgent()}{moveAgent()}}
+{\footnotesize\ttfamily template$<$typename Id , typename Size , typename Delay $>$ \\
+bool \mbox{\hyperlink{classdsm_1_1Dynamics}{dsm\+::\+Dynamics}}$<$ Id, Size, Delay $>$\+::move\+Agent (\begin{DoxyParamCaption}\item[{Size}]{agent\+Id }\end{DoxyParamCaption})}
+
+
+
+Move an agent. 
 
 
 \begin{DoxyParams}{Parameters}
-{\em agents} & The agents \\
+{\em agent\+Id} & The id of the agent to move \\
 \hline
 \end{DoxyParams}
-\mbox{\Hypertarget{classdsm_1_1Dynamics_a723b42376bd009e001ab463b56275d27}\label{classdsm_1_1Dynamics_a723b42376bd009e001ab463b56275d27}} 
-\index{dsm::Dynamics$<$ Id, Size $>$@{dsm::Dynamics$<$ Id, Size $>$}!setItineraries@{setItineraries}}
-\index{setItineraries@{setItineraries}!dsm::Dynamics$<$ Id, Size $>$@{dsm::Dynamics$<$ Id, Size $>$}}
+\begin{DoxyReturn}{Returns}
+true If the agent has been moved, false otherwise 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classdsm_1_1Dynamics_a5263eec8314818f852a61de586696352}\label{classdsm_1_1Dynamics_a5263eec8314818f852a61de586696352}} 
+\index{dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}!removeAgent@{removeAgent}}
+\index{removeAgent@{removeAgent}!dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}}
+\doxysubsubsection{\texorpdfstring{removeAgent()}{removeAgent()}}
+{\footnotesize\ttfamily template$<$typename Id , typename Size , typename Delay $>$ \\
+void \mbox{\hyperlink{classdsm_1_1Dynamics}{dsm\+::\+Dynamics}}$<$ Id, Size, Delay $>$\+::remove\+Agent (\begin{DoxyParamCaption}\item[{Size}]{agent\+Id }\end{DoxyParamCaption})}
+
+
+
+Remove an agent from the simulation. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em agent\+Id} & the id of the agent to remove \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classdsm_1_1Dynamics_a4d84796cc1b97f06774203428e680b05}\label{classdsm_1_1Dynamics_a4d84796cc1b97f06774203428e680b05}} 
+\index{dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}!requires@{requires}}
+\index{requires@{requires}!dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}}
+\doxysubsubsection{\texorpdfstring{requires()}{requires()}\hspace{0.1cm}{\footnotesize\ttfamily [1/4]}}
+{\footnotesize\ttfamily template$<$typename Id , typename Size , typename Delay $>$ \\
+template$<$typename T1 , typename... Tn$>$ \\
+\mbox{\hyperlink{classdsm_1_1Dynamics}{dsm\+::\+Dynamics}}$<$ Id, Size, Delay $>$\+::requires (\begin{DoxyParamCaption}\item[{is\+\_\+agent\+\_\+v$<$ T1 $>$ \&\&}]{is\+\_\+agent\+\_\+v$<$ Tn $>$ \&\&... }\end{DoxyParamCaption})}
+
+
+
+Add a pack of agents to the simulation. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em agent,An} & agent \\
+\hline
+{\em agents,Parameter} & pack of agents \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classdsm_1_1Dynamics_ab9d0a67e68cf27810c618046b2a6680e}\label{classdsm_1_1Dynamics_ab9d0a67e68cf27810c618046b2a6680e}} 
+\index{dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}!requires@{requires}}
+\index{requires@{requires}!dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}}
+\doxysubsubsection{\texorpdfstring{requires()}{requires()}\hspace{0.1cm}{\footnotesize\ttfamily [2/4]}}
+{\footnotesize\ttfamily template$<$typename Id , typename Size , typename Delay $>$ \\
+template$<$typename... Tn$>$ \\
+\mbox{\hyperlink{classdsm_1_1Dynamics}{dsm\+::\+Dynamics}}$<$ Id, Size, Delay $>$\+::requires (\begin{DoxyParamCaption}\item[{is\+\_\+agent\+\_\+v$<$ Tn $>$ \&\&}]{... }\end{DoxyParamCaption})}
+
+
+
+Add a pack of agents to the simulation. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em agents,Parameter} & pack of agents \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classdsm_1_1Dynamics_a109e6e51999da10bd03dc08ca2bda55c}\label{classdsm_1_1Dynamics_a109e6e51999da10bd03dc08ca2bda55c}} 
+\index{dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}!requires@{requires}}
+\index{requires@{requires}!dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}}
+\doxysubsubsection{\texorpdfstring{requires()}{requires()}\hspace{0.1cm}{\footnotesize\ttfamily [3/4]}}
+{\footnotesize\ttfamily template$<$typename Id , typename Size , typename Delay $>$ \\
+template$<$typename T1 , typename... Tn$>$ \\
+\mbox{\hyperlink{classdsm_1_1Dynamics}{dsm\+::\+Dynamics}}$<$ Id, Size, Delay $>$\+::requires (\begin{DoxyParamCaption}\item[{is\+\_\+itinerary\+\_\+v$<$ T1 $>$ \&\&}]{is\+\_\+itinerary\+\_\+v$<$ Tn $>$ \&\&... }\end{DoxyParamCaption})}
+
+
+
+Add a pack of itineraries. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em T1} & \\
+\hline
+{\em ...\+Tn} & \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em itinerary} & \\
+\hline
+{\em ...\+itineraries} & \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classdsm_1_1Dynamics_a5e00a7ef53049c2c8a5ead72bdcaeb8f}\label{classdsm_1_1Dynamics_a5e00a7ef53049c2c8a5ead72bdcaeb8f}} 
+\index{dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}!requires@{requires}}
+\index{requires@{requires}!dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}}
+\doxysubsubsection{\texorpdfstring{requires()}{requires()}\hspace{0.1cm}{\footnotesize\ttfamily [4/4]}}
+{\footnotesize\ttfamily template$<$typename Id , typename Size , typename Delay $>$ \\
+template$<$typename T1 , typename... Tn$>$ \\
+\mbox{\hyperlink{classdsm_1_1Dynamics}{dsm\+::\+Dynamics}}$<$ Id, Size, Delay $>$\+::requires (\begin{DoxyParamCaption}\item[{std\+::is\+\_\+convertible\+\_\+v$<$ T1, Size $>$ \&\&}]{std\+::is\+\_\+convertible\+\_\+v$<$ Tn, Size $>$ \&\&... }\end{DoxyParamCaption})}
+
+
+
+Remove a pack of agents from the simulation. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em id,the} & id of the first agent to remove \\
+\hline
+{\em ids,the} & pack of ides of the agents to remove \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classdsm_1_1Dynamics_a95544d85b7d1b176763ab90457923180}\label{classdsm_1_1Dynamics_a95544d85b7d1b176763ab90457923180}} 
+\index{dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}!setAgentSpeed@{setAgentSpeed}}
+\index{setAgentSpeed@{setAgentSpeed}!dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}}
+\doxysubsubsection{\texorpdfstring{setAgentSpeed()}{setAgentSpeed()}}
+{\footnotesize\ttfamily template$<$typename Id , typename Size , typename Delay $>$ \\
+virtual void \mbox{\hyperlink{classdsm_1_1Dynamics}{dsm\+::\+Dynamics}}$<$ Id, Size, Delay $>$\+::set\+Agent\+Speed (\begin{DoxyParamCaption}\item[{Size}]{agent\+Id }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Set the speed of an agent. 
+
+This is a pure-\/virtual function, it must be implemented in the derived classes 
+\begin{DoxyParams}{Parameters}
+{\em agent\+Id} & The id of the agent ~\newline
+ \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classdsm_1_1Dynamics_ad683bd08176b43f20aa300eaacefa199}\label{classdsm_1_1Dynamics_ad683bd08176b43f20aa300eaacefa199}} 
+\index{dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}!setErrorProbability@{setErrorProbability}}
+\index{setErrorProbability@{setErrorProbability}!dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}}
+\doxysubsubsection{\texorpdfstring{setErrorProbability()}{setErrorProbability()}}
+{\footnotesize\ttfamily template$<$typename Id , typename Size , typename Delay $>$ \\
+void \mbox{\hyperlink{classdsm_1_1Dynamics}{dsm\+::\+Dynamics}}$<$ Id, Size, Delay $>$\+::set\+Error\+Probability (\begin{DoxyParamCaption}\item[{double}]{error\+Probability }\end{DoxyParamCaption})}
+
+
+
+Set the error probability. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em error\+Probability,The} & error probability \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em std\+::invalid\+\_\+argument,If} & the error probability is not between 0 and 1 \\
+\hline
+\end{DoxyExceptions}
+\mbox{\Hypertarget{classdsm_1_1Dynamics_a504e2a0d5a3028aa408eb8771bdc2752}\label{classdsm_1_1Dynamics_a504e2a0d5a3028aa408eb8771bdc2752}} 
+\index{dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}!setItineraries@{setItineraries}}
+\index{setItineraries@{setItineraries}!dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}}
 \doxysubsubsection{\texorpdfstring{setItineraries()}{setItineraries()}}
-{\footnotesize\ttfamily template$<$typename Id , typename Size $>$ \\
-void \mbox{\hyperlink{classdsm_1_1Dynamics}{dsm\+::\+Dynamics}}$<$ Id, Size $>$\+::set\+Itineraries (\begin{DoxyParamCaption}\item[{const std\+::vector$<$ \mbox{\hyperlink{classdsm_1_1Itinerary}{Itinerary}}$<$ Id $>$$>$ \&}]{itineraries }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily template$<$typename Id , typename Size , typename Delay $>$ \\
+void \mbox{\hyperlink{classdsm_1_1Dynamics}{dsm\+::\+Dynamics}}$<$ Id, Size, Delay $>$\+::set\+Itineraries (\begin{DoxyParamCaption}\item[{std\+::span$<$ \mbox{\hyperlink{classdsm_1_1Itinerary}{Itinerary}}$<$ Id $>$$>$}]{itineraries }\end{DoxyParamCaption})}
 
 
 
@@ -173,22 +636,59 @@ Set the itineraries.
 
 
 \begin{DoxyParams}{Parameters}
-{\em itineraries} & The itineraries \\
+{\em itineraries,The} & itineraries \\
 \hline
 \end{DoxyParams}
-\mbox{\Hypertarget{classdsm_1_1Dynamics_ad4537a702beb3202cf5018ac56ecf173}\label{classdsm_1_1Dynamics_ad4537a702beb3202cf5018ac56ecf173}} 
-\index{dsm::Dynamics$<$ Id, Size $>$@{dsm::Dynamics$<$ Id, Size $>$}!time@{time}}
-\index{time@{time}!dsm::Dynamics$<$ Id, Size $>$@{dsm::Dynamics$<$ Id, Size $>$}}
+\mbox{\Hypertarget{classdsm_1_1Dynamics_a46887e5a88c7786a92d1dc22d407fe64}\label{classdsm_1_1Dynamics_a46887e5a88c7786a92d1dc22d407fe64}} 
+\index{dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}!setMinSpeedRateo@{setMinSpeedRateo}}
+\index{setMinSpeedRateo@{setMinSpeedRateo}!dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}}
+\doxysubsubsection{\texorpdfstring{setMinSpeedRateo()}{setMinSpeedRateo()}}
+{\footnotesize\ttfamily template$<$typename Id , typename Size , typename Delay $>$ \\
+void \mbox{\hyperlink{classdsm_1_1Dynamics}{dsm\+::\+Dynamics}}$<$ Id, Size, Delay $>$\+::set\+Min\+Speed\+Rateo (\begin{DoxyParamCaption}\item[{double}]{min\+Speed\+Rateo }\end{DoxyParamCaption})}
+
+
+
+Set the minim speed rateo, i.\+e. the minim speed with respect to the speed limit. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em min\+Speed\+Rateo} & The minim speed rateo \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em std\+::invalid\+\_\+argument,If} & the minim speed rateo is not between 0 and 1 \\
+\hline
+\end{DoxyExceptions}
+\mbox{\Hypertarget{classdsm_1_1Dynamics_ae424b81d7e9f6703f28a162256d9fbc1}\label{classdsm_1_1Dynamics_ae424b81d7e9f6703f28a162256d9fbc1}} 
+\index{dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}!setSeed@{setSeed}}
+\index{setSeed@{setSeed}!dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}}
+\doxysubsubsection{\texorpdfstring{setSeed()}{setSeed()}}
+{\footnotesize\ttfamily template$<$typename Id , typename Size , typename Delay $>$ \\
+void \mbox{\hyperlink{classdsm_1_1Dynamics}{dsm\+::\+Dynamics}}$<$ Id, Size, Delay $>$\+::set\+Seed (\begin{DoxyParamCaption}\item[{unsigned int}]{seed }\end{DoxyParamCaption})}
+
+
+
+Set the seed for the graph\textquotesingle{}s random number generator. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em seed,The} & seed \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classdsm_1_1Dynamics_a39a8c7d2ef6e881b204aa46ec13a9020}\label{classdsm_1_1Dynamics_a39a8c7d2ef6e881b204aa46ec13a9020}} 
+\index{dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}!time@{time}}
+\index{time@{time}!dsm::Dynamics$<$ Id, Size, Delay $>$@{dsm::Dynamics$<$ Id, Size, Delay $>$}}
 \doxysubsubsection{\texorpdfstring{time()}{time()}}
-{\footnotesize\ttfamily template$<$typename Id , typename Size $>$ \\
-Time\+Point \mbox{\hyperlink{classdsm_1_1Dynamics}{dsm\+::\+Dynamics}}$<$ Id, Size $>$\+::time (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+{\footnotesize\ttfamily template$<$typename Id , typename Size , typename Delay $>$ \\
+Time\+Point \mbox{\hyperlink{classdsm_1_1Dynamics}{dsm\+::\+Dynamics}}$<$ Id, Size, Delay $>$\+::time (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
 
 
 
 Get the time. 
 
 \begin{DoxyReturn}{Returns}
-Time\+Point The time 
+Time\+Point, The time 
 \end{DoxyReturn}
 
 

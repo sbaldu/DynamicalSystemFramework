@@ -5,10 +5,14 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Dynamical System Framework: dsm::Dynamics&lt; Id, Size &gt; Class Template Reference</title>
+<title>Dynamical system model: dsm::Dynamics&lt; Id, Size, Delay &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
@@ -21,7 +25,7 @@
  <tbody>
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">Dynamical System Framework
+   <div id="projectname">Dynamical system model
    </div>
   </td>
  </tr>
@@ -45,6 +49,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('classdsm_1_1Dynamics.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -59,97 +80,187 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><b>dsm</b></li><li class="navelem"><a class="el" href="classdsm_1_1Dynamics.html">Dynamics</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
+<a href="#pro-methods">Protected Member Functions</a> &#124;
+<a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="classdsm_1_1Dynamics-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">dsm::Dynamics&lt; Id, Size &gt; Class Template Reference</div>  </div>
+<div class="title">dsm::Dynamics&lt; Id, Size, Delay &gt; Class Template Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
 
 <p>The <a class="el" href="classdsm_1_1Dynamics.html" title="The Dynamics class represents the dynamics of the network.">Dynamics</a> class represents the dynamics of the network.  
  <a href="classdsm_1_1Dynamics.html#details">More...</a></p>
 
-<p><code>#include &lt;<a class="el" href="Dynamics_8hpp_source.html">Dynamics.hpp</a>&gt;</code></p>
+<p><code>#include &lt;Dynamics.hpp&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a59f53f340d368c4c71098730f017d0e9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdsm_1_1Dynamics.html#a59f53f340d368c4c71098730f017d0e9">Dynamics</a> (const <a class="el" href="classdsm_1_1Graph.html">Graph</a>&lt; Id, Size &gt; &amp;<a class="el" href="classdsm_1_1Dynamics.html#a49051e77e87274796dcefa1d6beb5c78">graph</a>)</td></tr>
-<tr class="memdesc:a59f53f340d368c4c71098730f017d0e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new <a class="el" href="classdsm_1_1Dynamics.html" title="The Dynamics class represents the dynamics of the network.">Dynamics</a> object.  <a href="classdsm_1_1Dynamics.html#a59f53f340d368c4c71098730f017d0e9">More...</a><br /></td></tr>
-<tr class="separator:a59f53f340d368c4c71098730f017d0e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a723b42376bd009e001ab463b56275d27"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdsm_1_1Dynamics.html#a723b42376bd009e001ab463b56275d27">setItineraries</a> (const std::vector&lt; <a class="el" href="classdsm_1_1Itinerary.html">Itinerary</a>&lt; Id &gt;&gt; &amp;itineraries)</td></tr>
-<tr class="memdesc:a723b42376bd009e001ab463b56275d27"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the itineraries.  <a href="classdsm_1_1Dynamics.html#a723b42376bd009e001ab463b56275d27">More...</a><br /></td></tr>
-<tr class="separator:a723b42376bd009e001ab463b56275d27"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afd018f2aee17fc397919c3c518c4c451"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdsm_1_1Dynamics.html#afd018f2aee17fc397919c3c518c4c451">setAgents</a> (const std::vector&lt; <a class="el" href="classdsm_1_1Agent.html">Agent</a>&lt; Id &gt;&gt; &amp;agents)</td></tr>
-<tr class="memdesc:afd018f2aee17fc397919c3c518c4c451"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the agents.  <a href="classdsm_1_1Dynamics.html#afd018f2aee17fc397919c3c518c4c451">More...</a><br /></td></tr>
-<tr class="separator:afd018f2aee17fc397919c3c518c4c451"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a49051e77e87274796dcefa1d6beb5c78"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classdsm_1_1Graph.html">Graph</a>&lt; Id, Size &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdsm_1_1Dynamics.html#a49051e77e87274796dcefa1d6beb5c78">graph</a> () const</td></tr>
-<tr class="memdesc:a49051e77e87274796dcefa1d6beb5c78"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the graph.  <a href="classdsm_1_1Dynamics.html#a49051e77e87274796dcefa1d6beb5c78">More...</a><br /></td></tr>
-<tr class="separator:a49051e77e87274796dcefa1d6beb5c78"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab2fb900ecccea3df506cd69bd7c986fc"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; shared&lt; <a class="el" href="classdsm_1_1Itinerary.html">Itinerary</a>&lt; Id &gt; &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdsm_1_1Dynamics.html#ab2fb900ecccea3df506cd69bd7c986fc">itineraries</a> () const</td></tr>
-<tr class="memdesc:ab2fb900ecccea3df506cd69bd7c986fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the itineraries.  <a href="classdsm_1_1Dynamics.html#ab2fb900ecccea3df506cd69bd7c986fc">More...</a><br /></td></tr>
-<tr class="separator:ab2fb900ecccea3df506cd69bd7c986fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a781f969dab89782d0957838fca051ef6"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; shared&lt; <a class="el" href="classdsm_1_1Agent.html">Agent</a>&lt; Id &gt; &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdsm_1_1Dynamics.html#a781f969dab89782d0957838fca051ef6">agents</a> () const</td></tr>
-<tr class="memdesc:a781f969dab89782d0957838fca051ef6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the agents.  <a href="classdsm_1_1Dynamics.html#a781f969dab89782d0957838fca051ef6">More...</a><br /></td></tr>
-<tr class="separator:a781f969dab89782d0957838fca051ef6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad4537a702beb3202cf5018ac56ecf173"><td class="memItemLeft" align="right" valign="top">TimePoint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdsm_1_1Dynamics.html#ad4537a702beb3202cf5018ac56ecf173">time</a> () const</td></tr>
-<tr class="memdesc:ad4537a702beb3202cf5018ac56ecf173"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the time.  <a href="classdsm_1_1Dynamics.html#ad4537a702beb3202cf5018ac56ecf173">More...</a><br /></td></tr>
-<tr class="separator:ad4537a702beb3202cf5018ac56ecf173"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8c8801f9f520f2007335d5064c8ffaf4"><td class="memItemLeft" align="right" valign="top"><a id="a8c8801f9f520f2007335d5064c8ffaf4"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>addAgent</b> (const <a class="el" href="classdsm_1_1Agent.html">Agent</a>&lt; Id &gt; &amp;agent)</td></tr>
-<tr class="separator:a8c8801f9f520f2007335d5064c8ffaf4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7ad7199abf7d8ed99135bc660285922c"><td class="memItemLeft" align="right" valign="top"><a id="a7ad7199abf7d8ed99135bc660285922c"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>addAgent</b> (shared&lt; <a class="el" href="classdsm_1_1Agent.html">Agent</a>&lt; Id &gt;&gt; agent)</td></tr>
-<tr class="separator:a7ad7199abf7d8ed99135bc660285922c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a02d74f9c1a402ff683e79aea03242f48"><td class="memTemplParams" colspan="2"><a id="a02d74f9c1a402ff683e79aea03242f48"></a>
+<tr class="memitem:a8572f4b8b2bba7d4288d54974a8d5554"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdsm_1_1Dynamics.html#a8572f4b8b2bba7d4288d54974a8d5554">Dynamics</a> (const <a class="el" href="classdsm_1_1Graph.html">Graph</a>&lt; Id, Size &gt; &amp;<a class="el" href="classdsm_1_1Dynamics.html#aaca095b19606865b51579a9f2ee9b234">graph</a>)</td></tr>
+<tr class="memdesc:a8572f4b8b2bba7d4288d54974a8d5554"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new <a class="el" href="classdsm_1_1Dynamics.html" title="The Dynamics class represents the dynamics of the network.">Dynamics</a> object.  <a href="classdsm_1_1Dynamics.html#a8572f4b8b2bba7d4288d54974a8d5554">More...</a><br /></td></tr>
+<tr class="separator:a8572f4b8b2bba7d4288d54974a8d5554"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a504e2a0d5a3028aa408eb8771bdc2752"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdsm_1_1Dynamics.html#a504e2a0d5a3028aa408eb8771bdc2752">setItineraries</a> (std::span&lt; <a class="el" href="classdsm_1_1Itinerary.html">Itinerary</a>&lt; Id &gt;&gt; itineraries)</td></tr>
+<tr class="memdesc:a504e2a0d5a3028aa408eb8771bdc2752"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the itineraries.  <a href="classdsm_1_1Dynamics.html#a504e2a0d5a3028aa408eb8771bdc2752">More...</a><br /></td></tr>
+<tr class="separator:a504e2a0d5a3028aa408eb8771bdc2752"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae424b81d7e9f6703f28a162256d9fbc1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdsm_1_1Dynamics.html#ae424b81d7e9f6703f28a162256d9fbc1">setSeed</a> (unsigned int seed)</td></tr>
+<tr class="memdesc:ae424b81d7e9f6703f28a162256d9fbc1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the seed for the graph's random number generator.  <a href="classdsm_1_1Dynamics.html#ae424b81d7e9f6703f28a162256d9fbc1">More...</a><br /></td></tr>
+<tr class="separator:ae424b81d7e9f6703f28a162256d9fbc1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a46887e5a88c7786a92d1dc22d407fe64"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdsm_1_1Dynamics.html#a46887e5a88c7786a92d1dc22d407fe64">setMinSpeedRateo</a> (double minSpeedRateo)</td></tr>
+<tr class="memdesc:a46887e5a88c7786a92d1dc22d407fe64"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the minim speed rateo, i.e. the minim speed with respect to the speed limit.  <a href="classdsm_1_1Dynamics.html#a46887e5a88c7786a92d1dc22d407fe64">More...</a><br /></td></tr>
+<tr class="separator:a46887e5a88c7786a92d1dc22d407fe64"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad683bd08176b43f20aa300eaacefa199"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdsm_1_1Dynamics.html#ad683bd08176b43f20aa300eaacefa199">setErrorProbability</a> (double errorProbability)</td></tr>
+<tr class="memdesc:ad683bd08176b43f20aa300eaacefa199"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the error probability.  <a href="classdsm_1_1Dynamics.html#ad683bd08176b43f20aa300eaacefa199">More...</a><br /></td></tr>
+<tr class="separator:ad683bd08176b43f20aa300eaacefa199"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a95544d85b7d1b176763ab90457923180"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdsm_1_1Dynamics.html#a95544d85b7d1b176763ab90457923180">setAgentSpeed</a> (Size agentId)=0</td></tr>
+<tr class="memdesc:a95544d85b7d1b176763ab90457923180"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the speed of an agent.  <a href="classdsm_1_1Dynamics.html#a95544d85b7d1b176763ab90457923180">More...</a><br /></td></tr>
+<tr class="separator:a95544d85b7d1b176763ab90457923180"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab7f1056b608e79cab06bce0955627309"><td class="memItemLeft" align="right" valign="top"><a id="ab7f1056b608e79cab06bce0955627309"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdsm_1_1Dynamics.html#ab7f1056b608e79cab06bce0955627309">updatePaths</a> ()</td></tr>
+<tr class="memdesc:ab7f1056b608e79cab06bce0955627309"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update the paths of the itineraries based on the actual travel times. <br /></td></tr>
+<tr class="separator:ab7f1056b608e79cab06bce0955627309"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac2eddc5d43aa3e3a7a6a8a057ad7a6cf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdsm_1_1Dynamics.html#ac2eddc5d43aa3e3a7a6a8a057ad7a6cf">evolve</a> (bool reinsert_agents=false)</td></tr>
+<tr class="memdesc:ac2eddc5d43aa3e3a7a6a8a057ad7a6cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Evolve the simulation.  <a href="classdsm_1_1Dynamics.html#ac2eddc5d43aa3e3a7a6a8a057ad7a6cf">More...</a><br /></td></tr>
+<tr class="separator:ac2eddc5d43aa3e3a7a6a8a057ad7a6cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaca095b19606865b51579a9f2ee9b234"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classdsm_1_1Graph.html">Graph</a>&lt; Id, Size &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdsm_1_1Dynamics.html#aaca095b19606865b51579a9f2ee9b234">graph</a> () const</td></tr>
+<tr class="memdesc:aaca095b19606865b51579a9f2ee9b234"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the graph.  <a href="classdsm_1_1Dynamics.html#aaca095b19606865b51579a9f2ee9b234">More...</a><br /></td></tr>
+<tr class="separator:aaca095b19606865b51579a9f2ee9b234"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae572254a63a9fe0caeae65e5c8f6313d"><td class="memItemLeft" align="right" valign="top">const std::unordered_map&lt; Id, std::unique_ptr&lt; <a class="el" href="classdsm_1_1Itinerary.html">Itinerary</a>&lt; Id &gt; &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdsm_1_1Dynamics.html#ae572254a63a9fe0caeae65e5c8f6313d">itineraries</a> () const</td></tr>
+<tr class="memdesc:ae572254a63a9fe0caeae65e5c8f6313d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the itineraries.  <a href="classdsm_1_1Dynamics.html#ae572254a63a9fe0caeae65e5c8f6313d">More...</a><br /></td></tr>
+<tr class="separator:ae572254a63a9fe0caeae65e5c8f6313d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a78400c79a28ad0a85eccebc64e42f4ef"><td class="memItemLeft" align="right" valign="top">const std::unordered_map&lt; Id, std::unique_ptr&lt; <a class="el" href="classdsm_1_1Agent.html">Agent</a>&lt; Id, Size, Delay &gt; &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdsm_1_1Dynamics.html#a78400c79a28ad0a85eccebc64e42f4ef">agents</a> () const</td></tr>
+<tr class="memdesc:a78400c79a28ad0a85eccebc64e42f4ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the agents.  <a href="classdsm_1_1Dynamics.html#a78400c79a28ad0a85eccebc64e42f4ef">More...</a><br /></td></tr>
+<tr class="separator:a78400c79a28ad0a85eccebc64e42f4ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a39a8c7d2ef6e881b204aa46ec13a9020"><td class="memItemLeft" align="right" valign="top">TimePoint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdsm_1_1Dynamics.html#a39a8c7d2ef6e881b204aa46ec13a9020">time</a> () const</td></tr>
+<tr class="memdesc:a39a8c7d2ef6e881b204aa46ec13a9020"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the time.  <a href="classdsm_1_1Dynamics.html#a39a8c7d2ef6e881b204aa46ec13a9020">More...</a><br /></td></tr>
+<tr class="separator:a39a8c7d2ef6e881b204aa46ec13a9020"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5b2994e9266359e688fcaa362665a7ef"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdsm_1_1Dynamics.html#a5b2994e9266359e688fcaa362665a7ef">addAgent</a> (const <a class="el" href="classdsm_1_1Agent.html">Agent</a>&lt; Id, Size, Delay &gt; &amp;agent)</td></tr>
+<tr class="memdesc:a5b2994e9266359e688fcaa362665a7ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add an agent to the simulation.  <a href="classdsm_1_1Dynamics.html#a5b2994e9266359e688fcaa362665a7ef">More...</a><br /></td></tr>
+<tr class="separator:a5b2994e9266359e688fcaa362665a7ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9fe41197bd8816d70c1ea91f0562a1c7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdsm_1_1Dynamics.html#a9fe41197bd8816d70c1ea91f0562a1c7">addAgent</a> (std::unique_ptr&lt; <a class="el" href="classdsm_1_1Agent.html">Agent</a>&lt; Id, Size, Delay &gt;&gt; agent)</td></tr>
+<tr class="memdesc:a9fe41197bd8816d70c1ea91f0562a1c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add an agent to the simulation.  <a href="classdsm_1_1Dynamics.html#a9fe41197bd8816d70c1ea91f0562a1c7">More...</a><br /></td></tr>
+<tr class="separator:a9fe41197bd8816d70c1ea91f0562a1c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab9d0a67e68cf27810c618046b2a6680e"><td class="memTemplParams" colspan="2">template&lt;typename... Tn&gt; </td></tr>
+<tr class="memitem:ab9d0a67e68cf27810c618046b2a6680e"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classdsm_1_1Dynamics.html#ab9d0a67e68cf27810c618046b2a6680e">requires</a> (is_agent_v&lt; Tn &gt; &amp;&amp;...) void <a class="el" href="classdsm_1_1Dynamics.html#af94e4ee5e0150cef5743fc29757b333b">addAgents</a>(Tn... agents)</td></tr>
+<tr class="memdesc:ab9d0a67e68cf27810c618046b2a6680e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a pack of agents to the simulation.  <a href="classdsm_1_1Dynamics.html#ab9d0a67e68cf27810c618046b2a6680e">More...</a><br /></td></tr>
+<tr class="separator:ab9d0a67e68cf27810c618046b2a6680e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4d84796cc1b97f06774203428e680b05"><td class="memTemplParams" colspan="2">template&lt;typename T1 , typename... Tn&gt; </td></tr>
+<tr class="memitem:a4d84796cc1b97f06774203428e680b05"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classdsm_1_1Dynamics.html#a4d84796cc1b97f06774203428e680b05">requires</a> (is_agent_v&lt; T1 &gt; &amp;&amp;(is_agent_v&lt; Tn &gt; &amp;&amp;...)) void <a class="el" href="classdsm_1_1Dynamics.html#af94e4ee5e0150cef5743fc29757b333b">addAgents</a>(T1 agent</td></tr>
+<tr class="memdesc:a4d84796cc1b97f06774203428e680b05"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a pack of agents to the simulation.  <a href="classdsm_1_1Dynamics.html#a4d84796cc1b97f06774203428e680b05">More...</a><br /></td></tr>
+<tr class="separator:a4d84796cc1b97f06774203428e680b05"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af94e4ee5e0150cef5743fc29757b333b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdsm_1_1Dynamics.html#af94e4ee5e0150cef5743fc29757b333b">addAgents</a> (std::span&lt; <a class="el" href="classdsm_1_1Agent.html">Agent</a>&lt; Id, Size, Delay &gt;&gt; agents)</td></tr>
+<tr class="memdesc:af94e4ee5e0150cef5743fc29757b333b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a set of agents to the simulation.  <a href="classdsm_1_1Dynamics.html#af94e4ee5e0150cef5743fc29757b333b">More...</a><br /></td></tr>
+<tr class="separator:af94e4ee5e0150cef5743fc29757b333b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a93b4e45650b44243c8537c3e8f12ef0f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdsm_1_1Dynamics.html#a93b4e45650b44243c8537c3e8f12ef0f">addRandomAgents</a> (Size nAgents, bool uniformly=false)</td></tr>
+<tr class="memdesc:a93b4e45650b44243c8537c3e8f12ef0f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a set of agents to the simulation.  <a href="classdsm_1_1Dynamics.html#a93b4e45650b44243c8537c3e8f12ef0f">More...</a><br /></td></tr>
+<tr class="separator:a93b4e45650b44243c8537c3e8f12ef0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5263eec8314818f852a61de586696352"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdsm_1_1Dynamics.html#a5263eec8314818f852a61de586696352">removeAgent</a> (Size agentId)</td></tr>
+<tr class="memdesc:a5263eec8314818f852a61de586696352"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove an agent from the simulation.  <a href="classdsm_1_1Dynamics.html#a5263eec8314818f852a61de586696352">More...</a><br /></td></tr>
+<tr class="separator:a5263eec8314818f852a61de586696352"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5e00a7ef53049c2c8a5ead72bdcaeb8f"><td class="memTemplParams" colspan="2">template&lt;typename T1 , typename... Tn&gt; </td></tr>
+<tr class="memitem:a5e00a7ef53049c2c8a5ead72bdcaeb8f"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classdsm_1_1Dynamics.html#a5e00a7ef53049c2c8a5ead72bdcaeb8f">requires</a> (std::is_convertible_v&lt; T1, Size &gt; &amp;&amp;(std::is_convertible_v&lt; Tn, Size &gt; &amp;&amp;...)) void removeAgents(T1 id</td></tr>
+<tr class="memdesc:a5e00a7ef53049c2c8a5ead72bdcaeb8f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove a pack of agents from the simulation.  <a href="classdsm_1_1Dynamics.html#a5e00a7ef53049c2c8a5ead72bdcaeb8f">More...</a><br /></td></tr>
+<tr class="separator:a5e00a7ef53049c2c8a5ead72bdcaeb8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6ec161c6f02718754f67afcfdebed7da"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdsm_1_1Dynamics.html#a6ec161c6f02718754f67afcfdebed7da">addItinerary</a> (const <a class="el" href="classdsm_1_1Itinerary.html">Itinerary</a>&lt; Id &gt; &amp;itinerary)</td></tr>
+<tr class="memdesc:a6ec161c6f02718754f67afcfdebed7da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add an itinerary.  <a href="classdsm_1_1Dynamics.html#a6ec161c6f02718754f67afcfdebed7da">More...</a><br /></td></tr>
+<tr class="separator:a6ec161c6f02718754f67afcfdebed7da"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6791cfe3b6f4c79a090d0d8f6cfd424e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdsm_1_1Dynamics.html#a6791cfe3b6f4c79a090d0d8f6cfd424e">addItinerary</a> (std::unique_ptr&lt; <a class="el" href="classdsm_1_1Itinerary.html">Itinerary</a>&lt; Id &gt;&gt; itinerary)</td></tr>
+<tr class="memdesc:a6791cfe3b6f4c79a090d0d8f6cfd424e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add an itinerary.  <a href="classdsm_1_1Dynamics.html#a6791cfe3b6f4c79a090d0d8f6cfd424e">More...</a><br /></td></tr>
+<tr class="separator:a6791cfe3b6f4c79a090d0d8f6cfd424e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3bbbe6a1cc5d090f7e1ff9f304763a8f"><td class="memTemplParams" colspan="2"><a id="a3bbbe6a1cc5d090f7e1ff9f304763a8f"></a>
 template&lt;typename... Tn&gt; </td></tr>
-<tr class="memitem:a02d74f9c1a402ff683e79aea03242f48"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><b>requires</b> (is_agent_v&lt; Tn &gt; &amp;&amp;...) void addAgents(Tn... agents)</td></tr>
-<tr class="separator:a02d74f9c1a402ff683e79aea03242f48"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a26fe9a43e26b4b473342dc1636ae05c5"><td class="memTemplParams" colspan="2"><a id="a26fe9a43e26b4b473342dc1636ae05c5"></a>
-template&lt;typename T1 , typename... Tn&gt; </td></tr>
-<tr class="memitem:a26fe9a43e26b4b473342dc1636ae05c5"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><b>requires</b> (is_agent_v&lt; T1 &gt; &amp;&amp;(is_agent_v&lt; Tn &gt; &amp;&amp;...)) void addAgents(T1 agent</td></tr>
-<tr class="separator:a26fe9a43e26b4b473342dc1636ae05c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a858a95495f44253e8feb944db5257dfb"><td class="memItemLeft" align="right" valign="top"><a id="a858a95495f44253e8feb944db5257dfb"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>addItinerary</b> (const <a class="el" href="classdsm_1_1Itinerary.html">Itinerary</a>&lt; Id &gt; &amp;itinerary)</td></tr>
-<tr class="separator:a858a95495f44253e8feb944db5257dfb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9ecaf5d8a5f9a6cce0c1e5d1d2844fe6"><td class="memItemLeft" align="right" valign="top"><a id="a9ecaf5d8a5f9a6cce0c1e5d1d2844fe6"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>addItinerary</b> (shared&lt; <a class="el" href="classdsm_1_1Itinerary.html">Itinerary</a>&lt; Id &gt;&gt; itinerary)</td></tr>
-<tr class="separator:a9ecaf5d8a5f9a6cce0c1e5d1d2844fe6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaefff5f8394a7e60a51f4ad1aa77ef8d"><td class="memTemplParams" colspan="2"><a id="aaefff5f8394a7e60a51f4ad1aa77ef8d"></a>
-template&lt;typename... Tn&gt; </td></tr>
-<tr class="memitem:aaefff5f8394a7e60a51f4ad1aa77ef8d"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><b>requires</b> (is_agent_v&lt; Tn &gt; &amp;&amp;...) void addItineraries(Tn... itineraries)</td></tr>
-<tr class="separator:aaefff5f8394a7e60a51f4ad1aa77ef8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a34b1eed5c909e40fe76de8947363d755"><td class="memTemplParams" colspan="2"><a id="a34b1eed5c909e40fe76de8947363d755"></a>
-template&lt;typename T1 , typename... Tn&gt; </td></tr>
-<tr class="memitem:a34b1eed5c909e40fe76de8947363d755"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><b>requires</b> (is_agent_v&lt; T1 &gt; &amp;&amp;(is_agent_v&lt; Tn &gt; &amp;&amp;...)) void addItineraries(T1 itinerary</td></tr>
-<tr class="separator:a34b1eed5c909e40fe76de8947363d755"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a23277afc2d227d58689b62163c0ad7c3"><td class="memItemLeft" align="right" valign="top"><a id="a23277afc2d227d58689b62163c0ad7c3"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>resetTime</b> ()</td></tr>
-<tr class="separator:a23277afc2d227d58689b62163c0ad7c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab4524976ea35dc467dfc15e4ac6041a7"><td class="memTemplParams" colspan="2"><a id="ab4524976ea35dc467dfc15e4ac6041a7"></a>
-template&lt;typename F , typename... Tn&gt; </td></tr>
-<tr class="memitem:ab4524976ea35dc467dfc15e4ac6041a7"><td class="memTemplItemLeft" align="right" valign="top">requires std::is_invocable_v&lt; F, Tn... &gt; void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>evolve</b> (F f, Tn... args)</td></tr>
-<tr class="separator:ab4524976ea35dc467dfc15e4ac6041a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3bbbe6a1cc5d090f7e1ff9f304763a8f"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><b>requires</b> (is_itinerary_v&lt; Tn &gt; &amp;&amp;...) void <a class="el" href="classdsm_1_1Dynamics.html#ac8cf5f50197e63e78b864ac23ab46179">addItineraries</a>(Tn... itineraries)</td></tr>
+<tr class="separator:a3bbbe6a1cc5d090f7e1ff9f304763a8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a109e6e51999da10bd03dc08ca2bda55c"><td class="memTemplParams" colspan="2">template&lt;typename T1 , typename... Tn&gt; </td></tr>
+<tr class="memitem:a109e6e51999da10bd03dc08ca2bda55c"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classdsm_1_1Dynamics.html#a109e6e51999da10bd03dc08ca2bda55c">requires</a> (is_itinerary_v&lt; T1 &gt; &amp;&amp;(is_itinerary_v&lt; Tn &gt; &amp;&amp;...)) void <a class="el" href="classdsm_1_1Dynamics.html#ac8cf5f50197e63e78b864ac23ab46179">addItineraries</a>(T1 itinerary</td></tr>
+<tr class="memdesc:a109e6e51999da10bd03dc08ca2bda55c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a pack of itineraries.  <a href="classdsm_1_1Dynamics.html#a109e6e51999da10bd03dc08ca2bda55c">More...</a><br /></td></tr>
+<tr class="separator:a109e6e51999da10bd03dc08ca2bda55c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac8cf5f50197e63e78b864ac23ab46179"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdsm_1_1Dynamics.html#ac8cf5f50197e63e78b864ac23ab46179">addItineraries</a> (std::span&lt; <a class="el" href="classdsm_1_1Itinerary.html">Itinerary</a>&lt; Id &gt;&gt; itineraries)</td></tr>
+<tr class="memdesc:ac8cf5f50197e63e78b864ac23ab46179"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a set of itineraries.  <a href="classdsm_1_1Dynamics.html#ac8cf5f50197e63e78b864ac23ab46179">More...</a><br /></td></tr>
+<tr class="separator:ac8cf5f50197e63e78b864ac23ab46179"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a647fbd791a38d426b5a57ca6bce0df57"><td class="memItemLeft" align="right" valign="top"><a id="a647fbd791a38d426b5a57ca6bce0df57"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdsm_1_1Dynamics.html#a647fbd791a38d426b5a57ca6bce0df57">resetTime</a> ()</td></tr>
+<tr class="memdesc:a647fbd791a38d426b5a57ca6bce0df57"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset the simulation time. <br /></td></tr>
+<tr class="separator:a647fbd791a38d426b5a57ca6bce0df57"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2d2fae3da76e39d43ef23ede0b9c2f1e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdsm_1_1Dynamics.html#a2d2fae3da76e39d43ef23ede0b9c2f1e">moveAgent</a> (Size agentId)</td></tr>
+<tr class="memdesc:a2d2fae3da76e39d43ef23ede0b9c2f1e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move an agent.  <a href="classdsm_1_1Dynamics.html#a2d2fae3da76e39d43ef23ede0b9c2f1e">More...</a><br /></td></tr>
+<tr class="separator:a2d2fae3da76e39d43ef23ede0b9c2f1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a98044cdb7f035d58b23f5b5ed3d6acd1"><td class="memTemplParams" colspan="2">template&lt;typename F , typename... Tn&gt; </td></tr>
+<tr class="memitem:a98044cdb7f035d58b23f5b5ed3d6acd1"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classdsm_1_1Dynamics.html#ab9d0a67e68cf27810c618046b2a6680e">requires</a> std::is_invocable_v&lt; F, Tn... &gt; void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classdsm_1_1Dynamics.html#a98044cdb7f035d58b23f5b5ed3d6acd1">evolve</a> (F f, Tn... args)</td></tr>
+<tr class="memdesc:a98044cdb7f035d58b23f5b5ed3d6acd1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Evolve the simulation.  <a href="classdsm_1_1Dynamics.html#a98044cdb7f035d58b23f5b5ed3d6acd1">More...</a><br /></td></tr>
+<tr class="separator:a98044cdb7f035d58b23f5b5ed3d6acd1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab8dd0a0617d83cebcc99cf7da9a1a804"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdsm_1_1Dynamics.html#ab8dd0a0617d83cebcc99cf7da9a1a804">meanSpeed</a> () const</td></tr>
+<tr class="memdesc:ab8dd0a0617d83cebcc99cf7da9a1a804"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the mean speed of the agents.  <a href="classdsm_1_1Dynamics.html#ab8dd0a0617d83cebcc99cf7da9a1a804">More...</a><br /></td></tr>
+<tr class="separator:ab8dd0a0617d83cebcc99cf7da9a1a804"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad589842e58ca1e8949c07ea3c31f837e"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdsm_1_1Dynamics.html#ad589842e58ca1e8949c07ea3c31f837e">meanDensity</a> () const</td></tr>
+<tr class="memdesc:ad589842e58ca1e8949c07ea3c31f837e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the mean density of the streets.  <a href="classdsm_1_1Dynamics.html#ad589842e58ca1e8949c07ea3c31f837e">More...</a><br /></td></tr>
+<tr class="separator:ad589842e58ca1e8949c07ea3c31f837e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a67ef5b638a8c64cd74f3dfa220a652ce"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdsm_1_1Dynamics.html#a67ef5b638a8c64cd74f3dfa220a652ce">meanFlow</a> () const</td></tr>
+<tr class="memdesc:a67ef5b638a8c64cd74f3dfa220a652ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the mean flow of the streets.  <a href="classdsm_1_1Dynamics.html#a67ef5b638a8c64cd74f3dfa220a652ce">More...</a><br /></td></tr>
+<tr class="separator:a67ef5b638a8c64cd74f3dfa220a652ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a860fe4fdd0829efa83006c160e8e3876"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdsm_1_1Dynamics.html#a860fe4fdd0829efa83006c160e8e3876">meanTravelTime</a> () const</td></tr>
+<tr class="memdesc:a860fe4fdd0829efa83006c160e8e3876"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the mean travel time of the agents.  <a href="classdsm_1_1Dynamics.html#a860fe4fdd0829efa83006c160e8e3876">More...</a><br /></td></tr>
+<tr class="separator:a860fe4fdd0829efa83006c160e8e3876"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a7a995b331a6d7684a3fb70aa3f15cf53"><td class="memItemLeft" align="right" valign="top"><a id="a7a995b331a6d7684a3fb70aa3f15cf53"></a>
+<tr class="memitem:a2100eaecbeae07b0e4ef5cb77b4d86bf"><td class="memItemLeft" align="right" valign="top"><a id="a2100eaecbeae07b0e4ef5cb77b4d86bf"></a>
 Tn&#160;</td><td class="memItemRight" valign="bottom"><b>agents</b></td></tr>
-<tr class="separator:a7a995b331a6d7684a3fb70aa3f15cf53"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a33dba554aa72d59c1c8fa9f8badde173"><td class="memItemLeft" align="right" valign="top"><a id="a33dba554aa72d59c1c8fa9f8badde173"></a>
+<tr class="separator:a2100eaecbeae07b0e4ef5cb77b4d86bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac1fdf8dcae5e803dd03dcb92050e95f3"><td class="memItemLeft" align="right" valign="top"><a id="ac1fdf8dcae5e803dd03dcb92050e95f3"></a>
+Tn&#160;</td><td class="memItemRight" valign="bottom"><b>ids</b></td></tr>
+<tr class="separator:ac1fdf8dcae5e803dd03dcb92050e95f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ef3652b30be7c90e2653288af1d75f1"><td class="memItemLeft" align="right" valign="top"><a id="a0ef3652b30be7c90e2653288af1d75f1"></a>
 Tn&#160;</td><td class="memItemRight" valign="bottom"><b>itineraries</b></td></tr>
-<tr class="separator:a33dba554aa72d59c1c8fa9f8badde173"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a0ef3652b30be7c90e2653288af1d75f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
+Protected Member Functions</h2></td></tr>
+<tr class="memitem:a6496a7873fe94ac7220e60c0b150cb3a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdsm_1_1Dynamics.html#a6496a7873fe94ac7220e60c0b150cb3a">m_evolveStreets</a> ()</td></tr>
+<tr class="memdesc:a6496a7873fe94ac7220e60c0b150cb3a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Evolve the streets.  <a href="classdsm_1_1Dynamics.html#a6496a7873fe94ac7220e60c0b150cb3a">More...</a><br /></td></tr>
+<tr class="separator:a6496a7873fe94ac7220e60c0b150cb3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af8335b84663b96c7daf9c667408cc59c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdsm_1_1Dynamics.html#af8335b84663b96c7daf9c667408cc59c">m_evolveNodes</a> (bool reinsert_agents)</td></tr>
+<tr class="memdesc:af8335b84663b96c7daf9c667408cc59c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Evolve the nodes.  <a href="classdsm_1_1Dynamics.html#af8335b84663b96c7daf9c667408cc59c">More...</a><br /></td></tr>
+<tr class="separator:af8335b84663b96c7daf9c667408cc59c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a84f2e9f7656f704ea1599dc275c48107"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdsm_1_1Dynamics.html#a84f2e9f7656f704ea1599dc275c48107">m_evolveAgents</a> ()</td></tr>
+<tr class="memdesc:a84f2e9f7656f704ea1599dc275c48107"><td class="mdescLeft">&#160;</td><td class="mdescRight">Evolve the agents.  <a href="classdsm_1_1Dynamics.html#a84f2e9f7656f704ea1599dc275c48107">More...</a><br /></td></tr>
+<tr class="separator:a84f2e9f7656f704ea1599dc275c48107"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
+Protected Attributes</h2></td></tr>
+<tr class="memitem:ae542b0b2c922ddbaf77620d075e12ea3"><td class="memItemLeft" align="right" valign="top"><a id="ae542b0b2c922ddbaf77620d075e12ea3"></a>
+std::unordered_map&lt; Id, std::unique_ptr&lt; <a class="el" href="classdsm_1_1Itinerary.html">Itinerary</a>&lt; Id &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_itineraries</b></td></tr>
+<tr class="separator:ae542b0b2c922ddbaf77620d075e12ea3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a62289a3c2f2fbf7e0d754b9a255e8e4d"><td class="memItemLeft" align="right" valign="top"><a id="a62289a3c2f2fbf7e0d754b9a255e8e4d"></a>
+std::unordered_map&lt; Id, std::unique_ptr&lt; <a class="el" href="classdsm_1_1Agent.html">Agent</a>&lt; Id, Size, Delay &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_agents</b></td></tr>
+<tr class="separator:a62289a3c2f2fbf7e0d754b9a255e8e4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afe55e00bd1c9e4aad44838b9c936c990"><td class="memItemLeft" align="right" valign="top"><a id="afe55e00bd1c9e4aad44838b9c936c990"></a>
+TimePoint&#160;</td><td class="memItemRight" valign="bottom"><b>m_time</b></td></tr>
+<tr class="separator:afe55e00bd1c9e4aad44838b9c936c990"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9ec3d59e2978d295ec11eba6961be1b6"><td class="memItemLeft" align="right" valign="top"><a id="a9ec3d59e2978d295ec11eba6961be1b6"></a>
+std::unique_ptr&lt; <a class="el" href="classdsm_1_1Graph.html">Graph</a>&lt; Id, Size &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_graph</b></td></tr>
+<tr class="separator:a9ec3d59e2978d295ec11eba6961be1b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ace9ced4a0e68546ec4749e0f23b4f3db"><td class="memItemLeft" align="right" valign="top"><a id="ace9ced4a0e68546ec4749e0f23b4f3db"></a>
+double&#160;</td><td class="memItemRight" valign="bottom"><b>m_errorProbability</b></td></tr>
+<tr class="separator:ace9ced4a0e68546ec4749e0f23b4f3db"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af554b6c2c1f960d494b233ee7797035a"><td class="memItemLeft" align="right" valign="top"><a id="af554b6c2c1f960d494b233ee7797035a"></a>
+double&#160;</td><td class="memItemRight" valign="bottom"><b>m_minSpeedRateo</b></td></tr>
+<tr class="separator:af554b6c2c1f960d494b233ee7797035a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac978d779ea4624c4cec9f84612996fb6"><td class="memItemLeft" align="right" valign="top"><a id="ac978d779ea4624c4cec9f84612996fb6"></a>
+std::mt19937_64&#160;</td><td class="memItemRight" valign="bottom"><b>m_generator</b> {std::random_device{}()}</td></tr>
+<tr class="separator:ac978d779ea4624c4cec9f84612996fb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae31a891e1512af4e0b4957f28f87dfad"><td class="memItemLeft" align="right" valign="top"><a id="ae31a891e1512af4e0b4957f28f87dfad"></a>
+std::uniform_real_distribution&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_uniformDist</b> {0., 1.}</td></tr>
+<tr class="separator:ae31a891e1512af4e0b4957f28f87dfad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4154e08332de563f3b5d7f1de7b9642d"><td class="memItemLeft" align="right" valign="top"><a id="a4154e08332de563f3b5d7f1de7b9642d"></a>
+std::vector&lt; unsigned int &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_travelTimes</b></td></tr>
+<tr class="separator:a4154e08332de563f3b5d7f1de7b9642d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><h3>template&lt;typename Id, typename Size&gt;<br />
-class dsm::Dynamics&lt; Id, Size &gt;</h3>
+<div class="textblock"><h3>template&lt;typename Id, typename Size, typename Delay&gt;<br />
+class dsm::Dynamics&lt; Id, Size, Delay &gt;</h3>
 
 <p>The <a class="el" href="classdsm_1_1Dynamics.html" title="The Dynamics class represents the dynamics of the network.">Dynamics</a> class represents the dynamics of the network. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
@@ -160,16 +271,16 @@ class dsm::Dynamics&lt; Id, Size &gt;</h3>
   </dd>
 </dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a59f53f340d368c4c71098730f017d0e9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a59f53f340d368c4c71098730f017d0e9">&#9670;&nbsp;</a></span>Dynamics()</h2>
+<a id="a8572f4b8b2bba7d4288d54974a8d5554"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8572f4b8b2bba7d4288d54974a8d5554">&#9670;&nbsp;</a></span>Dynamics()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Id , typename Size &gt; </div>
+template&lt;typename Id , typename Size , typename Delay &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classdsm_1_1Dynamics.html">dsm::Dynamics</a>&lt; Id, Size &gt;::<a class="el" href="classdsm_1_1Dynamics.html">Dynamics</a> </td>
+          <td class="memname"><a class="el" href="classdsm_1_1Dynamics.html">dsm::Dynamics</a>&lt; Id, Size, Delay &gt;::<a class="el" href="classdsm_1_1Dynamics.html">Dynamics</a> </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classdsm_1_1Graph.html">Graph</a>&lt; Id, Size &gt; &amp;&#160;</td>
           <td class="paramname"><em>graph</em></td><td>)</td>
@@ -181,7 +292,7 @@ template&lt;typename Id , typename Size &gt; </div>
 <p>Construct a new <a class="el" href="classdsm_1_1Dynamics.html" title="The Dynamics class represents the dynamics of the network.">Dynamics</a> object. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">graph</td><td>The graph representing the network </td></tr>
+    <tr><td class="paramname">graph,The</td><td>graph representing the network </td></tr>
   </table>
   </dd>
 </dl>
@@ -189,16 +300,229 @@ template&lt;typename Id , typename Size &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a781f969dab89782d0957838fca051ef6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a781f969dab89782d0957838fca051ef6">&#9670;&nbsp;</a></span>agents()</h2>
+<a id="a5b2994e9266359e688fcaa362665a7ef"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5b2994e9266359e688fcaa362665a7ef">&#9670;&nbsp;</a></span>addAgent() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Id , typename Size &gt; </div>
+template&lt;typename Id , typename Size , typename Delay &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">const std::vector&lt;shared&lt;<a class="el" href="classdsm_1_1Agent.html">Agent</a>&lt;Id&gt; &gt; &gt;&amp; <a class="el" href="classdsm_1_1Dynamics.html">dsm::Dynamics</a>&lt; Id, Size &gt;::agents </td>
+          <td class="memname">void <a class="el" href="classdsm_1_1Dynamics.html">dsm::Dynamics</a>&lt; Id, Size, Delay &gt;::addAgent </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classdsm_1_1Agent.html">Agent</a>&lt; Id, Size, Delay &gt; &amp;&#160;</td>
+          <td class="paramname"><em>agent</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Add an agent to the simulation. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">agent,The</td><td>agent </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a9fe41197bd8816d70c1ea91f0562a1c7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9fe41197bd8816d70c1ea91f0562a1c7">&#9670;&nbsp;</a></span>addAgent() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Id , typename Size , typename Delay &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classdsm_1_1Dynamics.html">dsm::Dynamics</a>&lt; Id, Size, Delay &gt;::addAgent </td>
+          <td>(</td>
+          <td class="paramtype">std::unique_ptr&lt; <a class="el" href="classdsm_1_1Agent.html">Agent</a>&lt; Id, Size, Delay &gt;&gt;&#160;</td>
+          <td class="paramname"><em>agent</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Add an agent to the simulation. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">agent,Unique</td><td>pointer to the agent </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="af94e4ee5e0150cef5743fc29757b333b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af94e4ee5e0150cef5743fc29757b333b">&#9670;&nbsp;</a></span>addAgents()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Id , typename Size , typename Delay &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classdsm_1_1Dynamics.html">dsm::Dynamics</a>&lt; Id, Size, Delay &gt;::addAgents </td>
+          <td>(</td>
+          <td class="paramtype">std::span&lt; <a class="el" href="classdsm_1_1Agent.html">Agent</a>&lt; Id, Size, Delay &gt;&gt;&#160;</td>
+          <td class="paramname"><em>agents</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Add a set of agents to the simulation. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">agents,Generic</td><td>container of agents, represented by an std::span </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ac8cf5f50197e63e78b864ac23ab46179"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac8cf5f50197e63e78b864ac23ab46179">&#9670;&nbsp;</a></span>addItineraries()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Id , typename Size , typename Delay &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classdsm_1_1Dynamics.html">dsm::Dynamics</a>&lt; Id, Size, Delay &gt;::addItineraries </td>
+          <td>(</td>
+          <td class="paramtype">std::span&lt; <a class="el" href="classdsm_1_1Itinerary.html">Itinerary</a>&lt; Id &gt;&gt;&#160;</td>
+          <td class="paramname"><em>itineraries</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Add a set of itineraries. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">itineraries,Generic</td><td>container of itineraries, represented by an std::span </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a6ec161c6f02718754f67afcfdebed7da"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6ec161c6f02718754f67afcfdebed7da">&#9670;&nbsp;</a></span>addItinerary() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Id , typename Size , typename Delay &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classdsm_1_1Dynamics.html">dsm::Dynamics</a>&lt; Id, Size, Delay &gt;::addItinerary </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classdsm_1_1Itinerary.html">Itinerary</a>&lt; Id &gt; &amp;&#160;</td>
+          <td class="paramname"><em>itinerary</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Add an itinerary. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">itinerary,The</td><td>itinerary </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a6791cfe3b6f4c79a090d0d8f6cfd424e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6791cfe3b6f4c79a090d0d8f6cfd424e">&#9670;&nbsp;</a></span>addItinerary() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Id , typename Size , typename Delay &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classdsm_1_1Dynamics.html">dsm::Dynamics</a>&lt; Id, Size, Delay &gt;::addItinerary </td>
+          <td>(</td>
+          <td class="paramtype">std::unique_ptr&lt; <a class="el" href="classdsm_1_1Itinerary.html">Itinerary</a>&lt; Id &gt;&gt;&#160;</td>
+          <td class="paramname"><em>itinerary</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Add an itinerary. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">itinerary,Unique</td><td>pointer to the itinerary </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a93b4e45650b44243c8537c3e8f12ef0f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a93b4e45650b44243c8537c3e8f12ef0f">&#9670;&nbsp;</a></span>addRandomAgents()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Id , typename Size , typename Delay &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classdsm_1_1Dynamics.html">dsm::Dynamics</a>&lt; Id, Size, Delay &gt;::addRandomAgents </td>
+          <td>(</td>
+          <td class="paramtype">Size&#160;</td>
+          <td class="paramname"><em>nAgents</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>uniformly</em> = <code>false</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Add a set of agents to the simulation. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">nAgents</td><td>The number of agents to add </td></tr>
+    <tr><td class="paramname">uniformly</td><td>If true, the agents are added uniformly on the streets </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::runtime_error</td><td>If there are no itineraries </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a78400c79a28ad0a85eccebc64e42f4ef"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a78400c79a28ad0a85eccebc64e42f4ef">&#9670;&nbsp;</a></span>agents()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Id , typename Size , typename Delay &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::unordered_map&lt;Id, std::unique_ptr&lt;<a class="el" href="classdsm_1_1Agent.html">Agent</a>&lt;Id, Size, Delay&gt; &gt; &gt;&amp; <a class="el" href="classdsm_1_1Dynamics.html">dsm::Dynamics</a>&lt; Id, Size, Delay &gt;::agents </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -207,20 +531,101 @@ template&lt;typename Id , typename Size &gt; </div>
 </div><div class="memdoc">
 
 <p>Get the agents. </p>
-<dl class="section return"><dt>Returns</dt><dd>const std::vector&lt;Agent&lt;Id&gt;&gt;&amp; The agents </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>const std::vector&lt;Agent&lt;Id&gt;&gt;&amp;, The agents </dd></dl>
 
 </div>
 </div>
-<a id="a49051e77e87274796dcefa1d6beb5c78"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a49051e77e87274796dcefa1d6beb5c78">&#9670;&nbsp;</a></span>graph()</h2>
+<a id="ac2eddc5d43aa3e3a7a6a8a057ad7a6cf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac2eddc5d43aa3e3a7a6a8a057ad7a6cf">&#9670;&nbsp;</a></span>evolve() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Id , typename Size &gt; </div>
+template&lt;typename Id , typename Size , typename Delay &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">Size &amp; <a class="el" href="classdsm_1_1Dynamics.html">dsm::Dynamics</a>&lt; Id, Size &gt;::graph </td>
+          <td class="memname">void <a class="el" href="classdsm_1_1Dynamics.html">dsm::Dynamics</a>&lt; Id, Size, Delay &gt;::evolve </td>
+          <td>(</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>reinsert_agents</em> = <code>false</code></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Evolve the simulation. </p>
+<p>Evolve the simulation by moving the agents and updating the travel times. In particular:</p><ul>
+<li>Move the first agent of each street queue, if possible, putting it in the next node</li>
+<li>Move the agents from each node, if possible, putting them in the next street and giving them a speed. If the error probability is not zero, the agents can move to a random street. If the agent is in the destination node, it is removed from the simulation (and then reinserted if reinsert_agents is true)</li>
+<li>Cycle over agents and update their times <dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">reinsert_agents</td><td>If true, the agents are reinserted in the simulation after they reach their destination </td></tr>
+  </table>
+  </dd>
+</dl>
+</li>
+</ul>
+
+</div>
+</div>
+<a id="a98044cdb7f035d58b23f5b5ed3d6acd1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a98044cdb7f035d58b23f5b5ed3d6acd1">&#9670;&nbsp;</a></span>evolve() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Id , typename Size , typename Delay &gt; </div>
+<div class="memtemplate">
+template&lt;typename F , typename... Tn&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">typename Tn <a class="el" href="classdsm_1_1Dynamics.html#ab9d0a67e68cf27810c618046b2a6680e">requires</a> std::is_invocable_v&lt; F, Tn... &gt; void <a class="el" href="classdsm_1_1Dynamics.html">dsm::Dynamics</a>&lt; Id, Size, Delay &gt;::evolve </td>
+          <td>(</td>
+          <td class="paramtype">F&#160;</td>
+          <td class="paramname"><em>f</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Tn...&#160;</td>
+          <td class="paramname"><em>args</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Evolve the simulation. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">F</td><td>The type of the function to call </td></tr>
+    <tr><td class="paramname">...Tn</td><td>The types of the arguments of the function </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">f</td><td>The function to call </td></tr>
+    <tr><td class="paramname">...args</td><td>The arguments of the function </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="aaca095b19606865b51579a9f2ee9b234"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaca095b19606865b51579a9f2ee9b234">&#9670;&nbsp;</a></span>graph()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Id , typename Size , typename Delay &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">Size &amp; <a class="el" href="classdsm_1_1Dynamics.html">dsm::Dynamics</a>&lt; Id, Size, Delay &gt;::graph </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -229,20 +634,20 @@ template&lt;typename Id , typename Size &gt; </div>
 </div><div class="memdoc">
 
 <p>Get the graph. </p>
-<dl class="section return"><dt>Returns</dt><dd>const Graph&lt;Id, Size&gt;&amp; The graph </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>const Graph&lt;Id, Size&gt;&amp;, The graph </dd></dl>
 
 </div>
 </div>
-<a id="ab2fb900ecccea3df506cd69bd7c986fc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab2fb900ecccea3df506cd69bd7c986fc">&#9670;&nbsp;</a></span>itineraries()</h2>
+<a id="ae572254a63a9fe0caeae65e5c8f6313d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae572254a63a9fe0caeae65e5c8f6313d">&#9670;&nbsp;</a></span>itineraries()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Id , typename Size &gt; </div>
+template&lt;typename Id , typename Size , typename Delay &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">const std::vector&lt;shared&lt;<a class="el" href="classdsm_1_1Itinerary.html">Itinerary</a>&lt;Id&gt; &gt; &gt;&amp; <a class="el" href="classdsm_1_1Dynamics.html">dsm::Dynamics</a>&lt; Id, Size &gt;::itineraries </td>
+          <td class="memname">const std::unordered_map&lt;Id, std::unique_ptr&lt;<a class="el" href="classdsm_1_1Itinerary.html">Itinerary</a>&lt;Id&gt; &gt; &gt;&amp; <a class="el" href="classdsm_1_1Dynamics.html">dsm::Dynamics</a>&lt; Id, Size, Delay &gt;::itineraries </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -251,50 +656,464 @@ template&lt;typename Id , typename Size &gt; </div>
 </div><div class="memdoc">
 
 <p>Get the itineraries. </p>
-<dl class="section return"><dt>Returns</dt><dd>const std::vector&lt;Itinerary&lt;Id&gt;&gt;&amp; The itineraries </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>const std::vector&lt;Itinerary&lt;Id&gt;&gt;&amp;, The itineraries </dd></dl>
 
 </div>
 </div>
-<a id="afd018f2aee17fc397919c3c518c4c451"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afd018f2aee17fc397919c3c518c4c451">&#9670;&nbsp;</a></span>setAgents()</h2>
+<a id="a84f2e9f7656f704ea1599dc275c48107"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a84f2e9f7656f704ea1599dc275c48107">&#9670;&nbsp;</a></span>m_evolveAgents()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Id , typename Size &gt; </div>
+template&lt;typename Id , typename Size , typename Delay &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classdsm_1_1Dynamics.html">dsm::Dynamics</a>&lt; Id, Size &gt;::setAgents </td>
+          <td class="memname">void <a class="el" href="classdsm_1_1Dynamics.html">dsm::Dynamics</a>&lt; Id, Size, Delay &gt;::m_evolveAgents </td>
           <td>(</td>
-          <td class="paramtype">const std::vector&lt; <a class="el" href="classdsm_1_1Agent.html">Agent</a>&lt; Id &gt;&gt; &amp;&#160;</td>
-          <td class="paramname"><em>agents</em></td><td>)</td>
+          <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>Set the agents. </p>
-<dl class="params"><dt>Parameters</dt><dd>
+<p>Evolve the agents. </p>
+<p>Puts all new agents on a street, if possible, decrements all delays and increments all travel times. </p>
+
+</div>
+</div>
+<a id="af8335b84663b96c7daf9c667408cc59c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af8335b84663b96c7daf9c667408cc59c">&#9670;&nbsp;</a></span>m_evolveNodes()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Id , typename Size , typename Delay &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classdsm_1_1Dynamics.html">dsm::Dynamics</a>&lt; Id, Size, Delay &gt;::m_evolveNodes </td>
+          <td>(</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>reinsert_agents</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Evolve the nodes. </p>
+<p>If possible, removes all agents from each node, putting them in the next street. If the error probability is not zero, the agents can move to a random street. If the agent is in the destination node, it is removed from the simulation (and then reinserted if reinsert_agents is true) </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">agents</td><td>The agents </td></tr>
+    <tr><td class="paramname">reinsert_agents</td><td>If true, the agents are reinserted in the simulation after they reach their destination </td></tr>
   </table>
   </dd>
 </dl>
 
 </div>
 </div>
-<a id="a723b42376bd009e001ab463b56275d27"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a723b42376bd009e001ab463b56275d27">&#9670;&nbsp;</a></span>setItineraries()</h2>
+<a id="a6496a7873fe94ac7220e60c0b150cb3a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6496a7873fe94ac7220e60c0b150cb3a">&#9670;&nbsp;</a></span>m_evolveStreets()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Id , typename Size &gt; </div>
+template&lt;typename Id , typename Size , typename Delay &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classdsm_1_1Dynamics.html">dsm::Dynamics</a>&lt; Id, Size &gt;::setItineraries </td>
+          <td class="memname">void <a class="el" href="classdsm_1_1Dynamics.html">dsm::Dynamics</a>&lt; Id, Size, Delay &gt;::m_evolveStreets </td>
           <td>(</td>
-          <td class="paramtype">const std::vector&lt; <a class="el" href="classdsm_1_1Itinerary.html">Itinerary</a>&lt; Id &gt;&gt; &amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Evolve the streets. </p>
+<p>If possible, removes the first agent of each street queue, putting it in the destination node. </p>
+
+</div>
+</div>
+<a id="ad589842e58ca1e8949c07ea3c31f837e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad589842e58ca1e8949c07ea3c31f837e">&#9670;&nbsp;</a></span>meanDensity()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Id , typename Size , typename Delay &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">double <a class="el" href="classdsm_1_1Dynamics.html">dsm::Dynamics</a>&lt; Id, Size, Delay &gt;::meanDensity </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get the mean density of the streets. </p>
+<dl class="section return"><dt>Returns</dt><dd>double, The mean density of the streets </dd></dl>
+
+</div>
+</div>
+<a id="a67ef5b638a8c64cd74f3dfa220a652ce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a67ef5b638a8c64cd74f3dfa220a652ce">&#9670;&nbsp;</a></span>meanFlow()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Id , typename Size , typename Delay &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">double <a class="el" href="classdsm_1_1Dynamics.html">dsm::Dynamics</a>&lt; Id, Size, Delay &gt;::meanFlow </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get the mean flow of the streets. </p>
+<dl class="section return"><dt>Returns</dt><dd>double, The mean flow of the streets </dd></dl>
+
+</div>
+</div>
+<a id="ab8dd0a0617d83cebcc99cf7da9a1a804"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab8dd0a0617d83cebcc99cf7da9a1a804">&#9670;&nbsp;</a></span>meanSpeed()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Id , typename Size , typename Delay &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">double <a class="el" href="classdsm_1_1Dynamics.html">dsm::Dynamics</a>&lt; Id, Size, Delay &gt;::meanSpeed </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get the mean speed of the agents. </p>
+<dl class="section return"><dt>Returns</dt><dd>double, The mean speed of the agents </dd></dl>
+
+</div>
+</div>
+<a id="a860fe4fdd0829efa83006c160e8e3876"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a860fe4fdd0829efa83006c160e8e3876">&#9670;&nbsp;</a></span>meanTravelTime()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Id , typename Size , typename Delay &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">double <a class="el" href="classdsm_1_1Dynamics.html">dsm::Dynamics</a>&lt; Id, Size, Delay &gt;::meanTravelTime </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get the mean travel time of the agents. </p>
+<dl class="section return"><dt>Returns</dt><dd>double, The mean travel time of the agents </dd></dl>
+
+</div>
+</div>
+<a id="a2d2fae3da76e39d43ef23ede0b9c2f1e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2d2fae3da76e39d43ef23ede0b9c2f1e">&#9670;&nbsp;</a></span>moveAgent()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Id , typename Size , typename Delay &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="classdsm_1_1Dynamics.html">dsm::Dynamics</a>&lt; Id, Size, Delay &gt;::moveAgent </td>
+          <td>(</td>
+          <td class="paramtype">Size&#160;</td>
+          <td class="paramname"><em>agentId</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Move an agent. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">agentId</td><td>The id of the agent to move </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true If the agent has been moved, false otherwise </dd></dl>
+
+</div>
+</div>
+<a id="a5263eec8314818f852a61de586696352"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5263eec8314818f852a61de586696352">&#9670;&nbsp;</a></span>removeAgent()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Id , typename Size , typename Delay &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classdsm_1_1Dynamics.html">dsm::Dynamics</a>&lt; Id, Size, Delay &gt;::removeAgent </td>
+          <td>(</td>
+          <td class="paramtype">Size&#160;</td>
+          <td class="paramname"><em>agentId</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Remove an agent from the simulation. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">agentId</td><td>the id of the agent to remove </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a4d84796cc1b97f06774203428e680b05"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4d84796cc1b97f06774203428e680b05">&#9670;&nbsp;</a></span>requires() <span class="overload">[1/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Id , typename Size , typename Delay &gt; </div>
+<div class="memtemplate">
+template&lt;typename T1 , typename... Tn&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classdsm_1_1Dynamics.html">dsm::Dynamics</a>&lt; Id, Size, Delay &gt;::requires </td>
+          <td>(</td>
+          <td class="paramtype">is_agent_v&lt; T1 &gt; &amp;&amp;&#160;</td>
+          <td class="paramname">is_agent_v&lt; Tn &gt; &amp;&amp;...</td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Add a pack of agents to the simulation. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">agent,An</td><td>agent </td></tr>
+    <tr><td class="paramname">agents,Parameter</td><td>pack of agents </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ab9d0a67e68cf27810c618046b2a6680e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab9d0a67e68cf27810c618046b2a6680e">&#9670;&nbsp;</a></span>requires() <span class="overload">[2/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Id , typename Size , typename Delay &gt; </div>
+<div class="memtemplate">
+template&lt;typename... Tn&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classdsm_1_1Dynamics.html">dsm::Dynamics</a>&lt; Id, Size, Delay &gt;::requires </td>
+          <td>(</td>
+          <td class="paramtype">is_agent_v&lt; Tn &gt; &amp;&amp;&#160;</td>
+          <td class="paramname"><em>...</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Add a pack of agents to the simulation. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">agents,Parameter</td><td>pack of agents </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a109e6e51999da10bd03dc08ca2bda55c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a109e6e51999da10bd03dc08ca2bda55c">&#9670;&nbsp;</a></span>requires() <span class="overload">[3/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Id , typename Size , typename Delay &gt; </div>
+<div class="memtemplate">
+template&lt;typename T1 , typename... Tn&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classdsm_1_1Dynamics.html">dsm::Dynamics</a>&lt; Id, Size, Delay &gt;::requires </td>
+          <td>(</td>
+          <td class="paramtype">is_itinerary_v&lt; T1 &gt; &amp;&amp;&#160;</td>
+          <td class="paramname">is_itinerary_v&lt; Tn &gt; &amp;&amp;...</td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Add a pack of itineraries. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">T1</td><td></td></tr>
+    <tr><td class="paramname">...Tn</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">itinerary</td><td></td></tr>
+    <tr><td class="paramname">...itineraries</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a5e00a7ef53049c2c8a5ead72bdcaeb8f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5e00a7ef53049c2c8a5ead72bdcaeb8f">&#9670;&nbsp;</a></span>requires() <span class="overload">[4/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Id , typename Size , typename Delay &gt; </div>
+<div class="memtemplate">
+template&lt;typename T1 , typename... Tn&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classdsm_1_1Dynamics.html">dsm::Dynamics</a>&lt; Id, Size, Delay &gt;::requires </td>
+          <td>(</td>
+          <td class="paramtype">std::is_convertible_v&lt; T1, Size &gt; &amp;&amp;&#160;</td>
+          <td class="paramname">std::is_convertible_v&lt; Tn, Size &gt; &amp;&amp;...</td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Remove a pack of agents from the simulation. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">id,the</td><td>id of the first agent to remove </td></tr>
+    <tr><td class="paramname">ids,the</td><td>pack of ides of the agents to remove </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a95544d85b7d1b176763ab90457923180"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a95544d85b7d1b176763ab90457923180">&#9670;&nbsp;</a></span>setAgentSpeed()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Id , typename Size , typename Delay &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void <a class="el" href="classdsm_1_1Dynamics.html">dsm::Dynamics</a>&lt; Id, Size, Delay &gt;::setAgentSpeed </td>
+          <td>(</td>
+          <td class="paramtype">Size&#160;</td>
+          <td class="paramname"><em>agentId</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the speed of an agent. </p>
+<p>This is a pure-virtual function, it must be implemented in the derived classes </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">agentId</td><td>The id of the agent <br  />
+ </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ad683bd08176b43f20aa300eaacefa199"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad683bd08176b43f20aa300eaacefa199">&#9670;&nbsp;</a></span>setErrorProbability()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Id , typename Size , typename Delay &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classdsm_1_1Dynamics.html">dsm::Dynamics</a>&lt; Id, Size, Delay &gt;::setErrorProbability </td>
+          <td>(</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>errorProbability</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Set the error probability. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">errorProbability,The</td><td>error probability </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::invalid_argument,If</td><td>the error probability is not between 0 and 1 </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a504e2a0d5a3028aa408eb8771bdc2752"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a504e2a0d5a3028aa408eb8771bdc2752">&#9670;&nbsp;</a></span>setItineraries()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Id , typename Size , typename Delay &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classdsm_1_1Dynamics.html">dsm::Dynamics</a>&lt; Id, Size, Delay &gt;::setItineraries </td>
+          <td>(</td>
+          <td class="paramtype">std::span&lt; <a class="el" href="classdsm_1_1Itinerary.html">Itinerary</a>&lt; Id &gt;&gt;&#160;</td>
           <td class="paramname"><em>itineraries</em></td><td>)</td>
           <td></td>
         </tr>
@@ -304,23 +1123,85 @@ template&lt;typename Id , typename Size &gt; </div>
 <p>Set the itineraries. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">itineraries</td><td>The itineraries </td></tr>
+    <tr><td class="paramname">itineraries,The</td><td>itineraries </td></tr>
   </table>
   </dd>
 </dl>
 
 </div>
 </div>
-<a id="ad4537a702beb3202cf5018ac56ecf173"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad4537a702beb3202cf5018ac56ecf173">&#9670;&nbsp;</a></span>time()</h2>
+<a id="a46887e5a88c7786a92d1dc22d407fe64"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a46887e5a88c7786a92d1dc22d407fe64">&#9670;&nbsp;</a></span>setMinSpeedRateo()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Id , typename Size &gt; </div>
+template&lt;typename Id , typename Size , typename Delay &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">TimePoint <a class="el" href="classdsm_1_1Dynamics.html">dsm::Dynamics</a>&lt; Id, Size &gt;::time </td>
+          <td class="memname">void <a class="el" href="classdsm_1_1Dynamics.html">dsm::Dynamics</a>&lt; Id, Size, Delay &gt;::setMinSpeedRateo </td>
+          <td>(</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>minSpeedRateo</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Set the minim speed rateo, i.e. the minim speed with respect to the speed limit. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">minSpeedRateo</td><td>The minim speed rateo </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::invalid_argument,If</td><td>the minim speed rateo is not between 0 and 1 </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ae424b81d7e9f6703f28a162256d9fbc1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae424b81d7e9f6703f28a162256d9fbc1">&#9670;&nbsp;</a></span>setSeed()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Id , typename Size , typename Delay &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classdsm_1_1Dynamics.html">dsm::Dynamics</a>&lt; Id, Size, Delay &gt;::setSeed </td>
+          <td>(</td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>seed</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Set the seed for the graph's random number generator. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">seed,The</td><td>seed </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a39a8c7d2ef6e881b204aa46ec13a9020"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a39a8c7d2ef6e881b204aa46ec13a9020">&#9670;&nbsp;</a></span>time()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Id , typename Size , typename Delay &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">TimePoint <a class="el" href="classdsm_1_1Dynamics.html">dsm::Dynamics</a>&lt; Id, Size, Delay &gt;::time </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -329,17 +1210,21 @@ template&lt;typename Id , typename Size &gt; </div>
 </div><div class="memdoc">
 
 <p>Get the time. </p>
-<dl class="section return"><dt>Returns</dt><dd>TimePoint The time </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>TimePoint, The time </dd></dl>
 
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>src/dsm/headers/<a class="el" href="Dynamics_8hpp_source.html">Dynamics.hpp</a></li>
+<li>src/dsm/headers/<a class="el" href="Dynamics_8hpp.html">Dynamics.hpp</a></li>
 </ul>
 </div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>dsm</b></li><li class="navelem"><a class="el" href="classdsm_1_1Dynamics.html">Dynamics</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>

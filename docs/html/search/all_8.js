@@ -1,18 +1,13 @@
 var searchData=
 [
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-  ['max_5fsize_0',['max_size',['../classdsm_1_1SparseMatrix.html#a01ba0d4bb2c3b39bcf1baa39a565d381',1,'dsm::SparseMatrix']]],
-  ['maxspeed_1',['maxSpeed',['../classdsm_1_1Street.html#ac4e212a4d223925f5d3138a7a86b753b',1,'dsm::Street']]]
-=======
-  ['node_27',['Node',['../classdsm_1_1Node.html',1,'dsm::Node&lt; Id &gt;'],['../classdsm_1_1Node.html#a892ce1333095c40e25e5018f33514ae6',1,'dsm::Node::Node(Id id)'],['../classdsm_1_1Node.html#adb1781f3464d8ac34c5f52c90858459c',1,'dsm::Node::Node(Id id, std::pair&lt; double, double &gt; coords)'],['../classdsm_1_1Node.html#a92106f14d03da91df50ab229733f59a5',1,'dsm::Node::Node(Id id, std::pair&lt; double, double &gt; coords, std::queue&lt; Id &gt; queue)']]]
->>>>>>> 88dffe6 (Updated docs)
-=======
-  ['max_5fsize_46',['max_size',['../classdsm_1_1SparseMatrix.html#ad89567696887d9dfbee87795c0c6285d',1,'dsm::SparseMatrix']]],
-  ['maxspeed_47',['maxSpeed',['../classdsm_1_1Street.html#a120a1b309c3922ad12d9eb7539c2d697',1,'dsm::Street']]]
->>>>>>> ebf2eca (Updated docs)
-=======
-  ['max_5fsize_43',['max_size',['../classdsm_1_1SparseMatrix.html#ad89567696887d9dfbee87795c0c6285d',1,'dsm::SparseMatrix']]]
->>>>>>> main
+  ['m_5fevolveagents_60',['m_evolveAgents',['../classdsm_1_1Dynamics.html#a84f2e9f7656f704ea1599dc275c48107',1,'dsm::Dynamics']]],
+  ['m_5fevolvenodes_61',['m_evolveNodes',['../classdsm_1_1Dynamics.html#af8335b84663b96c7daf9c667408cc59c',1,'dsm::Dynamics']]],
+  ['m_5fevolvestreets_62',['m_evolveStreets',['../classdsm_1_1Dynamics.html#a6496a7873fe94ac7220e60c0b150cb3a',1,'dsm::Dynamics']]],
+  ['max_5fsize_63',['max_size',['../classdsm_1_1SparseMatrix.html#ad89567696887d9dfbee87795c0c6285d',1,'dsm::SparseMatrix']]],
+  ['maxspeed_64',['maxSpeed',['../classdsm_1_1Street.html#a120a1b309c3922ad12d9eb7539c2d697',1,'dsm::Street']]],
+  ['meandensity_65',['meanDensity',['../classdsm_1_1Dynamics.html#ad589842e58ca1e8949c07ea3c31f837e',1,'dsm::Dynamics']]],
+  ['meanflow_66',['meanFlow',['../classdsm_1_1Dynamics.html#a67ef5b638a8c64cd74f3dfa220a652ce',1,'dsm::Dynamics']]],
+  ['meanspeed_67',['meanSpeed',['../classdsm_1_1Dynamics.html#ab8dd0a0617d83cebcc99cf7da9a1a804',1,'dsm::Dynamics']]],
+  ['meantraveltime_68',['meanTravelTime',['../classdsm_1_1Dynamics.html#a860fe4fdd0829efa83006c160e8e3876',1,'dsm::Dynamics']]],
+  ['moveagent_69',['moveAgent',['../classdsm_1_1Dynamics.html#a2d2fae3da76e39d43ef23ede0b9c2f1e',1,'dsm::Dynamics']]]
 ];

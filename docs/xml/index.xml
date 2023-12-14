@@ -1,90 +1,145 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
 <doxygenindex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="index.xsd" version="1.9.1" xml:lang="en-US">
   <compound refid="classdsm_1_1Agent" kind="class"><name>dsm::Agent</name>
-    <member refid="classdsm_1_1Agent_1aabe336e28193f6cf7f104091d69692eb" kind="variable"><name>m_itinerary</name></member>
-    <member refid="classdsm_1_1Agent_1ac281b44ab9ad42bfb2e47430855ea8d8" kind="variable"><name>m_speed</name></member>
-    <member refid="classdsm_1_1Agent_1ae0201e983152e87df62487ee807b9270" kind="variable"><name>m_index</name></member>
-    <member refid="classdsm_1_1Agent_1a6f5b623d7204fef47cb2fdbed3a1f3d4" kind="variable"><name>m_streetId</name></member>
-    <member refid="classdsm_1_1Agent_1aac49f33113860319a41d391f64c4e33f" kind="variable"><name>m_nextNodeId</name></member>
+    <member refid="classdsm_1_1Agent_1a8f00d41f211954eafdf905a4cf8dcbf0" kind="variable"><name>m_id</name></member>
+    <member refid="classdsm_1_1Agent_1aadfbfcf7059ec9b288f75775107946c2" kind="variable"><name>m_itineraryId</name></member>
+    <member refid="classdsm_1_1Agent_1ad10c826ae06560b146d78a137dc8dbaf" kind="variable"><name>m_streetId</name></member>
     <member refid="classdsm_1_1Agent_1ae4179c0476ac1f5968d5442125f46315" kind="variable"><name>m_delay</name></member>
+    <member refid="classdsm_1_1Agent_1ac281b44ab9ad42bfb2e47430855ea8d8" kind="variable"><name>m_speed</name></member>
     <member refid="classdsm_1_1Agent_1a23181f51c22c3c8a7ec080c2e3e27ffe" kind="variable"><name>m_time</name></member>
     <member refid="classdsm_1_1Agent_1ac94c574412393bf2a59bed4e4c95c0e9" kind="function"><name>Agent</name></member>
-    <member refid="classdsm_1_1Agent_1aae771dc0e4109cb057293bf152b34489" kind="function"><name>Agent</name></member>
-    <member refid="classdsm_1_1Agent_1a864dd6524080acf49933b4ac74f4895a" kind="function"><name>Agent</name></member>
+    <member refid="classdsm_1_1Agent_1a76fb0ad7b9d9b9e88ae29f06dbb49a19" kind="function"><name>Agent</name></member>
+    <member refid="classdsm_1_1Agent_1ab5fd3a028142f76b7924f37af7569571" kind="function"><name>Agent</name></member>
     <member refid="classdsm_1_1Agent_1aaba67776effa18a8cf83256b7a0f8177" kind="function"><name>setStreetId</name></member>
-    <member refid="classdsm_1_1Agent_1a651f906271fff5bee2f87b358c4921f4" kind="function"><name>setNextNodeId</name></member>
-    <member refid="classdsm_1_1Agent_1aa93ce3ae6fbec47fffd43200b86110f9" kind="function"><name>setItinerary</name></member>
+    <member refid="classdsm_1_1Agent_1a92fa2783b16c81613e53388bb6939d87" kind="function"><name>setItineraryId</name></member>
     <member refid="classdsm_1_1Agent_1a249fa1e43040f68ef09a0e1d60a79f96" kind="function"><name>setSpeed</name></member>
-    <member refid="classdsm_1_1Agent_1a2809ae1bbcbe77633913d43982ea823c" kind="function"><name>setDelay</name></member>
+    <member refid="classdsm_1_1Agent_1a709affadb49e8d82b36e0edcfeba4468" kind="function"><name>incrementDelay</name></member>
+    <member refid="classdsm_1_1Agent_1a583a1fc99ad5b4da977464f16df3b1ab" kind="function"><name>incrementDelay</name></member>
+    <member refid="classdsm_1_1Agent_1a0414e4ebf7cf81b16e083e4b140f0c6f" kind="function"><name>decrementDelay</name></member>
     <member refid="classdsm_1_1Agent_1a13d0562e6acafb866960d717cc4fb670" kind="function"><name>incrementTime</name></member>
     <member refid="classdsm_1_1Agent_1acb90b61b31ae05b50b76de47e20c7bd6" kind="function"><name>incrementTime</name></member>
     <member refid="classdsm_1_1Agent_1acc15634eeaea621bf407f77cc30ac87a" kind="function"><name>resetTime</name></member>
-    <member refid="classdsm_1_1Agent_1ac4658d146f4c3ff7cc9f4a0c9a70078d" kind="function"><name>index</name></member>
-    <member refid="classdsm_1_1Agent_1a3a15a471d6dd1148c8ad494bfd67ca96" kind="function"><name>streetId</name></member>
-    <member refid="classdsm_1_1Agent_1a773795411a700d03a6f45308c75df230" kind="function"><name>nextNodeId</name></member>
-    <member refid="classdsm_1_1Agent_1a830a79ba200b23ba23774f889c673bb0" kind="function"><name>itinerary</name></member>
+    <member refid="classdsm_1_1Agent_1a5fc24bef6738f0ab7dbeb1ebdfc75af6" kind="function"><name>id</name></member>
+    <member refid="classdsm_1_1Agent_1ac88eca519c40306c93ca866e1d8c119c" kind="function"><name>itineraryId</name></member>
+    <member refid="classdsm_1_1Agent_1a92cbda9b84b2ebcb94b44b30ec3231a3" kind="function"><name>streetId</name></member>
     <member refid="classdsm_1_1Agent_1abcf59bb67437986459517ae2bd69f7c1" kind="function"><name>speed</name></member>
     <member refid="classdsm_1_1Agent_1a8109cb7b2f8947f54625a282dee0dc92" kind="function"><name>delay</name></member>
     <member refid="classdsm_1_1Agent_1a36e15a53b1fc48d7a2f2e080baa84ee0" kind="function"><name>time</name></member>
-    <member refid="classdsm_1_1Agent_1a92878f1e2b8d57139cb4dbcd628099d0" kind="function"><name>has_arrived</name></member>
-    <member refid="classdsm_1_1Agent_1acbd6b4311ec9244cd84796d14ef003e0" kind="function"><name>operator++</name></member>
-    <member refid="classdsm_1_1Agent_1a9da679619f66e3ce045ea2d3f5facfa8" kind="function"><name>operator--</name></member>
   </compound>
-  <compound refid="structdsm_1_1is__node" kind="struct"><name>dsm::is_node</name>
+  <compound refid="classdsm_1_1Dynamics" kind="class"><name>dsm::Dynamics</name>
+    <member refid="classdsm_1_1Dynamics_1ae542b0b2c922ddbaf77620d075e12ea3" kind="variable"><name>m_itineraries</name></member>
+    <member refid="classdsm_1_1Dynamics_1a62289a3c2f2fbf7e0d754b9a255e8e4d" kind="variable"><name>m_agents</name></member>
+    <member refid="classdsm_1_1Dynamics_1afe55e00bd1c9e4aad44838b9c936c990" kind="variable"><name>m_time</name></member>
+    <member refid="classdsm_1_1Dynamics_1a9ec3d59e2978d295ec11eba6961be1b6" kind="variable"><name>m_graph</name></member>
+    <member refid="classdsm_1_1Dynamics_1ace9ced4a0e68546ec4749e0f23b4f3db" kind="variable"><name>m_errorProbability</name></member>
+    <member refid="classdsm_1_1Dynamics_1af554b6c2c1f960d494b233ee7797035a" kind="variable"><name>m_minSpeedRateo</name></member>
+    <member refid="classdsm_1_1Dynamics_1ac978d779ea4624c4cec9f84612996fb6" kind="variable"><name>m_generator</name></member>
+    <member refid="classdsm_1_1Dynamics_1ae31a891e1512af4e0b4957f28f87dfad" kind="variable"><name>m_uniformDist</name></member>
+    <member refid="classdsm_1_1Dynamics_1a4154e08332de563f3b5d7f1de7b9642d" kind="variable"><name>m_travelTimes</name></member>
+    <member refid="classdsm_1_1Dynamics_1a2100eaecbeae07b0e4ef5cb77b4d86bf" kind="variable"><name>agents</name></member>
+    <member refid="classdsm_1_1Dynamics_1ac1fdf8dcae5e803dd03dcb92050e95f3" kind="variable"><name>ids</name></member>
+    <member refid="classdsm_1_1Dynamics_1a0ef3652b30be7c90e2653288af1d75f1" kind="variable"><name>itineraries</name></member>
+    <member refid="classdsm_1_1Dynamics_1a6496a7873fe94ac7220e60c0b150cb3a" kind="function"><name>m_evolveStreets</name></member>
+    <member refid="classdsm_1_1Dynamics_1af8335b84663b96c7daf9c667408cc59c" kind="function"><name>m_evolveNodes</name></member>
+    <member refid="classdsm_1_1Dynamics_1a84f2e9f7656f704ea1599dc275c48107" kind="function"><name>m_evolveAgents</name></member>
+    <member refid="classdsm_1_1Dynamics_1a73d71ed25a10d1e2e0ea70f6d7a7c91a" kind="function"><name>Dynamics</name></member>
+    <member refid="classdsm_1_1Dynamics_1a8572f4b8b2bba7d4288d54974a8d5554" kind="function"><name>Dynamics</name></member>
+    <member refid="classdsm_1_1Dynamics_1a504e2a0d5a3028aa408eb8771bdc2752" kind="function"><name>setItineraries</name></member>
+    <member refid="classdsm_1_1Dynamics_1ae424b81d7e9f6703f28a162256d9fbc1" kind="function"><name>setSeed</name></member>
+    <member refid="classdsm_1_1Dynamics_1a46887e5a88c7786a92d1dc22d407fe64" kind="function"><name>setMinSpeedRateo</name></member>
+    <member refid="classdsm_1_1Dynamics_1ad683bd08176b43f20aa300eaacefa199" kind="function"><name>setErrorProbability</name></member>
+    <member refid="classdsm_1_1Dynamics_1a95544d85b7d1b176763ab90457923180" kind="function"><name>setAgentSpeed</name></member>
+    <member refid="classdsm_1_1Dynamics_1ab7f1056b608e79cab06bce0955627309" kind="function"><name>updatePaths</name></member>
+    <member refid="classdsm_1_1Dynamics_1ac2eddc5d43aa3e3a7a6a8a057ad7a6cf" kind="function"><name>evolve</name></member>
+    <member refid="classdsm_1_1Dynamics_1aaca095b19606865b51579a9f2ee9b234" kind="function"><name>graph</name></member>
+    <member refid="classdsm_1_1Dynamics_1ae572254a63a9fe0caeae65e5c8f6313d" kind="function"><name>itineraries</name></member>
+    <member refid="classdsm_1_1Dynamics_1a78400c79a28ad0a85eccebc64e42f4ef" kind="function"><name>agents</name></member>
+    <member refid="classdsm_1_1Dynamics_1a39a8c7d2ef6e881b204aa46ec13a9020" kind="function"><name>time</name></member>
+    <member refid="classdsm_1_1Dynamics_1a5b2994e9266359e688fcaa362665a7ef" kind="function"><name>addAgent</name></member>
+    <member refid="classdsm_1_1Dynamics_1a9fe41197bd8816d70c1ea91f0562a1c7" kind="function"><name>addAgent</name></member>
+    <member refid="classdsm_1_1Dynamics_1ab9d0a67e68cf27810c618046b2a6680e" kind="function"><name>requires</name></member>
+    <member refid="classdsm_1_1Dynamics_1a4d84796cc1b97f06774203428e680b05" kind="function"><name>requires</name></member>
+    <member refid="classdsm_1_1Dynamics_1af94e4ee5e0150cef5743fc29757b333b" kind="function"><name>addAgents</name></member>
+    <member refid="classdsm_1_1Dynamics_1a93b4e45650b44243c8537c3e8f12ef0f" kind="function"><name>addRandomAgents</name></member>
+    <member refid="classdsm_1_1Dynamics_1a5263eec8314818f852a61de586696352" kind="function"><name>removeAgent</name></member>
+    <member refid="classdsm_1_1Dynamics_1a5e00a7ef53049c2c8a5ead72bdcaeb8f" kind="function"><name>requires</name></member>
+    <member refid="classdsm_1_1Dynamics_1a6ec161c6f02718754f67afcfdebed7da" kind="function"><name>addItinerary</name></member>
+    <member refid="classdsm_1_1Dynamics_1a6791cfe3b6f4c79a090d0d8f6cfd424e" kind="function"><name>addItinerary</name></member>
+    <member refid="classdsm_1_1Dynamics_1a3bbbe6a1cc5d090f7e1ff9f304763a8f" kind="function"><name>requires</name></member>
+    <member refid="classdsm_1_1Dynamics_1a109e6e51999da10bd03dc08ca2bda55c" kind="function"><name>requires</name></member>
+    <member refid="classdsm_1_1Dynamics_1ac8cf5f50197e63e78b864ac23ab46179" kind="function"><name>addItineraries</name></member>
+    <member refid="classdsm_1_1Dynamics_1a647fbd791a38d426b5a57ca6bce0df57" kind="function"><name>resetTime</name></member>
+    <member refid="classdsm_1_1Dynamics_1a2d2fae3da76e39d43ef23ede0b9c2f1e" kind="function"><name>moveAgent</name></member>
+    <member refid="classdsm_1_1Dynamics_1a98044cdb7f035d58b23f5b5ed3d6acd1" kind="function"><name>evolve</name></member>
+    <member refid="classdsm_1_1Dynamics_1ab8dd0a0617d83cebcc99cf7da9a1a804" kind="function"><name>meanSpeed</name></member>
+    <member refid="classdsm_1_1Dynamics_1ad589842e58ca1e8949c07ea3c31f837e" kind="function"><name>meanDensity</name></member>
+    <member refid="classdsm_1_1Dynamics_1a67ef5b638a8c64cd74f3dfa220a652ce" kind="function"><name>meanFlow</name></member>
+    <member refid="classdsm_1_1Dynamics_1a860fe4fdd0829efa83006c160e8e3876" kind="function"><name>meanTravelTime</name></member>
   </compound>
-  <compound refid="structdsm_1_1is__node_3_01const_01Node_3_01Id_01_4_01_6_01_4" kind="struct"><name>dsm::is_node&lt; const Node&lt; Id &gt; &amp; &gt;</name>
-  </compound>
-  <compound refid="structdsm_1_1is__node_3_01const_01Node_3_01Id_01_4_01_4" kind="struct"><name>dsm::is_node&lt; const Node&lt; Id &gt; &gt;</name>
-  </compound>
-  <compound refid="structdsm_1_1is__node_3_01Node_3_01Id_01_4_01_4" kind="struct"><name>dsm::is_node&lt; Node&lt; Id &gt; &gt;</name>
-  </compound>
-  <compound refid="structdsm_1_1is__node_3_01shared_3_01Node_3_01Id_01_4_01_4_01_4" kind="struct"><name>dsm::is_node&lt; shared&lt; Node&lt; Id &gt; &gt; &gt;</name>
-  </compound>
-  <compound refid="structdsm_1_1is__numeric" kind="struct"><name>dsm::is_numeric</name>
-  </compound>
-  <compound refid="structdsm_1_1is__numeric_3_01bool_01_4" kind="struct"><name>dsm::is_numeric&lt; bool &gt;</name>
-  </compound>
-  <compound refid="structdsm_1_1is__numeric_3_01char_01_4" kind="struct"><name>dsm::is_numeric&lt; char &gt;</name>
-  </compound>
-  <compound refid="structdsm_1_1is__street" kind="struct"><name>dsm::is_street</name>
-  </compound>
-  <compound refid="structdsm_1_1is__street_3_01const_01Street_3_01Id_00_01Size_01_4_01_6_01_4" kind="struct"><name>dsm::is_street&lt; const Street&lt; Id, Size &gt; &amp; &gt;</name>
-  </compound>
-  <compound refid="structdsm_1_1is__street_3_01const_01Street_3_01Id_00_01Size_01_4_01_4" kind="struct"><name>dsm::is_street&lt; const Street&lt; Id, Size &gt; &gt;</name>
-  </compound>
-  <compound refid="structdsm_1_1is__street_3_01shared_3_01Street_3_01Id_00_01Size_01_4_01_4_01_4" kind="struct"><name>dsm::is_street&lt; shared&lt; Street&lt; Id, Size &gt; &gt; &gt;</name>
-  </compound>
-  <compound refid="structdsm_1_1is__street_3_01Street_3_01Id_00_01Size_01_4_01_4" kind="struct"><name>dsm::is_street&lt; Street&lt; Id, Size &gt; &gt;</name>
+  <compound refid="classdsm_1_1Graph" kind="class"><name>dsm::Graph</name>
+    <member refid="classdsm_1_1Graph_1acbc9b35b05888f4c98154c34c9ea46e9" kind="variable"><name>m_nodes</name></member>
+    <member refid="classdsm_1_1Graph_1a82ddbe1275584645f173db51828d202f" kind="variable"><name>m_streets</name></member>
+    <member refid="classdsm_1_1Graph_1aa0f10644c6e30df6880f0c8c26a111d6" kind="variable"><name>m_adjacency</name></member>
+    <member refid="classdsm_1_1Graph_1acf4e0c9e0a9c4829af9c471b67484e9e" kind="variable"><name>m_nodeMapping</name></member>
+    <member refid="classdsm_1_1Graph_1a8079d61113212b0766215ab8baa9cdd0" kind="function"><name>Graph</name></member>
+    <member refid="classdsm_1_1Graph_1ae94f60ddcb3ead6fc9d3d479509c7d40" kind="function"><name>Graph</name></member>
+    <member refid="classdsm_1_1Graph_1a3006ee4e8a4c7d49102af955c404a06a" kind="function"><name>Graph</name></member>
+    <member refid="classdsm_1_1Graph_1a2852d1d70368f1ecdefefc1119ea9ce6" kind="function"><name>buildAdj</name></member>
+    <member refid="classdsm_1_1Graph_1a71cf39c14d927106258f048c7fbfe0ae" kind="function"><name>importMatrix</name></member>
+    <member refid="classdsm_1_1Graph_1a5b14efd7ae9736a204c809a1f3b50078" kind="function"><name>importOSMNodes</name></member>
+    <member refid="classdsm_1_1Graph_1a11c7843d1ff6062c5355b0d35fb2295a" kind="function"><name>importOSMEdges</name></member>
+    <member refid="classdsm_1_1Graph_1a0770710257a9986a6af48009373e98bb" kind="function"><name>addNode</name></member>
+    <member refid="classdsm_1_1Graph_1ab3f798ef196dcc1011135ac2da68074a" kind="function"><name>addNode</name></member>
+    <member refid="classdsm_1_1Graph_1a4c39c33880325b56f875bdcbb31fef56" kind="function"><name>requires</name></member>
+    <member refid="classdsm_1_1Graph_1aa4ce444e8e46f21cd7140d3a9dfdce6b" kind="function"><name>addNodes</name></member>
+    <member refid="classdsm_1_1Graph_1a9fdbadf03f93c862bdaa2a6c4bf0f389" kind="function"><name>addStreet</name></member>
+    <member refid="classdsm_1_1Graph_1a51bcd5cfd4b2960f2f80e510279dd2dd" kind="function"><name>addStreet</name></member>
+    <member refid="classdsm_1_1Graph_1a4d47b949a69439dda8578ba32f618f9c" kind="function"><name>addStreets</name></member>
+    <member refid="classdsm_1_1Graph_1a493d70ce8c04f995e0cddec19cfaa18c" kind="function"><name>addStreets</name></member>
+    <member refid="classdsm_1_1Graph_1a52dcd5d4731075794981931edd1102a4" kind="function"><name>adjMatrix</name></member>
+    <member refid="classdsm_1_1Graph_1aafee5cedecc1df5574947fe5e9a84fe6" kind="function"><name>nodeSet</name></member>
+    <member refid="classdsm_1_1Graph_1acdf06c4e7e1e3e48eb37eb9ce331640c" kind="function"><name>streetSet</name></member>
+    <member refid="classdsm_1_1Graph_1a63e23423011768496c9ea0c72d3872c2" kind="function"><name>street</name></member>
+    <member refid="classdsm_1_1Graph_1a87a354651a95424efc2600198f286187" kind="function"><name>shortestPath</name></member>
+    <member refid="classdsm_1_1Graph_1a507344b6ee7fc9a8d5d7b441197ad30f" kind="function"><name>shortestPath</name></member>
   </compound>
   <compound refid="classdsm_1_1Itinerary" kind="class"><name>dsm::Itinerary</name>
+    <member refid="classdsm_1_1Itinerary_1a828cf1f5d5ddfa616d15700344c2f751" kind="variable"><name>m_id</name></member>
     <member refid="classdsm_1_1Itinerary_1abff9bd1a883c8d93f044f73bc17ba7f8" kind="variable"><name>m_path</name></member>
     <member refid="classdsm_1_1Itinerary_1ad60cf04c4de8dd879a4788de3759cdb2" kind="variable"><name>m_trip</name></member>
-    <member refid="classdsm_1_1Itinerary_1abe674b77c57bcc3c3cde6a4d95d251f9" kind="function"><name>Itinerary</name></member>
-    <member refid="classdsm_1_1Itinerary_1a3bcef6426d4f397bdd80ae809e4abefa" kind="function"><name>Itinerary</name></member>
-    <member refid="classdsm_1_1Itinerary_1a80b029a98863cbe8faefe1eeb9f01eaa" kind="function"><name>Itinerary</name></member>
-    <member refid="classdsm_1_1Itinerary_1a34476f64330c4b68f18fde47b1cfc196" kind="function"><name>Itinerary</name></member>
-    <member refid="classdsm_1_1Itinerary_1ac10c49a80cf8eafa3d8526562411872e" kind="function"><name>Itinerary</name></member>
+    <member refid="classdsm_1_1Itinerary_1a8e527a2a74c0259ed566bbf38e9a3482" kind="function"><name>Itinerary</name></member>
+    <member refid="classdsm_1_1Itinerary_1af1b29b4a5c63c9b8df62948ba41cbfc1" kind="function"><name>Itinerary</name></member>
+    <member refid="classdsm_1_1Itinerary_1a2b9f5f43674aca06d5da299c4ec356b2" kind="function"><name>Itinerary</name></member>
+    <member refid="classdsm_1_1Itinerary_1a0838fa3a916f5fae7fa78a250846e6f6" kind="function"><name>Itinerary</name></member>
+    <member refid="classdsm_1_1Itinerary_1ae8707d086aa2f0310f1f5d45e4d3dd0e" kind="function"><name>Itinerary</name></member>
     <member refid="classdsm_1_1Itinerary_1a71f1866902c5d3d6144adfd3309aa292" kind="function"><name>setSource</name></member>
     <member refid="classdsm_1_1Itinerary_1a94483f076fcf7e4262e927c819906454" kind="function"><name>setDestination</name></member>
     <member refid="classdsm_1_1Itinerary_1a778a325a4164bd8931faf0eed5cb2960" kind="function"><name>setPath</name></member>
+    <member refid="classdsm_1_1Itinerary_1a5e0685dbaa4fad04c45d6de5cc396dc4" kind="function"><name>id</name></member>
     <member refid="classdsm_1_1Itinerary_1a8ffdda4eb8e51d6c0988cc6b4666b009" kind="function"><name>source</name></member>
     <member refid="classdsm_1_1Itinerary_1ae637abd0e6aa89fa956c732ac601f25f" kind="function"><name>destination</name></member>
     <member refid="classdsm_1_1Itinerary_1ae942a76b5e1ea0b10e83ed458ef58488" kind="function"><name>trip</name></member>
     <member refid="classdsm_1_1Itinerary_1a45a888226ac4d09be5c2c64d903b964e" kind="function"><name>path</name></member>
   </compound>
   <compound refid="classdsm_1_1Node" kind="class"><name>dsm::Node</name>
-    <member refid="classdsm_1_1Node_1a0e4af4b2760e13608a0a4ae313b98fd7" kind="variable"><name>m_queue</name></member>
-    <member refid="classdsm_1_1Node_1a22eda670f2cc65f7ec08d2916de33d35" kind="variable"><name>m_coords</name></member>
-    <member refid="classdsm_1_1Node_1a65e7816217a27bfedbe91e0f866b2c10" kind="variable"><name>m_id</name></member>
-    <member refid="classdsm_1_1Node_1a75d2959b0ca30715dc3086b68aaa6b61" kind="function"><name>Node</name></member>
-    <member refid="classdsm_1_1Node_1a892ce1333095c40e25e5018f33514ae6" kind="function"><name>Node</name></member>
-    <member refid="classdsm_1_1Node_1adb1781f3464d8ac34c5f52c90858459c" kind="function"><name>Node</name></member>
-    <member refid="classdsm_1_1Node_1a92106f14d03da91df50ab229733f59a5" kind="function"><name>Node</name></member>
-    <member refid="classdsm_1_1Node_1acdec7de88a46ad7edc2e561b8e2014a6" kind="function"><name>setCoords</name></member>
-    <member refid="classdsm_1_1Node_1a6337227506949168f1cb561175effa21" kind="function"><name>setQueue</name></member>
-    <member refid="classdsm_1_1Node_1af11c9fd77141a161613842965c62e273" kind="function"><name>id</name></member>
-    <member refid="classdsm_1_1Node_1a95872f94b4428c666566b9dd2855f4e9" kind="function"><name>coords</name></member>
-    <member refid="classdsm_1_1Node_1a99f5fd6d030ac5823e00c5b8c8aff704" kind="function"><name>queue</name></member>
+    <member refid="classdsm_1_1Node_1a124030577c8f404078ed5f6798249098" kind="variable"><name>m_queue</name></member>
+    <member refid="classdsm_1_1Node_1a49cd188fd26c55b797279dbaa3fe199c" kind="variable"><name>m_coords</name></member>
+    <member refid="classdsm_1_1Node_1a95eed9dea5416e53dceb96e07ef33b39" kind="variable"><name>m_id</name></member>
+    <member refid="classdsm_1_1Node_1a7f21a0d23e0b212d3a82ea1c35b7d30c" kind="variable"><name>m_capacity</name></member>
+    <member refid="classdsm_1_1Node_1ad404de042b6678460f480079e9696d32" kind="function"><name>Node</name></member>
+    <member refid="classdsm_1_1Node_1a76d57edf2859550fff5e89f483116ed4" kind="function"><name>Node</name></member>
+    <member refid="classdsm_1_1Node_1ad3893b91bf69128f6ed0afac9b5631d6" kind="function"><name>Node</name></member>
+    <member refid="classdsm_1_1Node_1a22d01d32d994b2e0ba3e052a628229d0" kind="function"><name>Node</name></member>
+    <member refid="classdsm_1_1Node_1a2c641803c500a006e2cca5bf17278e3c" kind="function"><name>setCoords</name></member>
+    <member refid="classdsm_1_1Node_1a32b6910b5b8bd791c4f5d1f066ca02fc" kind="function"><name>setQueue</name></member>
+    <member refid="classdsm_1_1Node_1a358d7185ca6bf337726ca8c1e03028a7" kind="function"><name>setCapacity</name></member>
+    <member refid="classdsm_1_1Node_1a832d6b67db630a3ca9e39759d97d8f87" kind="function"><name>enqueue</name></member>
+    <member refid="classdsm_1_1Node_1ae9b7659124166acf8a004edc32a62d6d" kind="function"><name>dequeue</name></member>
+    <member refid="classdsm_1_1Node_1a556b11a3863cf561bcd7c82612a66047" kind="function"><name>id</name></member>
+    <member refid="classdsm_1_1Node_1a7f004b4856ea1db25fdfc6beff7b553c" kind="function"><name>coords</name></member>
+    <member refid="classdsm_1_1Node_1abf3716ce53146e89b20679728d13c2c8" kind="function"><name>queue</name></member>
+    <member refid="classdsm_1_1Node_1a74af84dd8e2a67c7a79cecf952443e7a" kind="function"><name>capacity</name></member>
+    <member refid="classdsm_1_1Node_1a26f717c9f122173d69aa6734d41f42c3" kind="function"><name>isFull</name></member>
   </compound>
   <compound refid="classdsm_1_1SparseMatrix" kind="class"><name>dsm::SparseMatrix</name>
     <member refid="classdsm_1_1SparseMatrix_1a30d57be7953a27be5644ea4268a9637f" kind="variable"><name>_matrix</name></member>
@@ -103,6 +158,8 @@
     <member refid="classdsm_1_1SparseMatrix_1a33dbc949d34d34a1357fc42db61c15e5" kind="function"><name>erase</name></member>
     <member refid="classdsm_1_1SparseMatrix_1ab90fbdc9bef8a76372794f6c5663e379" kind="function"><name>eraseRow</name></member>
     <member refid="classdsm_1_1SparseMatrix_1a1c2500e9a378261858f9080168cd8a70" kind="function"><name>eraseColumn</name></member>
+    <member refid="classdsm_1_1SparseMatrix_1a7ac8dfc1d51aba4ace05654ae2c9f97f" kind="function"><name>emptyRow</name></member>
+    <member refid="classdsm_1_1SparseMatrix_1a98fac46d4cc33677ca2c7327d42060a6" kind="function"><name>emptyColumn</name></member>
     <member refid="classdsm_1_1SparseMatrix_1a48287852ed2a75ec39a20ba62603965f" kind="function"><name>clear</name></member>
     <member refid="classdsm_1_1SparseMatrix_1a57384e33f75162bf97d464f1a73b7275" kind="function"><name>contains</name></member>
     <member refid="classdsm_1_1SparseMatrix_1ab553af75991a9a071706d9c7442bee42" kind="function"><name>contains</name></member>
@@ -134,21 +191,51 @@
     <member refid="classdsm_1_1SparseMatrix_1a09325308f2fbf11ffbc2b9043f4fb0b9" kind="function"><name>operator+=</name></member>
     <member refid="classdsm_1_1SparseMatrix_1a9ed7c96e2f7cf29f78e5cf9648570ac1" kind="function"><name>operator-=</name></member>
   </compound>
+  <compound refid="classdsm_1_1Street" kind="class"><name>dsm::Street</name>
+    <member refid="classdsm_1_1Street_1a65440345861cd64e77fcf2eaa2abba77" kind="variable"><name>m_queue</name></member>
+    <member refid="classdsm_1_1Street_1a6b4b71fa7703aa69a106cf75c2d10771" kind="variable"><name>m_nodePair</name></member>
+    <member refid="classdsm_1_1Street_1a6cdc2160bf02ac9f27e8cadc26f8432c" kind="variable"><name>m_len</name></member>
+    <member refid="classdsm_1_1Street_1ad4c28d56ff110b5b270deca0b76f9808" kind="variable"><name>m_maxSpeed</name></member>
+    <member refid="classdsm_1_1Street_1abb10ab6ed171be672181caf05b2b6af7" kind="variable"><name>m_id</name></member>
+    <member refid="classdsm_1_1Street_1a2d1ab859347c98ce129d9ac9e5bf7a9a" kind="variable"><name>m_capacity</name></member>
+    <member refid="classdsm_1_1Street_1acc69fee7650697bc899470823a1cc3e7" kind="function"><name>Street</name></member>
+    <member refid="classdsm_1_1Street_1ad183ace25feee24498d00b6e2e28712c" kind="function"><name>Street</name></member>
+    <member refid="classdsm_1_1Street_1a7eb8e689843686638d24e59a018f38f5" kind="function"><name>Street</name></member>
+    <member refid="classdsm_1_1Street_1a9bda54ae6c293805a5c90db6d8b39a98" kind="function"><name>Street</name></member>
+    <member refid="classdsm_1_1Street_1a4cc7e7def70cc54b09be5dc6de2017af" kind="function"><name>setId</name></member>
+    <member refid="classdsm_1_1Street_1a0a2bfe7cd81e3219bad98ed7bdf8d166" kind="function"><name>setCapacity</name></member>
+    <member refid="classdsm_1_1Street_1ab9facb0a77b6c9cf4afe1b03cb0df8d5" kind="function"><name>setLength</name></member>
+    <member refid="classdsm_1_1Street_1a28c410bb588b5afd608f5d2ff8335389" kind="function"><name>setQueue</name></member>
+    <member refid="classdsm_1_1Street_1a114ebccf21e939f040f21319f7670f94" kind="function"><name>setNodePair</name></member>
+    <member refid="classdsm_1_1Street_1a0fc79fe605008a7cdfaece8688465cfd" kind="function"><name>setNodePair</name></member>
+    <member refid="classdsm_1_1Street_1a4b919b2bd61c9d245dab9084ef103cd4" kind="function"><name>setNodePair</name></member>
+    <member refid="classdsm_1_1Street_1a6701eaf29452d2d13cb19f3f7f84a9d3" kind="function"><name>setMaxSpeed</name></member>
+    <member refid="classdsm_1_1Street_1a09f7a3b2f429a8639113c4e97d7f2390" kind="function"><name>id</name></member>
+    <member refid="classdsm_1_1Street_1a309ba56014542a2afc5cf72609aad2a7" kind="function"><name>capacity</name></member>
+    <member refid="classdsm_1_1Street_1a2533c798d8092d339c169e12af96b190" kind="function"><name>length</name></member>
+    <member refid="classdsm_1_1Street_1a7c1ef46483afb407b45570a485553ae3" kind="function"><name>queue</name></member>
+    <member refid="classdsm_1_1Street_1aba9d19bc8c1f4857949e393b7e9072b9" kind="function"><name>nodePair</name></member>
+    <member refid="classdsm_1_1Street_1af1838cc98476a485fa8c3defb86ab779" kind="function"><name>density</name></member>
+    <member refid="classdsm_1_1Street_1a120a1b309c3922ad12d9eb7539c2d697" kind="function"><name>maxSpeed</name></member>
+    <member refid="classdsm_1_1Street_1a11d274321efe2816ac05480f3d48372d" kind="function"><name>enqueue</name></member>
+    <member refid="classdsm_1_1Street_1a4c4aa4b53148d1f0a601284366bb1e9e" kind="function"><name>dequeue</name></member>
+  </compound>
   <compound refid="namespacedsm" kind="namespace"><name>dsm</name>
+    <member refid="Dynamics_8hpp_1ade8d3936688338113419d7f17c157044" kind="typedef"><name>TimePoint</name></member>
     <member refid="Graph_8hpp_1a9d6cb8869a2aa84ad1c1ac8f86d0b947" kind="typedef"><name>shared</name></member>
-    <member refid="Agent_8hpp_1a5fa86e1f15bf514e92a83e9d2060f9b6" kind="variable"><name>Size</name></member>
-    <member refid="is__node_8hpp_1a2ae76a18f0b5f6da24d140c09c084533" kind="variable"><name>is_node_v</name></member>
-    <member refid="is__numeric_8hpp_1a2a5929299d5be1807177ad84f5e40e0c" kind="variable"><name>is_numeric_v</name></member>
-    <member refid="is__street_8hpp_1a5d5a43a3c5eccbfcec2350a43dbc7eb6" kind="variable"><name>is_street_v</name></member>
+    <member refid="Agent_8hpp_1a0320c90f75b8c4b4d54b39296041e96d" kind="variable"><name>Size</name></member>
+    <member refid="Dynamics_8hpp_1a38ac5727a7f6c1603bd40de947358ec4" kind="variable"><name>requires</name></member>
     <member refid="Agent_8hpp_1a76566af5379cba731a8b2ab784c1fec5" kind="function"><name>requires</name></member>
-    <member refid="Agent_8hpp_1a401ed49f59be4b33b75bfdaf90bad862" kind="function"><name>requires</name></member>
-    <member refid="Graph_8hpp_1a6472ddb2ccca86766eef5bb16d5ea151" kind="function"><name>requires</name></member>
-  </compound>
-  <compound refid="namespacestd" kind="namespace"><name>std</name>
-  </compound>
-  <compound refid="dsm_8hpp" kind="file"><name>dsm.hpp</name>
+    <member refid="Dynamics_8hpp_1a93a868d31b91371cea53beac50aff12d" kind="function"><name>requires</name></member>
+    <member refid="Dynamics_8hpp_1aa71a936a940fc40c67e9a7087fd57b66" kind="function"><name>requires</name></member>
+    <member refid="Dynamics_8hpp_1a5e331393237a18af43d72dc0f0e00691" kind="function"><name>requires</name></member>
+    <member refid="Dynamics_8hpp_1a2aef0ff5f14194e920be2a47f6d19664" kind="function"><name>requires</name></member>
+    <member refid="Dynamics_8hpp_1a27ee7d6e7359410f2181f1a9c4faa766" kind="function"><name>requires</name></member>
+    <member refid="Dynamics_8hpp_1a05e72e4d107c2a9781c104fcc6fd8be3" kind="function"><name>requires</name></member>
   </compound>
   <compound refid="Agent_8hpp" kind="file"><name>Agent.hpp</name>
+  </compound>
+  <compound refid="Dynamics_8hpp" kind="file"><name>Dynamics.hpp</name>
   </compound>
   <compound refid="Graph_8hpp" kind="file"><name>Graph.hpp</name>
   </compound>
@@ -160,20 +247,10 @@
   </compound>
   <compound refid="Street_8hpp" kind="file"><name>Street.hpp</name>
   </compound>
-  <compound refid="is__node_8hpp" kind="file"><name>is_node.hpp</name>
-  </compound>
-  <compound refid="is__numeric_8hpp" kind="file"><name>is_numeric.hpp</name>
-  </compound>
-  <compound refid="is__street_8hpp" kind="file"><name>is_street.hpp</name>
-  </compound>
   <compound refid="dir_d0634b18ebbf3f30a60770e3162e8bd8" kind="dir"><name>src/dsm</name>
   </compound>
   <compound refid="dir_5f3c2da6cfa74439aaedc98709fe5cec" kind="dir"><name>src/dsm/headers</name>
   </compound>
   <compound refid="dir_68267d1309a1af8e8297ef4c3efbcdba" kind="dir"><name>src</name>
-  </compound>
-  <compound refid="dir_eeea95d5ca333e1cee1479dad84c0265" kind="dir"><name>src/dsm/utility/TypeTraits</name>
-  </compound>
-  <compound refid="dir_30b8eb66e65756cb0ed7e2a18e7ceca1" kind="dir"><name>src/dsm/utility</name>
   </compound>
 </doxygenindex>

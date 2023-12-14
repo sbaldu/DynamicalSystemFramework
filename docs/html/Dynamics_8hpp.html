@@ -5,10 +5,14 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Dynamical System Framework: src/dsm/headers/Dynamics.hpp File Reference</title>
+<title>Dynamical system model: src/dsm/headers/Dynamics.hpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
@@ -21,7 +25,7 @@
  <tbody>
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">Dynamical System Framework
+   <div id="projectname">Dynamical system model
    </div>
   </td>
  </tr>
@@ -45,6 +49,23 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('Dynamics_8hpp.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -59,16 +80,12 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_d0634b18ebbf3f30a60770e3162e8bd8.html">dsm</a></li><li class="navelem"><a class="el" href="dir_5f3c2da6cfa74439aaedc98709fe5cec.html">headers</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#typedef-members">Typedefs</a> &#124;
-<a href="#func-members">Functions</a>  </div>
+<a href="#func-members">Functions</a> &#124;
+<a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
 <div class="title">Dynamics.hpp File Reference</div>  </div>
 </div><!--header-->
@@ -76,89 +93,81 @@ $(function() {
 
 <p>Defines the Dynamics class.  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &lt;vector&gt;</code><br />
-<code>#include &quot;<a class="el" href="Agent_8hpp_source.html">Agent.hpp</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="Itinerary_8hpp_source.html">Itinerary.hpp</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="Graph_8hpp_source.html">Graph.hpp</a>&quot;</code><br />
-<code>#include &quot;utility/TypeTraits/is_agent.hpp&quot;</code><br />
-<code>#include &quot;utility/TypeTraits/is_itinerary.hpp&quot;</code><br />
-</div><div class="textblock"><div class="dynheader">
-Include dependency graph for Dynamics.hpp:</div>
-<div class="dyncontent">
-<div class="center"><img src="Dynamics_8hpp__incl.png" border="0" usemap="#asrc_2dsm_2headers_2Dynamics_8hpp" alt=""/></div>
-<map name="asrc_2dsm_2headers_2Dynamics_8hpp" id="asrc_2dsm_2headers_2Dynamics_8hpp">
-<area shape="rect" title="Defines the Dynamics class." alt="" coords="1429,5,1656,32"/>
-<area shape="rect" title=" " alt="" coords="337,497,399,524"/>
-<area shape="rect" href="Agent_8hpp.html" title="Defines the Agent class." alt="" coords="1339,259,1427,285"/>
-<area shape="rect" href="Itinerary_8hpp.html" title="Defines the Itinerary class." alt="" coords="1090,341,1193,367"/>
-<area shape="rect" href="Graph_8hpp.html" title="Defines the Graph class." alt="" coords="629,87,718,114"/>
-<area shape="rect" title=" " alt="" coords="1606,80,1735,121"/>
-<area shape="rect" title=" " alt="" coords="1759,80,1889,121"/>
-<area shape="rect" href="SparseMatrix_8hpp.html" title="Defines the SparseMatrix class." alt="" coords="1073,423,1209,449"/>
-<area shape="rect" title=" " alt="" coords="1455,497,1513,524"/>
-<area shape="rect" title=" " alt="" coords="1251,497,1338,524"/>
-<area shape="rect" title=" " alt="" coords="1363,497,1421,524"/>
-<area shape="rect" title=" " alt="" coords="924,333,1065,375"/>
-<area shape="rect" title=" " alt="" coords="795,497,875,524"/>
-<area shape="rect" title=" " alt="" coords="678,423,738,449"/>
-<area shape="rect" title=" " alt="" coords="899,497,979,524"/>
-<area shape="rect" title=" " alt="" coords="1003,497,1079,524"/>
-<area shape="rect" title=" " alt="" coords="1103,497,1227,524"/>
-<area shape="rect" title=" " alt="" coords="195,177,280,203"/>
-<area shape="rect" title=" " alt="" coords="304,177,381,203"/>
-<area shape="rect" title=" " alt="" coords="405,177,472,203"/>
-<area shape="rect" title=" " alt="" coords="496,177,611,203"/>
-<area shape="rect" title=" " alt="" coords="693,341,755,367"/>
-<area shape="rect" title=" " alt="" coords="653,259,745,285"/>
-<area shape="rect" href="Node_8hpp.html" title="Defines the Node class." alt="" coords="545,259,629,285"/>
-<area shape="rect" href="Street_8hpp.html" title="Defines the Street class." alt="" coords="1339,177,1429,203"/>
-<area shape="rect" title=" " alt="" coords="786,177,985,203"/>
-<area shape="rect" title=" " alt="" coords="1008,169,1149,211"/>
-<area shape="rect" title=" " alt="" coords="1173,169,1315,211"/>
-<area shape="rect" title=" " alt="" coords="582,341,669,367"/>
-<area shape="rect" title=" " alt="" coords="1139,259,1213,285"/>
-</map>
-</div>
-</div>
-<p><a href="Dynamics_8hpp_source.html">Go to the source code of this file.</a></p>
-<table class="memberdecls">
+<div class="textblock"><code>#include &lt;algorithm&gt;</code><br />
+<code>#include &lt;concepts&gt;</code><br />
+<code>#include &lt;vector&gt;</code><br />
+<code>#include &lt;random&gt;</code><br />
+<code>#include &lt;span&gt;</code><br />
+<code>#include &lt;string&gt;</code><br />
+<code>#include &lt;numeric&gt;</code><br />
+<code>#include &lt;unordered_map&gt;</code><br />
+<code>#include &lt;iterator&gt;</code><br />
+<code>#include &quot;<a class="el" href="Agent_8hpp.html">Agent.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="Itinerary_8hpp.html">Itinerary.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="Graph_8hpp.html">Graph.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="SparseMatrix_8hpp.html">SparseMatrix.hpp</a>&quot;</code><br />
+<code>#include &quot;../utility/TypeTraits/is_agent.hpp&quot;</code><br />
+<code>#include &quot;../utility/TypeTraits/is_itinerary.hpp&quot;</code><br />
+</div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdsm_1_1Dynamics.html">dsm::Dynamics&lt; Id, Size &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdsm_1_1Dynamics.html">dsm::Dynamics&lt; Id, Size, Delay &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <a class="el" href="classdsm_1_1Dynamics.html" title="The Dynamics class represents the dynamics of the network.">Dynamics</a> class represents the dynamics of the network.  <a href="classdsm_1_1Dynamics.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:a9d6cb8869a2aa84ad1c1ac8f86d0b947"><td class="memTemplParams" colspan="2"><a id="a9d6cb8869a2aa84ad1c1ac8f86d0b947"></a>
-template&lt;typename T &gt; </td></tr>
-<tr class="memitem:a9d6cb8869a2aa84ad1c1ac8f86d0b947"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><b>dsm::shared</b> = std::shared_ptr&lt; T &gt;</td></tr>
-<tr class="separator:a9d6cb8869a2aa84ad1c1ac8f86d0b947"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ade8d3936688338113419d7f17c157044"><td class="memItemLeft" align="right" valign="top"><a id="ade8d3936688338113419d7f17c157044"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>dsm::TimePoint</b> = long long unsigned int</td></tr>
 <tr class="separator:ade8d3936688338113419d7f17c157044"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:afb17e178111f5c33d44692a1bab0909a"><td class="memTemplParams" colspan="2"><a id="afb17e178111f5c33d44692a1bab0909a"></a>
-template&lt;typename Id , typename Size &gt; </td></tr>
-<tr class="memitem:afb17e178111f5c33d44692a1bab0909a"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><b>dsm::requires</b> (std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt;) Dynamics&lt; Id</td></tr>
-<tr class="separator:afb17e178111f5c33d44692a1bab0909a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8b8363e6ff3618e365dcba9feff4f1f5"><td class="memTemplParams" colspan="2"><a id="a8b8363e6ff3618e365dcba9feff4f1f5"></a>
-template&lt;typename Id , typename Size &gt; </td></tr>
-<tr class="memitem:a8b8363e6ff3618e365dcba9feff4f1f5"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><b>dsm::requires</b> (std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt;) template&lt; typename... Tn &gt; requires(is_agent_v&lt; Tn &gt; &amp;&amp;...) void Dynamics&lt; Id</td></tr>
-<tr class="separator:a8b8363e6ff3618e365dcba9feff4f1f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a93a868d31b91371cea53beac50aff12d"><td class="memTemplParams" colspan="2"><a id="a93a868d31b91371cea53beac50aff12d"></a>
+template&lt;typename Id , typename Size , typename Delay &gt; </td></tr>
+<tr class="memitem:a93a868d31b91371cea53beac50aff12d"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><b>dsm::requires</b> (std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt;) Dynamics&lt; Id</td></tr>
+<tr class="separator:a93a868d31b91371cea53beac50aff12d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a76566af5379cba731a8b2ab784c1fec5"><td class="memTemplParams" colspan="2"><a id="a76566af5379cba731a8b2ab784c1fec5"></a>
+template&lt;typename Id , typename Size , typename Delay &gt; </td></tr>
+<tr class="memitem:a76566af5379cba731a8b2ab784c1fec5"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><b>dsm::requires</b> (std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; &amp;&amp;is_numeric_v&lt; Delay &gt;) Agent&lt; Id</td></tr>
+<tr class="separator:a76566af5379cba731a8b2ab784c1fec5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa71a936a940fc40c67e9a7087fd57b66"><td class="memTemplParams" colspan="2"><a id="aa71a936a940fc40c67e9a7087fd57b66"></a>
+template&lt;typename Id , typename Size , typename Delay &gt; </td></tr>
+<tr class="memitem:aa71a936a940fc40c67e9a7087fd57b66"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><b>dsm::requires</b> (std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; &amp;&amp;std::unsigned_integral&lt; Delay &gt;) void Dynamics&lt; Id</td></tr>
+<tr class="separator:aa71a936a940fc40c67e9a7087fd57b66"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5e331393237a18af43d72dc0f0e00691"><td class="memTemplParams" colspan="2"><a id="a5e331393237a18af43d72dc0f0e00691"></a>
+template&lt;typename Id , typename Size , typename Delay &gt; </td></tr>
+<tr class="memitem:a5e331393237a18af43d72dc0f0e00691"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><b>dsm::requires</b> (std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt;) template&lt; typename... Tn &gt; requires(is_agent_v&lt; Tn &gt; &amp;&amp;...) void Dynamics&lt; Id</td></tr>
+<tr class="separator:a5e331393237a18af43d72dc0f0e00691"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2aef0ff5f14194e920be2a47f6d19664"><td class="memItemLeft" align="right" valign="top"><a id="a2aef0ff5f14194e920be2a47f6d19664"></a>
 typename Tn&#160;</td><td class="memItemRight" valign="bottom"><b>dsm::requires</b> (is_agent_v&lt; T1 &gt; &amp;&amp;(is_agent_v&lt; Tn &gt; &amp;&amp;...)) void Dynamics&lt; Id</td></tr>
 <tr class="separator:a2aef0ff5f14194e920be2a47f6d19664"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a27ee7d6e7359410f2181f1a9c4faa766"><td class="memItemLeft" align="right" valign="top"><a id="a27ee7d6e7359410f2181f1a9c4faa766"></a>
+typename Tn&#160;</td><td class="memItemRight" valign="bottom"><b>dsm::requires</b> (std::is_convertible_v&lt; T1, Size &gt; &amp;&amp;(std::is_convertible_v&lt; Tn, Size &gt; &amp;&amp;...)) void Dynamics&lt; Id</td></tr>
+<tr class="separator:a27ee7d6e7359410f2181f1a9c4faa766"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a05e72e4d107c2a9781c104fcc6fd8be3"><td class="memTemplParams" colspan="2"><a id="a05e72e4d107c2a9781c104fcc6fd8be3"></a>
+template&lt;typename Id , typename Size &gt; </td></tr>
+<tr class="memitem:a05e72e4d107c2a9781c104fcc6fd8be3"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><b>dsm::requires</b> (std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt;) void SecondOrderDynamics&lt; Id</td></tr>
+<tr class="separator:a05e72e4d107c2a9781c104fcc6fd8be3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:a38ac5727a7f6c1603bd40de947358ec4"><td class="memTemplParams" colspan="2"><a id="a38ac5727a7f6c1603bd40de947358ec4"></a>
+template&lt;typename Id , typename Size , typename Delay &gt; </td></tr>
+<tr class="memitem:a38ac5727a7f6c1603bd40de947358ec4"><td class="memTemplItemLeft" align="right" valign="top">requires(std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; &amp;&amp;std::unsigned_integral&lt; Delay &gt;) class FirstOrderDynamics&#160;</td><td class="memTemplItemRight" valign="bottom"><b>dsm::requires</b> (std::unsigned_integral&lt; Id &gt; &amp;&amp;std::unsigned_integral&lt; Size &gt; &amp;&amp;std::unsigned_integral&lt; Delay &gt;) FirstOrderDynamics&lt; Id</td></tr>
+<tr class="separator:a38ac5727a7f6c1603bd40de947358ec4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Defines the Dynamics class. </p>
 <p>This file contains the definition of the Dynamics class. The Dynamics class represents the dynamics of the network. It is templated by the type of the graph's id and the type of the graph's capacity. The graph's id and capacity must be unsigned integral types. </p>
 </div></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_d0634b18ebbf3f30a60770e3162e8bd8.html">dsm</a></li><li class="navelem"><a class="el" href="dir_5f3c2da6cfa74439aaedc98709fe5cec.html">headers</a></li><li class="navelem"><a class="el" href="Dynamics_8hpp.html">Dynamics.hpp</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
 </body>
 </html>
