@@ -9,10 +9,10 @@
 
 #include "doctest.h"
 
-using Graph = dsm::Graph<uint16_t, uint16_t>;
-using SparseMatrix = dsm::SparseMatrix<uint16_t, bool>;
-using Street = dsm::Street<uint16_t, uint16_t>;
-using Path = std::vector<uint16_t>;
+using Graph = dsm::Graph<uint, uint>;
+using SparseMatrix = dsm::SparseMatrix<uint, bool>;
+using Street = dsm::Street<uint, uint>;
+using Path = std::vector<uint>;
 
 template <typename T1, typename T2>
 bool checkPath(const std::vector<T1>& path1, const std::vector<T2>& path2) {
@@ -99,13 +99,13 @@ TEST_CASE("Graph") {
     CHECK_FALSE(graph.adjMatrix()->contains(1, 3));
   }
 
-  SUBCASE("importAdj - dsm") {
-    // This tests the importAdj function over .dsm files
+  SUBCASE("importMatrix - dsm") {
+    // This tests the importMatrix function over .dsm files
     // GIVEN: a graph
     // WHEN: we import a .dsm file
     // THEN: the graph's adjacency matrix is the same as the one in the file
     Graph graph{};
-    graph.importAdj("./data/matrix.dsm");
+    graph.importMatrix("./data/matrix.dsm");
     CHECK_EQ(graph.adjMatrix()->max_size(), 9);
     CHECK_EQ(graph.adjMatrix()->getRowDim(), 3);
     CHECK_EQ(graph.adjMatrix()->getColDim(), 3);
@@ -116,14 +116,40 @@ TEST_CASE("Graph") {
     CHECK(graph.nodeSet().size() == 3);
     CHECK(graph.streetSet().size() == 4);
   }
-  SUBCASE("importAdj - EXCEPTIONS") {
-    // This tests the importAdj throws an exception when the file has not the correct format or is not found
+  SUBCASE("importMatrix - raw matrix") {
+    Graph graph{};
+    graph.importMatrix("./data/rawMatrix.txt", false);
+    CHECK_EQ(graph.adjMatrix()->max_size(), 9);
+    CHECK_EQ(graph.adjMatrix()->getRowDim(), 3);
+    CHECK_EQ(graph.adjMatrix()->getColDim(), 3);
+    CHECK(graph.adjMatrix()->operator()(0, 1));
+    CHECK(graph.adjMatrix()->operator()(1, 0));
+    CHECK(graph.adjMatrix()->operator()(1, 2));
+    CHECK(graph.adjMatrix()->operator()(2, 1));
+    CHECK(graph.nodeSet().size() == 3);
+    CHECK(graph.streetSet().size() == 4);
+    CHECK_EQ(graph.streetSet()[1]->length(), 500);
+    CHECK_EQ(graph.streetSet()[3]->length(), 200);
+    CHECK_EQ(graph.streetSet()[5]->length(), 1);
+    CHECK_EQ(graph.streetSet()[7]->length(), 3);
+  }
+  SUBCASE("importMatrix - EXCEPTIONS") {
+    // This tests the importMatrix throws an exception when the file has not the correct format or is not found
     // GIVEN: a graph
     // WHEN: we import a file with a wrong format
     // THEN: an exception is thrown
     Graph graph{};
-    CHECK_THROWS(graph.importAdj("./data/matrix.nogood"));
-    CHECK_THROWS(graph.importAdj("./data/not_found.dsm"));
+    CHECK_THROWS(graph.importMatrix("./data/matrix.nogood"));
+    CHECK_THROWS(graph.importMatrix("./data/not_found.dsm"));
+  }
+  SUBCASE("importOSMNodes and importOSMEdges") {
+    Graph graph{};
+    graph.importOSMNodes("./data/nodes.csv");
+    CHECK_EQ(graph.nodeSet().size(), 25);
+    graph.importOSMEdges("./data/edges.csv");
+    CHECK_EQ(graph.streetSet().size(), 60);
+    graph.buildAdj();
+    CHECK_EQ(graph.adjMatrix()->size(), 60);
   }
 }
 
