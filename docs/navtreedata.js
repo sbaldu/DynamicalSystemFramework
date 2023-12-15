@@ -25,6 +25,13 @@
 var NAVTREE =
 [
   [ "Dynamical system model", "index.html", [
+    [ "DynamicalSystemFramework", "index.html", [
+      [ "Requirements", "index.html#autotoc_md1", null ],
+      [ "installation", "index.html#autotoc_md2", null ],
+      [ "Testing", "index.html#autotoc_md3", null ],
+      [ "Benchmarking", "index.html#autotoc_md4", null ],
+      [ "Citing", "index.html#autotoc_md5", null ]
+    ] ],
     [ "Classes", "annotated.html", [
       [ "Class List", "annotated.html", "annotated_dup" ],
       [ "Class Index", "classes.html", null ],

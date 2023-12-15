@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Dynamical system model: Main Page</title>
+<title>Dynamical system model: DynamicalSystemFramework</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -80,11 +80,36 @@ $(document).ready(function(){initNavTree('index.html',''); initResizable(); });
 </iframe>
 </div>
 
-<div class="header">
+<div class="PageDoc"><div class="header">
   <div class="headertitle">
-<div class="title">Dynamical system model Documentation</div>  </div>
+<div class="title">DynamicalSystemFramework </div>  </div>
 </div><!--header-->
 <div class="contents">
+<div class="textblock"><p><a class="anchor" id="md_README"></a> The aim of this project is to rework the original <a href="https://github.com/Grufoony/TrafficFlowDynamicsModel">Traffic Flow Dynamics Model</a>. This rework consists of a full code rewriting, in order to implement more features (like <em>intersections</em>) and get advantage from the latest C++ updates.</p>
+<h1><a class="anchor" id="autotoc_md1"></a>
+Requirements</h1>
+<p>Right now the project only requires <code>C++20</code> and <code>cmake</code>.</p>
+<h1><a class="anchor" id="autotoc_md2"></a>
+installation</h1>
+<p>The library can be installed using CMake. To do this build it with the commands: </p><div class="fragment"><div class="line">mkdir -p build &amp;&amp; cd build</div>
+<div class="line">cmake ..</div>
+</div><!-- fragment --><p> and then install it with: </p><div class="fragment"><div class="line">sudo make install</div>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md3"></a>
+Testing</h1>
+<p>To compile tests one can run: </p><div class="fragment"><div class="line">cd test</div>
+<div class="line">cmake -B build &amp;&amp; make -C build</div>
+</div><!-- fragment --><p> To run all the tests together use the command: </p><div class="fragment"><div class="line">./dsm_tests.out</div>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md4"></a>
+Benchmarking</h1>
+<p>Some functionalities of the library have been benchmarked in order to assess their efficiency. <br  />
+ The benchmarks are performed using a small toolkit developed by @sbaldu, in order to keep them simple and without needing to rely on large external libraries. <br  />
+ To compile the benchmarks use the commands: </p><div class="fragment"><div class="line">cd benchmark</div>
+<div class="line">cmake -B build &amp;&amp; make -C build</div>
+</div><!-- fragment --><p> To run all the benchmarks together use the command: </p><div class="fragment"><div class="line">for f in ./*.out ; do ./$f ; done</div>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md5"></a>
+Citing</h1>
+<p>```BibTex @misc{DSM, author = {Berselli, Gregorio and Balducci, Simone}, title = {Framework for modelling dynamical complex systems.}, year = {2023}, url = {<a href="https://github.com/sbaldu/DynamicalSystemFramework">https://github.com/sbaldu/DynamicalSystemFramework</a>}, publisher = {GitHub}, howpublished = {\url{<a href="https://github.com/sbaldu/DynamicalSystemFramework">https://github.com/sbaldu/DynamicalSystemFramework</a>}} } </p>
+</div></div><!-- PageDoc -->
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
