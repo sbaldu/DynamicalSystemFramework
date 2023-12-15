@@ -231,7 +231,7 @@ namespace dsm {
   void TrafficLight<Id, Size, Delay>::increaseCounter() {
     if (m_delay.has_value()) {
       ++m_counter;
-      if (m_counter == 2 * m_delay) {
+      if (m_counter == 2 * m_delay - 1) {
         m_counter = 0;
       }
     }
