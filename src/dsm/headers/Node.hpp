@@ -62,13 +62,13 @@ namespace dsm {
     Id dequeue();
 
     /// @brief Get the node's id
-    /// @return Id, The node's id
+    /// @return Id The node's id
     Id id() const;
     /// @brief Get the node's coordinates
     /// @return std::pair<double,, double> A std::pair containing the node's coordinates
     const std::pair<double, double>& coords() const;
     /// @brief Get the node's queue
-    /// @return std::queue<Id>, A std::queue containing the node's queue
+    /// @return std::queue<Id> A std::queue containing the node's queue
     const std::queue<Id>& queue() const;
     /// @brief Get the node's queue capacity
     /// @return Size The node's queue capacity
