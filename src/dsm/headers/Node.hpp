@@ -200,6 +200,7 @@ namespace dsm {
     TrafficLight(Id id);
 
     void setDelay(Delay delay);
+    void setPhase(Delay phase);
     void increaseCounter();
 
     std::optional<Delay> delay() const;
@@ -216,9 +217,14 @@ namespace dsm {
   }
   template <typename Id, typename Size, typename Delay>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
+  void TrafficLight<Id, Size, Delay>::setPhase(Delay phase) {
+    m_counter = phase % m_delay.value();
+  }
+  template <typename Id, typename Size, typename Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
   void TrafficLight<Id, Size, Delay>::increaseCounter() {
     if (m_delay.has_value()) {
-      m_counter++;
+      ++m_counter;
       if (m_counter == m_delay) {
         m_counter = 0;
       }
