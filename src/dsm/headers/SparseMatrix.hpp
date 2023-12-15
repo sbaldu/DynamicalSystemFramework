@@ -140,13 +140,19 @@ namespace dsm {
 
     /// @brief get a row as a row vector
     /// @param index row index
-    /// @return a row vector
+    /// @param keepIndex if true, the index of the elements in the row will be
+    /// the same as the index of the elements in the matrix
+    /// @return a row vector if keepIndex is false, otherwise a matrix with the
+    /// same dimensions as the original matrix
     /// @throw std::out_of_range if the index is out of range
     SparseMatrix getRow(Index index, bool keepIndex = false) const;
 
     /// @brief get a column as a column vector
     /// @param index column index
-    /// @return a column vector
+    /// @param keepIndex if true, the index of the elements in the column will
+    /// be the same as the index of the elements in the matrix
+    /// @return a column vector if keepIndex is false, otherwise a matrix with
+    /// the same dimensions as the original matrix
     /// @throw std::out_of_range if the index is out of range
     SparseMatrix getCol(Index index, bool keepIndex = false) const;
 
@@ -587,14 +593,14 @@ namespace dsm {
   SparseMatrix<Index, double> SparseMatrix<Index, T>::getNormRows() const {
     SparseMatrix<Index, double> normRows(_rows, _cols);
     for (Index index = 0; index < _rows; ++index) {
-      auto row = this->getRow(index);
+      auto row = this->getRow(index, true);
       double sum = 0.;
       for (auto& it : row) {
         sum += std::abs(it.second);
       }
       sum < std::numeric_limits<double>::epsilon() ? sum = 1. : sum = sum;
       for (auto& it : row) {
-        normRows.insert(it.first + index * _cols, it.second / sum);
+        normRows.insert(it.first, it.second / sum);
       }
     }
     return normRows;
@@ -605,14 +611,14 @@ namespace dsm {
   SparseMatrix<Index, double> SparseMatrix<Index, T>::getNormCols() const {
     SparseMatrix<Index, double> normCols(_rows, _cols);
     for (Index index = 0; index < _cols; ++index) {
-      auto col = this->getCol(index);
+      auto col = this->getCol(index, true);
       double sum = 0.;
       for (auto& it : col) {
         sum += std::abs(it.second);
       }
       sum < std::numeric_limits<double>::epsilon() ? sum = 1. : sum = sum;
       for (auto& it : col) {
-        normCols.insert(it.first * _cols + index, it.second / sum);
+        normCols.insert(it.first, it.second / sum);
       }
     }
     return normCols;
