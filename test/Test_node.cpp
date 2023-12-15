@@ -5,6 +5,7 @@
 #include "doctest.h"
 
 using Node = dsm::Node<uint16_t, uint16_t>;
+using TrafficLight = dsm::TrafficLight<uint16_t, uint16_t, uint16_t>;
 
 TEST_CASE("Node") {
   SUBCASE("Constructor") {
@@ -63,5 +64,16 @@ TEST_CASE("Node") {
     node.enqueue(3);
     CHECK_EQ(node.dequeue(), 2);
     CHECK_EQ(node.dequeue(), 3);
+  }
+}
+
+TEST_CASE("TrafficLight") {
+  SUBCASE("Constructor") {
+    /// This tests the constructor that takes an Id.
+    /// GIVEN: An Id
+    /// WHEN: A TrafficLight is constructed
+    /// THEN: The Id is set correctly
+    TrafficLight trafficLight{1};
+    CHECK(trafficLight.id() == 1);
   }
 }

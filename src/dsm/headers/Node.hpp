@@ -13,6 +13,7 @@
 #include <utility>
 #include <string>
 #include <stdexcept>
+#include <optional>
 
 namespace dsm {
   /// @brief The Node class represents a node in the network.
@@ -20,7 +21,7 @@ namespace dsm {
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   class Node {
-  private:
+  protected:
     std::queue<Id> m_queue;
     std::pair<double, double> m_coords;
     Id m_id;
@@ -173,6 +174,8 @@ namespace dsm {
     return m_queue.size() == m_capacity;
   }
 
+
+
   // to be implemented
   /* template <typename Id> */
   /* class Intersection : public Node<Id, Size> { */
@@ -186,11 +189,48 @@ namespace dsm {
   /*   std::function<void()> m_priority; */
   /* }; */
 
-  /* template <typename Id> */
-  /* class TrafficLight : public Node<Id, Size> { */
-  /* private: */
-  /*   std::function<void()> m_priority; */
-  /* }; */
+  template <typename Id, typename Size, typename Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
+  class TrafficLight : public Node<Id, Size> {
+  private:
+    std::optional<Delay> m_delay;
+    Delay m_counter;
+  public:
+    TrafficLight() = default;
+    TrafficLight(Id id);
+
+    void setDelay(Delay delay);
+    void increaseCounter();
+
+    std::optional<Delay> delay() const;
+  };
+
+  template <typename Id, typename Size, typename Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
+  TrafficLight<Id, Size, Delay>::TrafficLight(Id id) : Node<Id, Size>{id}, m_counter{0} {}
+
+  template <typename Id, typename Size, typename Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
+  void TrafficLight<Id, Size, Delay>::setDelay(Delay delay) {
+    m_delay = delay;
+  }
+  template <typename Id, typename Size, typename Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
+  void TrafficLight<Id, Size, Delay>::increaseCounter() {
+    if (m_delay.has_value()) {
+      m_counter++;
+      if (m_counter == m_delay) {
+        m_counter = 0;
+      }
+    }
+  }
+
+  template <typename Id, typename Size, typename Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
+  std::optional<Delay> TrafficLight<Id, Size, Delay>::delay() const {
+    return m_delay;
+  }
+
 };  // namespace dsm
 
 #endif
