@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="dsm_8hpp" kind="file" language="C++">
     <compoundname>dsm.hpp</compoundname>
     <includes refid="Agent_8hpp" local="yes">headers/Agent.hpp</includes>
@@ -8,10 +8,21 @@
     <includes refid="Node_8hpp" local="yes">headers/Node.hpp</includes>
     <includes refid="SparseMatrix_8hpp" local="yes">headers/SparseMatrix.hpp</includes>
     <includes refid="Street_8hpp" local="yes">headers/Street.hpp</includes>
-    <includes refid="HashFunctions_8hpp" local="yes">utility/HashFunctions.hpp</includes>
+    <includes local="yes">utility/HashFunctions.hpp</includes>
     <includes refid="is__node_8hpp" local="yes">utility/TypeTraits/is_node.hpp</includes>
     <includes refid="is__street_8hpp" local="yes">utility/TypeTraits/is_street.hpp</includes>
     <includes refid="is__numeric_8hpp" local="yes">utility/TypeTraits/is_numeric.hpp</includes>
+    <incdepgraph>
+      <node id="2">
+        <label>utility/HashFunctions.hpp</label>
+      </node>
+      <node id="1">
+        <label>src/dsm/dsm.hpp</label>
+        <link refid="dsm_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
     <briefdescription>
     </briefdescription>
     <detaileddescription>

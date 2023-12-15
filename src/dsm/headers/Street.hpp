@@ -39,48 +39,49 @@ namespace dsm {
   public:
     Street() = delete;
     /// @brief Construct a new Street object
-    /// @param index, The street's id
-    /// @param nodePair, The street's node pair
-    Street(Id index, std::pair<Id, Id> nodePair);
+    /// @param id The street's id
+    /// @param nodePair The street's node pair
+    Street(Id id, std::pair<Id, Id> nodePair);
     /// @brief Construct a new Street object
-    /// @param index, The street's id
-    /// @param capacity, The street's capacity
+    /// @param id The street's id
+    /// @param capacity The street's capacity
     /// @param len, The street's length
     /// @param nodePair, The street's node pair
-    Street(Id index, Size capacity, double len, std::pair<Id, Id> nodePair);
+    Street(Id id, Size capacity, double len, std::pair<Id, Id> nodePair);
     /// @brief Construct a new Street object
-    /// @param index, The street's id
-    /// @param capacity, The street's capacity
-    /// @param len, The street's length
-    /// @param maxSpeed, The street's speed limit
-    /// @param nodePair, The street's node pair
-    Street(Id index, Size capacity, double len, double maxSpeed, std::pair<Id, Id> nodePair);
+    /// @param id The street's id
+    /// @param capacity The street's capacity
+    /// @param len The street's length
+    /// @param maxSpeed The street's speed limit
+    /// @param nodePair The street's node pair
+    Street(Id id, Size capacity, double len, double maxSpeed, std::pair<Id, Id> nodePair);
 
     /// @brief Set the street's id
-    /// @param id, The street's id
+    /// @param id The street's id
     void setId(Id id);
     /// @brief Set the street's capacity
-    /// @param capacity, The street's capacity
+    /// @param capacity The street's capacity
     void setCapacity(Size capacity);
     /// @brief Set the street's length
-    /// @param len, The street's length
+    /// @param len The street's length
+    /// @throw std::invalid_argument, If the length is negative
     void setLength(double len);
     /// @brief Set the street's queue
     /// @param queue, The street's queue
     void setQueue(std::queue<Size> queue);
     /// @brief Set the street's node pair
-    /// @param node1, The source node of the street
-    /// @param node2, The destination node of the street
+    /// @param node1 The source node of the street
+    /// @param node2 The destination node of the street
     void setNodePair(Id node1, Id node2);
     /// @brief Set the street's node pair
-    /// @param node1, The source node of the street
-    /// @param node2, The destination node of the street
-    void setNodePair(const Node<Id>& node1, const Node<Id>& node2);
+    /// @param node1 The source node of the street
+    /// @param node2 The destination node of the street
+    void setNodePair(const Node<Id, Size>& node1, const Node<Id, Size>& node2);
     /// @brief Set the street's node pair
-    /// @param pair, The street's node pair
+    /// @param pair The street's node pair
     void setNodePair(std::pair<Id, Id> pair);
     /// @brief Set the street's speed limit
-    /// @param speed, The street's speed limit
+    /// @param speed The street's speed limit
     /// @throw std::invalid_argument, If the speed is negative
     void setMaxSpeed(double speed);
 
@@ -118,23 +119,23 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  Street<Id, Size>::Street(Id index, std::pair<Id, Id> pair)
-      : m_nodePair{std::move(pair)}, m_maxSpeed{30.}, m_id{index}, m_size{0} {}
+  Street<Id, Size>::Street(Id id, std::pair<Id, Id> pair)
+      : m_nodePair{std::move(pair)}, m_maxSpeed{30.}, m_id{id}, m_size{0} {}
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  Street<Id, Size>::Street(Id index, Size capacity, double len, std::pair<Id, Id> nodePair)
+  Street<Id, Size>::Street(Id id, Size capacity, double len, std::pair<Id, Id> nodePair)
       : m_nodePair{std::move(nodePair)},
         m_len{len},
         m_maxSpeed{30.},
-        m_id{index},
+        m_id{id},
         m_size{0},
         m_capacity{capacity} {}
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  Street<Id, Size>::Street(Id index, Size capacity, double len, double maxSpeed, std::pair<Id, Id> nodePair)
-      : m_nodePair{std::move(nodePair)}, m_len{len}, m_id{index}, m_size{0}, m_capacity{capacity} {
+  Street<Id, Size>::Street(Id id, Size capacity, double len, double maxSpeed, std::pair<Id, Id> nodePair)
+      : m_nodePair{std::move(nodePair)}, m_len{len}, m_id{id}, m_size{0}, m_capacity{capacity} {
     this->setMaxSpeed(maxSpeed);
   }
 
@@ -151,6 +152,11 @@ namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Street<Id, Size>::setLength(double len) {
+    if (len < 0.) {
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                           "The length of a street cannot be negative."};
+      throw std::invalid_argument(errorMsg);
+    }
     m_len = len;
   }
   template <typename Id, typename Size>
@@ -165,7 +171,7 @@ namespace dsm {
   }
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Street<Id, Size>::setNodePair(const Node<Id>& node1, const Node<Id>& node2) {
+  void Street<Id, Size>::setNodePair(const Node<Id, Size>& node1, const Node<Id, Size>& node2) {
     m_nodePair = std::make_pair(node1.id(), node2.id());
   }
   template <typename Id, typename Size>
@@ -177,8 +183,8 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Street<Id, Size>::setMaxSpeed(double speed) {
     if (speed < 0.) {
-      std::string errorMsg = "Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                             "The maximum speed of a street cannot be negative.";
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                           "The maximum speed of a street cannot be negative."};
       throw std::invalid_argument(errorMsg);
     }
     m_maxSpeed = speed;
@@ -230,7 +236,7 @@ namespace dsm {
   template <typename Delay>
   void Street<Id, Size>::enqueue(const Agent<Id, Size, Delay>& agent) {
     if (m_size < m_capacity) {
-      m_queue.push(agent.index());
+      m_queue.push(agent.id());
       ++m_size;
     }
   }

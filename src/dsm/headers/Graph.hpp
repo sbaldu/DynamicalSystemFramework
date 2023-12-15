@@ -13,17 +13,21 @@
 #include <concepts>
 #include <limits>
 #include <memory>
+#include <optional>
 #include <ranges>
 #include <unordered_map>
+#include <unordered_set>
 #include <queue>
 #include <type_traits>
 #include <utility>
 #include <string>
 #include <fstream>
+#include <sstream>
 
 #include "Node.hpp"
 #include "SparseMatrix.hpp"
 #include "Street.hpp"
+#include "../utility/DijkstraResult.hpp"
 #include "../utility/TypeTraits/is_node.hpp"
 #include "../utility/TypeTraits/is_street.hpp"
 
@@ -41,9 +45,10 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   class Graph {
   private:
-    std::unordered_map<Id, shared<Node<Id>>> m_nodes;
+    std::unordered_map<Id, shared<Node<Id, Size>>> m_nodes;
     std::unordered_map<Id, shared<Street<Id, Size>>> m_streets;
     shared<SparseMatrix<Id, bool>> m_adjacency;
+    std::unordered_map<Id, Id> m_nodeMapping;
 
   public:
     Graph();
@@ -57,18 +62,29 @@ namespace dsm {
     /// @brief Build the graph's adjacency matrix
     void buildAdj();
 
-    /// @brief Import the graph's adjacency matrix from a file
+    /// @brief Import the graph's adjacency matrix from a file.
+    /// If the file is not of a supported format, it will read the file as a matrix with the first two elements being
+    /// the number of rows and columns and the following elements being the matrix elements.
     /// @param fileName, The name of the file to import the adjacency matrix from.
-    /// @throws std::invalid_argument if the file is not found or the format is not supported
+    /// @param isAdj A boolean value indicating if the file contains the adjacency matrix or the distance matrix.
+    /// @throws std::invalid_argument if the file is not found or invalid
     /// The matrix format is deduced from the file extension. Currently only .dsm files are supported.
-    void importAdj(const std::string& fileName);
+    void importMatrix(const std::string& fileName, bool isAdj = true);
+    /// @brief Import the graph's nodes from a file
+    /// @param fileName The name of the file to import the nodes from.
+    /// @throws std::invalid_argument if the file is not found, invalid or the format is not supported
+    void importOSMNodes(const std::string& fileName);
+    /// @brief Import the graph's streets from a file
+    /// @param fileName The name of the file to import the streets from.
+    /// @throws std::invalid_argument if the file is not found, invalid or the format is not supported
+    void importOSMEdges(const std::string& fileName);
 
     /// @brief Add a node to the graph
     /// @param node, A std::shared_ptr to the node to add
-    void addNode(shared<Node<Id>> node);
+    void addNode(shared<Node<Id, Size>> node);
     /// @brief Add a node to the graph
     /// @param node, A reference to the node to add
-    void addNode(const Node<Id>& node);
+    void addNode(const Node<Id, Size>& node);
 
     template <typename... Tn>
       requires(is_node_v<std::remove_reference_t<Tn>> && ...)
@@ -98,10 +114,22 @@ namespace dsm {
     shared<SparseMatrix<Id, bool>> adjMatrix() const;
     /// @brief Get the graph's node map
     /// @return A std::unordered_map containing the graph's nodes
-    std::unordered_map<Id, shared<Node<Id>>> nodeSet() const;
+    std::unordered_map<Id, shared<Node<Id, Size>>> nodeSet() const;
     /// @brief Get the graph's street map
     /// @return A std::unordered_map containing the graph's streets
     std::unordered_map<Id, shared<Street<Id, Size>>> streetSet() const;
+
+    /// @brief Get the shortest path between two nodes using dijkstra algorithm
+    /// @param source, The source node
+    /// @param destination, The destination node
+    /// @return A DijkstraResult object containing the path and the distance
+    std::optional<DijkstraResult<Id>> shortestPath(const Node<Id, Size>& source,
+                                                   const Node<Id, Size>& destination) const;
+    /// @brief Get the shortest path between two nodes using dijkstra algorithm
+    /// @param source, The source node id
+    /// @param destination, The destination node id
+    /// @return A DijkstraResult object containing the path and the distance
+    std::optional<DijkstraResult<Id>> shortestPath(Id source, Id destination) const;
   };
 
   template <typename Id, typename Size>
@@ -113,7 +141,7 @@ namespace dsm {
   Graph<Id, Size>::Graph(const SparseMatrix<Id, bool>& adj)
       : m_adjacency{make_shared<SparseMatrix<Id, bool>>(adj)} {
     std::ranges::for_each(std::views::iota(0, (int)adj.getColDim()), [this](auto i) -> void {
-      m_nodes.insert(std::make_pair(i, make_shared<Node<Id>>(i)));
+      m_nodes.insert(std::make_pair(i, make_shared<Node<Id, Size>>(i)));
     });
 
     std::ranges::for_each(std::views::iota(0, (int)adj.size()), [this, adj](auto i) -> void {
@@ -131,8 +159,8 @@ namespace dsm {
 
       Id node1 = street->nodePair().first;
       Id node2 = street->nodePair().second;
-      m_nodes.insert(node1, make_shared<Node<Id>>(node1));
-      m_nodes.insert(node2, make_shared<Node<Id>>(node2));
+      m_nodes.insert(node1, make_shared<Node<Id, Size>>(node1));
+      m_nodes.insert(node2, make_shared<Node<Id, Size>>(node2));
     }
 
     buildAdj();
@@ -143,7 +171,7 @@ namespace dsm {
   void Graph<Id, Size>::buildAdj() {
     // find max values in streets node pairs
     const size_t maxNode{m_nodes.size()};
-    m_adjacency->reshape(maxNode);
+    m_adjacency->reshape(maxNode, maxNode);
     for (const auto& street : m_streets) {
       m_adjacency->insert(street.second->nodePair().first, street.second->nodePair().second, true);
     }
@@ -151,22 +179,22 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Graph<Id, Size>::importAdj(const std::string& fileName) {
+  void Graph<Id, Size>::importMatrix(const std::string& fileName, bool isAdj) {
     // check the file extension
     std::string fileExt = fileName.substr(fileName.find_last_of(".") + 1);
     if (fileExt == "dsm") {
-      std::ifstream file(fileName);
+      std::ifstream file{fileName};
       if (!file.is_open()) {
-        std::string errrorMsg =
-            "Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " + "File not found";
-        throw std::invalid_argument(errrorMsg);
+        std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                             "File not found"};
+        throw std::invalid_argument(errorMsg);
       }
       Id rows, cols;
       file >> rows >> cols;
       if (rows != cols) {
-        std::string errrorMsg = "Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ +
-                                ": " + "Adjacency matrix must be square";
-        throw std::invalid_argument(errrorMsg);
+        std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                             "Adjacency matrix must be square"};
+        throw std::invalid_argument(errorMsg);
       }
       m_adjacency = make_shared<SparseMatrix<Id, bool>>(rows, cols);
       // each line has (should have) 3 elements
@@ -177,28 +205,157 @@ namespace dsm {
         m_adjacency->insert(index, val);
         const Id node1{static_cast<Id>(index / rows)};
         const Id node2{static_cast<Id>(index % cols)};
-        m_nodes.insert_or_assign(node1, make_shared<Node<Id>>(node1));
-        m_nodes.insert_or_assign(node2, make_shared<Node<Id>>(node2));
+        m_nodes.insert_or_assign(node1, make_shared<Node<Id, Size>>(node1));
+        m_nodes.insert_or_assign(node2, make_shared<Node<Id, Size>>(node2));
         m_streets.insert_or_assign(index,
                                    make_shared<Street<Id, Size>>(index, std::make_pair(node1, node2)));
+        if (!isAdj) {
+          m_streets[index]->setLength(val);
+        }
       }
     } else {
-      std::string errrorMsg = "Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                              "File extension not supported";
+      // default case: read the file as a matrix with the first two elements being the number of rows and columns and
+      // the following elements being the matrix elements
+      std::ifstream file{fileName};
+      if (!file.is_open()) {
+        std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                             "File not found"};
+        throw std::invalid_argument(errorMsg);
+      }
+      Id rows, cols;
+      file >> rows >> cols;
+      if (rows != cols) {
+        std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                             "Adjacency matrix must be square"};
+        throw std::invalid_argument(errorMsg);
+      }
+      m_adjacency = make_shared<SparseMatrix<Id, bool>>(rows, cols);
+      Id index{0};
+      while (!file.eof()) {
+        double value;
+        file >> value;
+        if (value < 0) {
+          std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                               "Adjacency matrix elements must be positive"};
+          throw std::invalid_argument(errorMsg);
+        }
+        if (value > 0) {
+          m_adjacency->insert(index, true);
+          const Id node1{static_cast<Id>(index / rows)};
+          const Id node2{static_cast<Id>(index % cols)};
+          m_nodes.insert_or_assign(node1, make_shared<Node<Id, Size>>(node1));
+          m_nodes.insert_or_assign(node2, make_shared<Node<Id, Size>>(node2));
+          m_streets.insert_or_assign(index,
+                                     make_shared<Street<Id, Size>>(index, std::make_pair(node1, node2)));
+          if (!isAdj) {
+            m_streets[index]->setLength(value);
+          }
+        }
+        ++index;
+      }
+    }
+  }
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Graph<Id, Size>::importOSMNodes(const std::string& fileName) {
+    std::string fileExt = fileName.substr(fileName.find_last_of(".") + 1);
+    if (fileExt == "csv") {
+      std::ifstream file{fileName};
+      if (!file.is_open()) {
+        std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                              "File not found"};
+        throw std::invalid_argument(errrorMsg);
+      }
+      std::string line;
+      std::getline(file, line);  // skip first line
+      Id nodeIndex{0};
+      while (!file.eof()) {
+        std::getline(file, line);
+        if (line.empty()) {
+          continue;
+        }
+        std::istringstream iss{line};
+        std::string id, lat, lon, highway;
+        // osmid;x;y;highway
+        std::getline(iss, id, ';');
+        std::getline(iss, lat, ';');
+        std::getline(iss, lon, ';');
+        std::getline(iss, highway, ';');
+        Id nodeId{static_cast<Id>(std::stoul(id))};
+        m_nodes.insert_or_assign(
+            nodeIndex,
+            make_shared<Node<Id, Size>>(nodeIndex, std::make_pair(std::stod(lat), std::stod(lon))));
+        m_nodeMapping.emplace(std::make_pair(nodeId, nodeIndex));
+        ++nodeIndex;
+      }
+    } else {
+      std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                            "File extension not supported"};
       throw std::invalid_argument(errrorMsg);
     }
   }
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Graph<Id, Size>::addNode(shared<Node<Id>> node) {
+  void Graph<Id, Size>::importOSMEdges(const std::string& fileName) {
+    std::string fileExt = fileName.substr(fileName.find_last_of(".") + 1);
+    if (fileExt == "csv") {
+      std::ifstream file{fileName};
+      if (!file.is_open()) {
+        std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                              "File not found"};
+        throw std::invalid_argument(errrorMsg);
+      }
+      std::string line;
+      std::getline(file, line);  // skip first line
+      while (!file.eof()) {
+        std::getline(file, line);
+        if (line.empty()) {
+          continue;
+        }
+        std::istringstream iss{line};
+        std::string sourceId, targetId, length, oneway, highway, maxspeed, bridge;
+        // u;v;length;oneway;highway;maxspeed;bridge
+        std::getline(iss, sourceId, ';');
+        std::getline(iss, targetId, ';');
+        std::getline(iss, length, ';');
+        std::getline(iss, oneway, ';');
+        std::getline(iss, highway, ';');
+        std::getline(iss, maxspeed, ';');
+        std::getline(iss, bridge, ';');
+        try {
+          std::stod(maxspeed);
+        } catch (const std::invalid_argument& e) {
+          maxspeed = "30";
+        }
+        Id streetId = std::stoul(sourceId) + std::stoul(targetId) * m_nodes.size();
+        m_streets.insert_or_assign(
+            streetId,
+            make_shared<Street<Id, Size>>(
+                streetId,
+                1,
+                std::stod(maxspeed),
+                std::stod(length),
+                std::make_pair(m_nodeMapping[std::stoul(sourceId)], m_nodeMapping[std::stoul(targetId)])));
+      }
+    } else {
+      std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                            "File extension not supported"};
+      throw std::invalid_argument(errrorMsg);
+    }
+  }
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Graph<Id, Size>::addNode(shared<Node<Id, Size>> node) {
     m_nodes.insert(std::make_pair(node->id(), node));
   }
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Graph<Id, Size>::addNode(const Node<Id>& node) {
-    m_nodes.insert(std::make_pair(node.id(), make_shared<Node<Id>>(node)));
+  void Graph<Id, Size>::addNode(const Node<Id, Size>& node) {
+    m_nodes.insert(std::make_pair(node.id(), make_shared<Node<Id, Size>>(node)));
   }
 
   template <typename Id, typename Size>
@@ -236,8 +393,8 @@ namespace dsm {
     // insert nodes
     const Id node1{street.nodePair().first};
     const Id node2{street.nodePair().second};
-    m_nodes.insert_or_assign(node1, make_shared<Node<Id>>(node1));
-    m_nodes.insert_or_assign(node2, make_shared<Node<Id>>(node2));
+    m_nodes.insert_or_assign(node1, make_shared<Node<Id, Size>>(node1));
+    m_nodes.insert_or_assign(node2, make_shared<Node<Id, Size>>(node2));
   }
 
   template <typename Id, typename Size>
@@ -250,8 +407,8 @@ namespace dsm {
     // insert nodes
     const Id node1{street.nodePair().first};
     const Id node2{street.nodePair().second};
-    m_nodes.insert_or_assign(node1, make_shared<Node<Id>>(node1));
-    m_nodes.insert_or_assign(node2, make_shared<Node<Id>>(node2));
+    m_nodes.insert_or_assign(node1, make_shared<Node<Id, Size>>(node1));
+    m_nodes.insert_or_assign(node2, make_shared<Node<Id, Size>>(node2));
   }
 
   template <typename Id, typename Size>
@@ -271,7 +428,7 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  std::unordered_map<Id, shared<Node<Id>>> Graph<Id, Size>::nodeSet() const {
+  std::unordered_map<Id, shared<Node<Id, Size>>> Graph<Id, Size>::nodeSet() const {
     return m_nodes;
   }
 
@@ -279,6 +436,95 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   std::unordered_map<Id, shared<Street<Id, Size>>> Graph<Id, Size>::streetSet() const {
     return m_streets;
+  }
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  std::optional<DijkstraResult<Id>> Graph<Id, Size>::shortestPath(const Node<Id, Size>& source,
+                                                                  const Node<Id, Size>& destination) const {
+    return dijkstra(source.id(), destination.id());
+  }
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  std::optional<DijkstraResult<Id>> Graph<Id, Size>::shortestPath(Id source, Id destination) const {
+    std::unordered_map<Id, shared<Node<Id, Size>>> unvisitedNodes{m_nodes};
+    if (!unvisitedNodes.contains(source)) {
+      return std::nullopt;
+    }
+
+    const size_t n_nodes{m_nodes.size()};
+    auto adj{*m_adjacency};
+
+    std::unordered_set<Id> visitedNodes;
+    std::vector<std::pair<Id, double>> dist(n_nodes);
+    std::for_each(dist.begin(), dist.end(), [count = 0](auto& element) mutable -> void {
+      element.first = count;
+      element.second = std::numeric_limits<double>::max();
+      ++count;
+    });
+    dist[source] = std::make_pair(source, 0.);
+
+    std::vector<Id> prev(n_nodes);
+    prev[source] = std::numeric_limits<Id>::max();
+    double distance{};
+
+    while (unvisitedNodes.size() != 0) {
+      source = std::min_element(unvisitedNodes.begin(),
+                                unvisitedNodes.end(),
+                                [&dist](const auto& a, const auto& b) -> bool {
+                                  return dist[a.first].second < dist[b.first].second;
+                                })
+                   ->first;
+      distance = dist[source].second;
+      unvisitedNodes.erase(source);
+      visitedNodes.insert(source);
+
+      // if the destination is reached, return the path
+      if (source == destination) {
+        std::vector<Id> path{source};
+        Id previous{source};
+        while (true) {
+          previous = prev[previous];
+          if (previous == std::numeric_limits<Id>::max()) {
+            break;
+          }
+          path.push_back(previous);
+        }
+        std::reverse(path.begin(), path.end());
+        return DijkstraResult<Id>(path, distance);
+      }
+
+      const auto& neighbors{adj.getRow(source)};
+      // if the node is isolated, stop the algorithm
+      if (neighbors.size() == 0) {
+        return std::nullopt;
+      }
+
+      for (const auto& neighbour : neighbors) {
+        // if the node has already been visited, skip it
+        if (visitedNodes.find(neighbour.first) != visitedNodes.end()) {
+          continue;
+        }
+
+        double streetLength{std::find_if(m_streets.cbegin(),
+                                         m_streets.cend(),
+                                         [source, &neighbour](const auto& street) -> bool {
+                                           return street.second->nodePair().first == source &&
+                                                  street.second->nodePair().second == neighbour.first;
+                                         })
+                                ->second->length()};
+        // if current path is shorter than the previous one, update the distance
+        if (streetLength + dist[source].second < dist[neighbour.first].second) {
+          dist[neighbour.first].second = streetLength + dist[source].second;
+          prev[neighbour.first] = source;
+        }
+      }
+
+      adj.emptyColumn(source);
+    }
+
+    return std::nullopt;
   }
 };  // namespace dsm
 
