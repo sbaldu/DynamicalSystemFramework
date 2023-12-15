@@ -174,8 +174,6 @@ namespace dsm {
     return m_queue.size() == m_capacity;
   }
 
-
-
   // to be implemented
   /* template <typename Id> */
   /* class Intersection : public Node<Id, Size> { */
@@ -193,12 +191,14 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
   class TrafficLight : public Node<Id, Size> {
   private:
+    std::pair<Id, Id> m_streetPair;
     std::optional<Delay> m_delay;
     Delay m_counter;
   public:
     TrafficLight() = default;
     TrafficLight(Id id);
 
+    void setStreetPair(std::pair<Id, Id> streetPair);
     void setDelay(Delay delay);
     void setPhase(Delay phase);
     void increaseCounter();
@@ -210,6 +210,11 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
   TrafficLight<Id, Size, Delay>::TrafficLight(Id id) : Node<Id, Size>{id}, m_counter{0} {}
 
+  template <typename Id, typename Size, typename Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
+  void TrafficLight<Id, Size, Delay>::setStreetPair(std::pair<Id, Id> streetPair) {
+    m_streetPair = std::move(streetPair);
+  }
   template <typename Id, typename Size, typename Delay>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
   void TrafficLight<Id, Size, Delay>::setDelay(Delay delay) {
