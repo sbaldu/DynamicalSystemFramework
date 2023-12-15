@@ -381,7 +381,7 @@ TEST_CASE("Dijkstra") {
 
   SUBCASE("equal length") {
     Graph graph{};
-    graph.importMatrix("./data/rawMatrix.dat", false);
+    graph.importMatrix("./data/matrix.dat", false);
     // check correct import
     CHECK_EQ(graph.adjMatrix()->max_size(), 14400);
     CHECK_EQ(graph.adjMatrix()->getRowDim(), 120);
