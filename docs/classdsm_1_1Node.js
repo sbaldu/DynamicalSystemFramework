@@ -13,5 +13,9 @@ var classdsm_1_1Node =
     [ "queue", "classdsm_1_1Node.html#abf3716ce53146e89b20679728d13c2c8", null ],
     [ "setCapacity", "classdsm_1_1Node.html#a358d7185ca6bf337726ca8c1e03028a7", null ],
     [ "setCoords", "classdsm_1_1Node.html#a2c641803c500a006e2cca5bf17278e3c", null ],
-    [ "setQueue", "classdsm_1_1Node.html#a32b6910b5b8bd791c4f5d1f066ca02fc", null ]
+    [ "setQueue", "classdsm_1_1Node.html#a32b6910b5b8bd791c4f5d1f066ca02fc", null ],
+    [ "m_capacity", "classdsm_1_1Node.html#a7f21a0d23e0b212d3a82ea1c35b7d30c", null ],
+    [ "m_coords", "classdsm_1_1Node.html#a49cd188fd26c55b797279dbaa3fe199c", null ],
+    [ "m_id", "classdsm_1_1Node.html#a95eed9dea5416e53dceb96e07ef33b39", null ],
+    [ "m_queue", "classdsm_1_1Node.html#a124030577c8f404078ed5f6798249098", null ]
 ];

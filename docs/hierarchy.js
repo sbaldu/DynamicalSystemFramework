@@ -12,7 +12,9 @@ var hierarchy =
       [ "dsm::is_numeric< T >", "structdsm_1_1is__numeric.html", null ]
     ] ],
     [ "dsm::Itinerary< Id >", "classdsm_1_1Itinerary.html", null ],
-    [ "dsm::Node< Id, Size >", "classdsm_1_1Node.html", null ],
+    [ "dsm::Node< Id, Size >", "classdsm_1_1Node.html", [
+      [ "dsm::TrafficLight< Id, Size, Delay >", "classdsm_1_1TrafficLight.html", null ]
+    ] ],
     [ "dsm::SparseMatrix< Index, T >", "classdsm_1_1SparseMatrix.html", null ],
     [ "dsm::SparseMatrix< Id, bool >", "classdsm_1_1SparseMatrix.html", null ],
     [ "std::true_type", null, [

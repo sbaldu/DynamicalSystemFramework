@@ -76,4 +76,46 @@ TEST_CASE("TrafficLight") {
     TrafficLight trafficLight{1};
     CHECK(trafficLight.id() == 1);
   }
+  SUBCASE("Light cycle") {
+    /// This tests the light cycle.
+    /// GIVEN: A TrafficLight
+    /// WHEN: The light cycle is set
+    /// THEN: The light cycle is set correctly
+    TrafficLight trafficLight{0};
+    trafficLight.setDelay(1);
+    CHECK(trafficLight.isGreen());
+    trafficLight.increaseCounter();
+    CHECK_FALSE(trafficLight.isGreen());
+    trafficLight.increaseCounter();
+    CHECK(trafficLight.isGreen());
+  }
+  SUBCASE("Ligh cycle 2") {
+    /// This tests the light cycle.
+    /// GIVEN: A TrafficLight
+    /// WHEN: The light cycle is set
+    /// THEN: The light cycle is set correctly
+    TrafficLight trafficLight{0};
+    trafficLight.setDelay(2);
+    CHECK(trafficLight.isGreen());
+    trafficLight.increaseCounter();
+    CHECK(trafficLight.isGreen());
+    trafficLight.increaseCounter();
+    CHECK_FALSE(trafficLight.isGreen());
+    trafficLight.increaseCounter();
+    CHECK_FALSE(trafficLight.isGreen());
+    trafficLight.increaseCounter();
+    CHECK(trafficLight.isGreen());
+  }
+  SUBCASE("Phase") {
+    /// This tests the phase.
+    /// GIVEN: A TrafficLight
+    /// WHEN: The phase is set
+    /// THEN: The phase is set correctly
+    TrafficLight trafficLight{0};
+    trafficLight.setDelay(5);
+    trafficLight.setPhase(5);
+    CHECK(trafficLight.isGreen());
+    trafficLight.setPhase(7);
+    CHECK_FALSE(trafficLight.isGreen());
+  }
 }

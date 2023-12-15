@@ -4,6 +4,7 @@ var annotated_dup =
       [ "Agent", "classdsm_1_1Agent.html", "classdsm_1_1Agent" ],
       [ "Itinerary", "classdsm_1_1Itinerary.html", "classdsm_1_1Itinerary" ],
       [ "Node", "classdsm_1_1Node.html", "classdsm_1_1Node" ],
+      [ "TrafficLight", "classdsm_1_1TrafficLight.html", "classdsm_1_1TrafficLight" ],
       [ "SparseMatrix", "classdsm_1_1SparseMatrix.html", "classdsm_1_1SparseMatrix" ],
       [ "DijkstraResult", "classdsm_1_1DijkstraResult.html", "classdsm_1_1DijkstraResult" ],
       [ "is_node", "structdsm_1_1is__node.html", null ],

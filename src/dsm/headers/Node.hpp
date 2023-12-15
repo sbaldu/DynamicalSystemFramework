@@ -196,14 +196,33 @@ namespace dsm {
     Delay m_counter;
   public:
     TrafficLight() = default;
+    /// @brief Construct a new TrafficLight object
+    /// @param id The node's id
     TrafficLight(Id id);
 
+    /// @brief Set the node's street pair
+    /// @param streetPair A std::pair containing the node's street pair
+    /// @details These streets are the ones to which the traffic light isGreen is associated
     void setStreetPair(std::pair<Id, Id> streetPair);
+    /// @brief Set the node's delay
+    /// @param delay The node's delay
     void setDelay(Delay delay);
+    /// @brief Set the node's phase
+    /// @param phase The node's phase
+    /// @throw std::runtime_error if the delay is not set
     void setPhase(Delay phase);
+    /// @brief Increase the node's counter
+    /// @details This function is used to increase the node's counter
+    ///          when the simulation is running. It automatically resets the counter
+    ///          when it reaches the double of the delay value.
+    /// @throw std::runtime_error if the delay is not set
     void increaseCounter();
 
+    /// @brief Get the node's delay
+    /// @return std::optional<Delay> The node's delay
     std::optional<Delay> delay() const;
+    /// @brief Returns true if the traffic light is green
+    /// @return bool True if the traffic light is green
     bool isGreen() const;
   };
 
@@ -224,16 +243,24 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
   void TrafficLight<Id, Size, Delay>::setPhase(Delay phase) {
-    m_counter = phase % m_delay.value();
+    if (!m_delay.has_value()) {
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                           "TrafficLight's delay is not set"};
+      throw std::runtime_error(errorMsg);
+    }
+    phase == 0 ? m_counter = 0 : m_counter = m_delay.value() % phase;
   }
   template <typename Id, typename Size, typename Delay>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
   void TrafficLight<Id, Size, Delay>::increaseCounter() {
-    if (m_delay.has_value()) {
-      ++m_counter;
-      if (m_counter == 2 * m_delay - 1) {
-        m_counter = 0;
-      }
+    if (!m_delay.has_value()) {
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                           "TrafficLight's delay is not set"};
+      throw std::runtime_error(errorMsg);
+    }
+    ++m_counter;
+    if (m_counter == 2 * m_delay.value()) {
+      m_counter = 0;
     }
   }
 
