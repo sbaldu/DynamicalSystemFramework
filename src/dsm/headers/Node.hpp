@@ -204,6 +204,7 @@ namespace dsm {
     void increaseCounter();
 
     std::optional<Delay> delay() const;
+    bool isGreen() const;
   };
 
   template <typename Id, typename Size, typename Delay>
@@ -230,7 +231,7 @@ namespace dsm {
   void TrafficLight<Id, Size, Delay>::increaseCounter() {
     if (m_delay.has_value()) {
       ++m_counter;
-      if (m_counter == m_delay) {
+      if (m_counter == 2 * m_delay) {
         m_counter = 0;
       }
     }
@@ -240,6 +241,11 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
   std::optional<Delay> TrafficLight<Id, Size, Delay>::delay() const {
     return m_delay;
+  }
+  template <typename Id, typename Size, typename Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
+  bool TrafficLight<Id, Size, Delay>::isGreen() const {
+    return m_counter < m_delay;
   }
 
 };  // namespace dsm
