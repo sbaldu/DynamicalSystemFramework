@@ -50,11 +50,11 @@ namespace dsm {
     shared<SparseMatrix<Id, bool>> m_adjacency;
     std::unordered_map<Id, Id> m_nodeMapping;
 
-	/// @brief A struct containing information about a node
-	/// @details This struct is used in the dijkstra algorithm to store information about a node
-	/// @param id, The node's id
-	/// @param previous, The id of the previous node in the shortest path
-	/// @param distance, The shortest distance from the source node
+    /// @brief A struct containing information about a node
+    /// @details This struct is used in the dijkstra algorithm to store information about a node
+    /// @param id, The node's id
+    /// @param previous, The id of the previous node in the shortest path
+    /// @param distance, The shortest distance from the source node
     struct NodeInfo {
       Id id;
       Id previous;
