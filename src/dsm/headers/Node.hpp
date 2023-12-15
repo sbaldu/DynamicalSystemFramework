@@ -194,6 +194,7 @@ namespace dsm {
     std::pair<Id, Id> m_streetPair;
     std::optional<Delay> m_delay;
     Delay m_counter;
+
   public:
     TrafficLight() = default;
     /// @brief Construct a new TrafficLight object
