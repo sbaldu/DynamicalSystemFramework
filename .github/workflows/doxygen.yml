@@ -1,0 +1,10 @@
+name: Doxygen Action
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+uses: mattnotmitt/doxygen-action@1.9.5
+            
