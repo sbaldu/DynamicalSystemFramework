@@ -27,7 +27,8 @@ jobs:
         
       - name: Commit and Push
         run: |
-          git checkout -b main
+          git checkout main
           git add .
-          git commit -m "Deploy documentation"
+          git commit -m "Update documentation"
           git push --force origin main
+
