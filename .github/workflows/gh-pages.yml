@@ -1,0 +1,33 @@
+name: GitHub Pages
+
+on:
+  push:
+    branches: [ "main" ]
+
+
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Build Doxygen Documentation
+        run: |
+          sudo apt-get install doxygen
+          sudo apt-get install graphviz
+          doxygen Doxyfile
+
+      - name: Set up git
+        run: |
+          git config --global user.name "${GITHUB_ACTOR}"
+          git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+        
+      - name: Commit and Push
+        run: |
+          git checkout -b main
+          git add .
+          git commit -m "Deploy documentation"
+          git push --force origin main
