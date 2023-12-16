@@ -3,8 +3,6 @@ name: GitHub Pages
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
 
 
 
@@ -29,7 +27,7 @@ jobs:
         
       - name: Commit and Push
         run: |
-          git checkout -b gh-pages
+          git checkout -b main
           git add .
           git commit -m "Deploy documentation"
-          git push --force origin gh-pages
+          git push --force origin main
