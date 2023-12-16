@@ -29,6 +29,8 @@ jobs:
         
       - name: Commit and Push
         run: |
+          git remote rm origin
+          git remote add origin https://github.com/sbaldu/DynamicalSystemFramework.git
           git checkout -b gh-pages
           git add .
           git commit -m "Deploy documentation"
