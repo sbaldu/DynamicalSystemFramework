@@ -22,9 +22,17 @@ jobs:
           sudo apt-get install graphviz
           doxygen Doxyfile
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./
+      - name: Set up git
+        run: |
+          git config --global user.name "${GITHUB_ACTOR}"
+          git config --global user.email "${
+          GITHUB_ACTOR
+          }@users.noreply.github.com"
+        
+      - name: Commit and Push
+        run: |
+          git checkout -b gh-pages
+          git add .
+          git commit -m "Deploy documentation"
+          git push --force origin gh-pages
 ```
