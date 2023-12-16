@@ -35,4 +35,3 @@ jobs:
           git add .
           git commit -m "Deploy documentation"
           git push --force origin gh-pages
-```
