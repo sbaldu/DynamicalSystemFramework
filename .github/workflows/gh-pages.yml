@@ -14,6 +14,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: Switch to gh-pages branch and rebase
+        run: |
+          git fetch
+          git checkout gh-pages
+          git reset --hard main
+
       - name: Build Doxygen Documentation
         run: |
           sudo apt-get install doxygen
@@ -27,7 +33,6 @@ jobs:
         
       - name: Commit and Push
         run: |
-          git checkout -b main
-          git add .
-          git commit -m "Deploy documentation"
-          git push --force origin main
+          git add ./docs
+          git commit -m "Auto-deploy documentation"
+          git push --force
