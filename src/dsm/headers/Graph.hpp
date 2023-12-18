@@ -471,8 +471,8 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  std::optional<DijkstraResult<Id>> Graph<Id, Size>::shortestPath(const Node<Id>& source,
-                                                                  const Node<Id>& destination) const {
+  std::optional<DijkstraResult<Id>> Graph<Id, Size>::shortestPath(const Node<Id, Size>& source,
+                                                                  const Node<Id, Size>& destination) const {
     return dijkstra(source.id(), destination.id());
   }
 

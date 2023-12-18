@@ -16,7 +16,7 @@ using Itineary = dsm::Itinerary<uint16_t>;
 
 TEST_CASE("Dynamics") {
     auto graph = Graph{};
-    graph.importAdj("./data/matrix.dsm");
+    graph.importMatrix("./data/matrix.dsm", true);
     SUBCASE("Constructor") {
         /// GIVEN: a graph
         /// WHEN: we create a dynamics object
@@ -34,7 +34,7 @@ TEST_CASE("Dynamics") {
         /// WHEN: we add a random agent to the dynamics
         /// THEN: the agent has the same itineary
         Dynamics dynamics(graph);
-        Itineary itineary{0, 2};
+        Itineary itineary{0, 0, 2};
         dynamics.addItinerary(itineary);
         dynamics.addRandomAgents(1);
         CHECK(dynamics.agents().size() == 1);
@@ -47,18 +47,18 @@ TEST_CASE("Dynamics") {
         /// THEN: the number of agents is the same as the number of itineraries
         Dynamics dynamics(graph);
         dynamics.setSeed(69);
-        Itineary itineary{0, 2}, itineary2{1, 2}, itineary3{0, 1};
+        Itineary itineary{0, 0, 2}, itineary2{1, 1, 2}, itineary3{2, 0, 1};
         dynamics.addItinerary(itineary);
         dynamics.addItinerary(itineary2);
         dynamics.addItinerary(itineary3);
         dynamics.addRandomAgents(3);
         CHECK(dynamics.agents().size() == 3);
-        CHECK(dynamics.agents()[0]->itinerary().source() == itineary2.source());
-        CHECK(dynamics.agents()[0]->itinerary().destination() == itineary2.destination());
-        CHECK(dynamics.agents()[1]->itinerary().source() == itineary.source());
-        CHECK(dynamics.agents()[1]->itinerary().destination() == itineary.destination());
-        CHECK(dynamics.agents()[2]->itinerary().source() == itineary3.source());
-        CHECK(dynamics.agents()[2]->itinerary().destination() == itineary3.destination());
+        CHECK(dynamics.agents()[0]->itineraryId().source() == itineary2.source());
+        CHECK(dynamics.agents()[0]->itineraryId().destination() == itineary2.destination());
+        CHECK(dynamics.agents()[1]->itineraryId().source() == itineary.source());
+        CHECK(dynamics.agents()[1]->itineraryId().destination() == itineary.destination());
+        CHECK(dynamics.agents()[2]->itineraryId().source() == itineary3.source());
+        CHECK(dynamics.agents()[2]->itineraryId().destination() == itineary3.destination());
     }
     SUBCASE("AddRandomAgents - exceptions") {
         /// GIVEN: a dynamics object
