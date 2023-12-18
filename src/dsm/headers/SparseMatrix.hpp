@@ -472,8 +472,8 @@ namespace dsm {
   }
 
   template <typename Index, typename T>
-    requires std::unsigned_integral<Index> bool
-  SparseMatrix<Index, T>::contains(Index i, Index j) const {
+    requires std::unsigned_integral<Index>
+  bool SparseMatrix<Index, T>::contains(Index i, Index j) const {
     if (i >= _rows || j >= _cols) {
       std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
                            "Index out of range"};
@@ -483,8 +483,8 @@ namespace dsm {
   }
 
   template <typename Index, typename T>
-    requires std::unsigned_integral<Index> bool
-  SparseMatrix<Index, T>::contains(Index const index) const {
+    requires std::unsigned_integral<Index>
+  bool SparseMatrix<Index, T>::contains(Index const index) const {
     if (index > _rows * _cols - 1) {
       std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
                            "Index out of range"};

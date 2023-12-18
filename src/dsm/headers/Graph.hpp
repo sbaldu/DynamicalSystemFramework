@@ -458,12 +458,11 @@ namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   std::optional<shared<Street<Id, Size>>> Graph<Id, Size>::street(Id source, Id destination) {
-    auto streetIt = std::find_if(m_streets.begin(),
-                                 m_streets.end(),
-                                 [source, destination](const auto& street) -> bool {
-                                   return street.second->nodePair().first == source &&
-                                          street.second->nodePair().second == destination;
-                                 });
+    auto streetIt =
+        std::find_if(m_streets.begin(), m_streets.end(), [source, destination](const auto& street) -> bool {
+          return street.second->nodePair().first == source &&
+                 street.second->nodePair().second == destination;
+        });
     if (streetIt == m_streets.end()) {
       return std::nullopt;
     }
