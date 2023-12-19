@@ -393,6 +393,7 @@ TEST_CASE("Dijkstra") {
     CHECK_EQ(street2->length(), 1.);
     CHECK_EQ(street2->capacity(), 1);
     CHECK(!graph.street(1, 0).has_value());
+  }
 
   SUBCASE("equal length") {
     Graph graph{};

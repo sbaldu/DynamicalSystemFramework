@@ -365,7 +365,7 @@ namespace dsm {
       Size itineraryIndex{itineraryDist(m_generator)};
       auto& itinerary{*m_itineraries[itineraryIndex]};
       this->addAgent(
-          Agent<Id, Size, Delay>{static_cast<Size>(m_agents.size()), itinerary.source(), itinerary});
+          Agent<Id, Size, Delay>{static_cast<Size>(m_agents.size()), itinerary.source()});
     }
   }
 

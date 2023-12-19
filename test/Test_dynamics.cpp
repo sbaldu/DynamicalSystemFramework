@@ -38,8 +38,8 @@ TEST_CASE("Dynamics") {
         dynamics.addItinerary(itineary);
         dynamics.addRandomAgents(1);
         CHECK(dynamics.agents().size() == 1);
-        CHECK(dynamics.agents()[0]->itinerary().source() == itineary.source());
-        CHECK(dynamics.agents()[0]->itinerary().destination() == itineary.destination());
+        CHECK(dynamics.itineraries()[dynamics.agents()[0]->itineraryId()]->source() == itineary.source());
+        CHECK(dynamics.itineraries()[dynamics.agents()[0]->itineraryId()]->destination() == itineary.destination());
     }
     SUBCASE("AddRandomAgents with many itineraries") {
         /// GIVEN: a dynamics object
@@ -53,12 +53,12 @@ TEST_CASE("Dynamics") {
         dynamics.addItinerary(itineary3);
         dynamics.addRandomAgents(3);
         CHECK(dynamics.agents().size() == 3);
-        CHECK(dynamics.agents()[0]->itineraryId().source() == itineary2.source());
-        CHECK(dynamics.agents()[0]->itineraryId().destination() == itineary2.destination());
-        CHECK(dynamics.agents()[1]->itineraryId().source() == itineary.source());
-        CHECK(dynamics.agents()[1]->itineraryId().destination() == itineary.destination());
-        CHECK(dynamics.agents()[2]->itineraryId().source() == itineary3.source());
-        CHECK(dynamics.agents()[2]->itineraryId().destination() == itineary3.destination());
+        CHECK(dynamics.itineraries()[dynamics.agents()[0]->itineraryId()]->source() == itineary2.source());
+        CHECK(dynamics.itineraries()[dynamics.agents()[0]->itineraryId()]->destination() == itineary2.destination());
+        CHECK(dynamics.itineraries()[dynamics.agents()[1]->itineraryId()]->source() == itineary.source());
+        CHECK(dynamics.itineraries()[dynamics.agents()[1]->itineraryId()]->destination() == itineary.destination());
+        CHECK(dynamics.itineraries()[dynamics.agents()[2]->itineraryId()]->source() == itineary3.source());
+        CHECK(dynamics.itineraries()[dynamics.agents()[2]->itineraryId()]->destination() == itineary3.destination());
     }
     SUBCASE("AddRandomAgents - exceptions") {
         /// GIVEN: a dynamics object
@@ -78,7 +78,7 @@ TEST_CASE("Dynamics") {
         graph2.addStreets(s1, s2, s3);
         graph2.buildAdj();
         Dynamics dynamics{graph2};
-        Itineary itinerary{0, 2};
+        Itineary itinerary{0, 0, 2};
         dynamics.addItinerary(itinerary);
         dynamics.updatePaths();
         CHECK_EQ(dynamics.itineraries().size(), 1);
@@ -96,7 +96,7 @@ TEST_CASE("Dynamics") {
         graph2.addStreets(s1, s2, s3, s4);
         graph2.buildAdj();
         Dynamics dynamics{graph2};
-        Itineary itinerary{0, 2};
+        Itineary itinerary{0, 0, 2};
         dynamics.addItinerary(itinerary);
         dynamics.updatePaths();
         CHECK_EQ(dynamics.itineraries().size(), 1);
