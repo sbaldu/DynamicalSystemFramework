@@ -1,9 +1,34 @@
 var indexSectionsWithContent =
 {
+<<<<<<< HEAD
   0: "abcdegilmnopqrstu",
   1: "adgins",
   2: "adgins",
   3: "abcdegilmnopqrstu"
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+  0: "abcdegilmnopqrst",
+  1: "agins",
+  2: "abcdegilmnopqrst"
+=======
+  0: "abcdegimnopqrst",
+  1: "ains",
+  2: "abcdegimnopqrst"
+>>>>>>> 88dffe6 (Updated docs)
+=======
+  0: "abcdegilmnopqrst",
+  1: "adgins",
+  2: "adgins",
+  3: "abcdegilmnopqrst"
+>>>>>>> ebf2eca (Updated docs)
+=======
+  0: "abcdeghimnopqrst",
+  1: "ains",
+  2: "abcdeghimnopqrst"
+>>>>>>> main
+>>>>>>> main
 };
 
 var indexSectionNames =

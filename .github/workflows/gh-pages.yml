@@ -1,0 +1,38 @@
+name: GitHub Pages
+
+on:
+  push:
+    branches: [ "main" ]
+
+
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Switch to gh-pages branch and rebase
+        run: |
+          git fetch
+          git checkout gh-pages
+          git reset --hard main
+
+      - name: Build Doxygen Documentation
+        run: |
+          sudo apt-get install doxygen
+          sudo apt-get install graphviz
+          doxygen Doxyfile
+
+      - name: Set up git
+        run: |
+          git config --global user.name "${GITHUB_ACTOR}"
+          git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+        
+      - name: Commit and Push
+        run: |
+          git add ./docs
+          git commit -m "Auto-deploy documentation"
+          git push --force

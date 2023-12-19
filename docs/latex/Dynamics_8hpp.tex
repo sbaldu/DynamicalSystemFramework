@@ -5,6 +5,7 @@
 Defines the Dynamics class.  
 
 
+<<<<<<< HEAD
 {\ttfamily \#include $<$algorithm$>$}\newline
 {\ttfamily \#include $<$concepts$>$}\newline
 {\ttfamily \#include $<$vector$>$}\newline
@@ -24,16 +25,43 @@ Defines the Dynamics class.
 \begin{DoxyCompactItemize}
 \item 
 class \mbox{\hyperlink{classdsm_1_1Dynamics}{dsm\+::\+Dynamics$<$ Id, Size, Delay $>$}}
+=======
+{\ttfamily \#include $<$vector$>$}\newline
+{\ttfamily \#include \char`\"{}Agent.\+hpp\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}Itinerary.\+hpp\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}Graph.\+hpp\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}utility/\+Type\+Traits/is\+\_\+agent.\+hpp\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}utility/\+Type\+Traits/is\+\_\+itinerary.\+hpp\char`\"{}}\newline
+Include dependency graph for Dynamics.\+hpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{Dynamics_8hpp__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{classdsm_1_1Dynamics}{dsm\+::\+Dynamics$<$ Id, Size $>$}}
+>>>>>>> main
 \begin{DoxyCompactList}\small\item\em The \mbox{\hyperlink{classdsm_1_1Dynamics}{Dynamics}} class represents the dynamics of the network. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsection*{Typedefs}
 \begin{DoxyCompactItemize}
 \item 
+<<<<<<< HEAD
+=======
+\mbox{\Hypertarget{Dynamics_8hpp_a9d6cb8869a2aa84ad1c1ac8f86d0b947}\label{Dynamics_8hpp_a9d6cb8869a2aa84ad1c1ac8f86d0b947}} 
+{\footnotesize template$<$typename T $>$ }\\using {\bfseries dsm\+::shared} = std\+::shared\+\_\+ptr$<$ T $>$
+\item 
+>>>>>>> main
 \mbox{\Hypertarget{Dynamics_8hpp_ade8d3936688338113419d7f17c157044}\label{Dynamics_8hpp_ade8d3936688338113419d7f17c157044}} 
 using {\bfseries dsm\+::\+Time\+Point} = long long unsigned int
 \end{DoxyCompactItemize}
 \doxysubsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
+<<<<<<< HEAD
 \mbox{\Hypertarget{Dynamics_8hpp_a93a868d31b91371cea53beac50aff12d}\label{Dynamics_8hpp_a93a868d31b91371cea53beac50aff12d}} 
 {\footnotesize template$<$typename Id , typename Size , typename Delay $>$ }\\{\bfseries dsm\+::requires} (std\+::unsigned\+\_\+integral$<$ Id $>$ \&\&std\+::unsigned\+\_\+integral$<$ Size $>$) Dynamics$<$ Id
 \item 
@@ -60,6 +88,16 @@ typename Tn {\bfseries dsm\+::requires} (std\+::is\+\_\+convertible\+\_\+v$<$ T1
 \item 
 \mbox{\Hypertarget{Dynamics_8hpp_a38ac5727a7f6c1603bd40de947358ec4}\label{Dynamics_8hpp_a38ac5727a7f6c1603bd40de947358ec4}} 
 {\footnotesize template$<$typename Id , typename Size , typename Delay $>$ }\\requires(std\+::unsigned\+\_\+integral$<$ Id $>$ \&\&std\+::unsigned\+\_\+integral$<$ Size $>$ \&\&std\+::unsigned\+\_\+integral$<$ Delay $>$) class First\+Order\+Dynamics {\bfseries dsm\+::requires} (std\+::unsigned\+\_\+integral$<$ Id $>$ \&\&std\+::unsigned\+\_\+integral$<$ Size $>$ \&\&std\+::unsigned\+\_\+integral$<$ Delay $>$) First\+Order\+Dynamics$<$ Id
+=======
+\mbox{\Hypertarget{Dynamics_8hpp_afb17e178111f5c33d44692a1bab0909a}\label{Dynamics_8hpp_afb17e178111f5c33d44692a1bab0909a}} 
+{\footnotesize template$<$typename Id , typename Size $>$ }\\{\bfseries dsm\+::requires} (std\+::unsigned\+\_\+integral$<$ Id $>$ \&\&std\+::unsigned\+\_\+integral$<$ Size $>$) Dynamics$<$ Id
+\item 
+\mbox{\Hypertarget{Dynamics_8hpp_a8b8363e6ff3618e365dcba9feff4f1f5}\label{Dynamics_8hpp_a8b8363e6ff3618e365dcba9feff4f1f5}} 
+{\footnotesize template$<$typename Id , typename Size $>$ }\\{\bfseries dsm\+::requires} (std\+::unsigned\+\_\+integral$<$ Id $>$ \&\&std\+::unsigned\+\_\+integral$<$ Size $>$) template$<$ typename... Tn $>$ requires(is\+\_\+agent\+\_\+v$<$ Tn $>$ \&\&...) void Dynamics$<$ Id
+\item 
+\mbox{\Hypertarget{Dynamics_8hpp_a2aef0ff5f14194e920be2a47f6d19664}\label{Dynamics_8hpp_a2aef0ff5f14194e920be2a47f6d19664}} 
+typename Tn {\bfseries dsm\+::requires} (is\+\_\+agent\+\_\+v$<$ T1 $>$ \&\&(is\+\_\+agent\+\_\+v$<$ Tn $>$ \&\&...)) void Dynamics$<$ Id
+>>>>>>> main
 \end{DoxyCompactItemize}
 
 
