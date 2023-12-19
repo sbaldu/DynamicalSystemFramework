@@ -191,7 +191,7 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
   class TrafficLight : public Node<Id, Size> {
   private:
-    std::pair<Id, Id> m_streetPair;
+    std::pair<Id, Id> m_streetPair;  // the pair of streets that currently have the green light
     std::optional<Delay> m_delay;
     Delay m_counter;
 
