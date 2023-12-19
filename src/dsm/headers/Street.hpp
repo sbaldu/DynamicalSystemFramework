@@ -1,4 +1,4 @@
-/// @file       src/Street.hpp
+/// @file       /src/dsm/headers/Street.hpp
 /// @brief      Defines the Street class.
 ///
 /// @details    This file contains the definition of the Street class.
@@ -25,7 +25,7 @@ namespace dsm {
   /// @tparam Id, The type of the street's id. It must be an unsigned integral type.
   /// @tparam Size, The type of the street's capacity. It must be an unsigned integral type.
   template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   class Street {
   private:
     std::queue<Size> m_queue;
@@ -112,6 +112,7 @@ namespace dsm {
     /// @brief Add an agent to the street's queue
     /// @param agent, The agent to add
     template <typename Delay>
+      requires is_numeric_v<Delay>
     void enqueue(const Agent<Id, Size, Delay>& agent);
     /// @brief Remove an agent from the street's queue
     std::optional<Id> dequeue();
@@ -119,8 +120,8 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  Street<Id, Size>::Street(Id id, std::pair<Id, Id> pair)
-      : m_nodePair{std::move(pair)}, m_maxSpeed{30.}, m_id{id}, m_size{0} {}
+  Street<Id, Size>::Street(Id index, std::pair<Id, Id> pair)
+      : m_nodePair{std::move(pair)}, m_maxSpeed{30.}, m_id{index}, m_size{0}, m_capacity{1} {}
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
@@ -234,6 +235,7 @@ namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   template <typename Delay>
+    requires is_numeric_v<Delay>
   void Street<Id, Size>::enqueue(const Agent<Id, Size, Delay>& agent) {
     if (m_size < m_capacity) {
       m_queue.push(agent.id());

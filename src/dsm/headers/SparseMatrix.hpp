@@ -1,4 +1,4 @@
-/// @file       src/SparseMatrix.hpp
+/// @file       /src/dsm/headers/SparseMatrix.hpp
 /// @brief      Defines the SparseMatrix class.
 ///
 /// @details    This file contains the definition of the SparseMatrix class.
