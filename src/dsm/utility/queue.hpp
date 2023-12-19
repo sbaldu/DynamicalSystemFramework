@@ -7,7 +7,7 @@
 namespace dsm {
   // use the default allocator for std::deque
   template <typename T, typename Container = std::deque<T>>
-  class queue {
+  class queue : public std::queue<T, Container> {
 	public:
 	  typedef typename Container::iterator iterator;
 	  typedef typename Container::const_iterator const_iterator;
