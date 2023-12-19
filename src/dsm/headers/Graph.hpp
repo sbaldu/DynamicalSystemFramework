@@ -50,17 +50,6 @@ namespace dsm {
     shared<SparseMatrix<Id, bool>> m_adjacency;
     std::unordered_map<Id, Id> m_nodeMapping;
 
-    /// @brief A struct containing information about a node
-    /// @details This struct is used in the dijkstra algorithm to store information about a node
-    /// @param id, The node's id
-    /// @param previous, The id of the previous node in the shortest path
-    /// @param distance, The shortest distance from the source node
-    struct NodeInfo {
-      Id id;
-      Id previous;
-      double distance;
-    };
-
   public:
     Graph();
     /// @brief Construct a new Graph object
@@ -478,10 +467,10 @@ namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   std::optional<DijkstraResult<Id>> Graph<Id, Size>::shortestPath(Id source, Id destination) const {
-	  const Id sourceId{source};
+	const Id sourceId{source};
 
     std::unordered_map<Id, shared<Node<Id, Size>>> unvisitedNodes{m_nodes};
-    if (!unvisitedNodes.contains(source) || !unvisitedNodes.contains(destination)) {
+    if (!unvisitedNodes.contains(source)) {
       return std::nullopt;
     }
     if (!unvisitedNodes.contains(destination)) {
@@ -492,11 +481,10 @@ namespace dsm {
     auto adj{*m_adjacency};
 
     std::unordered_set<Id> visitedNodes;
-    std::vector<NodeInfo> dist_prev(n_nodes);
-    std::for_each(dist_prev.begin(), dist_prev.end(), [count = 0](auto& node) mutable -> void {
-      node.id = count;
-      node.distance = std::numeric_limits<double>::max();
-      node.previous = std::numeric_limits<Id>::max();
+    std::vector<std::pair<Id, double>> dist(n_nodes);
+    std::for_each(dist.begin(), dist.end(), [count = 0](auto& element) mutable -> void {
+      element.first = count;
+      element.second = std::numeric_limits<double>::max();
       ++count;
     });
     dist[source] = std::make_pair(source, 0.);
@@ -511,8 +499,8 @@ namespace dsm {
     while (unvisitedNodes.size() != 0) {
       source = std::min_element(unvisitedNodes.begin(),
                                 unvisitedNodes.end(),
-                                [&dist_prev](const auto& a, const auto& b) -> bool {
-                                  return dist_prev[a.first].distance < dist_prev[b.first].distance;
+                                [&dist](const auto& a, const auto& b) -> bool {
+                                  return dist[a.first].second < dist[b.first].second;
                                 })
                    ->first;
       unvisitedNodes.erase(source);
