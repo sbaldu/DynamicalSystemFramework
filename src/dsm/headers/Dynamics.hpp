@@ -216,7 +216,7 @@ namespace dsm {
       if (destinationNode->isFull()) {
         continue;
       }
-      destinationNode->enqueue(street->dequeue().value());
+      destinationNode->addAgent(street->dequeue().value());
     }
   }
 
@@ -225,10 +225,28 @@ namespace dsm {
   void Dynamics<Id, Size, Delay>::m_evolveNodes(bool reinsert_agents) {
     for (auto& nodePair : this->m_graph->nodeSet()) {
       auto node{nodePair.second};
-      while (!node->queue().empty()) {
-        Id agentId{node->queue().front()};
+      for (const auto agentId : node->agentIds()) {
+        if (dynamic_cast<TrafficLight<Id, Size, Delay>*>(node.get())) {
+          const auto& streetPriorities = node->streetPriorities();
+          // revert the map
+          std::map<Id, int16_t> priorities;
+          for (const auto& streetPriority : streetPriorities) {
+            priorities[streetPriority.second] = streetPriority.first;
+            // std::cout << "STREET: " << streetPriority.first << " " << streetPriority.second << std::endl;
+          }
+          // std::cout << "MAPPA: " << priorities[this->m_agents[agentId]->streetId().value()] << std::endl;
+          if (node->isGreen()) {
+            if (priorities[this->m_agents[agentId]->streetId().value()] < 0) {
+              continue;
+            }
+          } else {
+            if (priorities[this->m_agents[agentId]->streetId().value()] > 0) {
+              continue;
+            }
+          }
+        }
         if (node->id() == this->m_itineraries[this->m_agents[agentId]->itineraryId()]->destination()) {
-          agentId = node->dequeue().value();
+          node->removeAgent(agentId);
           this->m_travelTimes.push_back(this->m_agents[agentId]->time());
           if (reinsert_agents) {
             Agent<Id, Size, Delay> newAgent{this->m_agents[agentId]->id(), this->m_agents[agentId]->itineraryId()};
@@ -257,7 +275,7 @@ namespace dsm {
         auto nextStreet{streetResult.value()};
 
         if (nextStreet->density() < 1) {
-          agentId = node->dequeue().value();
+          node->removeAgent(agentId);
           this->m_agents[agentId]->setStreetId(nextStreet->id());
           this->setAgentSpeed(this->m_agents[agentId]->id());
           this->m_agents[agentId]->incrementDelay(nextStreet->length() / this->m_agents[agentId]->speed());
@@ -266,6 +284,9 @@ namespace dsm {
           break;
         }
       }
+      if (dynamic_cast<TrafficLight<Id, Size, Delay>*>(node.get())) {
+          node->increaseCounter();
+         }
     }
   }
 
@@ -280,7 +301,7 @@ namespace dsm {
       if (srcNode->isFull()) {
         continue;
       }
-      srcNode->enqueue(agentPair.second->id());
+      srcNode->addAgent(agentPair.second->id());
     }
     // decrement all agent delays
     std::ranges::for_each(this->m_agents, [](auto& agent) {

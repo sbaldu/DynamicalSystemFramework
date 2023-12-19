@@ -148,11 +148,11 @@ namespace dsm {
   Graph<Id, Size>::Graph(const SparseMatrix<Id, bool>& adj)
       : m_adjacency{make_shared<SparseMatrix<Id, bool>>(adj)} {
     std::ranges::for_each(std::views::iota(0, (int)adj.getColDim()), [this](auto i) -> void {
-      m_nodes.insert(std::make_pair(i, make_shared<Node<Id, Size>>(i)));
+      m_nodes.emplace(std::make_pair(i, make_shared<Node<Id, Size>>(i)));
     });
 
     std::ranges::for_each(std::views::iota(0, (int)adj.size()), [this, adj](auto i) -> void {
-      this->m_streets.insert(std::make_pair(
+      this->m_streets.emplace(std::make_pair(
           i, make_shared<Street<Id, Size>>(i, std::make_pair(i / adj.getColDim(), i % adj.getColDim()))));
     });
   }
@@ -162,12 +162,12 @@ namespace dsm {
   Graph<Id, Size>::Graph(const std::unordered_map<Id, shared<Street<Id, Size>>>& streetSet)
       : m_adjacency{make_shared<SparseMatrix<Id, bool>>()} {
     for (const auto& street : streetSet) {
-      m_streets.insert(std::make_pair(street->id(), street));
+      m_streets.emplace(std::make_pair(street->id(), street));
 
       Id node1 = street->nodePair().first;
       Id node2 = street->nodePair().second;
-      m_nodes.insert(node1, make_shared<Node<Id, Size>>(node1));
-      m_nodes.insert(node2, make_shared<Node<Id, Size>>(node2));
+      m_nodes.emplace(node1, make_shared<Node<Id, Size>>(node1));
+      m_nodes.emplace(node2, make_shared<Node<Id, Size>>(node2));
     }
 
     buildAdj();
@@ -209,11 +209,11 @@ namespace dsm {
         Id index;
         bool val;
         file >> index >> val;
-        m_adjacency->insert(index, val);
+        m_adjacency->emplace(index, val);
         const Id node1{static_cast<Id>(index / rows)};
         const Id node2{static_cast<Id>(index % cols)};
-        m_nodes.insert_or_assign(node1, make_shared<Node<Id, Size>>(node1));
-        m_nodes.insert_or_assign(node2, make_shared<Node<Id, Size>>(node2));
+        m_nodes.emplace(node1, make_shared<Node<Id, Size>>(node1));
+        m_nodes.emplace(node2, make_shared<Node<Id, Size>>(node2));
         m_streets.emplace(index, make_shared<Street<Id, Size>>(index, std::make_pair(node1, node2)));
         if (!isAdj) {
           m_streets[index]->setLength(val);
@@ -246,11 +246,11 @@ namespace dsm {
           throw std::invalid_argument(errorMsg);
         }
         if (value > 0) {
-          m_adjacency->insert(index, true);
+          m_adjacency->emplace(index, true);
           const Id node1{static_cast<Id>(index / rows)};
           const Id node2{static_cast<Id>(index % cols)};
-          m_nodes.insert_or_assign(node1, make_shared<Node<Id, Size>>(node1));
-          m_nodes.insert_or_assign(node2, make_shared<Node<Id, Size>>(node2));
+          m_nodes.emplace(node1, make_shared<Node<Id, Size>>(node1));
+          m_nodes.emplace(node2, make_shared<Node<Id, Size>>(node2));
           m_streets.emplace(index,
                                      make_shared<Street<Id, Size>>(index, std::make_pair(node1, node2)));
           if (!isAdj) {
@@ -289,7 +289,7 @@ namespace dsm {
         std::getline(iss, lon, ';');
         std::getline(iss, highway, ';');
         Id nodeId{static_cast<Id>(std::stoul(id))};
-        m_nodes.insert_or_assign(
+        m_nodes.emplace(
             nodeIndex,
             make_shared<Node<Id, Size>>(nodeIndex, std::make_pair(std::stod(lat), std::stod(lon))));
         m_nodeMapping.emplace(std::make_pair(nodeId, nodeIndex));
@@ -336,7 +336,7 @@ namespace dsm {
           maxspeed = "30";
         }
         Id streetId = std::stoul(sourceId) + std::stoul(targetId) * m_nodes.size();
-        m_streets.insert_or_assign(
+        m_streets.emplace(
             streetId,
             make_shared<Street<Id, Size>>(
                 streetId,
@@ -355,13 +355,13 @@ namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Graph<Id, Size>::addNode(shared<Node<Id, Size>> node) {
-    m_nodes.insert(std::make_pair(node->id(), node));
+    m_nodes.emplace(std::make_pair(node->id(), node));
   }
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Graph<Id, Size>::addNode(const Node<Id, Size>& node) {
-    m_nodes.insert(std::make_pair(node.id(), make_shared<Node<Id, Size>>(node)));
+    m_nodes.emplace(std::make_pair(node.id(), make_shared<Node<Id, Size>>(node)));
   }
 
   template <typename Id, typename Size>
@@ -382,25 +382,25 @@ namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Graph<Id, Size>::addStreet(shared<Street<Id, Size>> street) {
-    // insert street
-    m_streets.insert(std::make_pair(street->id(), street));
-    // insert nodes
+    // emplace street
+    m_streets.emplace(std::make_pair(street->id(), street));
+    // emplace nodes
     const Id node1{street.nodePair().first};
     const Id node2{street.nodePair().second};
-    m_nodes.insert_or_assign(node1);
-    m_nodes.insert_or_assign(node2);
+    m_nodes.emplace(node1);
+    m_nodes.emplace(node2);
   }
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Graph<Id, Size>::addStreet(const Street<Id, Size>& street) {
-    // insert street
-    m_streets.insert(std::make_pair(street.id(), make_shared<Street<Id, Size>>(street)));
-    // insert nodes
+    // emplace street
+    m_streets.emplace(std::make_pair(street.id(), make_shared<Street<Id, Size>>(street)));
+    // emplace nodes
     const Id node1{street.nodePair().first};
     const Id node2{street.nodePair().second};
-    m_nodes.insert_or_assign(node1, make_shared<Node<Id, Size>>(node1));
-    m_nodes.insert_or_assign(node2, make_shared<Node<Id, Size>>(node2));
+    m_nodes.emplace(node1, make_shared<Node<Id, Size>>(node1));
+    m_nodes.emplace(node2, make_shared<Node<Id, Size>>(node2));
   }
 
   template <typename Id, typename Size>
@@ -408,13 +408,13 @@ namespace dsm {
   template <typename T1>
     requires is_street_v<std::remove_reference_t<T1>>
   void Graph<Id, Size>::addStreets(T1&& street) {
-    // insert street
-    m_streets.insert(std::make_pair(street.id(), make_shared<Street<Id, Size>>(street)));
-    // insert nodes
+    // emplace street
+    m_streets.emplace(std::make_pair(street.id(), make_shared<Street<Id, Size>>(street)));
+    // emplace nodes
     const Id node1{street.nodePair().first};
     const Id node2{street.nodePair().second};
-    m_nodes.insert_or_assign(node1, make_shared<Node<Id, Size>>(node1));
-    m_nodes.insert_or_assign(node2, make_shared<Node<Id, Size>>(node2));
+    m_nodes.emplace(node1, make_shared<Node<Id, Size>>(node1));
+    m_nodes.emplace(node2, make_shared<Node<Id, Size>>(node2));
   }
 
   template <typename Id, typename Size>
@@ -505,7 +505,7 @@ namespace dsm {
                                 })
                    ->first;
       unvisitedNodes.erase(source);
-      visitedNodes.insert(source);
+      visitedNodes.emplace(source);
 
       const auto& neighbors{adj.getRow(source)};
       for (const auto& neighbour : neighbors) {

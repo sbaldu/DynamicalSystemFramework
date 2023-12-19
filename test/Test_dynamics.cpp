@@ -13,6 +13,7 @@ using Graph = dsm::Graph<uint16_t, uint16_t>;
 using SparseMatrix = dsm::SparseMatrix<uint16_t, bool>;
 using Street = dsm::Street<uint16_t, uint16_t>;
 using Itineary = dsm::Itinerary<uint16_t>;
+using TrafficLight = dsm::TrafficLight<uint16_t, uint16_t, uint16_t>;
 
 TEST_CASE("Dynamics") {
   auto graph = Graph{};
@@ -210,5 +211,31 @@ TEST_CASE("Dynamics") {
     CHECK_EQ(dynamics.agents().at(0)->delay(), 0);
     CHECK_FALSE(dynamics.agents().at(0)->streetId().has_value());
     CHECK_EQ(dynamics.agents().at(0)->speed(), 0.);
+  }
+  SUBCASE("TrafficLights") {
+    TrafficLight tl{1};
+    tl.setDelay(2);
+    Street s1{0, 1, 30., std::make_pair(0, 1)};
+    Street s2{1, 1, 30., std::make_pair(1, 2)};
+    Street s3{2, 1, 30., std::make_pair(3, 1)};
+    Street s4{3, 1, 30., std::make_pair(1, 0)};
+    tl.addStreetPriority(2, 0);
+    tl.addStreetPriority(1, 1);
+    tl.addStreetPriority(-1, 2);
+    tl.addStreetPriority(-2, 3);
+    Graph graph2;
+    graph2.addNode(tl);
+    graph2.addStreets(s1, s2, s3, s4);
+    graph2.buildAdj();
+    Dynamics dynamics{graph2};
+    dynamics.setSeed(69);
+    Itineary itinerary{0, 0, 2};
+    dynamics.addItinerary(itinerary);
+    dynamics.updatePaths();
+    dynamics.addRandomAgents(1);
+    for (uint8_t i = 0; i < 15; ++i) {
+      dynamics.evolve(false);
+    }
+
   }
 }

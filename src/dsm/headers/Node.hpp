@@ -9,11 +9,12 @@
 #define Node_hpp
 
 #include <functional>
-#include <queue>
 #include <utility>
 #include <string>
 #include <stdexcept>
 #include <optional>
+#include <vector>
+#include <map>
 
 namespace dsm {
   /// @brief The Node class represents a node in the network.
@@ -22,7 +23,8 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   class Node {
   protected:
-    std::queue<Id> m_queue;
+    std::vector<Id> m_agentIds;
+    std::map<int16_t, Id> m_streetPriorities;
     std::pair<double, double> m_coords;
     Id m_id;
     Size m_capacity;
@@ -36,30 +38,26 @@ namespace dsm {
     /// @param id The node's id
     /// @param coords A std::pair containing the node's coordinates
     Node(Id id, std::pair<double, double> coords);
-    /// @brief Construct a new Node object
-    /// @param id The node's id
-    /// @param coords A std::pair containing the node's coordinates
-    /// @param queue A std::queue containing the node's queue
-    Node(Id id, std::pair<double, double> coords, std::queue<Id> queue);
 
     /// @brief Set the node's coordinates
     /// @param coords A std::pair containing the node's coordinates
     void setCoords(std::pair<double, double> coords);
-    /// @brief Set the node's queue
-    /// @param queue A std::queue containing the node's queue
-    /// @throw std::invalid_argument if the queue size is greater than the node's capacity
-    void setQueue(std::queue<Id> queue);
     /// @brief Set the node's capacity
     /// @param capacity The node's capacity
     void setCapacity(Size capacity);
-    /// @brief Enqueue an id to the node's queue
-    /// @param id The id to enqueue
-    /// @throw std::runtime_error if the queue is full
-    void enqueue(Id id);
-    /// @brief Dequeue an id from the node's queue
-    /// @return Id The dequeued id
-    /// @throw std::runtime_error if the queue is empty
-    std::optional<Id> dequeue();
+    /// @brief Puts an agent in the node
+    /// @param agentId The agent's id
+    void addAgent(Id agentId);
+    /// @brief Removes an agent from the node
+    /// @param agentId The agent's id
+    void removeAgent(Id agentId);
+    
+    void setStreetPriorities(std::map<int16_t, Id> streetPriorities);
+
+    void addStreetPriority(int16_t priority, Id streetId);
+
+    virtual bool isGreen() const { return false; };
+    virtual void increaseCounter() {};
 
     /// @brief Get the node's id
     /// @return Id The node's id
@@ -67,14 +65,21 @@ namespace dsm {
     /// @brief Get the node's coordinates
     /// @return std::pair<double,, double> A std::pair containing the node's coordinates
     const std::pair<double, double>& coords() const;
-    /// @brief Get the node's queue
-    /// @return std::queue<Id> A std::queue containing the node's queue
-    const std::queue<Id>& queue() const;
-    /// @brief Get the node's queue capacity
-    /// @return Size The node's queue capacity
+    /// @brief Get the node's street priorities
+    /// @return std::map<Id, Size> A std::map containing the node's street priorities
+    /// @details The keys of the map are intended as priorities, while the values are the ids of the streets.
+    ///          The streets are ordered by priority, from the highest to the lowest. You should have both positive
+    ///          and negative priorities, where the positive ones are the ones that have the green light, and the
+    ///          negative ones are the ones that have the red light (and viceversa)
+    virtual const std::map<int16_t, Id>& streetPriorities() const;
+    /// @brief Get the node's capacity
+    /// @return Size The node's capacity
     Size capacity() const;
-    /// @brief Returns true if the node's queue is full
-    /// @return bool True if the node's queue is full
+    /// @brief Get the node's agent ids
+    /// @return std::vector<Id> A std::vector containing the node's agent ids
+    std::vector<Id> agentIds() const;
+    /// @brief Returns true if the node is full
+    /// @return bool True if the node is full
     bool isFull() const;
   };
 
@@ -86,11 +91,6 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   Node<Id, Size>::Node(Id id, std::pair<double, double> coords)
       : m_coords{std::move(coords)}, m_id{id}, m_capacity{1} {}
-
-  template <typename Id, typename Size>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
-  Node<Id, Size>::Node(Id id, std::pair<double, double> coords, std::queue<Id> queue)
-      : m_queue{std::move(queue)}, m_coords{std::move(coords)}, m_id{id}, m_capacity{1} {}
 
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
@@ -106,21 +106,22 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
-  void Node<Id, Size>::setQueue(std::queue<Id> queue) {
-    if (queue.size() > m_capacity) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                           "Node's queue capacity is smaller than the queue size"};
-      throw std::invalid_argument(errorMsg);
-    }
-    m_queue = std::move(queue);
+  void Node<Id, Size>::setStreetPriorities(std::map<int16_t, Id> streetPriorities) {
+    m_streetPriorities = std::move(streetPriorities);
+  }
+
+  template <typename Id, typename Size>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
+  void Node<Id, Size>::addStreetPriority(int16_t priority, Id streetId) {
+    m_streetPriorities.emplace(priority, streetId);
   }
 
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   void Node<Id, Size>::setCapacity(Size capacity) {
-    if (capacity < m_queue.size()) {
+    if (capacity < m_agentIds.size()) {
       std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                           "Node's queue capacity is smaller than the current queue size"};
+                           "Node's capacity is smaller than the current size"};
       throw std::invalid_argument(errorMsg);
     }
     m_capacity = capacity;
@@ -128,24 +129,25 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
-  void Node<Id, Size>::enqueue(Id id) {
-    if (m_queue.size() == m_capacity) {
+  void Node<Id, Size>::addAgent(Id agentId) {
+    if (m_agentIds.size() == m_capacity) {
       std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                           "Node's queue is fulls"};
+                           "Node is full"};
       throw std::runtime_error(errorMsg);
     }
-    m_queue.push(id);
+    m_agentIds.push_back(agentId);
   }
 
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
-  std::optional<Id> Node<Id, Size>::dequeue() {
-    if (m_queue.empty()) {
-      return std::nullopt;
+  void Node<Id, Size>::removeAgent(Id agentId) {
+    auto it = std::find(m_agentIds.begin(), m_agentIds.end(), agentId);
+    if (it == m_agentIds.end()) {
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                           "Agent is not on the node"};
+      throw std::runtime_error(errorMsg);
     }
-    Id id = m_queue.front();
-    m_queue.pop();
-    return id;
+    m_agentIds.erase(it);
   }
 
   template <typename Id, typename Size>
@@ -156,8 +158,8 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
-  const std::queue<Id>& Node<Id, Size>::queue() const {
-    return m_queue;
+  const std::map<int16_t, Id>& Node<Id, Size>::streetPriorities() const {
+    return m_streetPriorities;
   }
 
   template <typename Id, typename Size>
@@ -168,8 +170,14 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
+  std::vector<Id> Node<Id, Size>::agentIds() const {
+    return m_agentIds;
+  }
+
+  template <typename Id, typename Size>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   bool Node<Id, Size>::isFull() const {
-    return m_queue.size() == m_capacity;
+    return m_agentIds.size() == m_capacity;
   }
 
   // to be implemented
@@ -189,7 +197,6 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
   class TrafficLight : public Node<Id, Size> {
   private:
-    std::pair<Id, Id> m_streetPair;  // the pair of streets that currently have the green light
     std::optional<Delay> m_delay;
     Delay m_counter;
 
@@ -199,10 +206,6 @@ namespace dsm {
     /// @param id The node's id
     TrafficLight(Id id);
 
-    /// @brief Set the node's street pair
-    /// @param streetPair A std::pair containing the node's street pair
-    /// @details These streets are the ones to which the traffic light isGreen is associated
-    void setStreetPair(std::pair<Id, Id> streetPair);
     /// @brief Set the node's delay
     /// @param delay The node's delay
     void setDelay(Delay delay);
@@ -220,6 +223,7 @@ namespace dsm {
     /// @brief Get the node's delay
     /// @return std::optional<Delay> The node's delay
     std::optional<Delay> delay() const;
+    Delay counter() const { return m_counter; }
     /// @brief Returns true if the traffic light is green
     /// @return bool True if the traffic light is green
     bool isGreen() const;
@@ -229,11 +233,6 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
   TrafficLight<Id, Size, Delay>::TrafficLight(Id id) : Node<Id, Size>{id}, m_counter{0} {}
 
-  template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
-  void TrafficLight<Id, Size, Delay>::setStreetPair(std::pair<Id, Id> streetPair) {
-    m_streetPair = std::move(streetPair);
-  }
   template <typename Id, typename Size, typename Delay>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
   void TrafficLight<Id, Size, Delay>::setDelay(Delay delay) {
