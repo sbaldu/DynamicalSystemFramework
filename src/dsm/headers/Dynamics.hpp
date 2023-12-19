@@ -245,7 +245,7 @@ namespace dsm {
         if (!result.has_value()) {
           continue;
         }
-        // save the minimum distance between i and the destination 
+        // save the minimum distance between i and the destination
         auto minDistance{result.value().distance()};
         for (auto const& node : m_graph->adjMatrix()->getRow(i)) {
           // init distance from a neighbor node to the destination to zero
@@ -285,13 +285,15 @@ namespace dsm {
 
   template <typename Id, typename Size, typename Delay>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
-  const std::unordered_map<Id, std::unique_ptr<Itinerary<Id>>>& Dynamics<Id, Size, Delay>::itineraries() const {
+  const std::unordered_map<Id, std::unique_ptr<Itinerary<Id>>>& Dynamics<Id, Size, Delay>::itineraries()
+      const {
     return m_itineraries;
   }
 
   template <typename Id, typename Size, typename Delay>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
-  const std::unordered_map<Id, std::unique_ptr<Agent<Id, Size, Delay>>>& Dynamics<Id, Size, Delay>::agents() const {
+  const std::unordered_map<Id, std::unique_ptr<Agent<Id, Size, Delay>>>& Dynamics<Id, Size, Delay>::agents()
+      const {
     return m_agents;
   }
 
@@ -333,8 +335,9 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
   void Dynamics<Id, Size, Delay>::addAgents(std::span<Agent<Id, Size, Delay>> agents) {
-    std::ranges::for_each(
-        agents, [this](const auto& agent) -> void { this->m_agents.emplace(agent.id(), std::make_unique(agent)); });
+    std::ranges::for_each(agents, [this](const auto& agent) -> void {
+      this->m_agents.emplace(agent.id(), std::make_unique(agent));
+    });
   }
 
   template <typename Id, typename Size, typename Delay>
