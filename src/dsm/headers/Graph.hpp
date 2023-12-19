@@ -1,4 +1,5 @@
 /// @file       /src/dsm/headers/Graph.hpp
+/// @file       /src/dsm/headers/Graph.hpp
 /// @brief      Defines the Graph class.
 ///
 /// @details    This file contains the definition of the Graph class.
@@ -49,17 +50,6 @@ namespace dsm {
     std::unordered_map<Id, shared<Street<Id, Size>>> m_streets;
     shared<SparseMatrix<Id, bool>> m_adjacency;
     std::unordered_map<Id, Id> m_nodeMapping;
-
-    /// @brief A struct containing information about a node
-    /// @details This struct is used in the dijkstra algorithm to store information about a node
-    /// @param id, The node's id
-    /// @param previous, The id of the previous node in the shortest path
-    /// @param distance, The shortest distance from the source node
-    struct NodeInfo {
-      Id id;
-      Id previous;
-      double distance;
-    };
 
   public:
     Graph();
@@ -134,7 +124,7 @@ namespace dsm {
     /// @param destination The destination node
     /// @return A std::optional containing a std::shared_ptr to the street if it exists, otherwise
     /// std::nullopt
-    std::optional<shared<Street<Id, Size>>> street(Id source, Id destination);
+    std::optional<shared<Street<Id, Size>>> street(Id source, Id destination) const;
 
     /// @brief Get the shortest path between two nodes using dijkstra algorithm
     /// @param source, The source node
@@ -224,8 +214,7 @@ namespace dsm {
         const Id node2{static_cast<Id>(index % cols)};
         m_nodes.insert_or_assign(node1, make_shared<Node<Id, Size>>(node1));
         m_nodes.insert_or_assign(node2, make_shared<Node<Id, Size>>(node2));
-        m_streets.insert_or_assign(index,
-                                   make_shared<Street<Id, Size>>(index, std::make_pair(node1, node2)));
+        m_streets.emplace(index, make_shared<Street<Id, Size>>(index, std::make_pair(node1, node2)));
         if (!isAdj) {
           m_streets[index]->setLength(val);
         }
@@ -262,7 +251,7 @@ namespace dsm {
           const Id node2{static_cast<Id>(index % cols)};
           m_nodes.insert_or_assign(node1, make_shared<Node<Id, Size>>(node1));
           m_nodes.insert_or_assign(node2, make_shared<Node<Id, Size>>(node2));
-          m_streets.insert_or_assign(index,
+          m_streets.emplace(index,
                                      make_shared<Street<Id, Size>>(index, std::make_pair(node1, node2)));
           if (!isAdj) {
             m_streets[index]->setLength(value);
@@ -457,7 +446,7 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  std::optional<shared<Street<Id, Size>>> Graph<Id, Size>::street(Id source, Id destination) {
+  std::optional<shared<Street<Id, Size>>> Graph<Id, Size>::street(Id source, Id destination) const {
     auto streetIt =
         std::find_if(m_streets.begin(), m_streets.end(), [source, destination](const auto& street) -> bool {
           return street.second->nodePair().first == source &&
@@ -473,16 +462,19 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   std::optional<DijkstraResult<Id>> Graph<Id, Size>::shortestPath(const Node<Id, Size>& source,
                                                                   const Node<Id, Size>& destination) const {
-    return dijkstra(source.id(), destination.id());
+    return this->shortestPath(source.id(), destination.id());
   }
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   std::optional<DijkstraResult<Id>> Graph<Id, Size>::shortestPath(Id source, Id destination) const {
-    const Id sourceId{source};
+	const Id sourceId{source};
 
     std::unordered_map<Id, shared<Node<Id, Size>>> unvisitedNodes{m_nodes};
-    if (!unvisitedNodes.contains(source) || !unvisitedNodes.contains(destination)) {
+    if (!unvisitedNodes.contains(source)) {
+      return std::nullopt;
+    }
+    if (!unvisitedNodes.contains(destination)) {
       return std::nullopt;
     }
 
@@ -490,20 +482,26 @@ namespace dsm {
     auto adj{*m_adjacency};
 
     std::unordered_set<Id> visitedNodes;
-    std::vector<NodeInfo> dist_prev(n_nodes);
-    std::for_each(dist_prev.begin(), dist_prev.end(), [count = 0](auto& node) mutable -> void {
-      node.id = count;
-      node.distance = std::numeric_limits<double>::max();
-      node.previous = std::numeric_limits<Id>::max();
+    std::vector<std::pair<Id, double>> dist(n_nodes);
+    std::for_each(dist.begin(), dist.end(), [count = 0](auto& element) mutable -> void {
+      element.first = count;
+      element.second = std::numeric_limits<double>::max();
       ++count;
     });
-    dist_prev[source].distance = 0.;
+    dist[source] = std::make_pair(source, 0.);
+
+    std::vector<std::pair<Id, double>> prev(n_nodes);
+	std::for_each(prev.begin(), prev.end(), [](auto& pair) -> void {
+		  pair.first = std::numeric_limits<Id>::max();
+		  pair.second = std::numeric_limits<double>::max();
+		});
+    prev[source].second = 0.;
 
     while (unvisitedNodes.size() != 0) {
       source = std::min_element(unvisitedNodes.begin(),
                                 unvisitedNodes.end(),
-                                [&dist_prev](const auto& a, const auto& b) -> bool {
-                                  return dist_prev[a.first].distance < dist_prev[b.first].distance;
+                                [&dist](const auto& a, const auto& b) -> bool {
+                                  return dist[a.first].second < dist[b.first].second;
                                 })
                    ->first;
       unvisitedNodes.erase(source);
@@ -515,18 +513,12 @@ namespace dsm {
         if (visitedNodes.find(neighbour.first) != visitedNodes.end()) {
           continue;
         }
-
-        double streetLength{std::find_if(m_streets.cbegin(),
-                                         m_streets.cend(),
-                                         [source, &neighbour](const auto& street) -> bool {
-                                           return street.second->nodePair().first == source &&
-                                                  street.second->nodePair().second == neighbour.first;
-                                         })
-                                ->second->length()};
+        
+        double streetLength = this->street(source, neighbour.first).value()->length();
         // if current path is shorter than the previous one, update the distance
-        if (streetLength + dist_prev[source].distance < dist_prev[neighbour.first].distance) {
-          dist_prev[neighbour.first].distance = streetLength + dist_prev[source].distance;
-          dist_prev[neighbour.first].previous = source;
+        if (streetLength + dist[source].second < dist[neighbour.first].second) {
+          dist[neighbour.first].second = streetLength + dist[source].second;
+          prev[neighbour.first] = std::make_pair(source, dist[neighbour.first].second);
         }
       }
 
@@ -536,18 +528,18 @@ namespace dsm {
     std::vector<Id> path{destination};
     Id previous{destination};
     while (true) {
-      previous = dist_prev[previous].previous;
+      previous = prev[previous].first;
       if (previous == std::numeric_limits<Id>::max()) {
         return std::nullopt;
       }
       path.push_back(previous);
-      if (previous == sourceId) {
-        break;
-      }
+	  if (previous == sourceId) {
+		break;
+	  }
     }
 
     std::reverse(path.begin(), path.end());
-    return DijkstraResult<Id>(path, dist_prev[destination].distance);
+    return DijkstraResult<Id>(path, prev[destination].second);
   }
 };  // namespace dsm
 

@@ -151,6 +151,21 @@ TEST_CASE("Graph") {
     graph.buildAdj();
     CHECK_EQ(graph.adjMatrix()->size(), 60);
   }
+  SUBCASE("street") {
+    /// GIVEN: a graph
+    /// WHEN: we add a street
+    /// THEN: the street is added
+    Graph graph{};
+    Street street{1, 1, 1., std::make_pair(0, 1)};
+    graph.addStreet(street);
+    auto result = graph.street(0, 1);
+    CHECK(result.has_value());
+    auto street2 = result.value();
+    CHECK_EQ(street2->id(), 1);
+    CHECK_EQ(street2->length(), 1.);
+    CHECK_EQ(street2->capacity(), 1);
+    CHECK(!graph.street(1, 0).has_value());
+  }
 }
 
 TEST_CASE("Dijkstra") {

@@ -5,6 +5,7 @@
 #include "doctest.h"
 
 using Node = dsm::Node<uint16_t, uint16_t>;
+using TrafficLight = dsm::TrafficLight<uint16_t, uint16_t, uint16_t>;
 
 TEST_CASE("Node") {
   SUBCASE("Constructor") {
@@ -51,7 +52,7 @@ TEST_CASE("Node") {
     */
     Node node{1};
     std::queue<uint16_t> queue;
-    CHECK_THROWS(node.dequeue());
+    CHECK_FALSE(node.dequeue().has_value());
     queue.push(2);
     queue.push(3);
     CHECK_THROWS(node.setQueue(queue));
@@ -61,7 +62,60 @@ TEST_CASE("Node") {
     node.setCapacity(2);
     CHECK_FALSE(node.isFull());
     node.enqueue(3);
-    CHECK_EQ(node.dequeue(), 2);
-    CHECK_EQ(node.dequeue(), 3);
+    CHECK_EQ(node.dequeue().value(), 2);
+    CHECK_EQ(node.dequeue().value(), 3);
+  }
+}
+
+TEST_CASE("TrafficLight") {
+  SUBCASE("Constructor") {
+    /// This tests the constructor that takes an Id.
+    /// GIVEN: An Id
+    /// WHEN: A TrafficLight is constructed
+    /// THEN: The Id is set correctly
+    TrafficLight trafficLight{1};
+    CHECK(trafficLight.id() == 1);
+  }
+  SUBCASE("Light cycle") {
+    /// This tests the light cycle.
+    /// GIVEN: A TrafficLight
+    /// WHEN: The light cycle is set
+    /// THEN: The light cycle is set correctly
+    TrafficLight trafficLight{0};
+    trafficLight.setDelay(1);
+    CHECK(trafficLight.isGreen());
+    trafficLight.increaseCounter();
+    CHECK_FALSE(trafficLight.isGreen());
+    trafficLight.increaseCounter();
+    CHECK(trafficLight.isGreen());
+  }
+  SUBCASE("Ligh cycle 2") {
+    /// This tests the light cycle.
+    /// GIVEN: A TrafficLight
+    /// WHEN: The light cycle is set
+    /// THEN: The light cycle is set correctly
+    TrafficLight trafficLight{0};
+    trafficLight.setDelay(2);
+    CHECK(trafficLight.isGreen());
+    trafficLight.increaseCounter();
+    CHECK(trafficLight.isGreen());
+    trafficLight.increaseCounter();
+    CHECK_FALSE(trafficLight.isGreen());
+    trafficLight.increaseCounter();
+    CHECK_FALSE(trafficLight.isGreen());
+    trafficLight.increaseCounter();
+    CHECK(trafficLight.isGreen());
+  }
+  SUBCASE("Phase") {
+    /// This tests the phase.
+    /// GIVEN: A TrafficLight
+    /// WHEN: The phase is set
+    /// THEN: The phase is set correctly
+    TrafficLight trafficLight{0};
+    trafficLight.setDelay(5);
+    trafficLight.setPhase(5);
+    CHECK(trafficLight.isGreen());
+    trafficLight.setPhase(7);
+    CHECK_FALSE(trafficLight.isGreen());
   }
 }
