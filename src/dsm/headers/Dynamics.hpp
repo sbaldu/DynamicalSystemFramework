@@ -16,6 +16,7 @@
 #include <span>
 #include <string>
 #include <numeric>
+#include <unordered_map>
 
 #include "Agent.hpp"
 #include "Itinerary.hpp"
@@ -34,8 +35,8 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
   class Dynamics {
   private:
-    std::vector<std::unique_ptr<Itinerary<Id>>> m_itineraries;
-    std::vector<std::unique_ptr<Agent<Id, Size, Delay>>> m_agents;
+    std::unordered_map<Id, std::unique_ptr<Itinerary<Id>>> m_itineraries;
+    std::unordered_map<Id, std::unique_ptr<Agent<Id, Size, Delay>>> m_agents;
     TimePoint m_time;
     std::unique_ptr<Graph<Id, Size>> m_graph;
     double m_errorProbability;
@@ -82,11 +83,11 @@ namespace dsm {
     /// @return const Graph<Id, Size>&, The graph
     const Graph<Id, Size>& graph() const;
     /// @brief Get the itineraries
-    /// @return const std::vector<Itinerary<Id>>&, The itineraries
-    const std::vector<std::unique_ptr<Itinerary<Id>>>& itineraries() const;
+    /// @return const std::unordered_map<Id, Itinerary<Id>>&, The itineraries
+    const std::unordered_map<Id, std::unique_ptr<Itinerary<Id>>>& itineraries() const;
     /// @brief Get the agents
-    /// @return const std::vector<Agent<Id>>&, The agents
-    const std::vector<std::unique_ptr<Agent<Id, Size, Delay>>>& agents() const;
+    /// @return const std::unordered_map<Id, Agent<Id>>&, The agents
+    const std::unordered_map<Id, std::unique_ptr<Agent<Id, Size, Delay>>>& agents() const;
     /// @brief Get the time
     /// @return TimePoint, The time
     TimePoint time() const;
@@ -121,10 +122,6 @@ namespace dsm {
     /// @param id, the index of the first agent to remove
     /// @param ids, the pack of indexes of the agents to remove
     void removeAgents(T1 id, Tn... ids);
-    /// @brief Add a set of agents to the simulation
-    /// @param nAgents The number of agents to add
-    /// @throw std::runtime_error If there are no itineraries
-    void addRandomAgents(Size nAgents);
 
     /// @brief Add an itinerary
     /// @param itinerary, The itinerary
@@ -149,10 +146,6 @@ namespace dsm {
 
     /// @brief Reset the simulation time
     void resetTime();
-    /// @brief Move an agent
-    /// @param agentId The index of the agent to move
-    /// @return true If the agent has been moved, false otherwise
-    bool moveAgent(Size agentId);
 
     /// @brief Evolve the simulation
     /// @tparam F The type of the function to call
@@ -186,7 +179,7 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
   void Dynamics<Id, Size, Delay>::setItineraries(std::span<Itinerary<Id>> itineraries) {
     std::ranges::for_each(itineraries, [this](const auto& itinerary) {
-      this->m_itineraries.insert(std::make_unique<Itinerary<Id>>(itinerary));
+      this->m_itineraries.emplace(itinerary.id(), std::make_unique<Itinerary<Id>>(itinerary));
     });
   }
 
@@ -238,21 +231,26 @@ namespace dsm {
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::updatePaths() {
     const Size dimension = m_graph->adjMatrix()->getRowDim();
-    for (auto& itinerary : m_itineraries) {
+    for (auto& itineraryPair : m_itineraries) {
       SparseMatrix<Id, bool> path{dimension, dimension};
+      // cycle over the nodes
       for (Size i{0}; i < dimension; ++i) {
-        if (i == itinerary->destination()) {
+        if (i == itineraryPair.second->destination()) {
           continue;
         }
-        auto result{m_graph->shortestPath(i, itinerary->destination())};
+        auto result{m_graph->shortestPath(i, itineraryPair.second->destination())};
         if (!result.has_value()) {
           continue;
         }
+        // save the minimum distance between i and the destination 
         auto minDistance{result.value().distance()};
         for (auto const& node : m_graph->adjMatrix()->getRow(i)) {
+          // init distance from a neighbor node to the destination to zero
+          double distance{0.};
+
           auto streetResult = m_graph->street(i, node.first);
           if (!streetResult.has_value()) {
             continue;
@@ -260,18 +258,21 @@ namespace dsm {
           auto streetLength{streetResult.value()->length()};
           // TimePoint expectedTravelTime{
           //     streetLength};  // / street->maxSpeed()};  // TODO: change into input velocity
-          result = m_graph->shortestPath(node.first, itinerary->destination());
-          if (!result.has_value()) {
+          result = m_graph->shortestPath(node.first, itineraryPair.second->destination());
+          if (result.has_value()) {
+            // if the shortest path exists, save the distance
+            distance = result.value().distance();
+          } else if (node.first != itineraryPair.second->destination()) {
+            // if the node is the destination, the distance is zero, otherwise the iteration is skipped
             continue;
           }
-          auto distance = result.value().distance();
 
           // if (!(distance > minDistance + expectedTravelTime)) {
           if (!(distance > minDistance + streetLength)) {
-            path.insert(i, node.first, 1);
+            path.insert(i, node.first, true);
           }
         }
-        itinerary->setPath(path);
+        itineraryPair.second->setPath(path);
       }
     }
   }
@@ -284,13 +285,13 @@ namespace dsm {
 
   template <typename Id, typename Size, typename Delay>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
-  const std::vector<std::unique_ptr<Itinerary<Id>>>& Dynamics<Id, Size, Delay>::itineraries() const {
+  const std::unordered_map<Id, std::unique_ptr<Itinerary<Id>>>& Dynamics<Id, Size, Delay>::itineraries() const {
     return m_itineraries;
   }
 
   template <typename Id, typename Size, typename Delay>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
-  const std::vector<std::unique_ptr<Agent<Id, Size, Delay>>>& Dynamics<Id, Size, Delay>::agents() const {
+  const std::unordered_map<Id, std::unique_ptr<Agent<Id, Size, Delay>>>& Dynamics<Id, Size, Delay>::agents() const {
     return m_agents;
   }
 
@@ -303,13 +304,13 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
   void Dynamics<Id, Size, Delay>::addAgent(const Agent<Id, Size, Delay>& agent) {
-    m_agents.push_back(std::make_unique<Agent<Id, Size, Delay>>(agent));
+    m_agents.emplace(agent.id(), std::make_unique<Agent<Id, Size, Delay>>(agent));
   }
 
   template <typename Id, typename Size, typename Delay>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
   void Dynamics<Id, Size, Delay>::addAgent(std::unique_ptr<Agent<Id, Size, Delay>> agent) {
-    m_agents.push_back(std::move(agent));
+    m_agents.emplace(agent->id(), std::move(agent));
   }
 
   template <typename Id, typename Size, typename Delay>
@@ -333,7 +334,7 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
   void Dynamics<Id, Size, Delay>::addAgents(std::span<Agent<Id, Size, Delay>> agents) {
     std::ranges::for_each(
-        agents, [this](const auto& agent) -> void { this->m_agents.push_back(std::make_unique(agent)); });
+        agents, [this](const auto& agent) -> void { this->m_agents.emplace(agent.id(), std::make_unique(agent)); });
   }
 
   template <typename Id, typename Size, typename Delay>
@@ -357,31 +358,15 @@ namespace dsm {
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
-  void Dynamics<Id, Size, Delay>::addRandomAgents(Size nAgents) {
-    if (m_itineraries.empty()) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                           "It is not possible to add random agents without itineraries"};
-      throw std::runtime_error(errorMsg);
-    }
-    std::uniform_int_distribution<Size> itineraryDist{0, static_cast<Size>(m_itineraries.size() - 1)};
-    for (Size i{0}; i < nAgents; ++i) {
-      Size itineraryIndex{itineraryDist(m_generator)};
-      auto& itinerary{*m_itineraries[itineraryIndex]};
-      this->addAgent(Agent<Id, Size, Delay>{static_cast<Size>(m_agents.size()), itinerary.source()});
-    }
-  }
-
-  template <typename Id, typename Size, typename Delay>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
   void Dynamics<Id, Size, Delay>::addItinerary(const Itinerary<Id>& itinerary) {
-    m_itineraries.push_back(std::make_unique<Itinerary<Id>>(itinerary));
+    m_itineraries.emplace(itinerary.id(), std::make_unique<Itinerary<Id>>(itinerary));
   }
 
   template <typename Id, typename Size, typename Delay>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
   void Dynamics<Id, Size, Delay>::addItinerary(std::unique_ptr<Itinerary<Id>> itinerary) {
-    m_itineraries.push_back(std::move(itinerary));
+    m_itineraries.emplace(itinerary->id(), std::move(itinerary));
   }
 
   template <typename Id, typename Size, typename Delay>
@@ -397,7 +382,7 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
   void Dynamics<Id, Size, Delay>::addItineraries(std::span<Itinerary<Id>> itineraries) {
     std::ranges::for_each(itineraries, [this](const auto& itinerary) -> void {
-      this->m_itineraries.push_back(std::make_unique<Itinerary<Id>>(itinerary));
+      this->m_itineraries.emplace(itinerary.id(), std::make_unique<Itinerary<Id>>(itinerary));
     });
   }
 
@@ -405,32 +390,6 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
   void Dynamics<Id, Size, Delay>::resetTime() {
     m_time = 0;
-  }
-
-  template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
-  bool Dynamics<Id, Size, Delay>::moveAgent(Size agentId) {
-    auto& agent = m_agents[agentId];
-    const auto& street{m_graph->street((*agentId)->position())};
-    auto& possibleMoves{agent->itinerary().path().getRow((*agentId).position())};
-    if (m_uniformDist(m_generator) < m_errorProbability) {
-      possibleMoves = m_graph->adjMatrix()->getRow((*agentId)->position());
-    }
-    // geerate a int between 0 and possibleMoves.size() - 1
-    std::uniform_int_distribution<Size> moveDist{0, static_cast<Size>(possibleMoves.size() - 1)};
-    const auto p{moveDist(m_generator)};
-    const auto& nextStreet{m_graph->street(possibleMoves[p].first)};
-    // What about nodes???
-    if (nextStreet->density() < 1) {
-      agent->setPosition(possibleMoves[p].first);
-      this->setAgentSpeed(agent->id());
-      /*
-      (*agentIt)->setDelay(nextStreet->length());
-      nextStreet->incrementDensity();
-      street->decrementDensity();
-      return true;
-	  */
-    }
   }
 
   template <typename Id, typename Size, typename Delay>
@@ -451,7 +410,7 @@ namespace dsm {
     return std::accumulate(m_agents.cbegin(),
                            m_agents.cend(),
                            0.,
-                           [](double sum, const auto& agent) { return sum + agent->speed(); }) /
+                           [](double sum, const auto& agent) { return sum + agent.second->speed(); }) /
            m_agents.size();
   }
 
