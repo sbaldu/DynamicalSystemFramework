@@ -28,6 +28,15 @@ TEST_CASE("Node") {
     CHECK(node.coords().first == 2.5);
     CHECK(node.coords().second == 3.5);
   }
+  SUBCASE("isGreen exception") {
+    /*This tests the isGreen function.
+    GIVEN: A Node
+    WHEN: The isGreen function is called
+    THEN: An exception is thrown
+    */
+    Node node{1};
+    CHECK_THROWS(node.isGreen());
+  }
 }
 
 TEST_CASE("TrafficLight") {
@@ -80,5 +89,22 @@ TEST_CASE("TrafficLight") {
     CHECK(trafficLight.isGreen());
     trafficLight.setPhase(7);
     CHECK_FALSE(trafficLight.isGreen());
+  }
+  SUBCASE("Asymmetric traffic light") {
+    /// This tests the asymmetric traffic light.
+    /// GIVEN: A TrafficLight
+    /// WHEN: The asymmetric traffic light is set
+    /// THEN: The asymmetric traffic light is set correctly
+    TrafficLight trafficLight{0};
+    trafficLight.setDelay(std::make_pair(5, 3));
+    for (int i = 0; i < 8; ++i) {
+      if (i < 5) {
+        CHECK(trafficLight.isGreen());
+      } else {
+        CHECK_FALSE(trafficLight.isGreen());
+      }
+      trafficLight.increaseCounter();
+    }
+    CHECK(trafficLight.isGreen());
   }
 }
