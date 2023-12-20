@@ -90,4 +90,21 @@ TEST_CASE("TrafficLight") {
     trafficLight.setPhase(7);
     CHECK_FALSE(trafficLight.isGreen());
   }
+  SUBCASE("Asymmetric traffic light") {
+    /// This tests the asymmetric traffic light.
+    /// GIVEN: A TrafficLight
+    /// WHEN: The asymmetric traffic light is set
+    /// THEN: The asymmetric traffic light is set correctly
+    TrafficLight trafficLight{0};
+    trafficLight.setDelay(std::make_pair(5, 3));
+    for (int i = 0; i < 8; ++i) {
+      if (i < 5) {
+        CHECK(trafficLight.isGreen());
+      } else {
+        CHECK_FALSE(trafficLight.isGreen());
+      }
+      trafficLight.increaseCounter();
+    }
+    CHECK(trafficLight.isGreen());
+  }
 }
