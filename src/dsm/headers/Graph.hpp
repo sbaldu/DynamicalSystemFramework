@@ -209,7 +209,7 @@ namespace dsm {
         Id index;
         bool val;
         file >> index >> val;
-        m_adjacency->emplace(index, val);
+        m_adjacency->insert(index, val);
         const Id node1{static_cast<Id>(index / rows)};
         const Id node2{static_cast<Id>(index % cols)};
         m_nodes.emplace(node1, make_shared<Node<Id, Size>>(node1));
@@ -246,7 +246,7 @@ namespace dsm {
           throw std::invalid_argument(errorMsg);
         }
         if (value > 0) {
-          m_adjacency->emplace(index, true);
+          m_adjacency->insert(index, true);
           const Id node1{static_cast<Id>(index / rows)};
           const Id node2{static_cast<Id>(index % cols)};
           m_nodes.emplace(node1, make_shared<Node<Id, Size>>(node1));
