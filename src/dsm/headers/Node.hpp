@@ -28,6 +28,7 @@ namespace dsm {
     std::pair<double, double> m_coords;
     Id m_id;
     Size m_capacity;
+    Size m_agentCounter;
 
   public:
     Node() = default;
@@ -81,16 +82,21 @@ namespace dsm {
     /// @brief Returns true if the node is full
     /// @return bool True if the node is full
     bool isFull() const;
+    /// @brief Returns the number of agents that have passed through the node
+    /// @return Size The number of agents that have passed through the node
+    /// @details This function returns the number of agents that have passed through the node
+    ///          since the last time this function was called. It also resets the counter.
+    Size agentCounter();
   };
 
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
-  Node<Id, Size>::Node(Id id) : m_id{id}, m_capacity{1} {}
+  Node<Id, Size>::Node(Id id) : m_id{id}, m_capacity{1}, m_agentCounter{0} {}
 
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   Node<Id, Size>::Node(Id id, std::pair<double, double> coords)
-      : m_coords{std::move(coords)}, m_id{id}, m_capacity{1} {}
+      : m_coords{std::move(coords)}, m_id{id}, m_capacity{1}, m_agentCounter{0} {}
   
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
@@ -144,6 +150,7 @@ namespace dsm {
       throw std::runtime_error(errorMsg);
     }
     m_agentIds.push_back(agentId);
+    ++m_agentCounter;
   }
 
   template <typename Id, typename Size>
@@ -186,6 +193,14 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   bool Node<Id, Size>::isFull() const {
     return m_agentIds.size() == m_capacity;
+  }
+
+  template <typename Id, typename Size>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
+  Size Node<Id, Size>::agentCounter() {
+    Size copy{m_agentCounter};
+    m_agentCounter = 0;
+    return copy;
   }
 
   // to be implemented
