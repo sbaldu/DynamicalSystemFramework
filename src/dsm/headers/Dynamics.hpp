@@ -233,7 +233,7 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::updatePaths() {
-    const Size dimension = m_graph->adjMatrix()->getRowDim();
+    const Size dimension = m_graph->adjMatrix().getRowDim();
     for (auto& itineraryPair : m_itineraries) {
       SparseMatrix<Id, bool> path{dimension, dimension};
       // cycle over the nodes
@@ -247,7 +247,7 @@ namespace dsm {
         }
         // save the minimum distance between i and the destination
         auto minDistance{result.value().distance()};
-        for (auto const& node : m_graph->adjMatrix()->getRow(i)) {
+        for (auto const& node : m_graph->adjMatrix().getRow(i)) {
           // init distance from a neighbor node to the destination to zero
           double distance{0.};
 
