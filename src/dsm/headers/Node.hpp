@@ -58,6 +58,7 @@ namespace dsm {
     void addStreetPriority(int16_t priority, Id streetId);
 
     virtual bool isGreen() const;
+    virtual bool isGreen(Id streetId) const;
     virtual void increaseCounter() {};
 
     /// @brief Get the node's id
@@ -101,6 +102,13 @@ namespace dsm {
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   bool Node<Id, Size>::isGreen() const {
+    std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                         "isGreen() is not implemented for this type of node"};
+    throw std::runtime_error(errorMsg);
+  }
+  template <typename Id, typename Size>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
+  bool Node<Id, Size>::isGreen(Id streetId) const {
     std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
                          "isGreen() is not implemented for this type of node"};
     throw std::runtime_error(errorMsg);
@@ -253,6 +261,7 @@ namespace dsm {
     /// @brief Returns true if the traffic light is green
     /// @return bool True if the traffic light is green
     bool isGreen() const;
+    bool isGreen(Id streetId) const;
   };
 
   template <typename Id, typename Size, typename Delay>
@@ -304,9 +313,26 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
   bool TrafficLight<Id, Size, Delay>::isGreen() const {
+    if (!m_delay.has_value()) {
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                           "TrafficLight's delay is not set"};
+      throw std::runtime_error(errorMsg);
+    }
     return m_counter < m_delay.value().first;
   }
-
+  template <typename Id, typename Size, typename Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
+  bool TrafficLight<Id, Size, Delay>::isGreen(Id streetId) const {
+    if (!m_delay.has_value()) {
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                           "TrafficLight's delay is not set"};
+      throw std::runtime_error(errorMsg);
+    }
+    if (this->isGreen()) {
+      return this->streetPriorities().at(streetId) > 0;
+    }
+    return this->streetPriorities().at(streetId) < 0;
+  }
 };  // namespace dsm
 
 #endif
