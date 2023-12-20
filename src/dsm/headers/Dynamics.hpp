@@ -216,6 +216,9 @@ namespace dsm {
       if (destinationNode->isFull()) {
         continue;
       }
+      if (std::dynamic_pointer_cast<TrafficLight<Id, Size, Delay>>(destinationNode) && !destinationNode->isGreen(street->id())) {
+        continue;
+      }
       destinationNode->addAgent(street->dequeue().value());
     }
   }
@@ -226,18 +229,6 @@ namespace dsm {
     for (auto& nodePair : this->m_graph->nodeSet()) {
       auto node{nodePair.second};
       for (const auto agentId : node->agentIds()) {
-        if (std::dynamic_pointer_cast<TrafficLight<Id, Size, Delay>>(node)) {
-          // const auto& streetPriorities = node->streetPriorities();
-          if (node->isGreen()) {
-            if (node->streetPriorities().at(this->m_agents[agentId]->streetId().value()) < 0) {
-              continue;
-            }
-          } else {
-            if (node->streetPriorities().at(this->m_agents[agentId]->streetId().value()) > 0) {
-              continue;
-            }
-          }
-        }
         if (node->id() == this->m_itineraries[this->m_agents[agentId]->itineraryId()]->destination()) {
           node->removeAgent(agentId);
           this->m_travelTimes.push_back(this->m_agents[agentId]->time());

@@ -236,6 +236,5 @@ TEST_CASE("Dynamics") {
     for (uint8_t i = 0; i < 15; ++i) {
       dynamics.evolve(false);
     }
-
   }
 }
