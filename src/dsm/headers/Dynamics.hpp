@@ -236,7 +236,7 @@ namespace dsm {
     const Size dimension = m_graph->adjMatrix()->getRowDim();
     std::unordered_map<Id, SparseMatrix<Id, bool>> paths;
     for (auto& itineraryPair : m_itineraries) {
-      if (itineraryPair.second->path().size() == 0 && paths.contains(itineraryPair.second->destination())) {
+      if (this->m_time == 0 && itineraryPair.second->path().size() == 0 && paths.contains(itineraryPair.second->destination())) {
         itineraryPair.second->setPath(paths.at(itineraryPair.second->destination()));
         continue;
       }
