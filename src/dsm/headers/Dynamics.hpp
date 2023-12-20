@@ -234,7 +234,12 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::updatePaths() {
     const Size dimension = m_graph->adjMatrix()->getRowDim();
+    std::unordered_map<Id, SparseMatrix<Id, bool>> paths;
     for (auto& itineraryPair : m_itineraries) {
+      if (itineraryPair.second->path().size() == 0 && paths.contains(itineraryPair.second->destination())) {
+        itineraryPair.second->setPath(paths.at(itineraryPair.second->destination()));
+        continue;
+      }
       SparseMatrix<Id, bool> path{dimension, dimension};
       // cycle over the nodes
       for (Size i{0}; i < dimension; ++i) {
