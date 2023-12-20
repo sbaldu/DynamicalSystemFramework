@@ -111,7 +111,7 @@ TEST_CASE("Dynamics") {
   SUBCASE("updatePaths - equal length") {
     /// GIVEN: a dynamics object
     /// WHEN: we update the paths
-    /// THEN: the paths are updated
+    /// THEN: the paths are updated correctly
     Street s1{0, 1, 5., std::make_pair(0, 1)};
     Street s2{1, 1, 5., std::make_pair(1, 2)};
     Street s3{2, 1, 5., std::make_pair(0, 3)};
@@ -161,7 +161,7 @@ TEST_CASE("Dynamics") {
   SUBCASE("evolve without insertion") {
     /// GIVEN: a dynamics object
     /// WHEN: we evolve the dynamics
-    /// THEN: the dynamics evolves
+    /// THEN: the agent is not reinserted
     Street s1{0, 1, 30., std::make_pair(0, 1)};
     Street s2{1, 1, 30., std::make_pair(1, 0)};
     Graph graph2;
@@ -186,7 +186,7 @@ TEST_CASE("Dynamics") {
   SUBCASE("evolve with reinsertion") {
     /// GIVEN: a dynamics object
     /// WHEN: we evolve the dynamics
-    /// THEN: the dynamics evolves
+    /// THEN: the agent is reinserted
     Street s1{0, 1, 30., std::make_pair(0, 1)};
     Street s2{1, 1, 30., std::make_pair(1, 0)};
     Graph graph2;
@@ -213,18 +213,22 @@ TEST_CASE("Dynamics") {
     CHECK_EQ(dynamics.agents().at(0)->speed(), 0.);
   }
   SUBCASE("TrafficLights") {
+    /// GIVEN: a dynamics object
+    /// WHEN: we evolve the dynamics
+    /// THEN: the agent is ready to go through the traffic light at time 3 but the traffic light is red
+    ///       until time 4, so the agent waits until time 4
     TrafficLight tl{1};
     tl.setDelay(2);
-    Street s1{0, 1, 30., std::make_pair(0, 1)};
-    Street s2{1, 1, 30., std::make_pair(1, 2)};
-    Street s3{2, 1, 30., std::make_pair(3, 1)};
-    Street s4{3, 1, 30., std::make_pair(1, 0)};
-    tl.addStreetPriority(2, 0);
+    Street s1{0, 1, 30., 15., std::make_pair(0, 1)};
+    Street s2{1, 1, 30., 15., std::make_pair(1, 2)};
+    Street s3{2, 1, 30., 15., std::make_pair(3, 1)};
+    Street s4{3, 1, 30., 15., std::make_pair(1, 4)};
+    tl.addStreetPriority(0, 2);
     tl.addStreetPriority(1, 1);
-    tl.addStreetPriority(-1, 2);
-    tl.addStreetPriority(-2, 3);
+    tl.addStreetPriority(2, -1);
+    tl.addStreetPriority(3, -2);
     Graph graph2;
-    graph2.addNode(tl);
+    graph2.addNode(std::make_shared<TrafficLight>(tl));
     graph2.addStreets(s1, s2, s3, s4);
     graph2.buildAdj();
     Dynamics dynamics{graph2};
@@ -233,8 +237,14 @@ TEST_CASE("Dynamics") {
     dynamics.addItinerary(itinerary);
     dynamics.updatePaths();
     dynamics.addRandomAgents(1);
-    for (uint8_t i = 0; i < 15; ++i) {
+    dynamics.evolve(false);
+    for (uint8_t i{0}; i < 5; ++i) {
       dynamics.evolve(false);
+      if (i < 3) {
+        CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 0);
+      } else {
+        CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 1);
+      }
     }
   }
 }
