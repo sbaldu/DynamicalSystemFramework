@@ -227,18 +227,13 @@ namespace dsm {
       auto node{nodePair.second};
       for (const auto agentId : node->agentIds()) {
         if (std::dynamic_pointer_cast<TrafficLight<Id, Size, Delay>>(node)) {
-          const auto& streetPriorities = node->streetPriorities();
-          // revert the map
-          std::map<Id, int16_t> priorities;
-          for (const auto& streetPriority : streetPriorities) {
-            priorities[streetPriority.second] = streetPriority.first;
-          }
+          // const auto& streetPriorities = node->streetPriorities();
           if (node->isGreen()) {
-            if (priorities[this->m_agents[agentId]->streetId().value()] < 0) {
+            if (node->streetPriorities().at(this->m_agents[agentId]->streetId().value()) < 0) {
               continue;
             }
           } else {
-            if (priorities[this->m_agents[agentId]->streetId().value()] > 0) {
+            if (node->streetPriorities().at(this->m_agents[agentId]->streetId().value()) > 0) {
               continue;
             }
           }
