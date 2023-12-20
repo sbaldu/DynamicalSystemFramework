@@ -278,6 +278,7 @@ namespace dsm {
           }
         }
         itineraryPair.second->setPath(path);
+        paths.emplace(itineraryPair.second->destination(), path);
       }
     }
   }
