@@ -1,3 +1,5 @@
+
+#include <cassert>
 #include <cstdint>
 
 #include "Graph.hpp"
@@ -54,6 +56,7 @@ TEST_CASE("Graph") {
     CHECK(graph.adjMatrix()->contains(3, 2));
     CHECK_FALSE(graph.adjMatrix()->contains(2, 1));
   }
+
   SUBCASE("Construction with addStreet") {
     Street s1(1, std::make_pair(0, 1));
     Street s2(2, std::make_pair(1, 2));
