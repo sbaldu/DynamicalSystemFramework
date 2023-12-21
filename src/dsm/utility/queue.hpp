@@ -40,4 +40,6 @@ namespace dsm {
     const T operator[](size_t i) const { return *(this->c.begin() + i); }
   };
 
+};  // namespace dsm
+
 #endif
