@@ -9,6 +9,7 @@
 #define Node_hpp
 
 #include <functional>
+#include <queue>
 #include <utility>
 #include <string>
 #include <stdexcept>
@@ -22,16 +23,14 @@ namespace dsm {
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   class Node {
-  protected:
-    std::vector<Id> m_agentIds;
-    std::map<int16_t, Id> m_streetPriorities;
+  private:
     std::pair<double, double> m_coords;
     Id m_id;
-    Size m_capacity;
-    Size m_agentCounter;
+	Size m_capacity;
 
   public:
-    Node() = default;
+    Node() = delete;
+
     /// @brief Construct a new Node object
     /// @param id The node's id
     explicit Node(Id id);
@@ -46,20 +45,6 @@ namespace dsm {
     /// @brief Set the node's capacity
     /// @param capacity The node's capacity
     void setCapacity(Size capacity);
-    /// @brief Puts an agent in the node
-    /// @param agentId The agent's id
-    void addAgent(Id agentId);
-    /// @brief Removes an agent from the node
-    /// @param agentId The agent's id
-    void removeAgent(Id agentId);
-    
-    void setStreetPriorities(std::map<int16_t, Id> streetPriorities);
-
-    void addStreetPriority(int16_t priority, Id streetId);
-
-    virtual bool isGreen() const;
-    virtual bool isGreen(Id streetId) const;
-    virtual void increaseCounter() {};
 
     /// @brief Get the node's id
     /// @return Id The node's id
@@ -67,28 +52,35 @@ namespace dsm {
     /// @brief Get the node's coordinates
     /// @return std::pair<double,, double> A std::pair containing the node's coordinates
     const std::pair<double, double>& coords() const;
-    /// @brief Get the node's street priorities
-    /// @return std::map<Id, Size> A std::map containing the node's street priorities
-    /// @details The keys of the map are intended as priorities, while the values are the ids of the streets.
-    ///          The streets are ordered by priority, from the highest to the lowest. You should have both positive
-    ///          and negative priorities, where the positive ones are the ones that have the green light, and the
-    ///          negative ones are the ones that have the red light (and viceversa)
-    virtual const std::map<int16_t, Id>& streetPriorities() const;
     /// @brief Get the node's capacity
     /// @return Size The node's capacity
     Size capacity() const;
-    /// @brief Get the node's agent ids
-    /// @return std::vector<Id> A std::vector containing the node's agent ids
-    std::vector<Id> agentIds() const;
+
     /// @brief Returns true if the node is full
     /// @return bool True if the node is full
-    bool isFull() const;
-    /// @brief Returns the number of agents that have passed through the node
-    /// @return Size The number of agents that have passed through the node
-    /// @details This function returns the number of agents that have passed through the node
-    ///          since the last time this function was called. It also resets the counter.
-    Size agentCounter();
+	virtual bool isFull() const = 0;
+	virtual bool isFull(Id streetId) const = 0;
   };
+
+  template <typename Id, typename Size, typename Priority>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
+  class Intersection : public Node<Id, Size> {
+	private:
+	  std::priority_queue<Id, Priority> m_queue;
+	
+	public:
+	  Intersection() = delete;
+	  Intersection(Id id);
+
+	  const std::priority_queue<Id, Priority>& queue() const;
+
+	  bool isFull() const override;
+	  bool isFull(Id streetId) const override;
+  };
+
+  template <typename Id, typename Size>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
+  class TrafficLight : public Node<Id, Size> {};
 
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
@@ -98,7 +90,7 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   Node<Id, Size>::Node(Id id, std::pair<double, double> coords)
       : m_coords{std::move(coords)}, m_id{id}, m_capacity{1}, m_agentCounter{0} {}
-  
+
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   bool Node<Id, Size>::isGreen() const {
@@ -211,19 +203,6 @@ namespace dsm {
     return copy;
   }
 
-  // to be implemented
-  /* template <typename Id> */
-  /* class Intersection : public Node<Id, Size> { */
-  /* private: */
-  /*   std::function<void()> m_priority; */
-  /* }; */
-
-  /* template <typename Id> */
-  /* class Roundabout : public Node<Id, Size> { */
-  /* private: */
-  /*   std::function<void()> m_priority; */
-  /* }; */
-
   template <typename Id, typename Size, typename Delay>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
   class TrafficLight : public Node<Id, Size> {
@@ -289,7 +268,7 @@ namespace dsm {
     if (phase > m_delay.value().first + m_delay.value().second) {
       phase -= m_delay.value().first + m_delay.value().second;
     }
-    phase == 0 ? m_counter = 0 : m_counter = m_delay.value().first % phase; //fwefbewbfw
+    phase == 0 ? m_counter = 0 : m_counter = m_delay.value().first % phase;  //fwefbewbfw
   }
   template <typename Id, typename Size, typename Delay>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
