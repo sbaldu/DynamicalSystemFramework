@@ -18,8 +18,8 @@ namespace dsm {
     const_iterator begin() const { return this->c.begin(); }
     const_iterator end() const { return this->c.end(); }
 
-    T operator[](size_t i) { return *(this->c.begin() + i); }
-    const T operator[](size_t i) const { return *(this->c.begin() + i); }
+	T& operator[](size_t i) { return *(this->c.begin() + i); }
+	const T& operator[](size_t i) const { return *(this->c.begin() + i); }
   };
 
   template <typename T,
@@ -36,8 +36,8 @@ namespace dsm {
     const_iterator begin() const { return this->c.begin(); }
     const_iterator end() const { return this->c.end(); }
 
-    T operator[](size_t i) { return *(this->c.begin() + i); }
-    const T operator[](size_t i) const { return *(this->c.begin() + i); }
+    T& operator[](size_t i) { return *(this->c.begin() + i); }
+    const T& operator[](size_t i) const { return *(this->c.begin() + i); }
   };
 
 };  // namespace dsm
