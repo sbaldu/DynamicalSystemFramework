@@ -19,6 +19,7 @@
 #include "Agent.hpp"
 #include "Node.hpp"
 #include "../utility/TypeTraits/is_numeric.hpp"
+#include "../utility/queue.hpp"
 
 namespace dsm {
   /// @brief The Street class represents a street in the network.
@@ -28,7 +29,7 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   class Street {
   private:
-    std::queue<Size> m_queue;
+    dsm::queue<Size> m_queue;
     std::pair<Id, Id> m_nodePair;
     double m_len;
     double m_maxSpeed;
@@ -68,7 +69,7 @@ namespace dsm {
     void setLength(double len);
     /// @brief Set the street's queue
     /// @param queue, The street's queue
-    void setQueue(std::queue<Size> queue);
+    void setQueue(dsm::queue<Size> queue);
     /// @brief Set the street's node pair
     /// @param node1 The source node of the street
     /// @param node2 The destination node of the street
@@ -98,8 +99,8 @@ namespace dsm {
     /// @return double, The street's length
     double length() const;
     /// @brief Get the street's queue
-    /// @return std::queue<Size>, The street's queue
-    const std::queue<Size>& queue() const;
+    /// @return dsm::queue<Size>, The street's queue
+    const dsm::queue<Size>& queue() const;
     /// @brief Get the street's node pair
     /// @return std::pair<Id, Id>, The street's node pair
     const std::pair<Id, Id>& nodePair() const;
@@ -162,7 +163,7 @@ namespace dsm {
   }
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Street<Id, Size>::setQueue(std::queue<Size> queue) {
+  void Street<Id, Size>::setQueue(dsm::queue<Size> queue) {
     m_queue = std::move(queue);
   }
   template <typename Id, typename Size>
@@ -213,7 +214,7 @@ namespace dsm {
   }
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  const std::queue<Size>& Street<Id, Size>::queue() const {
+  const dsm::queue<Size>& Street<Id, Size>::queue() const {
     return m_queue;
   }
   template <typename Id, typename Size>
