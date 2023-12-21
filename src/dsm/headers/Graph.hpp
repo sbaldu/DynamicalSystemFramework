@@ -461,7 +461,7 @@ namespace dsm {
     if (streetIt == m_streets.end()) {
       return std::nullopt;
     }
-    return streetIt->second;
+    return std::make_unique<Street<Id, Size>>(*streetIt->second);
   }
 
   template <typename Id, typename Size>

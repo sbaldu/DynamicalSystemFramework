@@ -21,7 +21,7 @@ TEST_CASE("Dynamics") {
     /// GIVEN: a graph
     /// WHEN: we create a dynamics object
     /// THEN: the graph is the same as the one in the dynamics object
-    Dynamics dynamics(graph);
+    Dynamics dynamics(std::move(graph));
     CHECK_EQ(dynamics.graph().nodeSet().size(), 3);
     CHECK_EQ(dynamics.graph().streetSet().size(), 4);
     CHECK_EQ(dynamics.meanSpeed(), 0.);
@@ -39,7 +39,7 @@ TEST_CASE("Dynamics") {
     Graph graph2;
     graph2.addStreets(s1, s2, s3);
     graph2.buildAdj();
-    Dynamics dynamics{graph2};
+    Dynamics dynamics{std::move(graph2)};
     Itineary itinerary{0, 0, 2};
     dynamics.addItinerary(itinerary);
     dynamics.updatePaths();
@@ -57,7 +57,7 @@ TEST_CASE("Dynamics") {
     Graph graph2;
     graph2.addStreets(s1, s2, s3, s4);
     graph2.buildAdj();
-    Dynamics dynamics{graph2};
+    Dynamics dynamics{std::move(graph2)};
     Itineary itinerary{0, 0, 2};
     dynamics.addItinerary(itinerary);
     dynamics.updatePaths();
