@@ -26,6 +26,7 @@ namespace dsm {
             typename Container = std::vector<T>,
             typename Compare = std::less<typename Container::value_type>>
   class priority_queue : public std::priority_queue<T, Container, Compare> {
+  public:
     typedef typename Container::iterator iterator;
     typedef typename Container::const_iterator const_iterator;
 
