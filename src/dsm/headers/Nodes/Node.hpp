@@ -21,14 +21,13 @@
 namespace dsm {
   /// @brief The Node class represents a node in the network.
   /// @tparam Id The type of the node's id. It must be an unsigned integral type.
-  template <typename Id, typename Size, typename Priority>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && dsm::is_numeric_v<Priority>
+  template <typename Id, typename Size>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   class Node {
   private:
     std::pair<double, double> m_coords;
     Id m_id;
     Size m_capacity;
-    dsm::priority_queue<Id, Size> m_queue;
 
   public:
     Node() = delete;
@@ -56,9 +55,6 @@ namespace dsm {
     /// @brief Get the node's capacity
     /// @return Size The node's capacity
     Size capacity() const;
-    /// @brief Get the node's queue
-    /// @return const dsm::priority_queue<Id, Priority>& The node's queue
-    const dsm::priority_queue<Id, Priority>& queue() const;
 
     /// @brief Returns true if the node is full
     /// @return bool True if the node is full
@@ -66,38 +62,39 @@ namespace dsm {
     virtual bool isFull(Id streetId) const = 0;
   };
 
-  template <typename Id, typename Size, typename Priority>
+  template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
-  Node<Id, Size, Priority>::Node(Id id) : m_id{id}, m_capacity{std::numeric_limits<Size>::max()} {}
-  template <typename Id, typename Size, typename Priority>
+  Node<Id, Size>::Node(Id id)
+      : m_id{id}, m_capacity{1} {}
+  template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
-  Node<Id, Size, Priority>::Node(Id id, std::pair<double, double> coords)
-      : m_coords{coords}, m_id{id}, m_capacity{std::numeric_limits<Size>::max()} {}
+  Node<Id, Size>::Node(Id id, std::pair<double, double> coords)
+      : m_coords{coords}, m_id{id}, m_capacity{1} {}
 
-  template <typename Id, typename Size, typename Priority>
+  template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
-  void Node<Id, Size, Priority>::setCoords(std::pair<double, double> coords) {
+  void Node<Id, Size>::setCoords(std::pair<double, double> coords) {
     m_coords = std::move(coords);
   }
-  template <typename Id, typename Size, typename Priority>
+  template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
-  void Node<Id, Size, Priority>::setCapacity(Size capacity) {
+  void Node<Id, Size>::setCapacity(Size capacity) {
     m_capacity = capacity;
   }
 
-  template <typename Id, typename Size, typename Priority>
+  template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
-  Id Node<Id, Size, Priority>::id() const {
+  Id Node<Id, Size>::id() const {
     return m_id;
   }
-  template <typename Id, typename Size, typename Priority>
+  template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
-  const std::pair<double, double>& Node<Id, Size, Priority>::coords() const {
+  const std::pair<double, double>& Node<Id, Size>::coords() const {
     return m_coords;
   }
-  template <typename Id, typename Size, typename Priority>
+  template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
-  Size Node<Id, Size, Priority>::capacity() const {
+  Size Node<Id, Size>::capacity() const {
     return m_capacity;
   }
 
