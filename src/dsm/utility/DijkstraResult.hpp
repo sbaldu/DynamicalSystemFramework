@@ -23,7 +23,8 @@ namespace dsm {
     /// @param path, A vector of the ids of the nodes in the path
     /// @param distance, The distance of the path
     /// @details The path is represented by a vector of the ids of the nodes in the path.
-    DijkstraResult(std::vector<Id> path, double distance) : m_path{std::move(path)}, m_distance{distance} {}
+    DijkstraResult(std::vector<Id> path, double distance)
+        : m_path{std::move(path)}, m_distance{distance} {}
 
     /// @brief Get the path
     /// @return A vector of the ids of the nodes in the path
