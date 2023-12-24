@@ -9,13 +9,13 @@
 #define Node_hpp
 
 #include <concepts>
-#include <utility>
+#include <optional>
 #include <string>
 #include <stdexcept>
-#include <optional>
 #include <vector>
-#include <map>
+#include <utility>
 
+#include "../../utility/TypeTraits/is_numeric.hpp"
 #include "../../utility/queue.hpp"
 
 namespace dsm {
@@ -99,11 +99,6 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   Size Node<Id, Size, Priority>::capacity() const {
     return m_capacity;
-  }
-  template <typename Id, typename Size, typename Priority>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
-  const dsm::priority_queue<Id, Priority>& Node<Id, Size, Priority>::queue() const {
-    return m_queue;
   }
 
 };  // namespace dsm

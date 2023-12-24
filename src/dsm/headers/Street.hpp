@@ -122,7 +122,11 @@ namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   Street<Id, Size>::Street(Id index, std::pair<Id, Id> pair)
-      : m_nodePair{std::move(pair)}, m_maxSpeed{30.}, m_id{index}, m_size{0}, m_capacity{1} {}
+      : m_nodePair{std::move(pair)},
+        m_maxSpeed{30.},
+        m_id{index},
+        m_size{0},
+        m_capacity{1} {}
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
@@ -136,8 +140,13 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  Street<Id, Size>::Street(Id id, Size capacity, double len, double maxSpeed, std::pair<Id, Id> nodePair)
-      : m_nodePair{std::move(nodePair)}, m_len{len}, m_id{id}, m_size{0}, m_capacity{capacity} {
+  Street<Id, Size>::Street(
+      Id id, Size capacity, double len, double maxSpeed, std::pair<Id, Id> nodePair)
+      : m_nodePair{std::move(nodePair)},
+        m_len{len},
+        m_id{id},
+        m_size{0},
+        m_capacity{capacity} {
     this->setMaxSpeed(maxSpeed);
   }
 
@@ -155,7 +164,8 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Street<Id, Size>::setLength(double len) {
     if (len < 0.) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " +
                            "The length of a street cannot be negative."};
       throw std::invalid_argument(errorMsg);
     }
@@ -173,7 +183,8 @@ namespace dsm {
   }
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Street<Id, Size>::setNodePair(const Node<Id, Size>& node1, const Node<Id, Size>& node2) {
+  void Street<Id, Size>::setNodePair(const Node<Id, Size>& node1,
+                                     const Node<Id, Size>& node2) {
     m_nodePair = std::make_pair(node1.id(), node2.id());
   }
   template <typename Id, typename Size>
@@ -185,7 +196,8 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Street<Id, Size>::setMaxSpeed(double speed) {
     if (speed < 0.) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " +
                            "The maximum speed of a street cannot be negative."};
       throw std::invalid_argument(errorMsg);
     }
