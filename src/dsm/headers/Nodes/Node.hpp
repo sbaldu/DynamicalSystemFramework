@@ -59,6 +59,9 @@ namespace dsm {
     /// @brief Returns true if the node is full
     /// @return bool True if the node is full
     virtual bool isFull() const = 0;
+    /// @brief Returns true if the node is full as seen from the street with the given id
+    /// @param streetId The id of the street
+    /// @return bool True if the node is full
     virtual bool isFull(Id streetId) const = 0;
   };
 

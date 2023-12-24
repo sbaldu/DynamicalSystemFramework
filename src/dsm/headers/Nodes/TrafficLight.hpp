@@ -27,8 +27,8 @@ namespace dsm {
   class TrafficLight : final public Node<Id, Size> {
   private:
 	std::vector<Size> m_passingAgents;
-    std::optional<TrafficLightCycle<Delay>> m_delay;
-    Delay m_counter;
+  std::optional<TrafficLightCycle<Delay>> m_delay;
+  Delay m_counter;
 
   public:
     TrafficLight() = delete;
@@ -53,11 +53,11 @@ namespace dsm {
     /// @throw std::runtime_error if the delay is not set
     void increaseCounter();
 
-	void addAgent(Size agentId);
-	void removeAgent(Size agentId);
+    void addAgent(Size agentId);
+    void removeAgent(Size agentId);
 
-	std::vector<Size>& agents() ;
-	const std::vector<Size>& agents() const;
+    std::vector<Size>& agents() ;
+    const std::vector<Size>& agents() const;
 
     /// @brief Get the node's delay
     /// @return std::optional<Delay> The node's delay
@@ -135,7 +135,6 @@ namespace dsm {
              std::unsigned_integral<Delay>
   void TrafficLight<Id, Size, Delay>::addAgent(Size agentId) {
 	m_passingAgents.push_back(agentId);
-	++m_counter;
   }
 
   template <typename Id, typename Size, typename Delay>
@@ -143,7 +142,6 @@ namespace dsm {
              std::unsigned_integral<Delay>
   void TrafficLight<Id, Size, Delay>::removeAgent(Size agentId) {
 	std::erase(std::find(m_passingAgents.begin(), m_passingAgents.end(), agentId));
-	--m_counter;
   }
 
   template <typename Id, typename Size, typename Delay>
