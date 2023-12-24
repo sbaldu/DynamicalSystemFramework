@@ -24,7 +24,7 @@ namespace dsm {
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   class Node {
-  private:
+  protected:
     std::pair<double, double> m_coords;
     Id m_id;
     Size m_capacity;
