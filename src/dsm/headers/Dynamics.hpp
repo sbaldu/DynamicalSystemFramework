@@ -49,14 +49,14 @@ namespace dsm {
   public:
     Dynamics() = delete;
     /// @brief Construct a new Dynamics object
-    /// @param graph, The graph representing the network
+    /// @param graph The graph representing the network
     Dynamics(const Graph<Id, Size>& graph);
 
     /// @brief Set the itineraries
     /// @param itineraries, The itineraries
     void setItineraries(std::span<Itinerary<Id>> itineraries);
     /// @brief Set the seed for the graph's random number generator
-    /// @param seed, The seed
+    /// @param seed The seed
     void setSeed(unsigned int seed);
     /// @brief Set the minim speed rateo, i.e. the minim speed with respect to the speed limit
     /// @param minSpeedRateo The minim speed rateo
@@ -94,42 +94,42 @@ namespace dsm {
     TimePoint time() const;
 
     /// @brief Add an agent to the simulation
-    /// @param agent, The agent
+    /// @param agent The agent
     void addAgent(const Agent<Id, Size, Delay>& agent);
     /// @brief Add an agent to the simulation
-    /// @param agent, Unique pointer to the agent
+    /// @param agent Unique pointer to the agent
     void addAgent(std::unique_ptr<Agent<Id, Size, Delay>> agent);
     /// @brief Add a pack of agents to the simulation
-    /// @param agents, Parameter pack of agents
+    /// @param agents Parameter pack of agents
     template <typename... Tn>
       requires(is_agent_v<Tn> && ...)
     void addAgents(Tn... agents);
     /// @brief Add a pack of agents to the simulation
-    /// @param agent, An agent
-    /// @param agents, Parameter pack of agents
+    /// @param agent An agent
+    /// @param agents Parameter pack of agents
     template <typename T1, typename... Tn>
       requires(is_agent_v<T1> && (is_agent_v<Tn> && ...))
     void addAgents(T1 agent, Tn... agents);
     /// @brief Add a set of agents to the simulation
-    /// @param agents, Generic container of agents, represented by an std::span
+    /// @param agents Generic container of agents, represented by an std::span
     void addAgents(std::span<Agent<Id, Size, Delay>> agents);
 
     /// @brief Remove an agent from the simulation
-    /// @param agentId, the index of the agent to remove
+    /// @param agentId the index of the agent to remove
     void removeAgent(Size agentId);
     template <typename T1, typename... Tn>
       requires(std::is_convertible_v<T1, Size> &&
                (std::is_convertible_v<Tn, Size> && ...))
     /// @brief Remove a pack of agents from the simulation
-    /// @param id, the index of the first agent to remove
-    /// @param ids, the pack of indexes of the agents to remove
+    /// @param id the index of the first agent to remove
+    /// @param ids the pack of indexes of the agents to remove
     void removeAgents(T1 id, Tn... ids);
 
     /// @brief Add an itinerary
     /// @param itinerary, The itinerary
     void addItinerary(const Itinerary<Id>& itinerary);
     /// @brief Add an itinerary
-    /// @param itinerary, Unique pointer to the itinerary
+    /// @param itinerary Unique pointer to the itinerary
     void addItinerary(std::unique_ptr<Itinerary<Id>> itinerary);
     template <typename... Tn>
       requires(is_itinerary_v<Tn> && ...)
@@ -143,7 +143,7 @@ namespace dsm {
       requires(is_itinerary_v<T1> && (is_itinerary_v<Tn> && ...))
     void addItineraries(T1 itinerary, Tn... itineraries);
     /// @brief Add a set of itineraries
-    /// @param itineraries, Generic container of itineraries, represented by an std::span
+    /// @param itineraries Generic container of itineraries, represented by an std::span
     void addItineraries(std::span<Itinerary<Id>> itineraries);
 
     /// @brief Reset the simulation time
@@ -159,17 +159,17 @@ namespace dsm {
     void evolve(F f, Tn... args);
 
     /// @brief Get the mean speed of the agents
-    /// @return double, The mean speed of the agents
-    double meanSpeed() const;
+    /// @return std::pair<double, double> The mean speed of the agents and the standard deviation
+    std::pair<double, double> meanSpeed() const;
     /// @brief Get the mean density of the streets
-    /// @return double, The mean density of the streets
-    double meanDensity() const;
+    /// @return std::pair<double, double> The mean density of the streets and the standard deviation
+    std::pair<double, double> meanDensity() const;
     /// @brief Get the mean flow of the streets
-    /// @return double, The mean flow of the streets
-    double meanFlow() const;
+    /// @return std::pair<double, double> The mean flow of the streets and the standard deviation
+    std::pair<double, double> meanFlow() const;
     /// @brief Get the mean travel time of the agents
-    /// @return double, The mean travel time of the agents
-    double meanTravelTime() const;
+    /// @return std::pair<double, double> The mean travel time of the agents and the standard
+    std::pair<double, double> meanTravelTime() const;
   };
 
   template <typename Id, typename Size, typename Delay>
@@ -435,51 +435,86 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
-  double Dynamics<Id, Size, Delay>::meanSpeed() const {
+  std::pair<double, double> Dynamics<Id, Size, Delay>::meanSpeed() const {
     if (m_agents.size() == 0) {
-      return 0.;
+      return std::make_pair(0., 0.);
     }
-    return std::accumulate(m_agents.cbegin(),
-                           m_agents.cend(),
-                           0.,
-                           [](double sum, const auto& agent) {
-                             return sum + agent.second->speed();
-                           }) /
-           m_agents.size();
+    double mean {
+      std::accumulate(
+          m_agents.cbegin(),
+          m_agents.cend(),
+          0.,
+          [](double sum, const auto& agent) { return sum + agent.second->speed(); }) /
+          m_agents.size();
+    }
+    double variance{std::accumulate(m_agents.cbegin(),
+                                    m_agents.cend(),
+                                    0.,
+                                    [mean](double sum, const auto& agent) {
+                                      return sum +
+                                             std::pow(agent.second->speed() - mean, 2);
+                                    }) /
+                    (m_agents.size() - 1)};
+    return std::make_pair(mean, std::sqrt(variance));
   }
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
-  double Dynamics<Id, Size, Delay>::meanDensity() const {
+  std::pair<double, double> Dynamics<Id, Size, Delay>::meanDensity() const {
     if (m_graph->streetSet().size() == 0) {
-      return 0.;
+      return std::make_pair(0., 0.);
     }
-    return std::accumulate(m_graph->streetSet().cbegin(),
-                           m_graph->streetSet().cend(),
-                           0.,
-                           [](double sum, const auto& street) {
-                             return sum + street.second->density();
-                           }) /
-           m_graph->streetSet().size();
+    double mean {
+      std::accumulate(
+          m_graph->streetSet().cbegin(),
+          m_graph->streetSet().cend(),
+          0.,
+          [](double sum, const auto& street) { return sum + street.second->density(); }) /
+          m_graph->streetSet().size();
+    }
+    double variance{std::accumulate(m_graph->streetSet().cbegin(),
+                                    m_graph->streetSet().cend(),
+                                    0.,
+                                    [mean](double sum, const auto& street) {
+                                      return sum +
+                                             std::pow(street.second->density() - mean, 2);
+                                    }) /
+                    (m_graph->streetSet().size() - 1)};
+    return std::make_pair(mean, std::sqrt(variance));
   }
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
-  double Dynamics<Id, Size, Delay>::meanFlow() const {
-    return this->meanDensity() * this->meanSpeed();
+  std::pair<double, double> Dynamics<Id, Size, Delay>::meanFlow() const {
+    auto meanSpeed{this->meanSpeed()};
+    auto meanDensity{this->meanDensity()};
+
+    double mean{meanSpeed.first * meanDensity.first};
+    double variance{(meanSpeed.first * std::pow(meanDensity.second, 2) +
+                     std::pow(meanSpeed.second, 2) * meanDensity.first) /
+                    mean};
+    return std::make_pair(mean, std::sqrt(variance));
   }
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
-  double Dynamics<Id, Size, Delay>::meanTravelTime() const {
+  std::pair<double, double> Dynamics<Id, Size, Delay>::meanTravelTime() const {
     if (m_travelTimes.size() == 0) {
-      return 0.;
+      return std::make_pair(0., 0.);
     }
-    return std::accumulate(m_travelTimes.cbegin(), m_travelTimes.cend(), 0.) /
-           m_travelTimes.size();
+    double mean{std::accumulate(m_travelTimes.cbegin(), m_travelTimes.cend(), 0.) /
+                m_travelTimes.size()};
+    double variance{std::accumulate(m_travelTimes.cbegin(),
+                                    m_travelTimes.cend(),
+                                    0.,
+                                    [mean](double sum, const auto& travelTime) {
+                                      return sum + std::pow(travelTime - mean, 2);
+                                    }) /
+                    (m_travelTimes.size() - 1)};
+    return std::make_pair(mean, std::sqrt(variance));
   }
 
   template <typename Id, typename Size, typename Delay>
