@@ -10,7 +10,6 @@
 #define Street_hpp
 
 #include <optional>
-#include <queue>
 #include <type_traits>
 #include <utility>
 #include <stdexcept>
