@@ -42,7 +42,7 @@ namespace dsm {
     std::unique_ptr<Graph<Id, Size>> m_graph;
     double m_errorProbability;
     double m_minSpeedRateo;
-    std::mt19937_64 m_generator{std::random_device{}()};
+    mutable std::mt19937_64 m_generator{std::random_device{}()};
     std::uniform_real_distribution<double> m_uniformDist{0., 1.};
     std::vector<unsigned int> m_travelTimes;
 
@@ -161,12 +161,24 @@ namespace dsm {
     /// @brief Get the mean speed of the agents
     /// @return std::pair<double, double> The mean speed of the agents and the standard deviation
     std::pair<double, double> meanSpeed() const;
+    /// @brief Compute the mean speed over nStreets randomly selected streets
+    /// @param nStreets The number of streets to select
+    /// @return std::pair<double, double> The mean speed of the streets and the standard deviation
+    std::pair<double, double> meanSpeed(Size nStreets) const;
     /// @brief Get the mean density of the streets
     /// @return std::pair<double, double> The mean density of the streets and the standard deviation
     std::pair<double, double> meanDensity() const;
+    /// @brief Compute the mean density over nStreets randomly selected streets
+    /// @param nStreets The number of streets to select
+    /// @return std::pair<double, double> The mean density of the streets and the standard deviation
+    std::pair<double, double> meanDensity(Size nStreets) const;
     /// @brief Get the mean flow of the streets
     /// @return std::pair<double, double> The mean flow of the streets and the standard deviation
     std::pair<double, double> meanFlow() const;
+    /// @brief Compute the mean flow over nStreets randomly selected streets
+    /// @param nStreets The number of streets to select
+    /// @return std::pair<double, double> The mean flow of the streets and the standard deviation
+    std::pair<double, double> meanFlow(Size nStreets) const;
     /// @brief Get the mean travel time of the agents
     /// @return std::pair<double, double> The mean travel time of the agents and the standard
     std::pair<double, double> meanTravelTime() const;
@@ -455,6 +467,52 @@ namespace dsm {
                                     }) /
                     (m_agents.size() - 1)};
     return std::make_pair(mean, std::sqrt(variance));
+  }
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>)
+  std::pair<double, double> Dynamics<Id, Size, Delay>::meanSpeed(Size nStreets) const {
+    if (m_graph->streetSet().size() == 0) {
+      return std::make_pair(0., 0.);
+    }
+    std::vector<Id> streetIds;
+    streetIds.reserve(m_graph->streetSet().size());
+    for (auto const& street : m_graph->streetSet()) {
+      streetIds.push_back(street.first);
+    }
+    std::sample(streetIds.begin(),
+                streetIds.end(),
+                std::back_inserter(streetIds),
+                nStreets,
+                m_generator);
+    // find all agents on the selected streets
+    std::vector<std::reference_wrapper<const Agent<Id, Size, Delay>>> agents;
+    for (auto const& agent : m_agents) {
+      if (std::find(streetIds.begin(), streetIds.end(), agent.second->streetId()) !=
+          streetIds.end()) {
+        agents.push_back(std::cref(*agent.second));
+      }
+    }
+    if (agents.size() == 0) {
+      return std::make_pair(0., 0.);
+    }
+    double mean{std::accumulate(agents.cbegin(),
+                                agents.cend(),
+                                0.,
+                                [](double sum, const auto& agent) {
+                                  return sum + agent.get().speed();
+                                }) /
+                agents.size()};
+    double variance{std::accumulate(agents.cbegin(),
+                                    agents.cend(),
+                                    0.,
+                                    [mean](double sum, const auto& agent) {
+                                      return sum +
+                                             std::pow(agent.get().speed() - mean, 2);
+                                    }) /
+                    (agents.size() - 1)};
+    return std::make_pair(mean, std::sqrt(variance));
+
   }
 
   template <typename Id, typename Size, typename Delay>
