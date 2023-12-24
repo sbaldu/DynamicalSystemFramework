@@ -17,13 +17,16 @@ namespace dsm {
 
     TrafficLightCycle() = delete;
     TrafficLightCycle(Delay green, Delay red) : green{green}, red{red} {}
-    TrafficLightCycle(const std::pair<Delay, Delay>& pair) : green{pair.first}, red{pair.second} {}
+    TrafficLightCycle(const std::pair<Delay, Delay>& pair)
+        : green{pair.first}, red{pair.second} {}
   };
 
-  template <typename Id, typename Size, typename Priority, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
-  class TrafficLight : public Node<Id, Size, Priority> {
+  template <typename Id, typename Size, typename Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>
+  class TrafficLight : final public Node<Id, Size> {
   private:
+	std::vector<Size> m_passingAgents;
     std::optional<TrafficLightCycle<Delay>> m_delay;
     Delay m_counter;
 
@@ -50,6 +53,12 @@ namespace dsm {
     /// @throw std::runtime_error if the delay is not set
     void increaseCounter();
 
+	void addAgent(Size agentId);
+	void removeAgent(Size agentId);
+
+	std::vector<Size>& agents() ;
+	const std::vector<Size>& agents() const;
+
     /// @brief Get the node's delay
     /// @return std::optional<Delay> The node's delay
     std::optional<Delay> delay() const;
@@ -68,81 +77,128 @@ namespace dsm {
     bool isFull(Id streetId) const override;
   };
 
-  template <typename Id, typename Size, typename Priority, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
-  TrafficLight<Id, Size, Priority, Delay>::TrafficLight(Id id) : Node<Id, Size>{id}, m_counter{0} {}
+  template <typename Id, typename Size, typename Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+                 std::unsigned_integral<Delay>
+  TrafficLight<Id, Size, Delay>::TrafficLight(Id id)
+      : Node<Id, Size>{id}, m_counter{0} {}
 
-  template <typename Id, typename Size, typename Priority, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
-  void TrafficLight<Id, Size, Priority, Delay>::setDelay(Delay delay) {
-    m_delay = std::make_pair(delay, delay);
+  template <typename Id, typename Size, typename Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>
+  void TrafficLight<Id, Size, Delay>::setDelay(Delay delay) {
+    m_delay.green = delay;
+    m_delay.red = delay;
   }
-  template <typename Id, typename Size, typename Priority, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
-  void TrafficLight<Id, Size, Priority, Delay>::setDelay(const std::pair<Delay, Delay>& delay) {
-     m_delay = std::move(delay); }
-    template <typename Id, typename Size, typename Priority, typename Delay>
-      requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
-    void TrafficLight<Id, Size, Priority, Delay>::setPhase(Delay phase) {
-      if (!m_delay.has_value()) {
-        std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                             "TrafficLight's delay is not set"};
-        throw std::runtime_error(errorMsg);
-      }
-      if (phase > m_delay.value().first + m_delay.value().second) {
-        phase -= m_delay.value().first + m_delay.value().second;
-      }
-      phase == 0 ? m_counter = 0 : m_counter = m_delay.value().first % phase;
-    }
-    template <typename Id, typename Size, typename Priority, typename Delay>
-      requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
-    void TrafficLight<Id, Size, Priority, Delay>::increaseCounter() {
-      if (!m_delay.has_value()) {
-        std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                             "TrafficLight's delay is not set"};
-        throw std::runtime_error(errorMsg);
-      }
-      ++m_counter;
-      if (m_counter == m_delay.value().first + m_delay.value().second) {
-        m_counter = 0;
-      }
-    }
 
-    template <typename Id, typename Size, typename Priority, typename Delay>
-      requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
-    std::optional<Delay> TrafficLight<Id, Size, Priority, Delay>::delay() const {
-      return m_delay;
-    }
+  template <typename Id, typename Size, typename Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>
+  void TrafficLight<Id, Size, Delay>::setDelay(
+      const std::pair<Delay, Delay>& delay) {
+    m_delay.green = delay.first;
+    m_delay.red = delay.second;
+  }
 
-    template <typename Id, typename Size, typename Priority, typename Delay>
-      requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
-    bool TrafficLight<Id, Size, Priority, Delay>::isFull() const {
-      if (!m_delay.has_value()) {
-        std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                             "TrafficLight's delay is not set"};
-        throw std::runtime_error(errorMsg);
-      }
-      if (m_capacity == m_queue.size()) {
-        return true;
-      }
-      return m_counter < m_delay.value().first;
+  template <typename Id, typename Size, typename Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>
+  void TrafficLight<Id, Size, Delay>::setPhase(Delay phase) {
+    if (!m_delay.has_value()) {
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " + "TrafficLight's delay is not set"};
+      throw std::runtime_error(errorMsg);
     }
-    template <typename Id, typename Size, typename Priority, typename Delay>
-      requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
-    bool TrafficLight<Id, Size, Priority, Delay>::isFull(Id streetId) const {
-      if (!m_delay.has_value()) {
-        std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                             "TrafficLight's delay is not set"};
-        throw std::runtime_error(errorMsg);
-      }
-      if (m_capacity == m_queue.size()) {
+    if (phase > m_delay.value().first + m_delay.value().second) {
+      phase -= m_delay.value().first + m_delay.value().second;
+    }
+    phase == 0 ? m_counter = 0 : m_counter = m_delay.value().first % phase;
+  }
+
+  template <typename Id, typename Size, typename Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>
+  void TrafficLight<Id, Size, Delay>::increaseCounter() {
+    if (!m_delay.has_value()) {
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " + "TrafficLight's delay is not set"};
+      throw std::runtime_error(errorMsg);
+    }
+    ++m_counter;
+    if (m_counter == m_delay.value().first + m_delay.value().second) {
+      m_counter = 0;
+    }
+  }
+
+  template <typename Id, typename Size, typename Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>
+  void TrafficLight<Id, Size, Delay>::addAgent(Size agentId) {
+	m_passingAgents.push_back(agentId);
+	++m_counter;
+  }
+
+  template <typename Id, typename Size, typename Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>
+  void TrafficLight<Id, Size, Delay>::removeAgent(Size agentId) {
+	std::erase(std::find(m_passingAgents.begin(), m_passingAgents.end(), agentId));
+	--m_counter;
+  }
+
+  template <typename Id, typename Size, typename Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>
+  std::vector<Size>& TrafficLight<Id, Size, Delay>::agents() {
+	return m_passingAgents
+  }
+
+  template <typename Id, typename Size, typename Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>
+  const std::vector<Size>& TrafficLight<Id, Size, Delay>::agents() const {
+	return m_passingAgents
+  }
+
+  template <typename Id, typename Size, typename Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>
+  std::optional<Delay> TrafficLight<Id, Size, Delay>::delay() const {
+    return m_delay;
+  }
+
+  template <typename Id, typename Size, typename Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>
+  bool TrafficLight<Id, Size, Delay>::isFull() const {
+    if (!m_delay.has_value()) {
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " + "TrafficLight's delay is not set"};
+      throw std::runtime_error(errorMsg);
+    }
+    if (m_capacity == m_passingAgents.size()) {
       return true;
     }
-        if (m_counter < m_delay.value().first) {
-          return this->streetPriorities()[streetId] < 0;
-        }
-        return this->streetPriorities()[streetId] > 0;
-      }
-    };  // namespace dsm
+    return m_counter < m_delay.value().first;
+  }
+
+  template <typename Id, typename Size, typename Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>
+  bool TrafficLight<Id, Size, Delay>::isFull(Id streetId) const {
+    if (!m_delay.has_value()) {
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " + "TrafficLight's delay is not set"};
+      throw std::runtime_error(errorMsg);
+    }
+    if (m_capacity == m_passingAgents.size()) {
+      return true;
+    }
+    if (m_counter < m_delay.value().first) {
+      return this->streetPriorities()[streetId] < 0;
+    }
+    return this->streetPriorities()[streetId] > 0;
+  }
+};  // namespace dsm
 
 #endif

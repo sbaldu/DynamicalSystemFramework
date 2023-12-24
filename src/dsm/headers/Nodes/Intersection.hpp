@@ -14,7 +14,7 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   class Intersection : public Node<Id, Size> {
   private:
-    dsm::priority_queue<Id, Priority> m_queue;
+    priority_queue<Id, Priority> m_queue;
 
   public:
     Intersection() = delete;
@@ -39,6 +39,7 @@ namespace dsm {
   template <typename Id, typename Size, typename Priority>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   bool Intersection<Id, Size, Priority>::isFull() const {
+	return m_queue.size() >= this->capacity();
   }
 
   template <typename Id, typename Size, typename Priority>
