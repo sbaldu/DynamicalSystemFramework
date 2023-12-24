@@ -439,14 +439,13 @@ namespace dsm {
     if (m_agents.size() == 0) {
       return std::make_pair(0., 0.);
     }
-    double mean {
-      std::accumulate(
-          m_agents.cbegin(),
-          m_agents.cend(),
-          0.,
-          [](double sum, const auto& agent) { return sum + agent.second->speed(); }) /
-          m_agents.size();
-    }
+    double mean{std::accumulate(m_agents.cbegin(),
+                                m_agents.cend(),
+                                0.,
+                                [](double sum, const auto& agent) {
+                                  return sum + agent.second->speed();
+                                }) /
+                m_agents.size()};
     double variance{std::accumulate(m_agents.cbegin(),
                                     m_agents.cend(),
                                     0.,
@@ -465,14 +464,13 @@ namespace dsm {
     if (m_graph->streetSet().size() == 0) {
       return std::make_pair(0., 0.);
     }
-    double mean {
-      std::accumulate(
-          m_graph->streetSet().cbegin(),
-          m_graph->streetSet().cend(),
-          0.,
-          [](double sum, const auto& street) { return sum + street.second->density(); }) /
-          m_graph->streetSet().size();
-    }
+    double mean{std::accumulate(m_graph->streetSet().cbegin(),
+                                m_graph->streetSet().cend(),
+                                0.,
+                                [](double sum, const auto& street) {
+                                  return sum + street.second->density();
+                                }) /
+                m_graph->streetSet().size()};
     double variance{std::accumulate(m_graph->streetSet().cbegin(),
                                     m_graph->streetSet().cend(),
                                     0.,
@@ -492,6 +490,9 @@ namespace dsm {
     auto meanDensity{this->meanDensity()};
 
     double mean{meanSpeed.first * meanDensity.first};
+    if (mean == 0.) {
+      return std::make_pair(0., 0.);
+    }
     double variance{(meanSpeed.first * std::pow(meanDensity.second, 2) +
                      std::pow(meanSpeed.second, 2) * meanDensity.first) /
                     mean};

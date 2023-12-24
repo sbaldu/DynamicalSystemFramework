@@ -24,10 +24,14 @@ TEST_CASE("Dynamics") {
     Dynamics dynamics(graph);
     CHECK_EQ(dynamics.graph().nodeSet().size(), 3);
     CHECK_EQ(dynamics.graph().streetSet().size(), 4);
-    CHECK_EQ(dynamics.meanSpeed(), 0.);
-    CHECK_EQ(dynamics.meanDensity(), 0.);
-    CHECK_EQ(dynamics.meanFlow(), 0.);
-    CHECK_EQ(dynamics.meanTravelTime(), 0.);
+    CHECK_EQ(dynamics.meanSpeed().first, 0.);
+    CHECK_EQ(dynamics.meanSpeed().second, 0.);
+    CHECK_EQ(dynamics.meanDensity().first, 0.);
+    CHECK_EQ(dynamics.meanDensity().second, 0.);
+    CHECK_EQ(dynamics.meanFlow().first, 0.);
+    CHECK_EQ(dynamics.meanFlow().second, 0.);
+    CHECK_EQ(dynamics.meanTravelTime().first, 0.);
+    CHECK_EQ(dynamics.meanTravelTime().second, 0.);
   }
   SUBCASE("updatePaths") {
     /// GIVEN: a dynamics object
