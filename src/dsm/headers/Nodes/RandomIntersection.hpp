@@ -17,14 +17,23 @@ namespace dsm {
 
   public:
     RandomIntersection() = delete;
+    /// @brief Constructs a random intersection
+    /// @param id The id of the intersection
     RandomIntersection(Id id);
 
+    /// @brief Adds an agent to the queue
+    /// @param agentId The id of the agent to add
     void enqueue(Size agentId);
+    /// @brief Removes the first agent from the queue
     void dequeue();
-    const dsm::queue<Size>& queue() const;
 
+    /// @brief Returns the queue of agents
+    /// @return dsm::queue<Size>& The queue of agents
+    const dsm::queue<Size>& queue() const;
+    /// @brief Returns whether the queue is full
+    /// @details The queue is considered full when it has reached its capacity
+    /// @return bool Whether the queue is full
     bool isFull() const override;
-    bool isFull(Id streetId) const override;
   };
 
   template <typename Id, typename Size>
@@ -51,11 +60,9 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
-  bool RandomIntersection<Id, Size>::isFull() const {}
-
-  template <typename Id, typename Size>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
-  bool RandomIntersection<Id, Size>::isFull(Id streetId) const {}
+  bool RandomIntersection<Id, Size>::isFull() const {
+    return m_agenyQueue.size() == m_capacity;
+  }
 
 };  // namespace dsm
 
