@@ -78,4 +78,17 @@ TEST_CASE("Dynamics") {
     CHECK(dynamics.itineraries().at(0)->path()(0, 3));
     CHECK(dynamics.itineraries().at(0)->path()(3, 2));
   }
+  SUBCASE("addAgents") {
+    /// GIVEN: a dynamics object
+    /// WHEN: we add agents
+    /// THEN: the agents are added
+    Dynamics dynamics{graph};
+    Itineary itinerary{0, 0, 2};
+    dynamics.addItinerary(itinerary);
+    CHECK_THROWS(dynamics.addAgents(1));
+    dynamics.addAgents(0);
+    CHECK_EQ(dynamics.agents().size(), 1);
+    dynamics.addAgents(0, 68);
+    CHECK_EQ(dynamics.agents().size(), 69);  // nice
+  }
 }
