@@ -49,22 +49,22 @@ namespace dsm {
   public:
     Dynamics() = delete;
     /// @brief Construct a new Dynamics object
-    /// @param graph, The graph representing the network
+    /// @param graph The graph representing the network
     Dynamics(const Graph<Id, Size>& graph);
 
     /// @brief Set the itineraries
-    /// @param itineraries, The itineraries
+    /// @param itineraries The itineraries
     void setItineraries(std::span<Itinerary<Id>> itineraries);
     /// @brief Set the seed for the graph's random number generator
-    /// @param seed, The seed
+    /// @param seed The seed
     void setSeed(unsigned int seed);
     /// @brief Set the minim speed rateo, i.e. the minim speed with respect to the speed limit
     /// @param minSpeedRateo The minim speed rateo
-    /// @throw std::invalid_argument, If the minim speed rateo is not between 0 and 1
+    /// @throw std::invalid_argument If the minim speed rateo is not between 0 and 1
     void setMinSpeedRateo(double minSpeedRateo);
     /// @brief Set the error probability
-    /// @param errorProbability, The error probability
-    /// @throw std::invalid_argument, If the error probability is not between 0 and 1
+    /// @param errorProbability The error probability
+    /// @throw std::invalid_argument If the error probability is not between 0 and 1
     void setErrorProbability(double errorProbability);
     /// @brief Set the speed of an agent
     /// @tparam Tid The type of the agent's id
@@ -73,7 +73,7 @@ namespace dsm {
     /// @param agentId The index of the agent
     /// @param f The function to call
     /// @param ...args The arguments of the function
-    /// @throw std::invalid_argument, If the agent is not found
+    /// @throw std::invalid_argument If the agent is not found
     template <typename Tid, typename F, typename... Tn>
       requires std::is_invocable_v<F, Tn...>
     void setAgentSpeed(Tid agentId, F f, Tn... args);
@@ -90,28 +90,34 @@ namespace dsm {
     /// @return const std::unordered_map<Id, Agent<Id>>&, The agents
     const std::unordered_map<Id, std::unique_ptr<Agent<Id, Size, Delay>>>& agents() const;
     /// @brief Get the time
-    /// @return TimePoint, The time
+    /// @return TimePoint The time
     TimePoint time() const;
 
     /// @brief Add an agent to the simulation
-    /// @param agent, The agent
+    /// @param agent The agent
     void addAgent(const Agent<Id, Size, Delay>& agent);
     /// @brief Add an agent to the simulation
-    /// @param agent, Unique pointer to the agent
+    /// @param agent std::unique_ptr to the agent
     void addAgent(std::unique_ptr<Agent<Id, Size, Delay>> agent);
     /// @brief Add a pack of agents to the simulation
-    /// @param agents, Parameter pack of agents
+    /// @param itineraryId The index of the itinerary
+    /// @param nAgents The number of agents to add
+    /// @throw std::invalid_argument If the itinerary is not found
+    /// @details adds nAgents agents with the same itinerary of id itineraryId
+    void addAgents(Id itineraryId, Size nAgents = 1);
+    /// @brief Add a pack of agents to the simulation
+    /// @param agents Parameter pack of agents
     template <typename... Tn>
       requires(is_agent_v<Tn> && ...)
     void addAgents(Tn... agents);
     /// @brief Add a pack of agents to the simulation
-    /// @param agent, An agent
-    /// @param agents, Parameter pack of agents
+    /// @param agent An agent
+    /// @param agents Parameter pack of agents
     template <typename T1, typename... Tn>
       requires(is_agent_v<T1> && (is_agent_v<Tn> && ...))
     void addAgents(T1 agent, Tn... agents);
     /// @brief Add a set of agents to the simulation
-    /// @param agents, Generic container of agents, represented by an std::span
+    /// @param agents Generic container of agents, represented by an std::span
     void addAgents(std::span<Agent<Id, Size, Delay>> agents);
 
     /// @brief Remove an agent from the simulation
@@ -121,15 +127,15 @@ namespace dsm {
       requires(std::is_convertible_v<T1, Size> &&
                (std::is_convertible_v<Tn, Size> && ...))
     /// @brief Remove a pack of agents from the simulation
-    /// @param id, the index of the first agent to remove
-    /// @param ids, the pack of indexes of the agents to remove
+    /// @param id the index of the first agent to remove
+    /// @param ids the pack of indexes of the agents to remove
     void removeAgents(T1 id, Tn... ids);
 
     /// @brief Add an itinerary
-    /// @param itinerary, The itinerary
+    /// @param itinerary The itinerary
     void addItinerary(const Itinerary<Id>& itinerary);
     /// @brief Add an itinerary
-    /// @param itinerary, Unique pointer to the itinerary
+    /// @param itinerary std::unique_ptr to the itinerary
     void addItinerary(std::unique_ptr<Itinerary<Id>> itinerary);
     template <typename... Tn>
       requires(is_itinerary_v<Tn> && ...)
@@ -143,7 +149,7 @@ namespace dsm {
       requires(is_itinerary_v<T1> && (is_itinerary_v<Tn> && ...))
     void addItineraries(T1 itinerary, Tn... itineraries);
     /// @brief Add a set of itineraries
-    /// @param itineraries, Generic container of itineraries, represented by an std::span
+    /// @param itineraries Generic container of itineraries, represented by an std::span
     void addItineraries(std::span<Itinerary<Id>> itineraries);
 
     /// @brief Reset the simulation time
@@ -162,13 +168,13 @@ namespace dsm {
     /// @return double, The mean speed of the agents
     double meanSpeed() const;
     /// @brief Get the mean density of the streets
-    /// @return double, The mean density of the streets
+    /// @return double The mean density of the streets
     double meanDensity() const;
     /// @brief Get the mean flow of the streets
-    /// @return double, The mean flow of the streets
+    /// @return double The mean flow of the streets
     double meanFlow() const;
     /// @brief Get the mean travel time of the agents
-    /// @return double, The mean travel time of the agents
+    /// @return double The mean travel time of the agents
     double meanTravelTime() const;
   };
 
@@ -326,12 +332,35 @@ namespace dsm {
   void Dynamics<Id, Size, Delay>::addAgent(const Agent<Id, Size, Delay>& agent) {
     m_agents.emplace(agent.id(), std::make_unique<Agent<Id, Size, Delay>>(agent));
   }
-
   template <typename Id, typename Size, typename Delay>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>
   void Dynamics<Id, Size, Delay>::addAgent(std::unique_ptr<Agent<Id, Size, Delay>> agent) {
     m_agents.emplace(agent->id(), std::move(agent));
+  }
+  template <typename Id, typename Size, typename Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>
+  void Dynamics<Id, Size, Delay>::addAgents(Id itineraryId, Size nAgents) {
+    auto itineraryIt{m_itineraries.find(itineraryId)};
+    if (itineraryIt == m_itineraries.end()) {
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " + "Itinerary " + std::to_string(itineraryId) +
+                           " not found"};
+      throw std::invalid_argument(errorMsg);
+    }
+    Id agentId{0};
+    if (!this->m_agents.empty()) {
+      agentId =
+          std::max_element(this->m_agents.cbegin(),
+                           this->m_agents.cend(),
+                           [](const auto& a, const auto& b) { return a.first < b.first; })
+              ->first +
+          1;
+    }
+    for (auto i{0}; i < nAgents; ++i, ++agentId) {
+      this->addAgent(Agent<Id, Size, Delay>{agentId, itineraryId});
+    }
   }
 
   template <typename Id, typename Size, typename Delay>
