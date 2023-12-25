@@ -339,21 +339,24 @@ namespace dsm {
     m_agents.emplace(agent->id(), std::move(agent));
   }
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>
   void Dynamics<Id, Size, Delay>::addAgents(Id itineraryId, Size nAgents) {
     auto itineraryIt{m_itineraries.find(itineraryId)};
     if (itineraryIt == m_itineraries.end()) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                           "Itinerary " + std::to_string(itineraryId) + " not found"};
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " + "Itinerary " + std::to_string(itineraryId) +
+                           " not found"};
       throw std::invalid_argument(errorMsg);
     }
     Id agentId{0};
     if (!this->m_agents.empty()) {
-      agentId = std::max_element(this->m_agents.cbegin(),
-                                 this->m_agents.cend(),
-                                 [](const auto& a, const auto& b) { return a.first < b.first; })
-                    ->first +
-                1;
+      agentId =
+          std::max_element(this->m_agents.cbegin(),
+                           this->m_agents.cend(),
+                           [](const auto& a, const auto& b) { return a.first < b.first; })
+              ->first +
+          1;
     }
     for (auto i{0}; i < nAgents; ++i, ++agentId) {
       this->addAgent(Agent<Id, Size, Delay>{agentId, itineraryId});
