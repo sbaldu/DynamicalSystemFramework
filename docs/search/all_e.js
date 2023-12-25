@@ -1,0 +1,7 @@
+var searchData=
+[
+  ['removeagent_79',['removeAgent',['../classdsm_1_1Dynamics.html#a717cd0eaa9b34da426f9e66a1741c016',1,'dsm::Dynamics']]],
+  ['requires_80',['requires',['../classdsm_1_1Dynamics.html#ab9d0a67e68cf27810c618046b2a6680e',1,'dsm::Dynamics::requires(is_agent_v&lt; Tn &gt; &amp;&amp;...) void addAgents(Tn... agents)'],['../classdsm_1_1Dynamics.html#a4d84796cc1b97f06774203428e680b05',1,'dsm::Dynamics::requires(is_agent_v&lt; T1 &gt; &amp;&amp;(is_agent_v&lt; Tn &gt; &amp;&amp;...)) void addAgents(T1 agent'],['../classdsm_1_1Dynamics.html#a5e00a7ef53049c2c8a5ead72bdcaeb8f',1,'dsm::Dynamics::requires(std::is_convertible_v&lt; T1, Size &gt; &amp;&amp;(std::is_convertible_v&lt; Tn, Size &gt; &amp;&amp;...)) void removeAgents(T1 id'],['../classdsm_1_1Dynamics.html#a109e6e51999da10bd03dc08ca2bda55c',1,'dsm::Dynamics::requires(is_itinerary_v&lt; T1 &gt; &amp;&amp;(is_itinerary_v&lt; Tn &gt; &amp;&amp;...)) void addItineraries(T1 itinerary']]],
+  ['resettime_81',['resetTime',['../classdsm_1_1Agent.html#acc15634eeaea621bf407f77cc30ac87a',1,'dsm::Agent::resetTime()'],['../classdsm_1_1Dynamics.html#ad9e47f94d6e473a265266dea0cf13f5a',1,'dsm::Dynamics::resetTime()']]],
+  ['reshape_82',['reshape',['../classdsm_1_1SparseMatrix.html#a51334882e61e39a865b22cc157168647',1,'dsm::SparseMatrix::reshape(Index rows, Index cols)'],['../classdsm_1_1SparseMatrix.html#a63f514cfb61078375437e060e338de7c',1,'dsm::SparseMatrix::reshape(Index dim)']]]
+];
