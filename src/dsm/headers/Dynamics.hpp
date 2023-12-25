@@ -34,10 +34,10 @@ namespace dsm {
   /// @param error The standard deviation of the sample
   template <typename T>
   struct Measurement {
-	T mean;
-	T error;
+    T mean;
+    T error;
 
-	Measurement(T mean, T error) : mean{mean}, error{error} {}
+    Measurement(T mean, T error) : mean{mean}, error{error} {}
   };
 
   /// @brief The Dynamics class represents the dynamics of the network.
