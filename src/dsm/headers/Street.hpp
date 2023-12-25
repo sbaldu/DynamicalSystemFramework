@@ -44,12 +44,15 @@ namespace dsm {
     /// @param nodePair The street's node pair
     Street(Id id, std::pair<Id, Id> nodePair);
     /// @brief Construct a new Street object
+    /// @details The default capacity is 1, the default length is 1, and the default speed limit is
+    ///          50 km/h, i.e. 13.8888888889 m/s.
     /// @param id The street's id
     /// @param capacity The street's capacity
-    /// @param len, The street's length
-    /// @param nodePair, The street's node pair
+    /// @param len The street's length
+    /// @param nodePair The street's node pair
     Street(Id id, Size capacity, double len, std::pair<Id, Id> nodePair);
     /// @brief Construct a new Street object
+    /// @details The default speed limit is 50 km/h, i.e. 13.8888888889 m/s.
     /// @param id The street's id
     /// @param capacity The street's capacity
     /// @param len The street's length
@@ -73,7 +76,7 @@ namespace dsm {
     /// @throw std::invalid_argument, If the length is negative
     void setLength(double len);
     /// @brief Set the street's queue
-    /// @param queue, The street's queue
+    /// @param queue The street's queue
     void setQueue(dsm::queue<Size> queue);
     /// @brief Set the street's node pair
     /// @param node1 The source node of the street
