@@ -5,6 +5,7 @@
 #include <concepts>
 #include <type_traits>
 #include <optional>
+#include <unordered_map>
 
 #include "Node.hpp"
 
@@ -27,6 +28,7 @@ namespace dsm {
   class TrafficLight : final public Node<Id, Size> {
   private:
 	std::vector<Size> m_passingAgents;
+  std::unordered_map<Id, uint8_t> m_streetPriorities;
   std::optional<TrafficLightCycle<Delay>> m_delay;
   Delay m_counter;
 
@@ -46,6 +48,18 @@ namespace dsm {
     /// @param phase The node's phase
     /// @throw std::runtime_error if the delay is not set
     void setPhase(Delay phase);
+    /// @brief Set the node's street priority
+    /// @details This function is used to set the node's street priority.
+    ///          If priority is positive, the light will follow the TrafficLightCycle green-red.
+    ///          If priority is negative, the light will follow the inverse TrafficLightCycle red-green.
+    /// @param streetId The id of the street that is connected to the node
+    void setStreetPriority(Id streetId, uint8_t priority);
+    /// @brief Set the node's street priorities
+    /// @details This function is used to set the node's street priorities. If
+    ///          priority is positive, the light will follow the TrafficLightCycle green-red.
+    ///          If priority is negative, the light will follow the inverse TrafficLightCycle red-green.
+    /// @param priorities The node's street priorities
+    void setStreetPriorities(const std::unordered_map<Id, uint8_t>& priorities);
     /// @brief Increase the node's counter
     /// @details This function is used to increase the node's counter
     ///          when the simulation is running. It automatically resets the counter
@@ -113,6 +127,20 @@ namespace dsm {
       phase -= m_delay.value().first + m_delay.value().second;
     }
     phase == 0 ? m_counter = 0 : m_counter = m_delay.value().first % phase;
+  }
+
+  template <typename Id, typename Size, typename Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>
+    void TrafficLight<Id, Size, Delay>::setStreetPriority(Id streetId, uint8_t priority) {
+    m_streetPriorities[streetId] = priority;
+  }
+  
+  template <typename Id, typename Size, typename Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+               std::unsigned_integral<Delay>
+    void TrafficLight<Id, Size, Delay>::setStreetPriorities(const std::unordered_map<Id, uint8_t>& priorities) {
+    m_streetPriorities = std::move(priorities);
   }
 
   template <typename Id, typename Size, typename Delay>
@@ -193,9 +221,9 @@ namespace dsm {
       return true;
     }
     if (m_counter < m_delay.value().first) {
-      return this->streetPriorities()[streetId] < 0;
+      return m_streetPriorities[streetId] < 0;
     }
-    return this->streetPriorities()[streetId] > 0;
+    return m_streetPriorities[streetId] > 0;
   }
 };  // namespace dsm
 
