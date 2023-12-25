@@ -17,7 +17,7 @@
 #include <string>
 
 #include "Agent.hpp"
-#include "Node.hpp"
+#include "Nodes/Node.hpp"
 #include "../utility/TypeTraits/is_numeric.hpp"
 #include "../utility/queue.hpp"
 

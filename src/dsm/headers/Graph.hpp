@@ -24,7 +24,7 @@
 #include <fstream>
 #include <sstream>
 
-#include "Node.hpp"
+#include "Nodes/Node.hpp"
 #include "SparseMatrix.hpp"
 #include "Street.hpp"
 #include "../utility/DijkstraResult.hpp"
