@@ -25,10 +25,18 @@ TEST_CASE("Dynamics") {
     Dynamics dynamics(graph);
     CHECK_EQ(dynamics.graph().nodeSet().size(), 3);
     CHECK_EQ(dynamics.graph().streetSet().size(), 4);
-    CHECK_EQ(dynamics.meanSpeed(), 0.);
-    CHECK_EQ(dynamics.meanDensity(), 0.);
-    CHECK_EQ(dynamics.meanFlow(), 0.);
-    CHECK_EQ(dynamics.meanTravelTime(), 0.);
+    CHECK_EQ(dynamics.meanSpeed().mean, 0.);
+    CHECK_EQ(dynamics.meanSpeed().error, 0.);
+    // CHECK_EQ(dynamics.meanSpeed(2).first, 0.);
+    // CHECK_EQ(dynamics.meanSpeed(2).second, 0.);
+    CHECK_EQ(dynamics.meanDensity().mean, 0.);
+    CHECK_EQ(dynamics.meanDensity().error, 0.);
+    // CHECK_EQ(dynamics.meanDensity(3).first, 0.);
+    // CHECK_EQ(dynamics.meanDensity(3).second, 0.);
+    CHECK_EQ(dynamics.meanFlow().mean, 0.);
+    CHECK_EQ(dynamics.meanFlow().error, 0.);
+    CHECK_EQ(dynamics.meanTravelTime().mean, 0.);
+    CHECK_EQ(dynamics.meanTravelTime().error, 0.);
   }
   SUBCASE("AddRandomAgents") {
     /// GIVEN: an itineary
@@ -90,6 +98,19 @@ TEST_CASE("Dynamics") {
     /// THEN: an exception is thrown
     Dynamics dynamics(graph);
     CHECK_THROWS(dynamics.addRandomAgents(1));
+  }
+  SUBCASE("addAgents") {
+    /// GIVEN: a dynamics object
+    /// WHEN: we add agents
+    /// THEN: the agents are added
+    Dynamics dynamics{graph};
+    Itineary itinerary{0, 0, 2};
+    dynamics.addItinerary(itinerary);
+    CHECK_THROWS(dynamics.addAgents(1));
+    dynamics.addAgents(0);
+    CHECK_EQ(dynamics.agents().size(), 1);
+    dynamics.addAgents(0, 68);
+    CHECK_EQ(dynamics.agents().size(), 69);  // nice
   }
   SUBCASE("updatePaths") {
     /// GIVEN: a dynamics object

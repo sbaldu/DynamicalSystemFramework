@@ -286,7 +286,8 @@ TEST_CASE("Dijkstra") {
     Street s17(16, 5, 2., std::make_pair(6, 4));
     Street s18(17, 5, 6., std::make_pair(6, 5));
     Graph graph{};
-    graph.addStreets(s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14, s15, s16, s17, s18);
+    graph.addStreets(
+        s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14, s15, s16, s17, s18);
     graph.buildAdj();
     auto result = graph.shortestPath(0, 1);
     Path correctPath{0, 1};
@@ -351,7 +352,8 @@ TEST_CASE("Dijkstra") {
     Street s17(16, 5, 6., std::make_pair(4, 3));
     Street s18(17, 5, 9., std::make_pair(4, 5));
     Graph graph{};
-    graph.addStreets(s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14, s15, s16, s17, s18);
+    graph.addStreets(
+        s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14, s15, s16, s17, s18);
     graph.buildAdj();
     auto result = graph.shortestPath(0, 4);
     Path correctPath{0, 2, 5, 4};
