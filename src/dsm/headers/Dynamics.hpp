@@ -558,12 +558,12 @@ namespace dsm {
     auto meanSpeed{this->meanSpeed()};
     auto meanDensity{this->meanDensity()};
 
-    double mean{meanSpeed.first * meanDensity.first};
+    double mean{meanSpeed.mean * meanDensity.mean};
     if (mean == 0.) {
-      return std::make_pair(0., 0.);
+      return Measurement(0., 0.);
     }
-    double variance{(meanSpeed.first * std::pow(meanDensity.second, 2) +
-                     std::pow(meanSpeed.second, 2) * meanDensity.first) /
+    double variance{(meanSpeed.mean * std::pow(meanDensity.error, 2) +
+                     std::pow(meanSpeed.error, 2) * meanDensity.mean) /
                     mean};
     return Measurement(mean, std::sqrt(variance));
   }
@@ -573,7 +573,7 @@ namespace dsm {
              is_numeric_v<Delay>
   Measurement<double> Dynamics<Id, Size, Delay>::meanTravelTime() const {
     if (m_travelTimes.size() == 0) {
-      return std::make_pair(0., 0.);
+      return Measurement(0., 0.);
     }
     double mean{std::accumulate(m_travelTimes.cbegin(), m_travelTimes.cend(), 0.) /
                 m_travelTimes.size()};
