@@ -81,6 +81,6 @@ TEST_CASE("Dynamics") {
     dynamics.addAgents(0);
     CHECK_EQ(dynamics.agents().size(), 1);
     dynamics.addAgents(0, 68);
-    CHECK_EQ(dynamics.agents().size(), 69); // nice
+    CHECK_EQ(dynamics.agents().size(), 69);  // nice
   }
 }

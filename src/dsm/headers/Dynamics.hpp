@@ -330,9 +330,11 @@ namespace dsm {
     }
     Id agentId{0};
     if (!this->m_agents.empty()) {
-      agentId = std::max_element(this->m_agents.cbegin(), this->m_agents.cend(), [](const auto& a, const auto& b) {
-        return a.first < b.first;
-      })->first + 1;
+      agentId = std::max_element(this->m_agents.cbegin(),
+                                 this->m_agents.cend(),
+                                 [](const auto& a, const auto& b) { return a.first < b.first; })
+                    ->first +
+                1;
     }
     for (auto i{0}; i < nAgents; ++i, ++agentId) {
       this->addAgent(Agent<Id, Size, Delay>{agentId, itineraryId});
