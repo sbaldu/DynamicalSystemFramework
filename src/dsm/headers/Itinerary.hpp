@@ -33,7 +33,8 @@ namespace dsm {
     Itinerary(Id id, Id source, Id destination);
     /// @brief Construct a new Itinerary object
     /// @param trip An std::pair containing the itinerary's source and destination
-    explicit Itinerary(Id id, std::pair<Id, Id> trip) : m_id{id}, m_trip{std::move(trip)} {}
+    explicit Itinerary(Id id, std::pair<Id, Id> trip)
+        : m_id{id}, m_trip{std::move(trip)} {}
     /// @brief Construct a new Itinerary<Id>:: Itinerary object
     /// @param source The itinerary's source
     /// @param destination The itinerary's destination
