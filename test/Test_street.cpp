@@ -22,9 +22,12 @@ TEST_CASE("Street") {
 
     Street street{1, std::make_pair(0, 1)};
     CHECK_EQ(street.id(), 1);
+    CHECK_EQ(street.capacity(), 1);
+    CHECK_EQ(street.transportCapacity(), 65535);
+    CHECK_EQ(street.length(), 1.);
     CHECK_EQ(street.nodePair().first, 0);
     CHECK_EQ(street.nodePair().second, 1);
-    CHECK_EQ(street.maxSpeed(), 30.);
+    CHECK_EQ(street.maxSpeed(), 13.8888888889);
   }
 
   SUBCASE("Constructor_2") {
@@ -37,11 +40,12 @@ TEST_CASE("Street") {
     Street street{1, 2, 3.5, std::make_pair(4, 5)};
     CHECK_EQ(street.id(), 1);
     CHECK_EQ(street.capacity(), 2);
+    CHECK_EQ(street.transportCapacity(), 65535);
     CHECK_EQ(street.length(), 3.5);
     CHECK_EQ(street.nodePair().first, 4);
     CHECK_EQ(street.nodePair().second, 5);
     CHECK_EQ(street.density(), 0);
-    CHECK_EQ(street.maxSpeed(), 30.);
+    CHECK_EQ(street.maxSpeed(), 13.8888888889);
   }
   SUBCASE("Constructor_3") {
     /*This tests the constructor that takes an Id, capacity, length, nodePair, and maxSpeed.
@@ -53,6 +57,7 @@ TEST_CASE("Street") {
     Street street{1, 2, 3.5, 40., std::make_pair(4, 5)};
     CHECK_EQ(street.id(), 1);
     CHECK_EQ(street.capacity(), 2);
+    CHECK_EQ(street.transportCapacity(), 65535);
     CHECK_EQ(street.length(), 3.5);
     CHECK_EQ(street.nodePair().first, 4);
     CHECK_EQ(street.nodePair().second, 5);
