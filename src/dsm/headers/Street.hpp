@@ -127,22 +127,32 @@ namespace dsm {
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   Street<Id, Size>::Street(Id index, std::pair<Id, Id> pair)
-      : m_nodePair{std::move(pair)}, m_maxSpeed{13.8888888889}, m_id{index}, m_capacity{1}, m_transportCapacity{std::numeric_limits<Size>::max()} {}
+      : m_nodePair{std::move(pair)},
+        m_len{1.},
+        m_maxSpeed{13.8888888889},
+        m_id{index},
+        m_capacity{1},
+        m_transportCapacity{std::numeric_limits<Size>::max()} {}
 
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   Street<Id, Size>::Street(Id id, Size capacity, double len, std::pair<Id, Id> nodePair)
       : m_nodePair{std::move(nodePair)},
         m_len{len},
-        m_maxSpeed{30.},
+        m_maxSpeed{13.8888888889},
         m_id{id},
         m_capacity{capacity},
         m_transportCapacity{std::numeric_limits<Size>::max()} {}
 
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
-  Street<Id, Size>::Street(Id id, Size capacity, double len, double maxSpeed, std::pair<Id, Id> nodePair)
-      : m_nodePair{std::move(nodePair)}, m_len{len}, m_id{id}, m_capacity{capacity} {
+  Street<Id, Size>::Street(
+      Id id, Size capacity, double len, double maxSpeed, std::pair<Id, Id> nodePair)
+      : m_nodePair{std::move(nodePair)},
+        m_len{len},
+        m_id{id},
+        m_capacity{capacity},
+        m_transportCapacity{std::numeric_limits<Size>::max()} {
     this->setMaxSpeed(maxSpeed);
   }
 
@@ -250,8 +260,8 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   void Street<Id, Size>::enqueue(Id agentId) {
     if (m_queue.size() == m_capacity) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                           "The street's queue is full."};
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " + "The street's queue is full."};
       throw std::runtime_error(errorMsg);
     }
     m_queue.push(agentId);
@@ -259,7 +269,7 @@ namespace dsm {
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   std::optional<Id> Street<Id, Size>::dequeue() {
-    if(m_queue.empty()) {
+    if (m_queue.empty()) {
       return std::nullopt;
     }
     Id id = m_queue.front();
