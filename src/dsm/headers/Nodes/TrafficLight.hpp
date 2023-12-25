@@ -25,7 +25,7 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              std::unsigned_integral<Delay>
-  class TrafficLight : final public Node<Id, Size> {
+  class TrafficLight : public Node<Id, Size> {
   private:
 	std::vector<Size> m_passingAgents;
   std::unordered_map<Id, uint8_t> m_streetPriorities;
@@ -67,10 +67,18 @@ namespace dsm {
     /// @throw std::runtime_error if the delay is not set
     void increaseCounter();
 
+	/// @brief Insert an agent in the node
+	/// @param agentId The id of the agent to insert
     void addAgent(Size agentId);
+	/// @brief Remove an agent from the node
+	/// @param agentId The id of the agent to remove
     void removeAgent(Size agentId);
 
-    std::vector<Size>& agents() ;
+	/// @brief Get vector of agents inside the node
+	/// @return The reference to the vector of agent ids
+    std::vector<Size>& agents();
+	/// @brief Get vector of agents inside the node
+	/// @return The const reference to the vector of agent ids
     const std::vector<Size>& agents() const;
 
     /// @brief Get the node's delay
@@ -176,14 +184,14 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              std::unsigned_integral<Delay>
   std::vector<Size>& TrafficLight<Id, Size, Delay>::agents() {
-	return m_passingAgents
+	return m_passingAgents;
   }
 
   template <typename Id, typename Size, typename Delay>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              std::unsigned_integral<Delay>
   const std::vector<Size>& TrafficLight<Id, Size, Delay>::agents() const {
-	return m_passingAgents
+	return m_passingAgents;
   }
 
   template <typename Id, typename Size, typename Delay>
@@ -202,7 +210,7 @@ namespace dsm {
                            __FILE__ + ": " + "TrafficLight's delay is not set"};
       throw std::runtime_error(errorMsg);
     }
-    if (m_capacity == m_passingAgents.size()) {
+    if (this->m_capacity == m_passingAgents.size()) {
       return true;
     }
     return m_counter < m_delay.value().first;
@@ -217,7 +225,7 @@ namespace dsm {
                            __FILE__ + ": " + "TrafficLight's delay is not set"};
       throw std::runtime_error(errorMsg);
     }
-    if (m_capacity == m_passingAgents.size()) {
+    if (this->m_capacity == m_passingAgents.size()) {
       return true;
     }
     if (m_counter < m_delay.value().first) {

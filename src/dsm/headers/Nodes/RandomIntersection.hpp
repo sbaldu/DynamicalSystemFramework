@@ -61,7 +61,7 @@ namespace dsm {
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   bool RandomIntersection<Id, Size>::isFull() const {
-    return m_agenyQueue.size() == m_capacity;
+    return m_agentQueue.size() >= this->m_capacity;
   }
 
 };  // namespace dsm
