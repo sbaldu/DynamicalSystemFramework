@@ -28,6 +28,18 @@ namespace dsm {
 
   using TimePoint = long long unsigned int;
 
+  /// @brief The Measurement struct represents the mean of a quantity and its standard deviation
+  /// @tparam T The type of the mean and the standard deviation
+  /// @param mean The mean
+  /// @param error The standard deviation of the sample
+  template <typename T>
+  struct Measurement {
+	T mean;
+	T error;
+
+	Measurement(T mean, T error) : mean{mean}, error{error} {}
+  };
+
   /// @brief The Dynamics class represents the dynamics of the network.
   /// @tparam Id, The type of the graph's id. It must be an unsigned integral type.
   /// @tparam Size, The type of the graph's capacity. It must be an unsigned integral type.
@@ -159,29 +171,29 @@ namespace dsm {
     void evolve(F f, Tn... args);
 
     /// @brief Get the mean speed of the agents
-    /// @return std::pair<double, double> The mean speed of the agents and the standard deviation
-    std::pair<double, double> meanSpeed() const;
+    /// @return Measurement<double> The mean speed of the agents and the standard deviation
+    Measurement<double> meanSpeed() const;
     /// @brief Compute the mean speed over nStreets randomly selected streets
     /// @param nStreets The number of streets to select
-    /// @return std::pair<double, double> The mean speed of the streets and the standard deviation
-    std::pair<double, double> meanSpeed(Size nStreets) const;  // TODO: implement
+    /// @return Measurement<double> The mean speed of the streets and the standard deviation
+    Measurement<double> meanSpeed(Size nStreets) const;  // TODO: implement
     /// @brief Get the mean density of the streets
-    /// @return std::pair<double, double> The mean density of the streets and the standard deviation
-    std::pair<double, double> meanDensity() const;
+    /// @return Measurement<double> The mean density of the streets and the standard deviation
+    Measurement<double> meanDensity() const;
     /// @brief Compute the mean density over nStreets randomly selected streets
     /// @param nStreets The number of streets to select
-    /// @return std::pair<double, double> The mean density of the streets and the standard deviation
-    std::pair<double, double> meanDensity(Size nStreets) const;  // TODO: implement
+    /// @return Measurement<double> The mean density of the streets and the standard deviation
+    Measurement<double> meanDensity(Size nStreets) const;  // TODO: implement
     /// @brief Get the mean flow of the streets
-    /// @return std::pair<double, double> The mean flow of the streets and the standard deviation
-    std::pair<double, double> meanFlow() const;
+    /// @return Measurement<double> The mean flow of the streets and the standard deviation
+    Measurement<double> meanFlow() const;
     /// @brief Compute the mean flow over nStreets randomly selected streets
     /// @param nStreets The number of streets to select
-    /// @return std::pair<double, double> The mean flow of the streets and the standard deviation
-    std::pair<double, double> meanFlow(Size nStreets) const;
+    /// @return Measurement<double> The mean flow of the streets and the standard deviation
+    Measurement<double> meanFlow(Size nStreets) const;
     /// @brief Get the mean travel time of the agents
-    /// @return std::pair<double, double> The mean travel time of the agents and the standard
-    std::pair<double, double> meanTravelTime() const;
+    /// @return Measurement<double> The mean travel time of the agents and the standard
+    Measurement<double> meanTravelTime() const;
   };
 
   template <typename Id, typename Size, typename Delay>
@@ -447,9 +459,9 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>
-  std::pair<double, double> Dynamics<Id, Size, Delay>::meanSpeed() const {
+  Measurement<double> Dynamics<Id, Size, Delay>::meanSpeed() const {
     if (m_agents.size() == 0) {
-      return std::make_pair(0., 0.);
+      return Measurement(0., 0.);
     }
     double mean{std::accumulate(m_agents.cbegin(),
                                 m_agents.cend(),
@@ -466,7 +478,7 @@ namespace dsm {
                                              std::pow(agent.second->speed() - mean, 2);
                                     }) /
                     (m_agents.size() - 1)};
-    return std::make_pair(mean, std::sqrt(variance));
+    return Measurement(mean, std::sqrt(variance));
   }
   // template <typename Id, typename Size, typename Delay>
   //   requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
@@ -517,9 +529,9 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>
-  std::pair<double, double> Dynamics<Id, Size, Delay>::meanDensity() const {
+  Measurement<double> Dynamics<Id, Size, Delay>::meanDensity() const {
     if (m_graph->streetSet().size() == 0) {
-      return std::make_pair(0., 0.);
+      return Measurement(0., 0.);
     }
     double mean{std::accumulate(m_graph->streetSet().cbegin(),
                                 m_graph->streetSet().cend(),
@@ -536,13 +548,13 @@ namespace dsm {
                                              std::pow(street.second->density() - mean, 2);
                                     }) /
                     (m_graph->streetSet().size() - 1)};
-    return std::make_pair(mean, std::sqrt(variance));
+    return Measurement(mean, std::sqrt(variance));
   }
 
   template <typename Id, typename Size, typename Delay>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>
-  std::pair<double, double> Dynamics<Id, Size, Delay>::meanFlow() const {
+  Measurement<double> Dynamics<Id, Size, Delay>::meanFlow() const {
     auto meanSpeed{this->meanSpeed()};
     auto meanDensity{this->meanDensity()};
 
@@ -553,13 +565,13 @@ namespace dsm {
     double variance{(meanSpeed.first * std::pow(meanDensity.second, 2) +
                      std::pow(meanSpeed.second, 2) * meanDensity.first) /
                     mean};
-    return std::make_pair(mean, std::sqrt(variance));
+    return Measurement(mean, std::sqrt(variance));
   }
 
   template <typename Id, typename Size, typename Delay>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>
-  std::pair<double, double> Dynamics<Id, Size, Delay>::meanTravelTime() const {
+  Measurement<double> Dynamics<Id, Size, Delay>::meanTravelTime() const {
     if (m_travelTimes.size() == 0) {
       return std::make_pair(0., 0.);
     }
@@ -572,7 +584,7 @@ namespace dsm {
                                       return sum + std::pow(travelTime - mean, 2);
                                     }) /
                     (m_travelTimes.size() - 1)};
-    return std::make_pair(mean, std::sqrt(variance));
+    return Measurement(mean, std::sqrt(variance));
   }
 
   template <typename Id, typename Size, typename Delay>
