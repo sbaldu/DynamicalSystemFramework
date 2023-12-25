@@ -67,8 +67,7 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
-  Node<Id, Size>::Node(Id id)
-      : m_id{id}, m_capacity{1} {}
+  Node<Id, Size>::Node(Id id) : m_id{id}, m_capacity{1} {}
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   Node<Id, Size>::Node(Id id, std::pair<double, double> coords)

@@ -27,10 +27,10 @@ namespace dsm {
              std::unsigned_integral<Delay>
   class TrafficLight : public Node<Id, Size> {
   private:
-	std::vector<Size> m_passingAgents;
-  std::unordered_map<Id, uint8_t> m_streetPriorities;
-  std::optional<TrafficLightCycle<Delay>> m_delay;
-  Delay m_counter;
+    std::vector<Size> m_passingAgents;
+    std::unordered_map<Id, uint8_t> m_streetPriorities;
+    std::optional<TrafficLightCycle<Delay>> m_delay;
+    Delay m_counter;
 
   public:
     TrafficLight() = delete;
@@ -67,18 +67,18 @@ namespace dsm {
     /// @throw std::runtime_error if the delay is not set
     void increaseCounter();
 
-	/// @brief Insert an agent in the node
-	/// @param agentId The id of the agent to insert
+    /// @brief Insert an agent in the node
+    /// @param agentId The id of the agent to insert
     void addAgent(Size agentId);
-	/// @brief Remove an agent from the node
-	/// @param agentId The id of the agent to remove
+    /// @brief Remove an agent from the node
+    /// @param agentId The id of the agent to remove
     void removeAgent(Size agentId);
 
-	/// @brief Get vector of agents inside the node
-	/// @return The reference to the vector of agent ids
+    /// @brief Get vector of agents inside the node
+    /// @return The reference to the vector of agent ids
     std::vector<Size>& agents();
-	/// @brief Get vector of agents inside the node
-	/// @return The const reference to the vector of agent ids
+    /// @brief Get vector of agents inside the node
+    /// @return The const reference to the vector of agent ids
     const std::vector<Size>& agents() const;
 
     /// @brief Get the node's delay
@@ -102,8 +102,7 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
                  std::unsigned_integral<Delay>
-  TrafficLight<Id, Size, Delay>::TrafficLight(Id id)
-      : Node<Id, Size>{id}, m_counter{0} {}
+  TrafficLight<Id, Size, Delay>::TrafficLight(Id id) : Node<Id, Size>{id}, m_counter{0} {}
 
   template <typename Id, typename Size, typename Delay>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
@@ -116,8 +115,7 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              std::unsigned_integral<Delay>
-  void TrafficLight<Id, Size, Delay>::setDelay(
-      const std::pair<Delay, Delay>& delay) {
+  void TrafficLight<Id, Size, Delay>::setDelay(const std::pair<Delay, Delay>& delay) {
     m_delay.green = delay.first;
     m_delay.red = delay.second;
   }
@@ -140,14 +138,15 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              std::unsigned_integral<Delay>
-    void TrafficLight<Id, Size, Delay>::setStreetPriority(Id streetId, uint8_t priority) {
+  void TrafficLight<Id, Size, Delay>::setStreetPriority(Id streetId, uint8_t priority) {
     m_streetPriorities[streetId] = priority;
   }
-  
+
   template <typename Id, typename Size, typename Delay>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-               std::unsigned_integral<Delay>
-    void TrafficLight<Id, Size, Delay>::setStreetPriorities(const std::unordered_map<Id, uint8_t>& priorities) {
+             std::unsigned_integral<Delay>
+  void TrafficLight<Id, Size, Delay>::setStreetPriorities(
+      const std::unordered_map<Id, uint8_t>& priorities) {
     m_streetPriorities = std::move(priorities);
   }
 
@@ -170,28 +169,28 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              std::unsigned_integral<Delay>
   void TrafficLight<Id, Size, Delay>::addAgent(Size agentId) {
-	m_passingAgents.push_back(agentId);
+    m_passingAgents.push_back(agentId);
   }
 
   template <typename Id, typename Size, typename Delay>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              std::unsigned_integral<Delay>
   void TrafficLight<Id, Size, Delay>::removeAgent(Size agentId) {
-	std::erase(std::find(m_passingAgents.begin(), m_passingAgents.end(), agentId));
+    std::erase(std::find(m_passingAgents.begin(), m_passingAgents.end(), agentId));
   }
 
   template <typename Id, typename Size, typename Delay>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              std::unsigned_integral<Delay>
   std::vector<Size>& TrafficLight<Id, Size, Delay>::agents() {
-	return m_passingAgents;
+    return m_passingAgents;
   }
 
   template <typename Id, typename Size, typename Delay>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              std::unsigned_integral<Delay>
   const std::vector<Size>& TrafficLight<Id, Size, Delay>::agents() const {
-	return m_passingAgents;
+    return m_passingAgents;
   }
 
   template <typename Id, typename Size, typename Delay>

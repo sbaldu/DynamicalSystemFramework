@@ -18,16 +18,16 @@ namespace dsm {
 
   public:
     Intersection() = delete;
-	/// @brief Constructs an intersection
-	/// @param id The id of the intersection
+    /// @brief Constructs an intersection
+    /// @param id The id of the intersection
     Intersection(Id id);
 
-	/// @brief Adds an agent to the queue
-	/// @return agentId The id of the agent to add
+    /// @brief Adds an agent to the queue
+    /// @return agentId The id of the agent to add
     const priority_queue<Id, Priority>& queue() const;
 
-	/// @brief Returns whether the queue is full
-	/// @return bool Whether the queue is full
+    /// @brief Returns whether the queue is full
+    /// @return bool Whether the queue is full
     bool isFull() const override;
   };
 
@@ -37,14 +37,15 @@ namespace dsm {
 
   template <typename Id, typename Size, typename Priority>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
-  const dsm::priority_queue<Id, Priority>& Intersection<Id, Size, Priority>::queue() const {
+  const dsm::priority_queue<Id, Priority>& Intersection<Id, Size, Priority>::queue()
+      const {
     return m_queue;
   }
 
   template <typename Id, typename Size, typename Priority>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   bool Intersection<Id, Size, Priority>::isFull() const {
-	return m_queue.size() >= this->capacity();
+    return m_queue.size() >= this->capacity();
   }
 
 };  // namespace dsm
