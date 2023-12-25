@@ -32,7 +32,8 @@ namespace dsm {
   /// @tparam Id, The type of the graph's id. It must be an unsigned integral type.
   /// @tparam Size, The type of the graph's capacity. It must be an unsigned integral type.
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>
   class Dynamics {
   private:
     std::unordered_map<Id, std::unique_ptr<Itinerary<Id>>> m_itineraries;
@@ -123,7 +124,8 @@ namespace dsm {
     /// @param agentId, the index of the agent to remove
     void removeAgent(Size agentId);
     template <typename T1, typename... Tn>
-      requires(std::is_convertible_v<T1, Size> && (std::is_convertible_v<Tn, Size> && ...))
+      requires(std::is_convertible_v<T1, Size> &&
+               (std::is_convertible_v<Tn, Size> && ...))
     /// @brief Remove a pack of agents from the simulation
     /// @param id the index of the first agent to remove
     /// @param ids the pack of indexes of the agents to remove
@@ -177,29 +179,35 @@ namespace dsm {
   };
 
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>
   Dynamics<Id, Size, Delay>::Dynamics(const Graph<Id, Size>& graph)
       : m_graph{std::make_unique<Graph<Id, Size>>(graph)} {}
 
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>
   void Dynamics<Id, Size, Delay>::setItineraries(std::span<Itinerary<Id>> itineraries) {
     std::ranges::for_each(itineraries, [this](const auto& itinerary) {
-      this->m_itineraries.emplace(itinerary.id(), std::make_unique<Itinerary<Id>>(itinerary));
+      this->m_itineraries.emplace(itinerary.id(),
+                                  std::make_unique<Itinerary<Id>>(itinerary));
     });
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>
   void Dynamics<Id, Size, Delay>::setSeed(unsigned int seed) {
     m_generator.seed(seed);
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>
   void Dynamics<Id, Size, Delay>::setMinSpeedRateo(double minSpeedRateo) {
     if (minSpeedRateo < 0. || minSpeedRateo > 1.) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " +
                            "The minim speed rateo must be between 0 and 1"};
       throw std::invalid_argument(errorMsg);
     }
@@ -207,10 +215,12 @@ namespace dsm {
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>
   void Dynamics<Id, Size, Delay>::setErrorProbability(double errorProbability) {
     if (errorProbability < 0. || errorProbability > 1.) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " +
                            "The error probability must be between 0 and 1"};
       throw std::invalid_argument(errorMsg);
     }
@@ -223,11 +233,13 @@ namespace dsm {
              template <typename Tid, typename F, typename... Tn>
                requires std::is_invocable_v<F, Tn...>
   void Dynamics<Id, Size, Delay>::setAgentSpeed(Tid agentId, F f, Tn... args) {
-    auto agentIt{std::find_if(
-        m_agents.begin(), m_agents.end(), [agentId](auto agent) { return agent->index() == agentId; })};
+    auto agentIt{std::find_if(m_agents.begin(), m_agents.end(), [agentId](auto agent) {
+      return agent->index() == agentId;
+    })};
     if (agentIt == m_agents.end()) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                           "Agent " + std::to_string(agentId) + " not found"};
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " + "Agent " + std::to_string(agentId) +
+                           " not found"};
       throw std::invalid_argument(errorMsg);
     }
     auto& agent{*agentIt};
@@ -237,7 +249,8 @@ namespace dsm {
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::updatePaths() {
     const Size dimension = m_graph->adjMatrix()->getRowDim();
     for (auto& itineraryPair : m_itineraries) {
@@ -284,38 +297,44 @@ namespace dsm {
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>
   const Graph<Id, Size>& Dynamics<Id, Size, Delay>::graph() const {
     return *m_graph;
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
-  const std::unordered_map<Id, std::unique_ptr<Itinerary<Id>>>& Dynamics<Id, Size, Delay>::itineraries()
-      const {
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>
+  const std::unordered_map<Id, std::unique_ptr<Itinerary<Id>>>&
+  Dynamics<Id, Size, Delay>::itineraries() const {
     return m_itineraries;
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
-  const std::unordered_map<Id, std::unique_ptr<Agent<Id, Size, Delay>>>& Dynamics<Id, Size, Delay>::agents()
-      const {
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>
+  const std::unordered_map<Id, std::unique_ptr<Agent<Id, Size, Delay>>>&
+  Dynamics<Id, Size, Delay>::agents() const {
     return m_agents;
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>
   TimePoint Dynamics<Id, Size, Delay>::time() const {
     return m_time;
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>
   void Dynamics<Id, Size, Delay>::addAgent(const Agent<Id, Size, Delay>& agent) {
     m_agents.emplace(agent.id(), std::make_unique<Agent<Id, Size, Delay>>(agent));
   }
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>
   void Dynamics<Id, Size, Delay>::addAgent(std::unique_ptr<Agent<Id, Size, Delay>> agent) {
     m_agents.emplace(agent->id(), std::move(agent));
   }
@@ -359,7 +378,8 @@ namespace dsm {
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>
   void Dynamics<Id, Size, Delay>::addAgents(std::span<Agent<Id, Size, Delay>> agents) {
     std::ranges::for_each(agents, [this](const auto& agent) -> void {
       this->m_agents.emplace(agent.id(), std::make_unique(agent));
@@ -367,10 +387,12 @@ namespace dsm {
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>
   void Dynamics<Id, Size, Delay>::removeAgent(Size agentId) {
-    auto agentIt{std::find_if(
-        m_agents.begin(), m_agents.end(), [agentId](auto agent) { return agent->index() == agentId; })};
+    auto agentIt{std::find_if(m_agents.begin(), m_agents.end(), [agentId](auto agent) {
+      return agent->index() == agentId;
+    })};
     if (agentIt != m_agents.end()) {
       m_agents.erase(agentIt);
     }
@@ -380,20 +402,23 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>
              template <typename T1, typename... Tn>
-               requires(std::is_convertible_v<T1, Size> && (std::is_convertible_v<Tn, Size> && ...))
+               requires(std::is_convertible_v<T1, Size> &&
+                        (std::is_convertible_v<Tn, Size> && ...))
   void Dynamics<Id, Size, Delay>::removeAgents(T1 id, Tn... ids) {
     removeAgent(id);
     removeAgents(ids...);
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>
   void Dynamics<Id, Size, Delay>::addItinerary(const Itinerary<Id>& itinerary) {
     m_itineraries.emplace(itinerary.id(), std::make_unique<Itinerary<Id>>(itinerary));
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>
   void Dynamics<Id, Size, Delay>::addItinerary(std::unique_ptr<Itinerary<Id>> itinerary) {
     m_itineraries.emplace(itinerary->id(), std::move(itinerary));
   }
@@ -408,15 +433,18 @@ namespace dsm {
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>
   void Dynamics<Id, Size, Delay>::addItineraries(std::span<Itinerary<Id>> itineraries) {
     std::ranges::for_each(itineraries, [this](const auto& itinerary) -> void {
-      this->m_itineraries.emplace(itinerary.id(), std::make_unique<Itinerary<Id>>(itinerary));
+      this->m_itineraries.emplace(itinerary.id(),
+                                  std::make_unique<Itinerary<Id>>(itinerary));
     });
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>
   void Dynamics<Id, Size, Delay>::resetTime() {
     m_time = 0;
   }
@@ -431,7 +459,8 @@ namespace dsm {
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>)
   double Dynamics<Id, Size, Delay>::meanSpeed() const {
     if (m_agents.size() == 0) {
       return 0.;
@@ -439,12 +468,15 @@ namespace dsm {
     return std::accumulate(m_agents.cbegin(),
                            m_agents.cend(),
                            0.,
-                           [](double sum, const auto& agent) { return sum + agent.second->speed(); }) /
+                           [](double sum, const auto& agent) {
+                             return sum + agent.second->speed();
+                           }) /
            m_agents.size();
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>)
   double Dynamics<Id, Size, Delay>::meanDensity() const {
     if (m_graph->streetSet().size() == 0) {
       return 0.;
@@ -452,27 +484,33 @@ namespace dsm {
     return std::accumulate(m_graph->streetSet().cbegin(),
                            m_graph->streetSet().cend(),
                            0.,
-                           [](double sum, const auto& street) { return sum + street.second->density(); }) /
+                           [](double sum, const auto& street) {
+                             return sum + street.second->density();
+                           }) /
            m_graph->streetSet().size();
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>)
   double Dynamics<Id, Size, Delay>::meanFlow() const {
     return this->meanDensity() * this->meanSpeed();
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>)
   double Dynamics<Id, Size, Delay>::meanTravelTime() const {
     if (m_travelTimes.size() == 0) {
       return 0.;
     }
-    return std::accumulate(m_travelTimes.cbegin(), m_travelTimes.cend(), 0.) / m_travelTimes.size();
+    return std::accumulate(m_travelTimes.cbegin(), m_travelTimes.cend(), 0.) /
+           m_travelTimes.size();
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>)
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>)
   class FirstOrderDynamics : public Dynamics<Id, Size, Delay> {
   private:
     std::vector<std::unique_ptr<Agent<Id, Size, Delay>>> m_agents;
@@ -492,18 +530,22 @@ namespace dsm {
   };
 
   template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>)
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>)
   FirstOrderDynamics<Id, Size, Delay>::FirstOrderDynamics(const Graph<Id, Size>& graph)
       : Dynamics<Id, Size, Delay>(graph) {}
 
   template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>)
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>)
   void FirstOrderDynamics<Id, Size, Delay>::setAgentSpeed(Size agentId) {
-    auto agentIt{std::find_if(
-        m_agents.begin(), m_agents.end(), [agentId](auto agent) { return agent->index() == agentId; })};
+    auto agentIt{std::find_if(m_agents.begin(), m_agents.end(), [agentId](auto agent) {
+      return agent->index() == agentId;
+    })};
     if (agentIt == m_agents.end()) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                           "Agent " + std::to_string(agentId) + " not found"};
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " + "Agent " + std::to_string(agentId) +
+                           " not found"};
       throw std::invalid_argument(errorMsg);
     }
     auto& agent{*agentIt};
@@ -513,7 +555,8 @@ namespace dsm {
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>)
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>)
   void FirstOrderDynamics<Id, Size, Delay>::evolve(bool reinsert_agents) {
     for (auto& agent : m_agents) {
       if (!(agent->delay() > 0)) {

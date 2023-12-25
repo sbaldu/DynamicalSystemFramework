@@ -107,7 +107,8 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   void Node<Id, Size>::setQueue(std::queue<Id> queue) {
     if (queue.size() > m_capacity) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " +
                            "Node's queue capacity is smaller than the queue size"};
       throw std::invalid_argument(errorMsg);
     }
@@ -118,8 +119,9 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   void Node<Id, Size>::setCapacity(Size capacity) {
     if (capacity < m_queue.size()) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                           "Node's queue capacity is smaller than the current queue size"};
+      std::string errorMsg{
+          "Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+          "Node's queue capacity is smaller than the current queue size"};
       throw std::invalid_argument(errorMsg);
     }
     m_capacity = capacity;
@@ -129,8 +131,8 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   void Node<Id, Size>::enqueue(Id id) {
     if (m_queue.size() == m_capacity) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                           "Node's queue is fulls"};
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " + "Node's queue is fulls"};
       throw std::runtime_error(errorMsg);
     }
     m_queue.push(id);
@@ -140,8 +142,8 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   Id Node<Id, Size>::dequeue() {
     if (m_queue.empty()) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                           "Node's queue is empty"};
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " + "Node's queue is empty"};
       throw std::runtime_error(errorMsg);
     }
     Id id = m_queue.front();

@@ -127,7 +127,8 @@ TEST_CASE("Street") {
     street.enqueue(a2);
     street.enqueue(a3);
     street.enqueue(a4);
-    CHECK_EQ(street.queue().front(), 1);  // check that agent 1 is at the front of the queue
+    CHECK_EQ(street.queue().front(),
+             1);  // check that agent 1 is at the front of the queue
 
     // dequeue
     street.dequeue();

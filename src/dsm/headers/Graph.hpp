@@ -102,7 +102,8 @@ namespace dsm {
     void addNodes(Tn&&... nodes);
 
     template <typename T1, typename... Tn>
-      requires is_node_v<std::remove_reference_t<T1>> && (is_node_v<std::remove_reference_t<Tn>> && ...)
+      requires is_node_v<std::remove_reference_t<T1>> &&
+               (is_node_v<std::remove_reference_t<Tn>> && ...)
     void addNodes(T1&& node, Tn&&... nodes);
 
     /// @brief Add a street to the graph
@@ -117,7 +118,8 @@ namespace dsm {
     void addStreets(T1&& street);
 
     template <typename T1, typename... Tn>
-      requires is_street_v<std::remove_reference_t<T1>> && (is_street_v<std::remove_reference_t<Tn>> && ...)
+      requires is_street_v<std::remove_reference_t<T1>> &&
+               (is_street_v<std::remove_reference_t<Tn>> && ...)
     void addStreets(T1&& street, Tn&&... streets);
 
     /// @brief Get the graph's adjacency matrix
@@ -140,8 +142,8 @@ namespace dsm {
     /// @param source, The source node
     /// @param destination, The destination node
     /// @return A DijkstraResult object containing the path and the distance
-    std::optional<DijkstraResult<Id>> shortestPath(const Node<Id, Size>& source,
-                                                   const Node<Id, Size>& destination) const;
+    std::optional<DijkstraResult<Id>> shortestPath(
+        const Node<Id, Size>& source, const Node<Id, Size>& destination) const;
     /// @brief Get the shortest path between two nodes using dijkstra algorithm
     /// @param source, The source node id
     /// @param destination, The destination node id
@@ -157,14 +159,18 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   Graph<Id, Size>::Graph(const SparseMatrix<Id, bool>& adj)
       : m_adjacency{make_shared<SparseMatrix<Id, bool>>(adj)} {
-    std::ranges::for_each(std::views::iota(0, (int)adj.getColDim()), [this](auto i) -> void {
-      m_nodes.insert(std::make_pair(i, make_shared<Node<Id, Size>>(i)));
-    });
+    std::ranges::for_each(
+        std::views::iota(0, (int)adj.getColDim()), [this](auto i) -> void {
+          m_nodes.insert(std::make_pair(i, make_shared<Node<Id, Size>>(i)));
+        });
 
-    std::ranges::for_each(std::views::iota(0, (int)adj.size()), [this, adj](auto i) -> void {
-      this->m_streets.insert(std::make_pair(
-          i, make_shared<Street<Id, Size>>(i, std::make_pair(i / adj.getColDim(), i % adj.getColDim()))));
-    });
+    std::ranges::for_each(
+        std::views::iota(0, (int)adj.size()), [this, adj](auto i) -> void {
+          this->m_streets.insert(std::make_pair(
+              i,
+              make_shared<Street<Id, Size>>(
+                  i, std::make_pair(i / adj.getColDim(), i % adj.getColDim()))));
+        });
   }
 
   template <typename Id, typename Size>
@@ -190,7 +196,8 @@ namespace dsm {
     const size_t maxNode{m_nodes.size()};
     m_adjacency->reshape(maxNode, maxNode);
     for (const auto& street : m_streets) {
-      m_adjacency->insert(street.second->nodePair().first, street.second->nodePair().second, true);
+      m_adjacency->insert(
+          street.second->nodePair().first, street.second->nodePair().second, true);
     }
   }
 
@@ -202,15 +209,15 @@ namespace dsm {
     if (fileExt == "dsm") {
       std::ifstream file{fileName};
       if (!file.is_open()) {
-        std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                             "File not found"};
+        std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                             __FILE__ + ": " + "File not found"};
         throw std::invalid_argument(errorMsg);
       }
       Id rows, cols;
       file >> rows >> cols;
       if (rows != cols) {
-        std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                             "Adjacency matrix must be square"};
+        std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                             __FILE__ + ": " + "Adjacency matrix must be square"};
         throw std::invalid_argument(errorMsg);
       }
       m_adjacency = make_shared<SparseMatrix<Id, bool>>(rows, cols);
@@ -224,8 +231,8 @@ namespace dsm {
         const Id node2{static_cast<Id>(index % cols)};
         m_nodes.insert_or_assign(node1, make_shared<Node<Id, Size>>(node1));
         m_nodes.insert_or_assign(node2, make_shared<Node<Id, Size>>(node2));
-        m_streets.insert_or_assign(index,
-                                   make_shared<Street<Id, Size>>(index, std::make_pair(node1, node2)));
+        m_streets.insert_or_assign(
+            index, make_shared<Street<Id, Size>>(index, std::make_pair(node1, node2)));
         if (!isAdj) {
           m_streets[index]->setLength(val);
         }
@@ -235,15 +242,15 @@ namespace dsm {
       // the following elements being the matrix elements
       std::ifstream file{fileName};
       if (!file.is_open()) {
-        std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                             "File not found"};
+        std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                             __FILE__ + ": " + "File not found"};
         throw std::invalid_argument(errorMsg);
       }
       Id rows, cols;
       file >> rows >> cols;
       if (rows != cols) {
-        std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                             "Adjacency matrix must be square"};
+        std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                             __FILE__ + ": " + "Adjacency matrix must be square"};
         throw std::invalid_argument(errorMsg);
       }
       m_adjacency = make_shared<SparseMatrix<Id, bool>>(rows, cols);
@@ -252,7 +259,8 @@ namespace dsm {
         double value;
         file >> value;
         if (value < 0) {
-          std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+          std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                               __FILE__ + ": " +
                                "Adjacency matrix elements must be positive"};
           throw std::invalid_argument(errorMsg);
         }
@@ -262,8 +270,8 @@ namespace dsm {
           const Id node2{static_cast<Id>(index % cols)};
           m_nodes.insert_or_assign(node1, make_shared<Node<Id, Size>>(node1));
           m_nodes.insert_or_assign(node2, make_shared<Node<Id, Size>>(node2));
-          m_streets.insert_or_assign(index,
-                                     make_shared<Street<Id, Size>>(index, std::make_pair(node1, node2)));
+          m_streets.insert_or_assign(
+              index, make_shared<Street<Id, Size>>(index, std::make_pair(node1, node2)));
           if (!isAdj) {
             m_streets[index]->setLength(value);
           }
@@ -280,8 +288,8 @@ namespace dsm {
     if (fileExt == "csv") {
       std::ifstream file{fileName};
       if (!file.is_open()) {
-        std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                              "File not found"};
+        std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                              __FILE__ + ": " + "File not found"};
         throw std::invalid_argument(errrorMsg);
       }
       std::string line;
@@ -302,13 +310,14 @@ namespace dsm {
         Id nodeId{static_cast<Id>(std::stoul(id))};
         m_nodes.insert_or_assign(
             nodeIndex,
-            make_shared<Node<Id, Size>>(nodeIndex, std::make_pair(std::stod(lat), std::stod(lon))));
+            make_shared<Node<Id, Size>>(nodeIndex,
+                                        std::make_pair(std::stod(lat), std::stod(lon))));
         m_nodeMapping.emplace(std::make_pair(nodeId, nodeIndex));
         ++nodeIndex;
       }
     } else {
-      std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                            "File extension not supported"};
+      std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                            __FILE__ + ": " + "File extension not supported"};
       throw std::invalid_argument(errrorMsg);
     }
   }
@@ -320,8 +329,8 @@ namespace dsm {
     if (fileExt == "csv") {
       std::ifstream file{fileName};
       if (!file.is_open()) {
-        std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                              "File not found"};
+        std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                              __FILE__ + ": " + "File not found"};
         throw std::invalid_argument(errrorMsg);
       }
       std::string line;
@@ -354,11 +363,12 @@ namespace dsm {
                 1,
                 std::stod(maxspeed),
                 std::stod(length),
-                std::make_pair(m_nodeMapping[std::stoul(sourceId)], m_nodeMapping[std::stoul(targetId)])));
+                std::make_pair(m_nodeMapping[std::stoul(sourceId)],
+                               m_nodeMapping[std::stoul(targetId)])));
       }
     } else {
-      std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                            "File extension not supported"};
+      std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                            __FILE__ + ": " + "File extension not supported"};
       throw std::invalid_argument(errrorMsg);
     }
   }
@@ -384,7 +394,8 @@ namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   template <typename T1, typename... Tn>
-    requires is_node_v<std::remove_reference_t<T1>> && (is_node_v<std::remove_reference_t<Tn>> && ...)
+    requires is_node_v<std::remove_reference_t<T1>> &&
+             (is_node_v<std::remove_reference_t<Tn>> && ...)
   void Graph<Id, Size>::addNodes(T1&& node, Tn&&... nodes) {
     addNode(std::forward<T1>(node));
     addNodes(std::forward<Tn>(nodes)...);
@@ -431,7 +442,8 @@ namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   template <typename T1, typename... Tn>
-    requires is_street_v<std::remove_reference_t<T1>> && (is_street_v<std::remove_reference_t<Tn>> && ...)
+    requires is_street_v<std::remove_reference_t<T1>> &&
+             (is_street_v<std::remove_reference_t<Tn>> && ...)
   void Graph<Id, Size>::addStreets(T1&& street, Tn&&... streets) {
     addStreet(std::forward<T1>(street));
     addStreets(std::forward<Tn>(streets)...);
@@ -457,12 +469,14 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  std::optional<shared<Street<Id, Size>>> Graph<Id, Size>::street(Id source, Id destination) {
-    auto streetIt =
-        std::find_if(m_streets.begin(), m_streets.end(), [source, destination](const auto& street) -> bool {
-          return street.second->nodePair().first == source &&
-                 street.second->nodePair().second == destination;
-        });
+  std::optional<shared<Street<Id, Size>>> Graph<Id, Size>::street(Id source,
+                                                                  Id destination) {
+    auto streetIt = std::find_if(m_streets.begin(),
+                                 m_streets.end(),
+                                 [source, destination](const auto& street) -> bool {
+                                   return street.second->nodePair().first == source &&
+                                          street.second->nodePair().second == destination;
+                                 });
     if (streetIt == m_streets.end()) {
       return std::nullopt;
     }
@@ -471,14 +485,15 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  std::optional<DijkstraResult<Id>> Graph<Id, Size>::shortestPath(const Node<Id, Size>& source,
-                                                                  const Node<Id, Size>& destination) const {
+  std::optional<DijkstraResult<Id>> Graph<Id, Size>::shortestPath(
+      const Node<Id, Size>& source, const Node<Id, Size>& destination) const {
     return dijkstra(source.id(), destination.id());
   }
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  std::optional<DijkstraResult<Id>> Graph<Id, Size>::shortestPath(Id source, Id destination) const {
+  std::optional<DijkstraResult<Id>> Graph<Id, Size>::shortestPath(Id source,
+                                                                  Id destination) const {
     const Id sourceId{source};
 
     std::unordered_map<Id, shared<Node<Id, Size>>> unvisitedNodes{m_nodes};
@@ -491,19 +506,21 @@ namespace dsm {
 
     std::unordered_set<Id> visitedNodes;
     std::vector<NodeInfo> dist_prev(n_nodes);
-    std::for_each(dist_prev.begin(), dist_prev.end(), [count = 0](auto& node) mutable -> void {
-      node.id = count;
-      node.distance = std::numeric_limits<double>::max();
-      node.previous = std::numeric_limits<Id>::max();
-      ++count;
-    });
+    std::for_each(
+        dist_prev.begin(), dist_prev.end(), [count = 0](auto& node) mutable -> void {
+          node.id = count;
+          node.distance = std::numeric_limits<double>::max();
+          node.previous = std::numeric_limits<Id>::max();
+          ++count;
+        });
     dist_prev[source].distance = 0.;
 
     while (unvisitedNodes.size() != 0) {
       source = std::min_element(unvisitedNodes.begin(),
                                 unvisitedNodes.end(),
                                 [&dist_prev](const auto& a, const auto& b) -> bool {
-                                  return dist_prev[a.first].distance < dist_prev[b.first].distance;
+                                  return dist_prev[a.first].distance <
+                                         dist_prev[b.first].distance;
                                 })
                    ->first;
       unvisitedNodes.erase(source);
@@ -516,15 +533,17 @@ namespace dsm {
           continue;
         }
 
-        double streetLength{std::find_if(m_streets.cbegin(),
-                                         m_streets.cend(),
-                                         [source, &neighbour](const auto& street) -> bool {
-                                           return street.second->nodePair().first == source &&
-                                                  street.second->nodePair().second == neighbour.first;
-                                         })
-                                ->second->length()};
+        double streetLength{
+            std::find_if(m_streets.cbegin(),
+                         m_streets.cend(),
+                         [source, &neighbour](const auto& street) -> bool {
+                           return street.second->nodePair().first == source &&
+                                  street.second->nodePair().second == neighbour.first;
+                         })
+                ->second->length()};
         // if current path is shorter than the previous one, update the distance
-        if (streetLength + dist_prev[source].distance < dist_prev[neighbour.first].distance) {
+        if (streetLength + dist_prev[source].distance <
+            dist_prev[neighbour.first].distance) {
           dist_prev[neighbour.first].distance = streetLength + dist_prev[source].distance;
           dist_prev[neighbour.first].previous = source;
         }
