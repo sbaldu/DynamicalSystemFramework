@@ -28,6 +28,18 @@ namespace dsm {
 
   using TimePoint = long long unsigned int;
 
+  /// @brief The Measurement struct represents the mean of a quantity and its standard deviation
+  /// @tparam T The type of the mean and the standard deviation
+  /// @param mean The mean
+  /// @param error The standard deviation of the sample
+  template <typename T>
+  struct Measurement {
+    T mean;
+    T error;
+
+    Measurement(T mean, T error) : mean{mean}, error{error} {}
+  };
+
   /// @brief The Dynamics class represents the dynamics of the network.
   /// @tparam Id, The type of the graph's id. It must be an unsigned integral type.
   /// @tparam Size, The type of the graph's capacity. It must be an unsigned integral type.
@@ -42,7 +54,7 @@ namespace dsm {
     std::unique_ptr<Graph<Id, Size>> m_graph;
     double m_errorProbability;
     double m_minSpeedRateo;
-    std::mt19937_64 m_generator{std::random_device{}()};
+    mutable std::mt19937_64 m_generator{std::random_device{}()};
     std::uniform_real_distribution<double> m_uniformDist{0., 1.};
     std::vector<unsigned int> m_travelTimes;
 
@@ -121,7 +133,7 @@ namespace dsm {
     void addAgents(std::span<Agent<Id, Size, Delay>> agents);
 
     /// @brief Remove an agent from the simulation
-    /// @param agentId, the index of the agent to remove
+    /// @param agentId the index of the agent to remove
     void removeAgent(Size agentId);
     template <typename T1, typename... Tn>
       requires(std::is_convertible_v<T1, Size> &&
@@ -165,17 +177,29 @@ namespace dsm {
     void evolve(F f, Tn... args);
 
     /// @brief Get the mean speed of the agents
-    /// @return double, The mean speed of the agents
-    double meanSpeed() const;
+    /// @return Measurement<double> The mean speed of the agents and the standard deviation
+    Measurement<double> meanSpeed() const;
+    /// @brief Compute the mean speed over nStreets randomly selected streets
+    /// @param nStreets The number of streets to select
+    /// @return Measurement<double> The mean speed of the streets and the standard deviation
+    Measurement<double> meanSpeed(Size nStreets) const;  // TODO: implement
     /// @brief Get the mean density of the streets
-    /// @return double The mean density of the streets
-    double meanDensity() const;
+    /// @return Measurement<double> The mean density of the streets and the standard deviation
+    Measurement<double> meanDensity() const;
+    /// @brief Compute the mean density over nStreets randomly selected streets
+    /// @param nStreets The number of streets to select
+    /// @return Measurement<double> The mean density of the streets and the standard deviation
+    Measurement<double> meanDensity(Size nStreets) const;  // TODO: implement
     /// @brief Get the mean flow of the streets
-    /// @return double The mean flow of the streets
-    double meanFlow() const;
+    /// @return Measurement<double> The mean flow of the streets and the standard deviation
+    Measurement<double> meanFlow() const;
+    /// @brief Compute the mean flow over nStreets randomly selected streets
+    /// @param nStreets The number of streets to select
+    /// @return Measurement<double> The mean flow of the streets and the standard deviation
+    Measurement<double> meanFlow(Size nStreets) const;
     /// @brief Get the mean travel time of the agents
-    /// @return double The mean travel time of the agents
-    double meanTravelTime() const;
+    /// @return Measurement<double> The mean travel time of the agents and the standard
+    Measurement<double> meanTravelTime() const;
   };
 
   template <typename Id, typename Size, typename Delay>
@@ -249,8 +273,8 @@ namespace dsm {
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             is_numeric_v<Delay>)
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>
   void Dynamics<Id, Size, Delay>::updatePaths() {
     const Size dimension = m_graph->adjMatrix()->getRowDim();
     std::unordered_map<Id, SparseMatrix<Id, bool>> paths;
@@ -469,58 +493,139 @@ namespace dsm {
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             is_numeric_v<Delay>)
-  double Dynamics<Id, Size, Delay>::meanSpeed() const {
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>
+  Measurement<double> Dynamics<Id, Size, Delay>::meanSpeed() const {
     if (m_agents.size() == 0) {
-      return 0.;
+      return Measurement(0., 0.);
     }
-    return std::accumulate(m_agents.cbegin(),
-                           m_agents.cend(),
-                           0.,
-                           [](double sum, const auto& agent) {
-                             return sum + agent.second->speed();
-                           }) /
-           m_agents.size();
+    double mean{std::accumulate(m_agents.cbegin(),
+                                m_agents.cend(),
+                                0.,
+                                [](double sum, const auto& agent) {
+                                  return sum + agent.second->speed();
+                                }) /
+                m_agents.size()};
+    double variance{std::accumulate(m_agents.cbegin(),
+                                    m_agents.cend(),
+                                    0.,
+                                    [mean](double sum, const auto& agent) {
+                                      return sum +
+                                             std::pow(agent.second->speed() - mean, 2);
+                                    }) /
+                    (m_agents.size() - 1)};
+    return Measurement(mean, std::sqrt(variance));
   }
+  // template <typename Id, typename Size, typename Delay>
+  //   requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+  //            is_numeric_v<Delay>
+  // std::pair<double, double> Dynamics<Id, Size, Delay>::meanSpeed(Size nStreets) const {
+  //   if (m_graph->streetSet().size() == 0) {
+  //     return std::make_pair(0., 0.);
+  //   }
+  //   std::vector<Id> streetIds;
+  //   streetIds.reserve(m_graph->streetSet().size());
+  //   for (auto const& street : m_graph->streetSet()) {
+  //     streetIds.push_back(street.first);
+  //   }
+  //   std::sample(streetIds.begin(),
+  //               streetIds.end(),
+  //               std::back_inserter(streetIds),
+  //               nStreets,
+  //               m_generator);
+  //   // find all agents on the selected streets
+  //   std::vector<std::reference_wrapper<const Agent<Id, Size, Delay>>> agents;
+  //   for (auto const& agent : m_agents) {
+  //     if (std::find(streetIds.begin(), streetIds.end(), agent.second->streetId()) !=
+  //         streetIds.end()) {
+  //       agents.push_back(std::cref(*agent.second));
+  //     }
+  //   }
+  //   if (agents.size() == 0) {
+  //     return std::make_pair(0., 0.);
+  //   }
+  //   double mean{std::accumulate(agents.cbegin(),
+  //                               agents.cend(),
+  //                               0.,
+  //                               [](double sum, const auto& agent) {
+  //                                 return sum + agent.get().speed();
+  //                               }) /
+  //               agents.size()};
+  //   double variance{std::accumulate(agents.cbegin(),
+  //                                   agents.cend(),
+  //                                   0.,
+  //                                   [mean](double sum, const auto& agent) {
+  //                                     return sum +
+  //                                            std::pow(agent.get().speed() - mean, 2);
+  //                                   }) /
+  //                   (agents.size() - 1)};
+  //   return std::make_pair(mean, std::sqrt(variance));
+  // }
 
   template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             is_numeric_v<Delay>)
-  double Dynamics<Id, Size, Delay>::meanDensity() const {
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>
+  Measurement<double> Dynamics<Id, Size, Delay>::meanDensity() const {
     if (m_graph->streetSet().size() == 0) {
-      return 0.;
+      return Measurement(0., 0.);
     }
-    return std::accumulate(m_graph->streetSet().cbegin(),
-                           m_graph->streetSet().cend(),
-                           0.,
-                           [](double sum, const auto& street) {
-                             return sum + street.second->density();
-                           }) /
-           m_graph->streetSet().size();
+    double mean{std::accumulate(m_graph->streetSet().cbegin(),
+                                m_graph->streetSet().cend(),
+                                0.,
+                                [](double sum, const auto& street) {
+                                  return sum + street.second->density();
+                                }) /
+                m_graph->streetSet().size()};
+    double variance{std::accumulate(m_graph->streetSet().cbegin(),
+                                    m_graph->streetSet().cend(),
+                                    0.,
+                                    [mean](double sum, const auto& street) {
+                                      return sum +
+                                             std::pow(street.second->density() - mean, 2);
+                                    }) /
+                    (m_graph->streetSet().size() - 1)};
+    return Measurement(mean, std::sqrt(variance));
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             is_numeric_v<Delay>)
-  double Dynamics<Id, Size, Delay>::meanFlow() const {
-    return this->meanDensity() * this->meanSpeed();
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>
+  Measurement<double> Dynamics<Id, Size, Delay>::meanFlow() const {
+    auto meanSpeed{this->meanSpeed()};
+    auto meanDensity{this->meanDensity()};
+
+    double mean{meanSpeed.mean * meanDensity.mean};
+    if (mean == 0.) {
+      return Measurement(0., 0.);
+    }
+    double variance{(meanSpeed.mean * std::pow(meanDensity.error, 2) +
+                     std::pow(meanSpeed.error, 2) * meanDensity.mean) /
+                    mean};
+    return Measurement(mean, std::sqrt(variance));
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             is_numeric_v<Delay>)
-  double Dynamics<Id, Size, Delay>::meanTravelTime() const {
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>
+  Measurement<double> Dynamics<Id, Size, Delay>::meanTravelTime() const {
     if (m_travelTimes.size() == 0) {
-      return 0.;
+      return Measurement(0., 0.);
     }
-    return std::accumulate(m_travelTimes.cbegin(), m_travelTimes.cend(), 0.) /
-           m_travelTimes.size();
+    double mean{std::accumulate(m_travelTimes.cbegin(), m_travelTimes.cend(), 0.) /
+                m_travelTimes.size()};
+    double variance{std::accumulate(m_travelTimes.cbegin(),
+                                    m_travelTimes.cend(),
+                                    0.,
+                                    [mean](double sum, const auto& travelTime) {
+                                      return sum + std::pow(travelTime - mean, 2);
+                                    }) /
+                    (m_travelTimes.size() - 1)};
+    return Measurement(mean, std::sqrt(variance));
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             std::unsigned_integral<Delay>)
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>
   class FirstOrderDynamics : public Dynamics<Id, Size, Delay> {
   private:
     std::vector<std::unique_ptr<Agent<Id, Size, Delay>>> m_agents;
@@ -540,14 +645,14 @@ namespace dsm {
   };
 
   template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             std::unsigned_integral<Delay>)
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>
   FirstOrderDynamics<Id, Size, Delay>::FirstOrderDynamics(const Graph<Id, Size>& graph)
       : Dynamics<Id, Size, Delay>(graph) {}
 
   template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             std::unsigned_integral<Delay>)
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>
   void FirstOrderDynamics<Id, Size, Delay>::setAgentSpeed(Size agentId) {
     auto agentIt{std::find_if(m_agents.begin(), m_agents.end(), [agentId](auto agent) {
       return agent->index() == agentId;
@@ -565,8 +670,8 @@ namespace dsm {
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             std::unsigned_integral<Delay>)
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>
   void FirstOrderDynamics<Id, Size, Delay>::evolve(bool reinsert_agents) {
     for (auto& agent : m_agents) {
       if (!(agent->delay() > 0)) {
