@@ -177,14 +177,14 @@ TEST_CASE("Dynamics") {
     CHECK_EQ(dynamics.agents().at(0)->time(), 2);
     CHECK_EQ(dynamics.agents().at(0)->delay(), 0);
     CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 0);
-    CHECK_EQ(dynamics.agents().at(0)->speed(), 30);
+    CHECK_EQ(dynamics.agents().at(0)->speed(), 13.8888888889);
   }
   SUBCASE("evolve without insertion") {
     /// GIVEN: a dynamics object
     /// WHEN: we evolve the dynamics
     /// THEN: the agent is not reinserted
-    Street s1{0, 1, 30., std::make_pair(0, 1)};
-    Street s2{1, 1, 30., std::make_pair(1, 0)};
+    Street s1{0, 1, 13.8888888889, std::make_pair(0, 1)};
+    Street s2{1, 1, 13.8888888889, std::make_pair(1, 0)};
     Graph graph2;
     graph2.addStreets(s1, s2);
     graph2.buildAdj();
@@ -200,7 +200,7 @@ TEST_CASE("Dynamics") {
     CHECK_EQ(dynamics.agents().at(0)->time(), 2);
     CHECK_EQ(dynamics.agents().at(0)->delay(), 0);
     CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 0);
-    CHECK_EQ(dynamics.agents().at(0)->speed(), 30);
+    CHECK_EQ(dynamics.agents().at(0)->speed(), 13.8888888889);
     dynamics.evolve(false);
     CHECK_EQ(dynamics.agents().size(), 0);
   }
@@ -208,8 +208,8 @@ TEST_CASE("Dynamics") {
     /// GIVEN: a dynamics object
     /// WHEN: we evolve the dynamics
     /// THEN: the agent is reinserted
-    Street s1{0, 1, 30., std::make_pair(0, 1)};
-    Street s2{1, 1, 30., std::make_pair(1, 0)};
+    Street s1{0, 1, 13.8888888889, std::make_pair(0, 1)};
+    Street s2{1, 1, 13.8888888889, std::make_pair(1, 0)};
     Graph graph2;
     graph2.addStreets(s1, s2);
     graph2.buildAdj();
@@ -225,7 +225,7 @@ TEST_CASE("Dynamics") {
     CHECK_EQ(dynamics.agents().at(0)->time(), 2);
     CHECK_EQ(dynamics.agents().at(0)->delay(), 0);
     CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 0);
-    CHECK_EQ(dynamics.agents().at(0)->speed(), 30);
+    CHECK_EQ(dynamics.agents().at(0)->speed(), 13.8888888889);
     dynamics.evolve(true);
     CHECK_EQ(dynamics.agents().size(), 1);
     CHECK_EQ(dynamics.agents().at(0)->time(), 1);
