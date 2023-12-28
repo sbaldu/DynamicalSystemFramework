@@ -13,7 +13,7 @@
 #include <string>
 #include <stdexcept>
 #include <optional>
-#include <vector>
+#include <set>
 #include <map>
 
 namespace dsm {
@@ -23,7 +23,7 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   class Node {
   protected:
-    std::vector<Id> m_agentIds;
+    std::set<Id> m_agentIds;
     std::map<int16_t, Id> m_streetPriorities;
     std::pair<double, double> m_coords;
     Id m_id;
@@ -78,8 +78,8 @@ namespace dsm {
     /// @return Size The node's capacity
     Size capacity() const;
     /// @brief Get the node's agent ids
-    /// @return std::vector<Id> A std::vector containing the node's agent ids
-    std::vector<Id> agentIds() const;
+    /// @return std::set<Id> A std::set containing the node's agent ids
+    std::set<Id> agentIds() const;
     /// @brief Returns true if the node is full
     /// @return bool True if the node is full
     bool isFull() const;
@@ -157,7 +157,7 @@ namespace dsm {
                            "Node is full"};
       throw std::runtime_error(errorMsg);
     }
-    m_agentIds.push_back(agentId);
+    m_agentIds.emplace(agentId);
     ++m_agentCounter;
   }
 
@@ -193,7 +193,7 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
-  std::vector<Id> Node<Id, Size>::agentIds() const {
+  std::set<Id> Node<Id, Size>::agentIds() const {
     return m_agentIds;
   }
 
