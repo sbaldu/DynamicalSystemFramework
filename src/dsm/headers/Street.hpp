@@ -262,11 +262,11 @@ namespace dsm {
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   void Street<Id, Size>::enqueue(Id agentId) {
-    if (m_queue.size() == m_capacity) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
-                           __FILE__ + ": " + "The street's queue is full."};
-      throw std::runtime_error(errorMsg);
-    }
+    // if (m_queue.size() == m_capacity) {
+    //   std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+    //                        __FILE__ + ": " + "The street's queue is full."};
+    //   throw std::runtime_error(errorMsg);
+    // }
     m_queue.push(agentId);
   }
   template <typename Id, typename Size>

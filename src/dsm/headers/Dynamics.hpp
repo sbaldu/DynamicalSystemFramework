@@ -352,11 +352,14 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>
   void Dynamics<Id, Size, Delay>::m_evolve(bool reinsert_agents) {
+    std::queue<std::pair<Id, Id>> agentsToMove;
     std::vector<Size> movedFromNodes(this->m_graph->nodeSet().size(), 0);
     for (auto& streetPair : this->m_graph->streetSet()) {
+      std::cout << "IM STUCK HERE\n with the street " << streetPair.first << "\n";
       auto street{streetPair.second};
       Size movedFromStreet{0};
       while (!street->queue().empty() && movedFromStreet < street->transportCapacity()) {
+        std::cout << "IM STUCK HERE\n with the street " << streetPair.first << "\n";
         Id agentId{street->queue().front()};
         if (this->m_agents[agentId]->delay() > 0) {
           break;
@@ -413,11 +416,7 @@ namespace dsm {
           auto nextStreet{streetResult.value()};
           if (nextStreet->density() < 1) {
             street->dequeue();
-            this->m_agents[agentId]->setStreetId(nextStreet->id());
-            this->setAgentSpeed(this->m_agents[agentId]->id());
-            this->m_agents[agentId]->incrementDelay(nextStreet->length() /
-                                                    this->m_agents[agentId]->speed());
-            nextStreet->enqueue(this->m_agents[agentId]->id());
+            agentsToMove.push(std::make_pair(agentId, nextStreet->id()));
             ++movedFromStreet;
             ++movedFromNodes[nextNode->id()];
           } else {
@@ -425,6 +424,18 @@ namespace dsm {
           }
         }
       }
+    }
+    while (!agentsToMove.empty()) {
+      auto agentId{agentsToMove.front().first};
+      auto streetId{agentsToMove.front().second};
+      agentsToMove.pop();
+
+      auto nextStreet{this->m_graph->streetSet()[streetId]};
+      this->m_agents[agentId]->setStreetId(nextStreet->id());
+      this->setAgentSpeed(this->m_agents[agentId]->id());
+      this->m_agents[agentId]->incrementDelay(nextStreet->length() /
+                                              this->m_agents[agentId]->speed());
+      nextStreet->enqueue(this->m_agents[agentId]->id());
     }
   }
 
@@ -543,16 +554,16 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::evolve(bool reinsert_agents) {
-    // move the first agent of each street queue, if possible, putting it in the next node
-    this->m_evolveStreets();
-    // move all the agents from each node, if possible
-    this->m_evolveNodes(reinsert_agents);
-    // cycle over agents and update their times
-    this->m_evolveAgents();
-    // increment time simulation
-    ++this->m_time;
-    // this->m_evolve(reinsert_agents);
-    // this->m_increaseTime();
+    // // move the first agent of each street queue, if possible, putting it in the next node
+    // this->m_evolveStreets();
+    // // move all the agents from each node, if possible
+    // this->m_evolveNodes(reinsert_agents);
+    // // cycle over agents and update their times
+    // this->m_evolveAgents();
+    // // increment time simulation
+    // ++this->m_time;
+    this->m_evolve(reinsert_agents);
+    this->m_increaseTime();
   }
 
   template <typename Id, typename Size, typename Delay>
