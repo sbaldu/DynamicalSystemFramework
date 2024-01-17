@@ -73,10 +73,6 @@ namespace dsm {
     /// and increments all travel times.
     virtual void m_evolveAgents();
 
-    virtual void m_evolve(bool reinsert_agents = false);
-
-    virtual void m_increaseTime();
-
   public:
     Dynamics() = delete;
     /// @brief Construct a new Dynamics object
@@ -349,111 +345,6 @@ namespace dsm {
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             is_numeric_v<Delay>
-  void Dynamics<Id, Size, Delay>::m_evolve(bool reinsert_agents) {
-    std::queue<std::pair<Id, Id>> agentsToMove;
-    std::vector<Size> movedFromNodes(this->m_graph->nodeSet().size(), 0);
-    for (auto& streetPair : this->m_graph->streetSet()) {
-      std::cout << "IM STUCK HERE\n with the street " << streetPair.first << "\n";
-      auto street{streetPair.second};
-      Size movedFromStreet{0};
-      while (!street->queue().empty() && movedFromStreet < street->transportCapacity()) {
-        std::cout << "IM STUCK HERE\n with the street " << streetPair.first << "\n";
-        Id agentId{street->queue().front()};
-        if (this->m_agents[agentId]->delay() > 0) {
-          break;
-        }
-        // this->m_agents[agentId]->setSpeed(0.);  // CHECK THIS OUT
-        auto nextNode{this->m_graph->nodeSet()[street->nodePair().second]};
-        if (nextNode->isFull() ||
-            movedFromNodes[nextNode->id()] >= nextNode->capacity()) {
-          break;
-          /* TO CHANGE
-        if (nextNode->isFull() || movedFromNodes[nextNode->id()] >= nextNode->transportCapacity()) {
-          break;
-        }*/
-          // to delete when updated nodes come
-          if (std::dynamic_pointer_cast<TrafficLight<Id, Size, Delay>>(nextNode) &&
-              !nextNode->isGreen(street->id())) {
-            break;
-          }
-          /////////////////////////////////////////////////
-          if (nextNode->id() ==
-              this->m_itineraries[this->m_agents[agentId]->itineraryId()]->destination()) {
-            this->m_travelTimes.push_back(this->m_agents[agentId]->time());
-            if (reinsert_agents) {
-              Agent<Id, Size, Delay> newAgent{this->m_agents[agentId]->id(),
-                                              this->m_agents[agentId]->itineraryId()};
-              this->removeAgent(agentId);
-              this->addAgent(newAgent);
-            } else {
-              this->removeAgent(agentId);
-            }
-            continue;
-          }
-          auto possibleMoves{
-              this->m_itineraries[this->m_agents[agentId]->itineraryId()]->path().getRow(
-                  nextNode->id())};
-          // CHECK THIS OUT: NEED TO RETHINK ERROR LOGIC
-          if (this->m_uniformDist(this->m_generator) < this->m_errorProbability) {
-            possibleMoves = this->m_graph->adjMatrix()->getRow(nextNode->id());
-          }
-          /////////////////////////////////////////////////
-          if (static_cast<Size>(possibleMoves.size()) == 0) {
-            break;
-          }
-          std::uniform_int_distribution<Size> moveDist{
-              0, static_cast<Size>(possibleMoves.size() - 1)};
-          const auto p{moveDist(this->m_generator)};
-          auto iterator = possibleMoves.begin();
-          std::advance(iterator, p);
-          const auto& streetResult{
-              this->m_graph->street(nextNode->id(), iterator->first)};
-          if (!streetResult.has_value()) {
-            break;
-          }
-          auto nextStreet{streetResult.value()};
-          if (nextStreet->density() < 1) {
-            street->dequeue();
-            agentsToMove.push(std::make_pair(agentId, nextStreet->id()));
-            ++movedFromStreet;
-            ++movedFromNodes[nextNode->id()];
-          } else {
-            break;
-          }
-        }
-      }
-    }
-    while (!agentsToMove.empty()) {
-      auto agentId{agentsToMove.front().first};
-      auto streetId{agentsToMove.front().second};
-      agentsToMove.pop();
-
-      auto nextStreet{this->m_graph->streetSet()[streetId]};
-      this->m_agents[agentId]->setStreetId(nextStreet->id());
-      this->setAgentSpeed(this->m_agents[agentId]->id());
-      this->m_agents[agentId]->incrementDelay(nextStreet->length() /
-                                              this->m_agents[agentId]->speed());
-      nextStreet->enqueue(this->m_agents[agentId]->id());
-    }
-  }
-
-  template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             is_numeric_v<Delay>
-  void Dynamics<Id, Size, Delay>::m_increaseTime() {
-    for (auto& nodePair : this->m_graph->nodeSet()) {
-      auto node{nodePair.second};
-      if (std::dynamic_pointer_cast<TrafficLight<Id, Size, Delay>>(node)) {
-        node->increaseCounter();
-      }
-    }
-    this->m_evolveAgents();
-    ++this->m_time;
-  }
-
-  template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::setItineraries(std::span<Itinerary<Id>> itineraries) {
@@ -554,16 +445,14 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::evolve(bool reinsert_agents) {
-    // // move the first agent of each street queue, if possible, putting it in the next node
-    // this->m_evolveStreets();
-    // // move all the agents from each node, if possible
-    // this->m_evolveNodes(reinsert_agents);
-    // // cycle over agents and update their times
-    // this->m_evolveAgents();
-    // // increment time simulation
-    // ++this->m_time;
-    this->m_evolve(reinsert_agents);
-    this->m_increaseTime();
+    // move the first agent of each street queue, if possible, putting it in the next node
+    this->m_evolveStreets();
+    // move all the agents from each node, if possible
+    this->m_evolveNodes(reinsert_agents);
+    // cycle over agents and update their times
+    this->m_evolveAgents();
+    // increment time simulation
+    ++this->m_time;
   }
 
   template <typename Id, typename Size, typename Delay>
