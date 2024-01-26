@@ -688,6 +688,9 @@ namespace dsm {
                                   return sum + agent.second->speed();
                                 }) /
                 m_agents.size()};
+    if (m_agents.size() == 1) {
+      return Measurement(mean, 0.);
+    }
     double variance{std::accumulate(m_agents.cbegin(),
                                     m_agents.cend(),
                                     0.,
@@ -698,51 +701,6 @@ namespace dsm {
                     (m_agents.size() - 1)};
     return Measurement(mean, std::sqrt(variance));
   }
-  // template <typename Id, typename Size, typename Delay>
-  //   requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-  //            is_numeric_v<Delay>
-  // std::pair<double, double> Dynamics<Id, Size, Delay>::meanSpeed(Size nStreets) const {
-  //   if (m_graph->streetSet().size() == 0) {
-  //     return std::make_pair(0., 0.);
-  //   }
-  //   std::vector<Id> streetIds;
-  //   streetIds.reserve(m_graph->streetSet().size());
-  //   for (auto const& street : m_graph->streetSet()) {
-  //     streetIds.push_back(street.first);
-  //   }
-  //   std::sample(streetIds.begin(),
-  //               streetIds.end(),
-  //               std::back_inserter(streetIds),
-  //               nStreets,
-  //               m_generator);
-  //   // find all agents on the selected streets
-  //   std::vector<std::reference_wrapper<const Agent<Id, Size, Delay>>> agents;
-  //   for (auto const& agent : m_agents) {
-  //     if (std::find(streetIds.begin(), streetIds.end(), agent.second->streetId()) !=
-  //         streetIds.end()) {
-  //       agents.push_back(std::cref(*agent.second));
-  //     }
-  //   }
-  //   if (agents.size() == 0) {
-  //     return std::make_pair(0., 0.);
-  //   }
-  //   double mean{std::accumulate(agents.cbegin(),
-  //                               agents.cend(),
-  //                               0.,
-  //                               [](double sum, const auto& agent) {
-  //                                 return sum + agent.get().speed();
-  //                               }) /
-  //               agents.size()};
-  //   double variance{std::accumulate(agents.cbegin(),
-  //                                   agents.cend(),
-  //                                   0.,
-  //                                   [mean](double sum, const auto& agent) {
-  //                                     return sum +
-  //                                            std::pow(agent.get().speed() - mean, 2);
-  //                                   }) /
-  //                   (agents.size() - 1)};
-  //   return std::make_pair(mean, std::sqrt(variance));
-  // }
 
   template <typename Id, typename Size, typename Delay>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
