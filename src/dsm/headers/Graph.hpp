@@ -62,6 +62,8 @@ namespace dsm {
 
     /// @brief Build the graph's adjacency matrix
     void buildAdj();
+    /// @brief Build the graph's street angles using the node's coordinates
+    void buildStreetAngles();
 
     /// @brief Import the graph's adjacency matrix from a file.
     /// If the file is not of a supported format, it will read the file as a matrix with the first two elements being
@@ -184,6 +186,15 @@ namespace dsm {
     for (const auto& street : m_streets) {
       m_adjacency->insert(
           street.second->nodePair().first, street.second->nodePair().second, true);
+    }
+  }
+  template <typename Id, typename Size>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
+  void Graph<Id, Size>::buildStreetAngles() {
+    for (const auto& street : m_streets) {
+      const auto& node1{m_nodes[street.second->nodePair().first]};
+      const auto& node2{m_nodes[street.second->nodePair().second]};
+      street.second->setAngle(node1->coordinates(), node2->coordinates());
     }
   }
 
