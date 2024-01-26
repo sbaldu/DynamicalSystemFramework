@@ -265,6 +265,10 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::m_evolveNodes(bool reinsert_agents) {
+    /* In this function we have to manage the priority of the agents, given the street angles.
+    By doing the angle difference, if the destination street is the same we can basically compare these differences (mod(pi)!, i.e. delta % std::numbers::pi):
+    the smaller goes first.
+    Anyway, this is not trivial as it seems so I will leave it as a comment.*/
     for (auto& nodePair : this->m_graph->nodeSet()) {
       auto node{nodePair.second};
       for (const auto agentId : node->agentIds()) {
