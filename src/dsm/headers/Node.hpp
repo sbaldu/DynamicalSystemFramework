@@ -170,10 +170,16 @@ namespace dsm {
                            "Node is full"};
       throw std::runtime_error(errorMsg);
     }
+    for (auto const& agent : m_agents) {
+      if (agent.second == agentId) {
+        std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                             "Agent is already on the node"};
+        throw std::runtime_error(errorMsg);
+      }
+    }
     double lastKey{0};
     if (!m_agents.empty()) {
-      lastKey = m_agents.rbegin()->first;
-      ++lastKey;
+      lastKey = m_agents.rbegin()->first + 1;
     }
     m_agents.emplace(lastKey, agentId);
     ++m_agentCounter;
