@@ -278,9 +278,13 @@ namespace dsm {
           node->removeAgent(agentId);
           this->m_travelTimes.push_back(this->m_agents[agentId]->time());
           if (reinsert_agents) {
-            Id itineraryId{this->m_agents[agentId]->itineraryId()};
+            Agent<Id, Size, Delay> newAgent{this->m_agents[agentId]->id(),
+                                            this->m_agents[agentId]->itineraryId()};
             this->removeAgent(agentId);
-            this->addAgents(itineraryId, 1);
+            this->addAgent(newAgent);
+            // Id itineraryId{this->m_agents[agentId]->itineraryId()};
+            // this->removeAgent(agentId);
+            // this->addAgents(itineraryId, 1);
           } else {
             this->removeAgent(agentId);
           }
