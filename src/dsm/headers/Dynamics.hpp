@@ -271,13 +271,14 @@ namespace dsm {
     Anyway, this is not trivial as it seems so I will leave it as a comment.*/
     for (auto& nodePair : this->m_graph->nodeSet()) {
       auto node{nodePair.second};
-      for (const auto agentId : node->agentIds()) {
+      for (const auto agent : node->agents()) {
+        Id agentId{agent.second};
         if (node->id() ==
             this->m_itineraries[this->m_agents[agentId]->itineraryId()]->destination()) {
           node->removeAgent(agentId);
           this->m_travelTimes.push_back(this->m_agents[agentId]->time());
           if (reinsert_agents) {
-            Agent<Id, Size, Delay> newAgent{this->m_agents[agentId]->id(),
+            Agent<Id, Size, Delay> newAgent{agentId,
                                             this->m_agents[agentId]->itineraryId()};
             this->removeAgent(agentId);
             this->addAgent(newAgent);
