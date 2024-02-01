@@ -4,15 +4,19 @@
 /// @details    This file contains the definition of the Node class.
 ///             The Node class represents a node in the network. It is templated by the type
 ///             of the node's id, which must be an unsigned integral type.
+///             The derived classes are:
+///             - TrafficLight: represents a traffic light node
 
 #ifndef Node_hpp
 #define Node_hpp
 
 #include <functional>
-#include <queue>
 #include <utility>
 #include <string>
 #include <stdexcept>
+#include <optional>
+#include <set>
+#include <map>
 
 namespace dsm {
   /// @brief The Node class represents a node in the network.
@@ -20,11 +24,13 @@ namespace dsm {
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   class Node {
-  private:
-    std::queue<Id> m_queue;
+  protected:
+    std::set<Id> m_agentIds;
+    std::map<int16_t, Id> m_streetPriorities;
     std::pair<double, double> m_coords;
     Id m_id;
     Size m_capacity;
+    Size m_agentCounter;
 
   public:
     Node() = default;
@@ -35,61 +41,80 @@ namespace dsm {
     /// @param id The node's id
     /// @param coords A std::pair containing the node's coordinates
     Node(Id id, std::pair<double, double> coords);
-    /// @brief Construct a new Node object
-    /// @param id The node's id
-    /// @param coords A std::pair containing the node's coordinates
-    /// @param queue A std::queue containing the node's queue
-    Node(Id id, std::pair<double, double> coords, std::queue<Id> queue);
 
     /// @brief Set the node's coordinates
     /// @param coords A std::pair containing the node's coordinates
     void setCoords(std::pair<double, double> coords);
-    /// @brief Set the node's queue
-    /// @param queue A std::queue containing the node's queue
-    /// @throw std::invalid_argument if the queue size is greater than the node's capacity
-    void setQueue(std::queue<Id> queue);
     /// @brief Set the node's capacity
     /// @param capacity The node's capacity
     void setCapacity(Size capacity);
-    /// @brief Enqueue an id to the node's queue
-    /// @param id The id to enqueue
-    /// @throw std::runtime_error if the queue is full
-    void enqueue(Id id);
-    /// @brief Dequeue an id from the node's queue
-    /// @return Id The dequeued id
-    /// @throw std::runtime_error if the queue is empty
-    Id dequeue();
+    /// @brief Puts an agent in the node
+    /// @param agentId The agent's id
+    void addAgent(Id agentId);
+    /// @brief Removes an agent from the node
+    /// @param agentId The agent's id
+    void removeAgent(Id agentId);
+    
+    void setStreetPriorities(std::map<int16_t, Id> streetPriorities);
+
+    void addStreetPriority(int16_t priority, Id streetId);
+
+    virtual bool isGreen() const;
+    virtual bool isGreen(Id) const;
+    virtual void increaseCounter() {};
 
     /// @brief Get the node's id
-    /// @return Id, The node's id
+    /// @return Id The node's id
     Id id() const;
     /// @brief Get the node's coordinates
     /// @return std::pair<double,, double> A std::pair containing the node's coordinates
     const std::pair<double, double>& coords() const;
-    /// @brief Get the node's queue
-    /// @return std::queue<Id>, A std::queue containing the node's queue
-    const std::queue<Id>& queue() const;
-    /// @brief Get the node's queue capacity
-    /// @return Size The node's queue capacity
+    /// @brief Get the node's street priorities
+    /// @return std::map<Id, Size> A std::map containing the node's street priorities
+    /// @details The keys of the map are intended as priorities, while the values are the ids of the streets.
+    ///          The streets are ordered by priority, from the highest to the lowest. You should have both positive
+    ///          and negative priorities, where the positive ones are the ones that have the green light, and the
+    ///          negative ones are the ones that have the red light (and viceversa)
+    virtual const std::map<int16_t, Id>& streetPriorities() const;
+    /// @brief Get the node's capacity
+    /// @return Size The node's capacity
     Size capacity() const;
-    /// @brief Returns true if the node's queue is full
-    /// @return bool True if the node's queue is full
+    /// @brief Get the node's agent ids
+    /// @return std::set<Id> A std::set containing the node's agent ids
+    std::set<Id> agentIds() const;
+    /// @brief Returns true if the node is full
+    /// @return bool True if the node is full
     bool isFull() const;
+    /// @brief Returns the number of agents that have passed through the node
+    /// @return Size The number of agents that have passed through the node
+    /// @details This function returns the number of agents that have passed through the node
+    ///          since the last time this function was called. It also resets the counter.
+    Size agentCounter();
   };
 
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
-  Node<Id, Size>::Node(Id id) : m_id{id}, m_capacity{1} {}
+  Node<Id, Size>::Node(Id id) : m_id{id}, m_capacity{1}, m_agentCounter{0} {}
 
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   Node<Id, Size>::Node(Id id, std::pair<double, double> coords)
-      : m_coords{std::move(coords)}, m_id{id}, m_capacity{1} {}
-
+      : m_coords{std::move(coords)}, m_id{id}, m_capacity{1}, m_agentCounter{0} {}
+  
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
-  Node<Id, Size>::Node(Id id, std::pair<double, double> coords, std::queue<Id> queue)
-      : m_queue{std::move(queue)}, m_coords{std::move(coords)}, m_id{id}, m_capacity{1} {}
+  bool Node<Id, Size>::isGreen() const {
+    std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                         "isGreen() is not implemented for this type of node"};
+    throw std::runtime_error(errorMsg);
+  }
+  template <typename Id, typename Size>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
+  bool Node<Id, Size>::isGreen(Id) const {
+    std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                         "isGreen() is not implemented for this type of node"};
+    throw std::runtime_error(errorMsg);
+  }
 
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
@@ -105,23 +130,22 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
-  void Node<Id, Size>::setQueue(std::queue<Id> queue) {
-    if (queue.size() > m_capacity) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
-                           __FILE__ + ": " +
-                           "Node's queue capacity is smaller than the queue size"};
-      throw std::invalid_argument(errorMsg);
-    }
-    m_queue = std::move(queue);
+  void Node<Id, Size>::setStreetPriorities(std::map<int16_t, Id> streetPriorities) {
+    m_streetPriorities = std::move(streetPriorities);
+  }
+
+  template <typename Id, typename Size>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
+  void Node<Id, Size>::addStreetPriority(int16_t priority, Id streetId) {
+    m_streetPriorities.emplace(priority, streetId);
   }
 
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   void Node<Id, Size>::setCapacity(Size capacity) {
-    if (capacity < m_queue.size()) {
-      std::string errorMsg{
-          "Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-          "Node's queue capacity is smaller than the current queue size"};
+    if (capacity < m_agentIds.size()) {
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                           "Node's capacity is smaller than the current size"};
       throw std::invalid_argument(errorMsg);
     }
     m_capacity = capacity;
@@ -129,26 +153,26 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
-  void Node<Id, Size>::enqueue(Id id) {
-    if (m_queue.size() == m_capacity) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
-                           __FILE__ + ": " + "Node's queue is fulls"};
+  void Node<Id, Size>::addAgent(Id agentId) {
+    if (m_agentIds.size() == m_capacity) {
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                           "Node is full"};
       throw std::runtime_error(errorMsg);
     }
-    m_queue.push(id);
+    m_agentIds.emplace(agentId);
+    ++m_agentCounter;
   }
 
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
-  Id Node<Id, Size>::dequeue() {
-    if (m_queue.empty()) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
-                           __FILE__ + ": " + "Node's queue is empty"};
+  void Node<Id, Size>::removeAgent(Id agentId) {
+    auto it = std::find(m_agentIds.begin(), m_agentIds.end(), agentId);
+    if (it == m_agentIds.end()) {
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                           "Agent is not on the node"};
       throw std::runtime_error(errorMsg);
     }
-    Id id = m_queue.front();
-    m_queue.pop();
-    return id;
+    m_agentIds.erase(it);
   }
 
   template <typename Id, typename Size>
@@ -159,8 +183,8 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
-  const std::queue<Id>& Node<Id, Size>::queue() const {
-    return m_queue;
+  const std::map<int16_t, Id>& Node<Id, Size>::streetPriorities() const {
+    return m_streetPriorities;
   }
 
   template <typename Id, typename Size>
@@ -171,8 +195,22 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
+  std::set<Id> Node<Id, Size>::agentIds() const {
+    return m_agentIds;
+  }
+
+  template <typename Id, typename Size>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   bool Node<Id, Size>::isFull() const {
-    return m_queue.size() == m_capacity;
+    return m_agentIds.size() == m_capacity;
+  }
+
+  template <typename Id, typename Size>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
+  Size Node<Id, Size>::agentCounter() {
+    Size copy{m_agentCounter};
+    m_agentCounter = 0;
+    return copy;
   }
 
   // to be implemented
@@ -188,11 +226,115 @@ namespace dsm {
   /*   std::function<void()> m_priority; */
   /* }; */
 
-  /* template <typename Id> */
-  /* class TrafficLight : public Node<Id, Size> { */
-  /* private: */
-  /*   std::function<void()> m_priority; */
-  /* }; */
+  template <typename Id, typename Size, typename Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
+  class TrafficLight : public Node<Id, Size> {
+  private:
+    std::optional<std::pair<Delay, Delay>> m_delay;
+    Delay m_counter;
+
+  public:
+    TrafficLight() = default;
+    /// @brief Construct a new TrafficLight object
+    /// @param id The node's id
+    TrafficLight(Id id);
+
+    /// @brief Set the node's delay
+    /// @param delay The node's delay
+    void setDelay(Delay delay);
+    /// @brief Set the node's delay
+    /// @param delay The node's delay
+    void setDelay(std::pair<Delay, Delay> delay);
+    /// @brief Set the node's phase
+    /// @param phase The node's phase
+    /// @throw std::runtime_error if the delay is not set
+    void setPhase(Delay phase);
+    /// @brief Increase the node's counter
+    /// @details This function is used to increase the node's counter
+    ///          when the simulation is running. It automatically resets the counter
+    ///          when it reaches the double of the delay value.
+    /// @throw std::runtime_error if the delay is not set
+    void increaseCounter();
+
+    /// @brief Get the node's delay
+    /// @return std::optional<Delay> The node's delay
+    std::optional<Delay> delay() const;
+    Delay counter() const { return m_counter; }
+    /// @brief Returns true if the traffic light is green
+    /// @return bool True if the traffic light is green
+    bool isGreen() const;
+    bool isGreen(Id streetId) const;
+  };
+
+  template <typename Id, typename Size, typename Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
+  TrafficLight<Id, Size, Delay>::TrafficLight(Id id) : Node<Id, Size>{id}, m_counter{0} {}
+
+  template <typename Id, typename Size, typename Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
+  void TrafficLight<Id, Size, Delay>::setDelay(Delay delay) {
+    m_delay = std::make_pair(delay, delay);
+  }
+  template <typename Id, typename Size, typename Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
+  void TrafficLight<Id, Size, Delay>::setDelay(std::pair<Delay, Delay> delay) {
+    m_delay = std::move(delay);
+  }
+  template <typename Id, typename Size, typename Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
+  void TrafficLight<Id, Size, Delay>::setPhase(Delay phase) {
+    if (!m_delay.has_value()) {
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                           "TrafficLight's delay is not set"};
+      throw std::runtime_error(errorMsg);
+    }
+    if (phase > m_delay.value().first + m_delay.value().second) {
+      phase -= m_delay.value().first + m_delay.value().second;
+    }
+    phase == 0 ? m_counter = 0 : m_counter = m_delay.value().first % phase; //fwefbewbfw
+  }
+  template <typename Id, typename Size, typename Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
+  void TrafficLight<Id, Size, Delay>::increaseCounter() {
+    if (!m_delay.has_value()) {
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                           "TrafficLight's delay is not set"};
+      throw std::runtime_error(errorMsg);
+    }
+    ++m_counter;
+    if (m_counter == m_delay.value().first + m_delay.value().second) {
+      m_counter = 0;
+    }
+  }
+
+  template <typename Id, typename Size, typename Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
+  std::optional<Delay> TrafficLight<Id, Size, Delay>::delay() const {
+    return m_delay;
+  }
+  template <typename Id, typename Size, typename Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
+  bool TrafficLight<Id, Size, Delay>::isGreen() const {
+    if (!m_delay.has_value()) {
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                           "TrafficLight's delay is not set"};
+      throw std::runtime_error(errorMsg);
+    }
+    return m_counter < m_delay.value().first;
+  }
+  template <typename Id, typename Size, typename Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
+  bool TrafficLight<Id, Size, Delay>::isGreen(Id streetId) const {
+    if (!m_delay.has_value()) {
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+                           "TrafficLight's delay is not set"};
+      throw std::runtime_error(errorMsg);
+    }
+    if (this->isGreen()) {
+      return this->streetPriorities().at(streetId) > 0;
+    }
+    return this->streetPriorities().at(streetId) < 0;
+  }
 };  // namespace dsm
 
 #endif
