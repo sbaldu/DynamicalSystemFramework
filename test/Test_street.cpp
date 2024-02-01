@@ -1,6 +1,6 @@
-
 #include <cstdint>
 #include <optional>
+#include <numbers>
 
 #include "Agent.hpp"
 #include "Node.hpp"
@@ -134,7 +134,6 @@ TEST_CASE("Street") {
     street.enqueue(a4.id());
     CHECK_EQ(street.queue().front(),
              1);  // check that agent 1 is at the front of the queue
-
     // dequeue
     street.dequeue();
     CHECK_EQ(street.queue().front(), 2);  // check that agent 2 is now at front
@@ -148,5 +147,18 @@ TEST_CASE("Street") {
     street.dequeue();  // the queue is now empty
     // check that the result of dequeue is std::nullopt
     CHECK_FALSE(street.dequeue().has_value());
+  }
+  SUBCASE("Angle") {
+    /// This tests the angle method
+    /// GIVEN: A street
+    /// WHEN: The angle method is called
+    /// THEN: The angle is returned and is correct
+    Street street{1, 4, 3.5, std::make_pair(0, 1)};
+    CHECK_EQ(street.angle(), 0);
+    street.setAngle(std::make_pair(0, 1), std::make_pair(1, 0));
+    CHECK_EQ(street.angle(), 7 * std::numbers::pi / 4);
+    // exceptions
+    CHECK_THROWS(street.setAngle(-0.1));
+    CHECK_THROWS(street.setAngle(7.));
   }
 }
