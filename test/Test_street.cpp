@@ -22,9 +22,12 @@ TEST_CASE("Street") {
 
     Street street{1, std::make_pair(0, 1)};
     CHECK_EQ(street.id(), 1);
+    CHECK_EQ(street.capacity(), 1);
+    CHECK_EQ(street.transportCapacity(), 65535);
+    CHECK_EQ(street.length(), 1.);
     CHECK_EQ(street.nodePair().first, 0);
     CHECK_EQ(street.nodePair().second, 1);
-    CHECK_EQ(street.maxSpeed(), 30.);
+    CHECK_EQ(street.maxSpeed(), 13.8888888889);
   }
 
   SUBCASE("Constructor_2") {
@@ -37,11 +40,12 @@ TEST_CASE("Street") {
     Street street{1, 2, 3.5, std::make_pair(4, 5)};
     CHECK_EQ(street.id(), 1);
     CHECK_EQ(street.capacity(), 2);
+    CHECK_EQ(street.transportCapacity(), 65535);
     CHECK_EQ(street.length(), 3.5);
     CHECK_EQ(street.nodePair().first, 4);
     CHECK_EQ(street.nodePair().second, 5);
     CHECK_EQ(street.density(), 0);
-    CHECK_EQ(street.maxSpeed(), 30.);
+    CHECK_EQ(street.maxSpeed(), 13.8888888889);
   }
   SUBCASE("Constructor_3") {
     /*This tests the constructor that takes an Id, capacity, length, nodePair, and maxSpeed.
@@ -53,6 +57,7 @@ TEST_CASE("Street") {
     Street street{1, 2, 3.5, 40., std::make_pair(4, 5)};
     CHECK_EQ(street.id(), 1);
     CHECK_EQ(street.capacity(), 2);
+    CHECK_EQ(street.transportCapacity(), 65535);
     CHECK_EQ(street.length(), 3.5);
     CHECK_EQ(street.nodePair().first, 4);
     CHECK_EQ(street.nodePair().second, 5);
@@ -100,15 +105,15 @@ TEST_CASE("Street") {
 
     Street street{1, 4, 3.5, std::make_pair(0, 1)};
     // fill the queue
-    street.enqueue(a1);
-    street.enqueue(a2);
+    street.enqueue(a1.id());
+    street.enqueue(a2.id());
     CHECK_EQ(street.density(), 0.5);
-    street.enqueue(a3);
-    street.enqueue(a4);
+    street.enqueue(a3.id());
+    street.enqueue(a4.id());
     CHECK_EQ(street.queue().front(), 1);
     CHECK_EQ(street.queue().back(), 4);
     CHECK_EQ(street.queue().size(), street.capacity());
-    CHECK_EQ(street.size(), street.capacity());
+    CHECK_EQ(street.queue().size(), street.capacity());
     CHECK_EQ(street.density(), 1);
   }
 
@@ -123,10 +128,10 @@ TEST_CASE("Street") {
 
     Street street{1, 4, 3.5, std::make_pair(0, 1)};
     // fill the queue
-    street.enqueue(a1);
-    street.enqueue(a2);
-    street.enqueue(a3);
-    street.enqueue(a4);
+    street.enqueue(a1.id());
+    street.enqueue(a2.id());
+    street.enqueue(a3.id());
+    street.enqueue(a4.id());
     CHECK_EQ(street.queue().front(),
              1);  // check that agent 1 is at the front of the queue
 
@@ -135,10 +140,10 @@ TEST_CASE("Street") {
     CHECK_EQ(street.queue().front(), 2);  // check that agent 2 is now at front
     // check that the length of the queue has decreased
     CHECK_EQ(street.queue().size(), 3);
-    CHECK_EQ(street.size(), 3);
+    CHECK_EQ(street.queue().size(), 3);
     // check that the next agent dequeued is agent 2
     CHECK_EQ(street.dequeue().value(), 2);
-    CHECK_EQ(street.size(), 2);
+    CHECK_EQ(street.queue().size(), 2);
     street.dequeue();
     street.dequeue();  // the queue is now empty
     // check that the result of dequeue is std::nullopt
