@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Set the C++ flags
-string(APPEND CMAKE_CXX_FLAGS "-Wall -Wextra -O3 -g -fsanitize=address")
+string(APPEND CMAKE_CXX_FLAGS "-Wall -Wextra -O3 -g")
 
 # Set the folder for the executable
 set(EXECUTABLE_OUTPUT_PATH ../)
@@ -17,7 +17,7 @@ include(FetchContent)
 # Get doctest
 FetchContent_Declare(doctest
   GIT_REPOSITORY https://github.com/doctest/doctest.git
-  GIT_TAG 7b9885133108ae301ddd16e2651320f54cafeba7
+  GIT_TAG v2.4.11
 )
 FetchContent_GetProperties(doctest)
 if(NOT doctest_POPULATED)
