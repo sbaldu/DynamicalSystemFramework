@@ -184,11 +184,7 @@ namespace dsm {
         throw std::runtime_error(errorMsg);
       }
     }
-    double lastKey{0};
-    if (!m_agents.empty()) {
-      lastKey = m_agents.rbegin()->first + 1;
-    }
-    m_agents.emplace(lastKey, agentId);
+    m_agents.emplace(0, agentId);
     ++m_agentCounter;
   }
 
