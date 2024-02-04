@@ -11,8 +11,9 @@
 #include <functional>
 #include <queue>
 #include <utility>
-#include <string>
 #include <stdexcept>
+
+#include "../utility/Logger.hpp"
 
 namespace dsm {
   /// @brief The Node class represents a node in the network.
@@ -107,10 +108,7 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   void Node<Id, Size>::setQueue(std::queue<Id> queue) {
     if (queue.size() > m_capacity) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
-                           __FILE__ + ": " +
-                           "Node's queue capacity is smaller than the queue size"};
-      throw std::invalid_argument(errorMsg);
+      throw std::invalid_argument(buildLog("Node's queue capacity is smaller than the queue size"));
     }
     m_queue = std::move(queue);
   }
@@ -119,10 +117,7 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   void Node<Id, Size>::setCapacity(Size capacity) {
     if (capacity < m_queue.size()) {
-      std::string errorMsg{
-          "Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-          "Node's queue capacity is smaller than the current queue size"};
-      throw std::invalid_argument(errorMsg);
+      throw std::invalid_argument(buildLog("Node's queue capacity is smaller than the current queue size"));
     }
     m_capacity = capacity;
   }
@@ -131,9 +126,7 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   void Node<Id, Size>::enqueue(Id id) {
     if (m_queue.size() == m_capacity) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
-                           __FILE__ + ": " + "Node's queue is fulls"};
-      throw std::runtime_error(errorMsg);
+      throw std::runtime_error(buildLog("Node's queue is fulls"));
     }
     m_queue.push(id);
   }
@@ -142,9 +135,7 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   Id Node<Id, Size>::dequeue() {
     if (m_queue.empty()) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
-                           __FILE__ + ": " + "Node's queue is empty"};
-      throw std::runtime_error(errorMsg);
+      throw std::runtime_error(buildLog("Node's queue is empty"));
     }
     Id id = m_queue.front();
     m_queue.pop();

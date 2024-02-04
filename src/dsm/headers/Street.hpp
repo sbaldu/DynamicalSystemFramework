@@ -14,7 +14,6 @@
 #include <type_traits>
 #include <utility>
 #include <stdexcept>
-#include <string>
 #include <cmath>
 #include <numbers>
 
@@ -22,6 +21,7 @@
 #include "Node.hpp"
 #include "../utility/TypeTraits/is_numeric.hpp"
 #include "../utility/queue.hpp"
+#include "../utility/Logger.hpp"
 
 namespace dsm {
   /// @brief The Street class represents a street in the network.
@@ -195,10 +195,7 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   void Street<Id, Size>::setLength(double len) {
     if (len < 0.) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
-                           __FILE__ + ": " +
-                           "The length of a street cannot be negative."};
-      throw std::invalid_argument(errorMsg);
+      throw std::invalid_argument(buildLog("The length of a street cannot be negative."));
     }
     m_len = len;
   }
@@ -227,10 +224,7 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   void Street<Id, Size>::setMaxSpeed(double speed) {
     if (speed < 0.) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
-                           __FILE__ + ": " +
-                           "The maximum speed of a street cannot be negative."};
-      throw std::invalid_argument(errorMsg);
+      throw std::invalid_argument(buildLog("The maximum speed of a street cannot be negative."));
     }
     m_maxSpeed = speed;
   }
@@ -249,10 +243,7 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   void Street<Id, Size>::setAngle(double angle) {
     if (angle < 0. || angle > 2 * std::numbers::pi) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
-                           __FILE__ + ": " +
-                           "The angle of a street must be between 0 and 2 * pi."};
-      throw std::invalid_argument(errorMsg);
+      throw std::invalid_argument(buildLog("The angle of a street must be between 0 and 2 * pi."));
     }
     m_angle = angle;
   }

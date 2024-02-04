@@ -28,6 +28,7 @@
 #include "SparseMatrix.hpp"
 #include "Street.hpp"
 #include "../utility/DijkstraResult.hpp"
+#include "../utility/Logger.hpp"
 #include "../utility/TypeTraits/is_node.hpp"
 #include "../utility/TypeTraits/is_street.hpp"
 
@@ -209,16 +210,12 @@ namespace dsm {
     if (fileExt == "dsm") {
       std::ifstream file{fileName};
       if (!file.is_open()) {
-        std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
-                             __FILE__ + ": " + "File not found"};
-        throw std::invalid_argument(errorMsg);
+        throw std::invalid_argument(buildLog("Cannot find file: " + fileName));
       }
       Id rows, cols;
       file >> rows >> cols;
       if (rows != cols) {
-        std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
-                             __FILE__ + ": " + "Adjacency matrix must be square"};
-        throw std::invalid_argument(errorMsg);
+        throw std::invalid_argument(buildLog("Adjacency matrix must be square"));
       }
       m_adjacency = make_shared<SparseMatrix<Id, bool>>(rows, cols);
       // each line has (should have) 3 elements
@@ -242,16 +239,12 @@ namespace dsm {
       // the following elements being the matrix elements
       std::ifstream file{fileName};
       if (!file.is_open()) {
-        std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
-                             __FILE__ + ": " + "File not found"};
-        throw std::invalid_argument(errorMsg);
+        throw std::invalid_argument(buildLog("Cannot find file: " + fileName));
       }
       Id rows, cols;
       file >> rows >> cols;
       if (rows != cols) {
-        std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
-                             __FILE__ + ": " + "Adjacency matrix must be square"};
-        throw std::invalid_argument(errorMsg);
+        throw std::invalid_argument(buildLog("Adjacency matrix must be square"));
       }
       m_adjacency = make_shared<SparseMatrix<Id, bool>>(rows, cols);
       Id index{0};
@@ -259,10 +252,7 @@ namespace dsm {
         double value;
         file >> value;
         if (value < 0) {
-          std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
-                               __FILE__ + ": " +
-                               "Adjacency matrix elements must be positive"};
-          throw std::invalid_argument(errorMsg);
+          throw std::invalid_argument(buildLog("Adjacency matrix elements must be positive"));
         }
         if (value > 0) {
           m_adjacency->insert(index, true);
@@ -288,9 +278,7 @@ namespace dsm {
     if (fileExt == "csv") {
       std::ifstream file{fileName};
       if (!file.is_open()) {
-        std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
-                              __FILE__ + ": " + "File not found"};
-        throw std::invalid_argument(errrorMsg);
+        throw std::invalid_argument(buildLog("Cannot find file: " + fileName));
       }
       std::string line;
       std::getline(file, line);  // skip first line
@@ -316,9 +304,7 @@ namespace dsm {
         ++nodeIndex;
       }
     } else {
-      std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
-                            __FILE__ + ": " + "File extension not supported"};
-      throw std::invalid_argument(errrorMsg);
+      throw std::invalid_argument(buildLog("File extension not supported"));
     }
   }
 
