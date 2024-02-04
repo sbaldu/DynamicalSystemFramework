@@ -173,7 +173,7 @@ TEST_CASE("Boolean Matrix") {
     CHECK_THROWS(m.getRow(-1));
     CHECK_THROWS(m.getRow(4));
   }
-  SUBCASE("Get row") {
+  SUBCASE("getRow") {
     /*This test tests if the getRow function works correctly
     The getRow function should return a vector containing the elements of the
     row
@@ -193,6 +193,26 @@ TEST_CASE("Boolean Matrix") {
     CHECK(!row(1));
     CHECK(row(2));
   }
+  SUBCASE("getRow with keepIndex true") {
+    /*This test tests if the getRow function works correctly
+    The getRow function should return a vector containing the elements of the
+    row
+    GIVEN: the getRow function is called
+    WHEN: the function is called on a matrix
+    THEN: the function should return a vector (SparseMatrix) containing the
+    elements of the row
+    */
+    SparseMatrix<uint32_t, bool> m(3, 3);
+    // Create a row
+    m.insert(0, 0, true);
+    m.insert(0, 2, true);
+    auto row = m.getRow(0, true);
+    // verify attributes and values
+    CHECK(row.size() == 2);
+    CHECK(row(0));
+    CHECK(!row(1));
+    CHECK(row(2));
+  }
   SUBCASE("getColumn - exceptions") {
     /*This test tests if the getColumn function throws exceptions correctly
     The getColumn function should throw an exception if the column is out of
@@ -204,7 +224,7 @@ TEST_CASE("Boolean Matrix") {
     SparseMatrix<uint32_t, bool> m(3, 6);
     CHECK_THROWS(m.getCol(6));
   }
-  SUBCASE("Get column") {
+  SUBCASE("getCol") {
     /*This test tests if the getCol function works correctly
     The getCol function should return a vector containing the elements of the
     column
@@ -223,6 +243,26 @@ TEST_CASE("Boolean Matrix") {
     CHECK(col(0));
     CHECK(!col(1));
     CHECK(col(2));
+  }
+  SUBCASE("getCol with keepIndex true") {
+    /*This test tests if the getCol function works correctly
+    The getCol function should return a vector containing the elements of the
+    column
+    GIVEN: the getCol function is called
+    WHEN: the function is called on a matrix
+    THEN: the function should return a vector (SparseMatrix) containingthe
+    elements of the column
+    */
+    SparseMatrix<uint32_t, bool> m(3, 3);
+    // Create a column
+    m.insert(0, 0, true);
+    m.insert(2, 0, true);
+    auto col = m.getCol(0, true);
+    // verify attributes and values
+    CHECK(col.size() == 2);
+    CHECK(col(0));
+    CHECK(!col(1));
+    CHECK(col(6));
   }
   SUBCASE("Get row dimension") {
     /*This test tests if the getRowDim function works correctly
@@ -664,7 +704,7 @@ TEST_CASE("Boolean Matrix") {
     CHECK(m2(2, 2) == 0);
     CHECK(m2.size() == 5);
   }
-  SUBCASE("Reshape") {
+  SUBCASE("Reshape rectangular") {
     /*This test tests if the reshape function works correctly
     The reshape function should reshape the matrix
     GIVEN: the reshape function is called
@@ -681,7 +721,7 @@ TEST_CASE("Boolean Matrix") {
     CHECK(m(1, 2));
     CHECK(m.size() == 3);
   }
-  SUBCASE("Reshape") {
+  SUBCASE("Reshape into a column vector") {
     /*This test tests if the reshape function works correctly
     The reshape function should reshape the matrix
     GIVEN: the reshape function is called
@@ -693,9 +733,44 @@ TEST_CASE("Boolean Matrix") {
     m.insert(0, 1, true);
     m.insert(1, 2, true);
     m.reshape(2);
-    CHECK(m(0, 0));
-    CHECK(m(0, 1));
+    CHECK(m(0));
+    CHECK(m(1));
     CHECK_THROWS(m(1, 2));
     CHECK(m.size() == 2);
+  }
+  SUBCASE("reshape in greater dimension") {
+    /*
+    The reshape function should reshape the matrix
+    GIVEN: the reshape function is called
+    WHEN: the function is called on a matrix
+    THEN: the function should reshape the matrix
+    */
+    SparseMatrix<uint16_t, bool> m(3, 3);
+    m.insert(0, 0, true);
+    m.insert(0, 1, true);
+    m.insert(1, 2, true);
+    m.reshape(4, 4);
+    CHECK(m(0, 0));
+    CHECK(m(0, 1));
+    CHECK(m(1, 2));
+  }
+  SUBCASE("insert_and_expand") {
+    /*
+    The insert_and_expand function should insert a value in the matrix
+    and expand the matrix if necessary
+    GIVEN: the insert_and_expand function is called
+    WHEN: the function is called on a matrix
+    THEN: the function should insert a value in the matrix and expanding it
+    */
+    SparseMatrix<uint16_t, bool> m(3, 3);
+    m.insert(0, 0, true);
+    m.insert(1, 2, true);
+    m.insert_and_expand(3, 4, true);
+    CHECK(m(0, 0));
+    CHECK(m(1, 2));
+    CHECK(m(3, 4));
+    CHECK(m.size() == 3);
+    CHECK(m.getRowDim() == 5);
+    CHECK(m.getColDim() == 5);
   }
 }

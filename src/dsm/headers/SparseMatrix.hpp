@@ -1,4 +1,4 @@
-/// @file       src/dsm/headers/SparseMatrix.hpp
+/// @file       /src/dsm/headers/SparseMatrix.hpp
 /// @brief      Defines the SparseMatrix class.
 ///
 /// @details    This file contains the definition of the SparseMatrix class.
@@ -17,6 +17,7 @@
 #include <typeinfo>
 #include <unordered_map>
 #include <vector>
+#include <cmath>
 
 namespace dsm {
   /// @brief The SparseMatrix class represents a sparse matrix.
@@ -71,12 +72,24 @@ namespace dsm {
     /// @throw std::out_of_range if the index is out of range
     void insert_or_assign(Index index, T value);
 
+    /// @brief insert a value in the matrix and expand the matrix if necessary.
+    /// @param i row index
+    /// @param j column index
+    /// @param value value to insert
+    void insert_and_expand(Index i, Index j, T value);
+
     /// @brief remove a value from the matrix
     /// @param i row index
     /// @param j column index
     /// @throw std::out_of_range if the index is out of range
     /// @throw std::runtime_error if the element is not found
     void erase(Index i, Index j);
+
+    /// @brief remove a value from the matrix
+    /// @param index index in vectorial form
+    /// @throw std::out_of_range if the index is out of range
+    /// @throw std::runtime_error if the element is not found
+    void erase(Index index);
 
     /// @brief remove a row from the matrix
     /// @param index row index
@@ -87,6 +100,12 @@ namespace dsm {
     /// @param index column index
     /// @throw std::out_of_range if the index is out of range
     void eraseColumn(Index index);
+
+    /// @brief set to 0 all the elements in a row
+    void emptyRow(Index index);
+
+    /// @brief set to 0 all the elements in a column
+    void emptyColumn(Index index);
 
     /// @brief empty the matrix and set the dimensions to zero
     void clear();
@@ -121,15 +140,21 @@ namespace dsm {
 
     /// @brief get a row as a row vector
     /// @param index row index
-    /// @return a row vector
+    /// @param keepIndex if true, the index of the elements in the row will be
+    /// the same as the index of the elements in the matrix
+    /// @return a row vector if keepIndex is false, otherwise a matrix with the
+    /// same dimensions as the original matrix
     /// @throw std::out_of_range if the index is out of range
-    SparseMatrix getRow(Index index) const;
+    SparseMatrix getRow(Index index, bool keepIndex = false) const;
 
     /// @brief get a column as a column vector
     /// @param index column index
-    /// @return a column vector
+    /// @param keepIndex if true, the index of the elements in the column will
+    /// be the same as the index of the elements in the matrix
+    /// @return a column vector if keepIndex is false, otherwise a matrix with
+    /// the same dimensions as the original matrix
     /// @throw std::out_of_range if the index is out of range
-    SparseMatrix getCol(Index index) const;
+    SparseMatrix getCol(Index index, bool keepIndex = false) const;
 
     /// @brief get a matrix of double with every row normalized to 1
     /// @return a matrix of double
@@ -206,7 +231,9 @@ namespace dsm {
       requires std::unsigned_integral<I>
     SparseMatrix<Index, T> operator+(const SparseMatrix<I, U>& other) {
       if (this->_rows != other._rows || this->_cols != other._cols) {
-        throw std::runtime_error("SparseMatrix: dimensions do not match");
+        std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                             __FILE__ + ": " + "Dimensions do not match"};
+        throw std::runtime_error(errorMsg);
       }
       auto result = SparseMatrix<Index, T>(this->_rows, this->_cols);
       std::unordered_map<Index, bool> unique;
@@ -217,7 +244,9 @@ namespace dsm {
         unique.insert_or_assign(it.first, true);
       }
       for (auto& it : unique) {
-        result.insert(it.first / this->_cols, it.first % this->_cols, (*this)(it.first) + other(it.first));
+        result.insert(it.first / this->_cols,
+                      it.first % this->_cols,
+                      (*this)(it.first) + other(it.first));
       }
       return result;
     }
@@ -230,7 +259,9 @@ namespace dsm {
       requires std::unsigned_integral<I>
     SparseMatrix<Index, T> operator-(const SparseMatrix<I, U>& other) {
       if (this->_rows != other._rows || this->_cols != other._cols) {
-        throw std::runtime_error("SparseMatrix: dimensions do not match");
+        std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                             __FILE__ + ": " + "Dimensions do not match"};
+        throw std::runtime_error(errorMsg);
       }
       auto result = SparseMatrix(this->_rows, this->_cols);
       std::unordered_map<Index, bool> unique;
@@ -241,7 +272,9 @@ namespace dsm {
         unique.insert_or_assign(it.first, true);
       }
       for (auto& it : unique) {
-        result.insert(it.first / this->_cols, it.first % this->_cols, (*this)(it.first) - other(it.first));
+        result.insert(it.first / this->_cols,
+                      it.first % this->_cols,
+                      (*this)(it.first) - other(it.first));
       }
       return result;
     }
@@ -275,18 +308,26 @@ namespace dsm {
   template <typename Index, typename T>
     requires std::unsigned_integral<Index>
   SparseMatrix<Index, T>::SparseMatrix(Index rows, Index cols)
-      : _matrix{std::unordered_map<Index, T>()}, _rows{rows}, _cols{cols}, _defaultReturn{0} {}
+      : _matrix{std::unordered_map<Index, T>()},
+        _rows{rows},
+        _cols{cols},
+        _defaultReturn{0} {}
 
   template <typename Index, typename T>
     requires std::unsigned_integral<Index>
   SparseMatrix<Index, T>::SparseMatrix(Index index)
-      : _matrix{std::unordered_map<Index, T>()}, _rows{index}, _cols{1}, _defaultReturn{0} {}
+      : _matrix{std::unordered_map<Index, T>()},
+        _rows{index},
+        _cols{1},
+        _defaultReturn{0} {}
 
   template <typename Index, typename T>
     requires std::unsigned_integral<Index>
   void SparseMatrix<Index, T>::insert(Index i, Index j, T value) {
     if (i >= _rows || j >= _cols) {
-      throw std::out_of_range("Index out of range");
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " + "Index out of range"};
+      throw std::out_of_range(errorMsg);
     }
     _matrix.emplace(std::make_pair(i * _cols + j, value));
   }
@@ -295,7 +336,9 @@ namespace dsm {
     requires std::unsigned_integral<Index>
   void SparseMatrix<Index, T>::insert(Index i, T value) {
     if (i >= _rows * _cols) {
-      throw std::out_of_range("Index out of range");
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " + "Index out of range"};
+      throw std::out_of_range(errorMsg);
     }
     _matrix.emplace(std::make_pair(i, value));
   }
@@ -304,7 +347,9 @@ namespace dsm {
     requires std::unsigned_integral<Index>
   void SparseMatrix<Index, T>::insert_or_assign(Index i, Index j, T value) {
     if (i >= _rows || j >= _cols) {
-      throw std::out_of_range("Index out of range");
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " + "Index out of range"};
+      throw std::out_of_range(errorMsg);
     }
     _matrix.insert_or_assign(i * _cols + j, value);
   }
@@ -313,27 +358,72 @@ namespace dsm {
     requires std::unsigned_integral<Index>
   void SparseMatrix<Index, T>::insert_or_assign(Index index, T value) {
     if (index > _rows * _cols - 1) {
-      throw std::out_of_range("Index out of range");
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " + "Index out of range"};
+      throw std::out_of_range(errorMsg);
     }
     _matrix.insert_or_assign(index, value);
   }
 
   template <typename Index, typename T>
     requires std::unsigned_integral<Index>
+  void SparseMatrix<Index, T>::insert_and_expand(Index i, Index j, T value) {
+    if (!(i < _rows) || !(j < _cols)) {
+      Index delta = std::max(i - _rows, j - _cols);
+      if (_cols == 1) {
+        if (!((i + delta) < (_rows + delta))) {
+          ++delta;
+        }
+        this->reshape(_rows + delta);
+      } else {
+        if (!((i * (_cols + delta) + j) < (_rows + delta) * (_cols + delta))) {
+          ++delta;
+        }
+        this->reshape(_rows + delta, _cols + delta);
+      }
+    }
+    _matrix.insert_or_assign(i * _cols + j, value);
+  }
+
+  template <typename Index, typename T>
+    requires std::unsigned_integral<Index>
   void SparseMatrix<Index, T>::erase(Index i, Index j) {
     if (i >= _rows || j >= _cols) {
-      throw std::out_of_range("Index out of range");
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " + "Index out of range"};
+      throw std::out_of_range(errorMsg);
     }
-    _matrix.find(i * _cols + j) != _matrix.end()
-        ? _matrix.erase(i * _cols + j)
-        : throw std::runtime_error("SparseMatrix: element not found");
+    if (_matrix.find(i * _cols + j) == _matrix.end()) {
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " + "Element not found"};
+      throw std::runtime_error(errorMsg);
+    }
+    _matrix.erase(i * _cols + j);
+  }
+
+  template <typename Index, typename T>
+    requires std::unsigned_integral<Index>
+  void SparseMatrix<Index, T>::erase(Index index) {
+    if (index > _rows * _cols - 1) {
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " + "Index out of range"};
+      throw std::out_of_range(errorMsg);
+    }
+    if (_matrix.find(index) == _matrix.end()) {
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " + "Element not found"};
+      throw std::runtime_error(errorMsg);
+    }
+    _matrix.erase(index);
   }
 
   template <typename Index, typename T>
     requires std::unsigned_integral<Index>
   void SparseMatrix<Index, T>::eraseRow(Index index) {
     if (index > _rows - 1) {
-      throw std::out_of_range("Index out of range");
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " + "Index out of range"};
+      throw std::out_of_range(errorMsg);
     }
     for (Index i = 0; i < _cols; ++i) {
       _matrix.erase(index * _cols + i);
@@ -354,7 +444,9 @@ namespace dsm {
     requires std::unsigned_integral<Index>
   void SparseMatrix<Index, T>::eraseColumn(Index index) {
     if (index > _cols - 1) {
-      throw std::out_of_range("Index out of range");
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " + "Index out of range"};
+      throw std::out_of_range(errorMsg);
     }
     for (Index i = 0; i < _rows; ++i) {
       _matrix.erase(i * _cols + index);
@@ -364,11 +456,28 @@ namespace dsm {
       if (key % _cols < index) {
         new_matrix.emplace(std::make_pair(key - key / _cols, value));
       } else {
-        new_matrix.emplace(std::make_pair(key / _cols * (_cols - 1) + key % _cols - 1, value));
+        new_matrix.emplace(
+            std::make_pair(key / _cols * (_cols - 1) + key % _cols - 1, value));
       }
     }
     --_cols;
     _matrix = new_matrix;
+  }
+
+  template <typename Index, typename T>
+    requires std::unsigned_integral<Index>
+  void SparseMatrix<Index, T>::emptyRow(Index index) {
+    for (const auto& x : this->getRow(index)) {
+      _matrix.erase(index * _cols + x.first);
+    }
+  }
+
+  template <typename Index, typename T>
+    requires std::unsigned_integral<Index>
+  void SparseMatrix<Index, T>::emptyColumn(Index index) {
+    for (const auto& x : this->getCol(index)) {
+      _matrix.erase(x.first * _cols + index);
+    }
   }
 
   template <typename Index, typename T>
@@ -383,7 +492,9 @@ namespace dsm {
     requires std::unsigned_integral<Index>
   bool SparseMatrix<Index, T>::contains(Index i, Index j) const {
     if (i >= _rows || j >= _cols) {
-      throw std::out_of_range("Index out of range");
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " + "Index out of range"};
+      throw std::out_of_range(errorMsg);
     }
     return _matrix.contains(i * _cols + j);
   }
@@ -392,7 +503,9 @@ namespace dsm {
     requires std::unsigned_integral<Index>
   bool SparseMatrix<Index, T>::contains(Index const index) const {
     if (index > _rows * _cols - 1) {
-      throw std::out_of_range("Index out of range");
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " + "Index out of range"};
+      throw std::out_of_range(errorMsg);
     }
     return _matrix.contains(index);
   }
@@ -401,11 +514,15 @@ namespace dsm {
     requires std::unsigned_integral<Index>
   SparseMatrix<Index, int> SparseMatrix<Index, T>::getDegreeVector() {
     if (_rows != _cols) {
-      throw std::runtime_error("SparseMatrix: getDegreeVector only works on square matrices");
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " +
+                           "getDegreeVector only works on square matrices"};
+      throw std::runtime_error(errorMsg);
     }
     auto degreeVector = SparseMatrix<Index, int>(_rows, 1);
     for (auto& i : _matrix) {
-      degreeVector.insert_or_assign(i.first / _cols, 0, degreeVector(i.first / _cols, 0) + 1);
+      degreeVector.insert_or_assign(
+          i.first / _cols, 0, degreeVector(i.first / _cols, 0) + 1);
     }
     return degreeVector;
   }
@@ -414,11 +531,15 @@ namespace dsm {
     requires std::unsigned_integral<Index>
   SparseMatrix<Index, double> SparseMatrix<Index, T>::getStrengthVector() {
     if (_rows != _cols) {
-      throw std::runtime_error("SparseMatrix: getStrengthVector only works on square matrices");
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " +
+                           "getStrengthVector only works on square matrices"};
+      throw std::runtime_error(errorMsg);
     }
     auto strengthVector = SparseMatrix<Index, double>(_rows, 1);
     for (auto& i : _matrix) {
-      strengthVector.insert_or_assign(i.first / _cols, 0, strengthVector(i.first / _cols, 0) + i.second);
+      strengthVector.insert_or_assign(
+          i.first / _cols, 0, strengthVector(i.first / _cols, 0) + i.second);
     }
     return strengthVector;
   }
@@ -427,7 +548,10 @@ namespace dsm {
     requires std::unsigned_integral<Index>
   SparseMatrix<Index, int> SparseMatrix<Index, T>::getLaplacian() {
     if (_rows != _cols) {
-      throw std::runtime_error("SparseMatrix: getLaplacian only works on square matrices");
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " +
+                           "getLaplacian only works on square matrices"};
+      throw std::runtime_error(errorMsg);
     }
     auto laplacian = SparseMatrix<Index, int>(_rows, _cols);
     for (auto& i : _matrix) {
@@ -442,14 +566,21 @@ namespace dsm {
 
   template <typename Index, typename T>
     requires std::unsigned_integral<Index>
-  SparseMatrix<Index, T> SparseMatrix<Index, T>::getRow(Index index) const {
+  SparseMatrix<Index, T> SparseMatrix<Index, T>::getRow(Index index,
+                                                        bool keepIndex) const {
     if (index >= _rows) {
-      throw std::out_of_range("Index out of range");
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " + "Index out of range"};
+      throw std::out_of_range(errorMsg);
     }
     SparseMatrix row(1, _cols);
+    if (keepIndex) {
+      row.reshape(_rows, _cols);
+    }
     for (auto& it : _matrix) {
       if (it.first / _cols == index) {
-        row.insert(it.first % _cols, it.second);
+        keepIndex ? row.insert(it.first, it.second)
+                  : row.insert(it.first % _cols, it.second);
       }
     }
     return row;
@@ -457,14 +588,21 @@ namespace dsm {
 
   template <typename Index, typename T>
     requires std::unsigned_integral<Index>
-  SparseMatrix<Index, T> SparseMatrix<Index, T>::getCol(Index index) const {
+  SparseMatrix<Index, T> SparseMatrix<Index, T>::getCol(Index index,
+                                                        bool keepIndex) const {
     if (index >= _cols) {
-      throw std::out_of_range("Index out of range");
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " + "Index out of range"};
+      throw std::out_of_range(errorMsg);
     }
     SparseMatrix col(_rows, 1);
+    if (keepIndex) {
+      col.reshape(_rows, _cols);
+    }
     for (auto& it : _matrix) {
       if (it.first % _cols == index) {
-        col.insert(it.first / _cols, it.second);
+        keepIndex ? col.insert(it.first, it.second)
+                  : col.insert(it.first / _cols, it.second);
       }
     }
     return col;
@@ -475,14 +613,14 @@ namespace dsm {
   SparseMatrix<Index, double> SparseMatrix<Index, T>::getNormRows() const {
     SparseMatrix<Index, double> normRows(_rows, _cols);
     for (Index index = 0; index < _rows; ++index) {
-      auto row = this->getRow(index);
+      auto row = this->getRow(index, true);
       double sum = 0.;
       for (auto& it : row) {
         sum += std::abs(it.second);
       }
       sum < std::numeric_limits<double>::epsilon() ? sum = 1. : sum = sum;
       for (auto& it : row) {
-        normRows.insert(it.first + index * _cols, it.second / sum);
+        normRows.insert(it.first, it.second / sum);
       }
     }
     return normRows;
@@ -493,14 +631,14 @@ namespace dsm {
   SparseMatrix<Index, double> SparseMatrix<Index, T>::getNormCols() const {
     SparseMatrix<Index, double> normCols(_rows, _cols);
     for (Index index = 0; index < _cols; ++index) {
-      auto col = this->getCol(index);
+      auto col = this->getCol(index, true);
       double sum = 0.;
       for (auto& it : col) {
         sum += std::abs(it.second);
       }
       sum < std::numeric_limits<double>::epsilon() ? sum = 1. : sum = sum;
       for (auto& it : col) {
-        normCols.insert(it.first * _cols + index, it.second / sum);
+        normCols.insert(it.first, it.second / sum);
       }
     }
     return normCols;
@@ -539,38 +677,43 @@ namespace dsm {
   template <typename Index, typename T>
     requires std::unsigned_integral<Index>
   void SparseMatrix<Index, T>::reshape(Index rows, Index cols) {
+    Index oldCols = this->_cols;
     this->_rows = rows;
     this->_cols = cols;
     auto copy = _matrix;
     for (auto& it : copy) {
-      if (it.first > rows * cols - 1) {
-        _matrix.erase(it.first);
+      _matrix.erase(it.first);
+      if (it.first < rows * cols) {
+        this->insert_or_assign(it.first / oldCols, it.first % oldCols, it.second);
       }
     }
   }
 
   template <typename Index, typename T>
     requires std::unsigned_integral<Index>
-  void SparseMatrix<Index, T>::reshape(Index dim) {
-    this->_rows = dim;
-    this->_cols = dim;
+  void SparseMatrix<Index, T>::reshape(Index index) {
+    this->_rows = index;
+    this->_cols = 1;
     auto copy = _matrix;
     for (auto& it : copy) {
-      if (it.first > dim * dim - 1) {
-        _matrix.erase(it.first);
+      _matrix.erase(it.first);
+      if (it.first < index) {
+        this->insert_or_assign(it.first, it.second);
       }
     }
   }
 
   template <typename Index, typename T>
     requires std::unsigned_integral<Index>
-  typename std::unordered_map<Index, T>::const_iterator SparseMatrix<Index, T>::begin() const {
+  typename std::unordered_map<Index, T>::const_iterator SparseMatrix<Index, T>::begin()
+      const {
     return _matrix.begin();
   }
 
   template <typename Index, typename T>
     requires std::unsigned_integral<Index>
-  typename std::unordered_map<Index, T>::const_iterator SparseMatrix<Index, T>::end() const {
+  typename std::unordered_map<Index, T>::const_iterator SparseMatrix<Index, T>::end()
+      const {
     return _matrix.end();
   }
 
@@ -578,7 +721,9 @@ namespace dsm {
     requires std::unsigned_integral<Index>
   const T& SparseMatrix<Index, T>::operator()(Index i, Index j) const {
     if (i >= _rows || j >= _cols) {
-      throw std::out_of_range("Index out of range");
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " + "Index out of range"};
+      throw std::out_of_range(errorMsg);
     }
     auto const& it = _matrix.find(i * _cols + j);
     return it != _matrix.end() ? it->second : _defaultReturn;
@@ -588,7 +733,9 @@ namespace dsm {
     requires std::unsigned_integral<Index>
   T& SparseMatrix<Index, T>::operator()(Index i, Index j) {
     if (i >= _rows || j >= _cols) {
-      throw std::out_of_range("Index out of range");
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " + "Index out of range"};
+      throw std::out_of_range(errorMsg);
     }
     auto const& it = _matrix.find(i * _cols + j);
     return it != _matrix.end() ? it->second : _defaultReturn;
@@ -598,7 +745,9 @@ namespace dsm {
     requires std::unsigned_integral<Index>
   const T& SparseMatrix<Index, T>::operator()(Index index) const {
     if (index >= _rows * _cols) {
-      throw std::out_of_range("Index out of range");
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " + "Index out of range"};
+      throw std::out_of_range(errorMsg);
     }
     auto const& it = _matrix.find(index);
     return it != _matrix.end() ? it->second : _defaultReturn;
@@ -608,7 +757,9 @@ namespace dsm {
     requires std::unsigned_integral<Index>
   T& SparseMatrix<Index, T>::operator()(Index index) {
     if (index >= _rows * _cols) {
-      throw std::out_of_range("Index out of range");
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " + "Index out of range"};
+      throw std::out_of_range(errorMsg);
     }
     auto const& it = _matrix.find(index);
     return it != _matrix.end() ? it->second : _defaultReturn;
@@ -628,13 +779,17 @@ namespace dsm {
     requires std::unsigned_integral<Index>
   template <typename I, typename U>
     requires std::unsigned_integral<I>
-  SparseMatrix<Index, T>& SparseMatrix<Index, T>::operator+=(const SparseMatrix<I, U>& other) {
+  SparseMatrix<Index, T>& SparseMatrix<Index, T>::operator+=(
+      const SparseMatrix<I, U>& other) {
     if (this->_rows != other._rows || this->_cols != other._cols) {
-      throw std::runtime_error("SparseMatrix: dimensions do not match");
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " + "Dimensions do not match"};
+      throw std::runtime_error(errorMsg);
     }
     for (auto& it : other._matrix) {
-      this->contains(it.first) ? this->insert_or_assign(it.first, this->operator()(it.first) + it.second)
-                               : this->insert(it.first, it.second);
+      this->contains(it.first)
+          ? this->insert_or_assign(it.first, this->operator()(it.first) + it.second)
+          : this->insert(it.first, it.second);
     }
     return *this;
   }
@@ -643,13 +798,17 @@ namespace dsm {
     requires std::unsigned_integral<Index>
   template <typename I, typename U>
     requires std::unsigned_integral<I>
-  SparseMatrix<Index, T>& SparseMatrix<Index, T>::operator-=(const SparseMatrix<I, U>& other) {
+  SparseMatrix<Index, T>& SparseMatrix<Index, T>::operator-=(
+      const SparseMatrix<I, U>& other) {
     if (this->_rows != other._rows || this->_cols != other._cols) {
-      throw std::runtime_error("SparseMatrix: dimensions do not match");
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " + "Dimensions do not match"};
+      throw std::runtime_error(errorMsg);
     }
     for (auto& it : other._matrix) {
-      this->contains(it.first) ? this->insert_or_assign(it.first, this->operator()(it.first) - it.second)
-                               : this->insert(it.first, -it.second);
+      this->contains(it.first)
+          ? this->insert_or_assign(it.first, this->operator()(it.first) - it.second)
+          : this->insert(it.first, -it.second);
     }
     return *this;
   }

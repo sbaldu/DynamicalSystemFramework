@@ -1,6 +1,6 @@
-
 #include <cstdint>
 #include <optional>
+#include <numbers>
 
 #include "Agent.hpp"
 #include "Node.hpp"
@@ -9,7 +9,7 @@
 #include "doctest.h"
 
 using Agent = dsm::Agent<uint16_t, uint16_t, double>;
-using Node = dsm::Node<uint16_t>;
+using Node = dsm::Node<uint16_t, uint16_t>;
 using Street = dsm::Street<uint16_t, uint16_t>;
 
 TEST_CASE("Street") {
@@ -22,9 +22,12 @@ TEST_CASE("Street") {
 
     Street street{1, std::make_pair(0, 1)};
     CHECK_EQ(street.id(), 1);
+    CHECK_EQ(street.capacity(), 1);
+    CHECK_EQ(street.transportCapacity(), 65535);
+    CHECK_EQ(street.length(), 1.);
     CHECK_EQ(street.nodePair().first, 0);
     CHECK_EQ(street.nodePair().second, 1);
-    CHECK_EQ(street.maxSpeed(), 30.);
+    CHECK_EQ(street.maxSpeed(), 13.8888888889);
   }
 
   SUBCASE("Constructor_2") {
@@ -37,11 +40,12 @@ TEST_CASE("Street") {
     Street street{1, 2, 3.5, std::make_pair(4, 5)};
     CHECK_EQ(street.id(), 1);
     CHECK_EQ(street.capacity(), 2);
+    CHECK_EQ(street.transportCapacity(), 65535);
     CHECK_EQ(street.length(), 3.5);
     CHECK_EQ(street.nodePair().first, 4);
     CHECK_EQ(street.nodePair().second, 5);
     CHECK_EQ(street.density(), 0);
-    CHECK_EQ(street.maxSpeed(), 30.);
+    CHECK_EQ(street.maxSpeed(), 13.8888888889);
   }
   SUBCASE("Constructor_3") {
     /*This tests the constructor that takes an Id, capacity, length, nodePair, and maxSpeed.
@@ -53,6 +57,7 @@ TEST_CASE("Street") {
     Street street{1, 2, 3.5, 40., std::make_pair(4, 5)};
     CHECK_EQ(street.id(), 1);
     CHECK_EQ(street.capacity(), 2);
+    CHECK_EQ(street.transportCapacity(), 65535);
     CHECK_EQ(street.length(), 3.5);
     CHECK_EQ(street.nodePair().first, 4);
     CHECK_EQ(street.nodePair().second, 5);
@@ -93,22 +98,22 @@ TEST_CASE("Street") {
     /*This tests the insertion of an agent in a street's queue*/
 
     // define some agents
-    Agent a1{1, 1};  // they are all in street 1
-    Agent a2{2, 1};
-    Agent a3{3, 1};
-    Agent a4{4, 1};
+    Agent a1{1, 1, 0};  // they are all in street 1
+    Agent a2{2, 1, 0};
+    Agent a3{3, 1, 0};
+    Agent a4{4, 1, 0};
 
     Street street{1, 4, 3.5, std::make_pair(0, 1)};
     // fill the queue
-    street.enqueue(a1);
-    street.enqueue(a2);
+    street.enqueue(a1.id());
+    street.enqueue(a2.id());
     CHECK_EQ(street.density(), 0.5);
-    street.enqueue(a3);
-    street.enqueue(a4);
+    street.enqueue(a3.id());
+    street.enqueue(a4.id());
     CHECK_EQ(street.queue().front(), 1);
     CHECK_EQ(street.queue().back(), 4);
     CHECK_EQ(street.queue().size(), street.capacity());
-    CHECK_EQ(street.size(), street.capacity());
+    CHECK_EQ(street.queue().size(), street.capacity());
     CHECK_EQ(street.density(), 1);
   }
 
@@ -116,31 +121,44 @@ TEST_CASE("Street") {
     /*This tests the exit of an agent from a street's queue*/
 
     // define some agents
-    Agent a1{1, 1};  // they are all in street 1
-    Agent a2{2, 1};
-    Agent a3{3, 1};
-    Agent a4{4, 1};
+    Agent a1{1, 1, 0};  // they are all in street 1
+    Agent a2{2, 1, 0};
+    Agent a3{3, 1, 0};
+    Agent a4{4, 1, 0};
 
     Street street{1, 4, 3.5, std::make_pair(0, 1)};
     // fill the queue
-    street.enqueue(a1);
-    street.enqueue(a2);
-    street.enqueue(a3);
-    street.enqueue(a4);
-    CHECK_EQ(street.queue().front(), 1);  // check that agent 1 is at the front of the queue
-
+    street.enqueue(a1.id());
+    street.enqueue(a2.id());
+    street.enqueue(a3.id());
+    street.enqueue(a4.id());
+    CHECK_EQ(street.queue().front(),
+             1);  // check that agent 1 is at the front of the queue
     // dequeue
     street.dequeue();
     CHECK_EQ(street.queue().front(), 2);  // check that agent 2 is now at front
     // check that the length of the queue has decreased
     CHECK_EQ(street.queue().size(), 3);
-    CHECK_EQ(street.size(), 3);
+    CHECK_EQ(street.queue().size(), 3);
     // check that the next agent dequeued is agent 2
     CHECK_EQ(street.dequeue().value(), 2);
-    CHECK_EQ(street.size(), 2);
+    CHECK_EQ(street.queue().size(), 2);
     street.dequeue();
     street.dequeue();  // the queue is now empty
     // check that the result of dequeue is std::nullopt
     CHECK_FALSE(street.dequeue().has_value());
+  }
+  SUBCASE("Angle") {
+    /// This tests the angle method
+    /// GIVEN: A street
+    /// WHEN: The angle method is called
+    /// THEN: The angle is returned and is correct
+    Street street{1, 4, 3.5, std::make_pair(0, 1)};
+    CHECK_EQ(street.angle(), 0);
+    street.setAngle(std::make_pair(0, 1), std::make_pair(1, 0));
+    CHECK_EQ(street.angle(), 7 * std::numbers::pi / 4);
+    // exceptions
+    CHECK_THROWS(street.setAngle(-0.1));
+    CHECK_THROWS(street.setAngle(7.));
   }
 }

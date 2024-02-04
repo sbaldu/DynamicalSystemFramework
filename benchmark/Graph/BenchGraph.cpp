@@ -8,7 +8,7 @@
 #include "Graph.hpp"
 
 using Graph = dsm::Graph<uint32_t, uint32_t>;
-using Node = dsm::Node<uint32_t>;
+using Node = dsm::Node<uint32_t, uint32_t>;
 using Street = dsm::Street<uint32_t, uint32_t>;
 using SparseMatrix = dsm::SparseMatrix<uint32_t, bool>;
 
@@ -57,4 +57,11 @@ int main() {
   std::cout << "Benchmarking building the adjacency matrix\n";
   b3.benchmark([&g2]() -> void { g2.buildAdj(); });
   b3.print<sb::microseconds>();
+
+  Bench b4(3);
+  Graph g3;
+  g3.importMatrix("./Graph/data/matrix.dat");
+  std::cout << "Benchmarking the algorithm for the shortest path\n";
+  b4.benchmark([&g3]() -> void { g3.shortestPath(0, 1); });
+  b4.print<sb::microseconds>();
 }
