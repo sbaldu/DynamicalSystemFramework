@@ -238,7 +238,8 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   void Street<Id, Size>::setAngle(std::pair<double, double> srcNode,
                                   std::pair<double, double> dstNode) {
-    double angle{std::atan2(dstNode.second - srcNode.second, dstNode.first - srcNode.first)};
+    double angle{
+        std::atan2(dstNode.second - srcNode.second, dstNode.first - srcNode.first)};
     if (angle < 0.) {
       angle += 2 * std::numbers::pi;
     }
@@ -301,7 +302,6 @@ namespace dsm {
   double Street<Id, Size>::angle() const {
     return m_angle;
   }
-
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   void Street<Id, Size>::enqueue(Id agentId) {

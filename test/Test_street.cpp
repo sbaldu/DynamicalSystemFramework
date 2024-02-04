@@ -132,8 +132,8 @@ TEST_CASE("Street") {
     street.enqueue(a2.id());
     street.enqueue(a3.id());
     street.enqueue(a4.id());
-    CHECK_EQ(street.queue().front(), 1);  // check that agent 1 is at the front of the queue
-
+    CHECK_EQ(street.queue().front(),
+             1);  // check that agent 1 is at the front of the queue
     // dequeue
     street.dequeue();
     CHECK_EQ(street.queue().front(), 2);  // check that agent 2 is now at front
