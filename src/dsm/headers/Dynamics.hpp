@@ -50,7 +50,7 @@ namespace dsm {
   class Dynamics {
   protected:
     std::unordered_map<Id, std::unique_ptr<Itinerary<Id>>> m_itineraries;
-    std::unordered_map<Id, std::unique_ptr<Agent<Id, Size, Delay>>> m_agents;
+    std::map<Id, std::unique_ptr<Agent<Id, Size, Delay>>> m_agents;
     TimePoint m_time;
     std::unique_ptr<Graph<Id, Size>> m_graph;
     double m_errorProbability;
@@ -119,7 +119,7 @@ namespace dsm {
     const std::unordered_map<Id, std::unique_ptr<Itinerary<Id>>>& itineraries() const;
     /// @brief Get the agents
     /// @return const std::unordered_map<Id, Agent<Id>>&, The agents
-    const std::unordered_map<Id, std::unique_ptr<Agent<Id, Size, Delay>>>& agents() const;
+    const std::map<Id, std::unique_ptr<Agent<Id, Size, Delay>>>& agents() const;
     /// @brief Get the time
     /// @return TimePoint The time
     TimePoint time() const;
@@ -271,7 +271,8 @@ namespace dsm {
     Anyway, this is not trivial as it seems so I will leave it as a comment.*/
     for (auto& nodePair : this->m_graph->nodeSet()) {
       auto node{nodePair.second};
-      for (const auto agentId : node->agentIds()) {
+      for (const auto agent : node->agents()) {
+        Id agentId{agent.second};
         if (node->id() ==
             this->m_itineraries[this->m_agents[agentId]->itineraryId()]->destination()) {
           node->removeAgent(agentId);
@@ -336,8 +337,12 @@ namespace dsm {
               ->nodeSet()[this->m_itineraries[agentPair.second->itineraryId()]->source()]};
       if (srcNode->isFull()) {
         continue;
+      } try {
+        srcNode->addAgent(agentPair.second->id());
+      } catch (std::runtime_error& e) {
+        // std::cerr << e.what() << '\n';
+        continue;
       }
-      srcNode->addAgent(agentPair.second->id());
     }
     // decrement all agent delays
     std::ranges::for_each(this->m_agents, [](auto& agent) {
@@ -477,7 +482,7 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
-  const std::unordered_map<
+  const std::map<
       Id,
       std::unique_ptr<Agent<Id, Size, Delay>>>& Dynamics<Id, Size, Delay>::agents() const {
     return this->m_agents;
@@ -494,14 +499,25 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::addAgent(const Agent<Id, Size, Delay>& agent) {
-    this->m_agents.insert(
-        std::make_pair(agent.id(), std::make_unique<Agent<Id, Size, Delay>>(agent)));
+    if (this->m_agents.contains(agent.id())) {
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " + "Agent " + std::to_string(agent.id()) +
+                           " already exists"};
+      throw std::invalid_argument(errorMsg);
+    }
+    this->m_agents.emplace(agent.id(), std::make_unique<Agent<Id, Size, Delay>>(agent));
   }
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::addAgent(std::unique_ptr<Agent<Id, Size, Delay>> agent) {
-    this->m_agents.insert(std::make_pair(agent->id(), std::move(agent)));
+    if (this->m_agents.contains(agent->id())) {
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " + "Agent " + std::to_string(agent->id()) +
+                           " already exists"};
+      throw std::invalid_argument(errorMsg);
+    }
+    this->m_agents.emplace(agent->id(), std::move(agent));
   }
   template <typename Id, typename Size, typename Delay>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
@@ -516,12 +532,7 @@ namespace dsm {
     }
     Id agentId{0};
     if (!this->m_agents.empty()) {
-      agentId =
-          std::max_element(this->m_agents.cbegin(),
-                           this->m_agents.cend(),
-                           [](const auto& a, const auto& b) { return a.first < b.first; })
-              ->first +
-          1;
+      agentId = this->m_agents.rbegin()->first + 1;
     }
     for (auto i{0}; i < nAgents; ++i, ++agentId) {
       this->addAgent(Agent<Id, Size, Delay>{agentId, itineraryId});
@@ -570,16 +581,9 @@ namespace dsm {
         0, static_cast<Size>(this->m_graph->streetSet().size() - 1)};
     for (Size i{0}; i < nAgents; ++i) {
       Size itineraryId{itineraryDist(this->m_generator)};
-      // find the max of m_agents keys
-
-      Size agentId{0};
+      Id agentId{0};
       if (!this->m_agents.empty()) {
-        agentId = std::max_element(
-                      this->m_agents.cbegin(),
-                      this->m_agents.cend(),
-                      [](const auto& a, const auto& b) { return a.first < b.first; })
-                      ->first +
-                  1;
+        agentId = this->m_agents.rbegin()->first + 1;
       }
       if (uniformly) {
         Size streetId{0};
@@ -617,7 +621,7 @@ namespace dsm {
                            " not found"};
       throw std::invalid_argument(errorMsg);
     }
-    m_agents.erase(agentIt);
+    m_agents.erase(agentId);
   }
 
   template <typename Id, typename Size, typename Delay>
