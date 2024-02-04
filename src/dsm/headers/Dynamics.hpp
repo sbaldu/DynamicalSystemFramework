@@ -282,9 +282,6 @@ namespace dsm {
                                             this->m_agents[agentId]->itineraryId()};
             this->removeAgent(agentId);
             this->addAgent(newAgent);
-            // Id itineraryId{this->m_agents[agentId]->itineraryId()};
-            // this->removeAgent(agentId);
-            // this->addAgents(itineraryId, 1);
           } else {
             this->removeAgent(agentId);
           }
