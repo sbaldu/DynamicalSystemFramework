@@ -54,14 +54,14 @@ namespace dsm {
     /// @brief Removes an agent from the node
     /// @param agentId The agent's id
     void removeAgent(Id agentId);
-    
+
     void setStreetPriorities(std::map<int16_t, Id> streetPriorities);
 
     void addStreetPriority(int16_t priority, Id streetId);
 
     virtual bool isGreen() const;
     virtual bool isGreen(Id) const;
-    virtual void increaseCounter() {};
+    virtual void increaseCounter(){};
 
     /// @brief Get the node's id
     /// @return Id The node's id
@@ -100,18 +100,20 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   Node<Id, Size>::Node(Id id, std::pair<double, double> coords)
       : m_coords{std::move(coords)}, m_id{id}, m_capacity{1}, m_agentCounter{0} {}
-  
+
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   bool Node<Id, Size>::isGreen() const {
-    std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+    std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                         __FILE__ + ": " +
                          "isGreen() is not implemented for this type of node"};
     throw std::runtime_error(errorMsg);
   }
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   bool Node<Id, Size>::isGreen(Id) const {
-    std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+    std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                         __FILE__ + ": " +
                          "isGreen() is not implemented for this type of node"};
     throw std::runtime_error(errorMsg);
   }
@@ -144,7 +146,8 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   void Node<Id, Size>::setCapacity(Size capacity) {
     if (capacity < m_agentIds.size()) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " +
                            "Node's capacity is smaller than the current size"};
       throw std::invalid_argument(errorMsg);
     }
@@ -155,8 +158,8 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   void Node<Id, Size>::addAgent(Id agentId) {
     if (m_agentIds.size() == m_capacity) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                           "Node is full"};
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " + "Node is full"};
       throw std::runtime_error(errorMsg);
     }
     m_agentIds.emplace(agentId);
@@ -168,8 +171,8 @@ namespace dsm {
   void Node<Id, Size>::removeAgent(Id agentId) {
     auto it = std::find(m_agentIds.begin(), m_agentIds.end(), agentId);
     if (it == m_agentIds.end()) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                           "Agent is not on the node"};
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " + "Agent is not on the node"};
       throw std::runtime_error(errorMsg);
     }
     m_agentIds.erase(it);
@@ -227,7 +230,8 @@ namespace dsm {
   /* }; */
 
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>
   class TrafficLight : public Node<Id, Size> {
   private:
     std::optional<std::pair<Delay, Delay>> m_delay;
@@ -267,38 +271,43 @@ namespace dsm {
   };
 
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+                 std::unsigned_integral<Delay>
   TrafficLight<Id, Size, Delay>::TrafficLight(Id id) : Node<Id, Size>{id}, m_counter{0} {}
 
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>
   void TrafficLight<Id, Size, Delay>::setDelay(Delay delay) {
     m_delay = std::make_pair(delay, delay);
   }
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>
   void TrafficLight<Id, Size, Delay>::setDelay(std::pair<Delay, Delay> delay) {
     m_delay = std::move(delay);
   }
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>
   void TrafficLight<Id, Size, Delay>::setPhase(Delay phase) {
     if (!m_delay.has_value()) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                           "TrafficLight's delay is not set"};
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " + "TrafficLight's delay is not set"};
       throw std::runtime_error(errorMsg);
     }
     if (phase > m_delay.value().first + m_delay.value().second) {
       phase -= m_delay.value().first + m_delay.value().second;
     }
-    phase == 0 ? m_counter = 0 : m_counter = m_delay.value().first % phase; //fwefbewbfw
+    phase == 0 ? m_counter = 0 : m_counter = m_delay.value().first % phase;  //fwefbewbfw
   }
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>
   void TrafficLight<Id, Size, Delay>::increaseCounter() {
     if (!m_delay.has_value()) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                           "TrafficLight's delay is not set"};
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " + "TrafficLight's delay is not set"};
       throw std::runtime_error(errorMsg);
     }
     ++m_counter;
@@ -308,26 +317,29 @@ namespace dsm {
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>
   std::optional<Delay> TrafficLight<Id, Size, Delay>::delay() const {
     return m_delay;
   }
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>
   bool TrafficLight<Id, Size, Delay>::isGreen() const {
     if (!m_delay.has_value()) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                           "TrafficLight's delay is not set"};
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " + "TrafficLight's delay is not set"};
       throw std::runtime_error(errorMsg);
     }
     return m_counter < m_delay.value().first;
   }
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>
   bool TrafficLight<Id, Size, Delay>::isGreen(Id streetId) const {
     if (!m_delay.has_value()) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                           "TrafficLight's delay is not set"};
+      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                           __FILE__ + ": " + "TrafficLight's delay is not set"};
       throw std::runtime_error(errorMsg);
     }
     if (this->isGreen()) {
