@@ -37,7 +37,6 @@ namespace dsm {
     Id m_id;
     Size m_capacity;
     Size m_agentCounter;
-    Size m_agentCounter;
 
   public:
     Node() = default;
@@ -78,7 +77,7 @@ namespace dsm {
     void addStreetPriority(int16_t priority, Id streetId);
 
     virtual bool isGreen() const;
-    virtual bool isGreen(Id streetId) const;
+    virtual bool isGreen(Id) const;
     virtual void increaseCounter() {};
 
     /// @brief Get the node's id
@@ -88,15 +87,6 @@ namespace dsm {
     /// @brief Get the node's coordinates
     /// @return std::pair<double,, double> A std::pair containing the node's coordinates
     const std::pair<double, double>& coords() const;
-    /// @brief Get the node's street priorities
-    /// @return std::map<Id, Size> A std::map containing the node's street priorities
-    /// @details The keys of the map are intended as priorities, while the values are the ids of the streets.
-    ///          The streets are ordered by priority, from the highest to the lowest. You should have both positive
-    ///          and negative priorities, where the positive ones are the ones that have the green light, and the
-    ///          negative ones are the ones that have the red light (and viceversa)
-    virtual const std::map<int16_t, Id>& streetPriorities() const;
-    /// @brief Get the node's capacity
-    /// @return Size The node's capacity
     /// @brief Get the node's street priorities
     /// @return std::map<Id, Size> A std::map containing the node's street priorities
     /// @details The keys of the map are intended as priorities, while the values are the ids of the streets.
@@ -118,16 +108,10 @@ namespace dsm {
     /// @details This function returns the number of agents that have passed through the node
     ///          since the last time this function was called. It also resets the counter.
     Size agentCounter();
-    /// @brief Returns the number of agents that have passed through the node
-    /// @return Size The number of agents that have passed through the node
-    /// @details This function returns the number of agents that have passed through the node
-    ///          since the last time this function was called. It also resets the counter.
-    Size agentCounter();
   };
 
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
-  Node<Id, Size>::Node(Id id) : m_id{id}, m_capacity{1}, m_agentCounter{0} {}
   Node<Id, Size>::Node(Id id) : m_id{id}, m_capacity{1}, m_agentCounter{0} {}
 
   template <typename Id, typename Size>
@@ -144,7 +128,7 @@ namespace dsm {
   }
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
-  bool Node<Id, Size>::isGreen(Id streetId) const {
+  bool Node<Id, Size>::isGreen(Id) const {
     std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
                          "isGreen() is not implemented for this type of node"};
     throw std::runtime_error(errorMsg);
@@ -164,14 +148,6 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
-  void Node<Id, Size>::setStreetPriorities(std::map<int16_t, Id> streetPriorities) {
-    m_streetPriorities = std::move(streetPriorities);
-  }
-
-  template <typename Id, typename Size>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
-  void Node<Id, Size>::addStreetPriority(int16_t priority, Id streetId) {
-    m_streetPriorities.emplace(priority, streetId);
   void Node<Id, Size>::setStreetPriorities(std::map<int16_t, Id> streetPriorities) {
     m_streetPriorities = std::move(streetPriorities);
   }
