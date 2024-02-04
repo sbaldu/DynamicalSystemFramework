@@ -26,6 +26,10 @@ namespace dsm {
   class Node {
   protected:
     std::multimap<double, Id> m_agents;
+    /* I don't actually know if it is better yo use a std::map or a priority_queue...
+    Using the second one means that the node is blocked if an agent with priority cannot move.
+    The first is just like an ordering...
+    Need to discuss this.*/
     std::map<int16_t, Id> m_streetPriorities;
     std::pair<double, double> m_coords;
     Id m_id;
