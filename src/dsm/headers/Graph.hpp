@@ -322,7 +322,7 @@ namespace dsm {
   }
 
   template <typename Id, typename Size>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Graph<Id, Size>::importOSMEdges(const std::string& fileName) {
     std::string fileExt = fileName.substr(fileName.find_last_of(".") + 1);
     if (fileExt == "csv") {
