@@ -12,11 +12,12 @@
 
 #include <functional>
 #include <utility>
-#include <string>
 #include <stdexcept>
 #include <optional>
 #include <set>
 #include <map>
+
+#include "../utility/Logger.hpp"
 
 namespace dsm {
   /// @brief The Node class represents a node in the network.
@@ -146,10 +147,8 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   void Node<Id, Size>::setCapacity(Size capacity) {
     if (capacity < m_agentIds.size()) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
-                           __FILE__ + ": " +
-                           "Node's capacity is smaller than the current size"};
-      throw std::invalid_argument(errorMsg);
+      throw std::invalid_argument(
+          buildLog("Node's queue capacity is smaller than the current queue size"));
     }
     m_capacity = capacity;
   }
@@ -158,9 +157,7 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   void Node<Id, Size>::addAgent(Id agentId) {
     if (m_agentIds.size() == m_capacity) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
-                           __FILE__ + ": " + "Node is full"};
-      throw std::runtime_error(errorMsg);
+      throw std::runtime_error(buildLog("Node is full"));
     }
     m_agentIds.emplace(agentId);
     ++m_agentCounter;
@@ -171,9 +168,7 @@ namespace dsm {
   void Node<Id, Size>::removeAgent(Id agentId) {
     auto it = std::find(m_agentIds.begin(), m_agentIds.end(), agentId);
     if (it == m_agentIds.end()) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
-                           __FILE__ + ": " + "Agent is not on the node"};
-      throw std::runtime_error(errorMsg);
+      throw std::runtime_error(buildLog("Agent is not on the node"));
     }
     m_agentIds.erase(it);
   }
