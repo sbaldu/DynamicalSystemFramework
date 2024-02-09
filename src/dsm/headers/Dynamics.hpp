@@ -230,7 +230,8 @@ namespace dsm {
              is_numeric_v<Delay>
   void Dynamics<Id, Size, Delay>::setMinSpeedRateo(double minSpeedRateo) {
     if (minSpeedRateo < 0. || minSpeedRateo > 1.) {
-      throw std::invalid_argument(buildLog("The minim speed rateo must be between 0 and 1"));
+      throw std::invalid_argument(
+          buildLog("The minim speed rateo must be between 0 and 1"));
     }
     m_minSpeedRateo = minSpeedRateo;
   }
@@ -240,7 +241,8 @@ namespace dsm {
              is_numeric_v<Delay>
   void Dynamics<Id, Size, Delay>::setErrorProbability(double errorProbability) {
     if (errorProbability < 0. || errorProbability > 1.) {
-      throw std::invalid_argument(buildLog("The error probability must be between 0 and 1"));
+      throw std::invalid_argument(
+          buildLog("The error probability must be between 0 and 1"));
     }
     m_errorProbability = errorProbability;
   }
@@ -255,7 +257,8 @@ namespace dsm {
       return agent->index() == agentId;
     })};
     if (agentIt == m_agents.end()) {
-      throw std::invalid_argument(buildLog("Agent " + std::to_string(agentId) + " not found"));
+      throw std::invalid_argument(
+          buildLog("Agent " + std::to_string(agentId) + " not found"));
     }
     auto& agent{*agentIt};
     auto& street{this->m_graph->street(agent->position())};
@@ -366,8 +369,8 @@ namespace dsm {
   void Dynamics<Id, Size, Delay>::addAgents(Id itineraryId, Size nAgents) {
     auto itineraryIt{m_itineraries.find(itineraryId)};
     if (itineraryIt == m_itineraries.end()) {
-      throw std::invalid_argument(buildLog("Itinerary " + std::to_string(itineraryId) +
-                           " not found"));
+      throw std::invalid_argument(
+          buildLog("Itinerary " + std::to_string(itineraryId) + " not found"));
     }
     Id agentId{0};
     if (!this->m_agents.empty()) {
@@ -647,8 +650,8 @@ namespace dsm {
       return agent->index() == agentId;
     })};
     if (agentIt == m_agents.end()) {
-      throw std::invalid_argument(buildLog("Agent " + std::to_string(agentId) +
-                           " not found"));
+      throw std::invalid_argument(
+          buildLog("Agent " + std::to_string(agentId) + " not found"));
     }
     auto& agent{*agentIt};
     auto& street{this->m_graph->street(agent->position())};

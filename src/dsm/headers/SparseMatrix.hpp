@@ -501,7 +501,8 @@ namespace dsm {
     requires std::unsigned_integral<Index>
   SparseMatrix<Index, double> SparseMatrix<Index, T>::getStrengthVector() {
     if (_rows != _cols) {
-      throw std::runtime_error(buildLog("getStrengthVector only works on square matrices"));
+      throw std::runtime_error(
+          buildLog("getStrengthVector only works on square matrices"));
     }
     auto strengthVector = SparseMatrix<Index, double>(_rows, 1);
     for (auto& i : _matrix) {

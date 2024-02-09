@@ -252,7 +252,8 @@ namespace dsm {
         double value;
         file >> value;
         if (value < 0) {
-          throw std::invalid_argument(buildLog("Adjacency matrix elements must be positive"));
+          throw std::invalid_argument(
+              buildLog("Adjacency matrix elements must be positive"));
         }
         if (value > 0) {
           m_adjacency->insert(index, true);

@@ -224,7 +224,8 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   void Street<Id, Size>::setMaxSpeed(double speed) {
     if (speed < 0.) {
-      throw std::invalid_argument(buildLog("The maximum speed of a street cannot be negative."));
+      throw std::invalid_argument(
+          buildLog("The maximum speed of a street cannot be negative."));
     }
     m_maxSpeed = speed;
   }
@@ -243,7 +244,8 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   void Street<Id, Size>::setAngle(double angle) {
     if (angle < 0. || angle > 2 * std::numbers::pi) {
-      throw std::invalid_argument(buildLog("The angle of a street must be between 0 and 2 * pi."));
+      throw std::invalid_argument(
+          buildLog("The angle of a street must be between 0 and 2 * pi."));
     }
     m_angle = angle;
   }

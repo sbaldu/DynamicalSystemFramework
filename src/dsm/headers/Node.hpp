@@ -147,7 +147,8 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   void Node<Id, Size>::setCapacity(Size capacity) {
     if (capacity < m_agentIds.size()) {
-      throw std::invalid_argument(buildLog("Node's queue capacity is smaller than the current queue size"));
+      throw std::invalid_argument(
+          buildLog("Node's queue capacity is smaller than the current queue size"));
     }
     m_capacity = capacity;
   }
