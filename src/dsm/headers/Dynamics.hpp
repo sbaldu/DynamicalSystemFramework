@@ -61,13 +61,13 @@ namespace dsm {
 
     /// @brief Evolve the streets
     /// @details If possible, removes the first agent of each street queue, putting it in the destination node.
-    virtual void m_evolveStreets();
+    virtual void m_evolveStreets(bool reinsert_agents);
     /// @brief Evolve the nodes
     /// @details If possible, removes all agents from each node, putting them in the next street.
     /// If the error probability is not zero, the agents can move to a random street.
     /// If the agent is in the destination node, it is removed from the simulation (and then reinserted if reinsert_agents is true)
     /// @param reinsert_agents If true, the agents are reinserted in the simulation after they reach their destination
-    virtual void m_evolveNodes(bool reinsert_agents);
+    virtual void m_evolveNodes();
     /// @brief Evolve the agents.
     /// @details Puts all new agents on a street, if possible, decrements all delays
     /// and increments all travel times.
@@ -238,7 +238,7 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
-  void Dynamics<Id, Size, Delay>::m_evolveStreets() {
+  void Dynamics<Id, Size, Delay>::m_evolveStreets(bool reinsert_agents) {
     for (auto& streetPair : this->m_graph->streetSet()) {
       auto street{streetPair.second};
       if (street->queue().empty()) {
@@ -257,25 +257,9 @@ namespace dsm {
           !destinationNode->isGreen(street->id())) {
         continue;
       }
-      destinationNode->addAgent(street->dequeue().value());
-    }
-  }
-
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             is_numeric_v<Delay>)
-  void Dynamics<Id, Size, Delay>::m_evolveNodes(bool reinsert_agents) {
-    /* In this function we have to manage the priority of the agents, given the street angles.
-    By doing the angle difference, if the destination street is the same we can basically compare these differences (mod(pi)!, i.e. delta % std::numbers::pi):
-    the smaller goes first.
-    Anyway, this is not trivial as it seems so I will leave it as a comment.*/
-    for (auto& nodePair : this->m_graph->nodeSet()) {
-      auto node{nodePair.second};
-      for (const auto agent : node->agents()) {
-        Id agentId{agent.second};
-        if (node->id() ==
+      street->dequeue();
+      if (destinationNode->id() ==
             this->m_itineraries[this->m_agents[agentId]->itineraryId()]->destination()) {
-          node->removeAgent(agentId);
           this->m_travelTimes.push_back(this->m_agents[agentId]->time());
           if (reinsert_agents) {
             Agent<Id, Size, Delay> newAgent{this->m_agents[agentId]->id(),
@@ -286,7 +270,24 @@ namespace dsm {
             this->removeAgent(agentId);
           }
           continue;
-        }
+        } else {
+          destinationNode->addAgent(agentId);
+      }
+    }
+  }
+
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>)
+  void Dynamics<Id, Size, Delay>::m_evolveNodes() {
+    /* In this function we have to manage the priority of the agents, given the street angles.
+    By doing the angle difference, if the destination street is the same we can basically compare these differences (mod(pi)!, i.e. delta % std::numbers::pi):
+    the smaller goes first.
+    Anyway, this is not trivial as it seems so I will leave it as a comment.*/
+    for (auto& nodePair : this->m_graph->nodeSet()) {
+      auto node{nodePair.second};
+      for (const auto agent : node->agents()) {
+        Id agentId{agent.second};
         auto possibleMoves{
             this->m_itineraries[this->m_agents[agentId]->itineraryId()]->path().getRow(
                 node->id())};
@@ -450,9 +451,9 @@ namespace dsm {
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::evolve(bool reinsert_agents) {
     // move the first agent of each street queue, if possible, putting it in the next node
-    this->m_evolveStreets();
+    this->m_evolveStreets(reinsert_agents);
     // move all the agents from each node, if possible
-    this->m_evolveNodes(reinsert_agents);
+    this->m_evolveNodes();
     // cycle over agents and update their times
     this->m_evolveAgents();
     // increment time simulation
