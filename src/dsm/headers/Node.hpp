@@ -26,7 +26,7 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   class Node {
   protected:
-    std::multimap<double, Id> m_agents;
+    std::multimap<int16_t, Id> m_agents;
     /* I don't actually know if it is better yo use a std::map or a priority_queue...
     Using the second one means that the node is blocked if an agent with priority cannot move.
     The first is just like an ordering...
@@ -98,7 +98,7 @@ namespace dsm {
     Size capacity() const;
     /// @brief Get the node's agent ids
     /// @return std::set<Id> A std::set containing the node's agent ids
-    std::multimap<double, Id> agents() const;
+    std::multimap<int16_t, Id> agents() const;
     /// @brief Returns true if the node is full
     /// @return bool True if the node is full
     bool isFull() const;
@@ -177,7 +177,7 @@ namespace dsm {
         throw std::runtime_error(buildLog("Agent is already on the node"));
       }
     }
-    double lastKey{0};
+    int lastKey{0};
     if (!m_agents.empty()) {
       lastKey = m_agents.rbegin()->first + 1;
     }
@@ -217,7 +217,7 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
-  std::multimap<double, Id> Node<Id, Size>::agents() const {
+  std::multimap<int16_t, Id> Node<Id, Size>::agents() const {
     return m_agents;
   }
 
