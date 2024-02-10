@@ -12,13 +12,12 @@
 
 #include <functional>
 #include <utility>
-#include <string>
 #include <stdexcept>
 #include <optional>
 #include <set>
 #include <map>
 
-#include "../utility/queue.hpp"
+#include "../utility/Logger.hpp"
 
 namespace dsm {
   /// @brief The Node class represents a node in the network.
@@ -162,9 +161,7 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   void Node<Id, Size>::setCapacity(Size capacity) {
     if (capacity < m_agents.size()) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                           "Node's capacity is smaller than the current size"};
-      throw std::invalid_argument(errorMsg);
+      throw std::runtime_error(buildLog("Node capacity is smaller than the current queue size"));
     }
     m_capacity = capacity;
   }
@@ -173,15 +170,11 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   void Node<Id, Size>::addAgent(Id agentId) {
     if (m_agents.size() == m_capacity) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                           "Node is full"};
-      throw std::runtime_error(errorMsg);
+      throw std::runtime_error(buildLog("Node is full"));
     }
     for (auto const& agent : m_agents) {
       if (agent.second == agentId) {
-        std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                             "Agent is already on the node"};
-        throw std::runtime_error(errorMsg);
+        throw std::runtime_error(buildLog("Agent is already on the node"));
       }
     }
     double lastKey{0};
@@ -201,9 +194,7 @@ namespace dsm {
         return;
       }
     }
-    std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                          "Agent is not on the node"};
-    throw std::runtime_error(errorMsg);
+    throw std::runtime_error(buildLog("Agent is not on the node"));
   }
 
   template <typename Id, typename Size>

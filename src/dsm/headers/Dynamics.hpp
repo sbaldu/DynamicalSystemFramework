@@ -14,7 +14,6 @@
 #include <vector>
 #include <random>
 #include <span>
-#include <string>
 #include <numeric>
 #include <unordered_map>
 
@@ -24,6 +23,7 @@
 #include "SparseMatrix.hpp"
 #include "../utility/TypeTraits/is_agent.hpp"
 #include "../utility/TypeTraits/is_itinerary.hpp"
+#include "../utility/Logger.hpp"
 
 namespace dsm {
 
@@ -374,10 +374,8 @@ namespace dsm {
              is_numeric_v<Delay>
   void Dynamics<Id, Size, Delay>::setMinSpeedRateo(double minSpeedRateo) {
     if (minSpeedRateo < 0. || minSpeedRateo > 1.) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
-                           __FILE__ + ": " +
-                           "The minim speed rateo must be between 0 and 1"};
-      throw std::invalid_argument(errorMsg);
+      throw std::invalid_argument(
+          buildLog("The minim speed rateo must be between 0 and 1"));
     }
     m_minSpeedRateo = minSpeedRateo;
   }
@@ -387,17 +385,14 @@ namespace dsm {
              is_numeric_v<Delay>
   void Dynamics<Id, Size, Delay>::setErrorProbability(double errorProbability) {
     if (errorProbability < 0. || errorProbability > 1.) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
-                           __FILE__ + ": " +
-                           "The error probability must be between 0 and 1"};
-      throw std::invalid_argument(errorMsg);
+      throw std::invalid_argument(
+          buildLog("The error probability must be between 0 and 1"));
     }
     m_errorProbability = errorProbability;
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             is_numeric_v<Delay>)
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
   void Dynamics<Id, Size, Delay>::updatePaths() {
     const Size dimension = m_graph->adjMatrix()->getRowDim();
     std::unordered_map<Id, SparseMatrix<Id, bool>> paths;
@@ -525,10 +520,8 @@ namespace dsm {
   void Dynamics<Id, Size, Delay>::addAgents(Id itineraryId, Size nAgents) {
     auto itineraryIt{m_itineraries.find(itineraryId)};
     if (itineraryIt == m_itineraries.end()) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
-                           __FILE__ + ": " + "Itinerary " + std::to_string(itineraryId) +
-                           " not found"};
-      throw std::invalid_argument(errorMsg);
+      throw std::invalid_argument(
+          buildLog("Itinerary " + std::to_string(itineraryId) + " not found"));
     }
     Id agentId{0};
     if (!this->m_agents.empty()) {

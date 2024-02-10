@@ -14,10 +14,10 @@
 #include "Itinerary.hpp"
 #include "SparseMatrix.hpp"
 #include "../utility/TypeTraits/is_numeric.hpp"
+#include "../utility/Logger.hpp"
 
 #include <concepts>
 #include <stdexcept>
-#include <string>
 #include <limits>
 #include <optional>
 
@@ -135,9 +135,7 @@ namespace dsm {
              is_numeric_v<Delay>)
   void Agent<Id, Size, Delay>::setSpeed(double speed) {
     if (speed < 0) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
-                           __FILE__ + ": " + "Speed must be positive"};
-      throw std::invalid_argument(errorMsg);
+      throw std::invalid_argument(buildLog("Speed must be positive"));
     }
     m_speed = speed;
   }
@@ -146,9 +144,7 @@ namespace dsm {
              is_numeric_v<Delay>)
   void Agent<Id, Size, Delay>::incrementDelay() {
     if (m_delay == std::numeric_limits<Delay>::max()) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
-                           __FILE__ + ": " + "Delay has reached its maximum value"};
-      throw std::overflow_error(errorMsg);
+      throw std::overflow_error(buildLog("Delay has reached its maximum value"));
     }
     ++m_delay;
   }
@@ -157,9 +153,7 @@ namespace dsm {
              is_numeric_v<Delay>)
   void Agent<Id, Size, Delay>::incrementDelay(Delay delay) {
     if (m_delay + delay < m_delay) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
-                           __FILE__ + ": " + "Delay has reached its maximum value"};
-      throw std::overflow_error(errorMsg);
+      throw std::overflow_error(buildLog("Delay has reached its maximum value"));
     }
     m_delay = delay;
   }
@@ -168,9 +162,7 @@ namespace dsm {
              is_numeric_v<Delay>)
   void Agent<Id, Size, Delay>::decrementDelay() {
     if (m_delay == 0) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
-                           __FILE__ + ": " + "Delay has reached its minimum value"};
-      throw std::underflow_error(errorMsg);
+      throw std::underflow_error(buildLog("Delay has reached its minimum value"));
     }
     --m_delay;
   }
@@ -180,9 +172,7 @@ namespace dsm {
              is_numeric_v<Delay>)
   void Agent<Id, Size, Delay>::incrementTime() {
     if (m_time == std::numeric_limits<unsigned int>::max()) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
-                           __FILE__ + ": " + "Time has reached its maximum value"};
-      throw std::overflow_error(errorMsg);
+      throw std::overflow_error(buildLog("Time has reached its maximum value"));
     }
     ++m_time;
   }
@@ -192,9 +182,7 @@ namespace dsm {
              is_numeric_v<Delay>)
   void Agent<Id, Size, Delay>::incrementTime(unsigned int time) {
     if (m_time + time < m_time) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
-                           __FILE__ + ": " + "Time has reached its maximum value"};
-      throw std::overflow_error(errorMsg);
+      throw std::overflow_error(buildLog("Time has reached its maximum value"));
     }
     m_time += time;
   }
