@@ -12,7 +12,7 @@ using Dynamics = dsm::FirstOrderDynamics<uint16_t, uint16_t, uint16_t>;
 using Graph = dsm::Graph<uint16_t, uint16_t>;
 using SparseMatrix = dsm::SparseMatrix<uint16_t, bool>;
 using Street = dsm::Street<uint16_t, uint16_t>;
-using Itineary = dsm::Itinerary<uint16_t>;
+using Itinerary = dsm::Itinerary<uint16_t>;
 using TrafficLight = dsm::TrafficLight<uint16_t, uint16_t, uint16_t>;
 
 TEST_CASE("Dynamics") {
@@ -39,16 +39,16 @@ TEST_CASE("Dynamics") {
     CHECK_EQ(dynamics.meanTravelTime().error, 0.);
   }
   SUBCASE("AddRandomAgents") {
-    /// GIVEN: an itineary
+    /// GIVEN: an Itinerary
     /// WHEN: we add a random agent to the dynamics
-    /// THEN: the agent has the same itineary
+    /// THEN: the agent has the same Itinerary
     Dynamics dynamics(graph);
-    Itineary itineary{0, 0, 2};
-    dynamics.addItinerary(itineary);
+    Itinerary Itinerary{0, 0, 2};
+    dynamics.addItinerary(Itinerary);
     dynamics.addRandomAgents(1);
     CHECK_EQ(dynamics.agents().size(), 1);
-    CHECK_EQ(dynamics.itineraries().at(dynamics.agents().at(0)->itineraryId())->source(), itineary.source());
-    CHECK_EQ(dynamics.itineraries().at(dynamics.agents().at(0)->itineraryId())->destination(), itineary.destination());
+    CHECK_EQ(dynamics.itineraries().at(dynamics.agents().at(0)->itineraryId())->source(), Itinerary.source());
+    CHECK_EQ(dynamics.itineraries().at(dynamics.agents().at(0)->itineraryId())->destination(), Itinerary.destination());
   }
   SUBCASE("AddRandomAgents with many itineraries") {
     /// GIVEN: a dynamics object
@@ -56,18 +56,18 @@ TEST_CASE("Dynamics") {
     /// THEN: the number of agents is the same as the number of itineraries
     Dynamics dynamics(graph);
     dynamics.setSeed(69);
-    Itineary itineary{0, 0, 2}, itineary2{1, 1, 2}, itineary3{2, 0, 1};
-    dynamics.addItinerary(itineary);
-    dynamics.addItinerary(itineary2);
-    dynamics.addItinerary(itineary3);
+    Itinerary Itinerary{0, 0, 2}, Itinerary2{1, 1, 2}, Itinerary3{2, 0, 1};
+    dynamics.addItinerary(Itinerary);
+    dynamics.addItinerary(Itinerary2);
+    dynamics.addItinerary(Itinerary3);
     dynamics.addRandomAgents(3);
     CHECK_EQ(dynamics.agents().size(), 3);
-    CHECK_EQ(dynamics.itineraries().at(dynamics.agents().at(0)->itineraryId())->source(), itineary2.source());
-    CHECK_EQ(dynamics.itineraries().at(dynamics.agents().at(0)->itineraryId())->destination(), itineary2.destination());
-    CHECK_EQ(dynamics.itineraries().at(dynamics.agents().at(1)->itineraryId())->source(), itineary.source());
-    CHECK_EQ(dynamics.itineraries().at(dynamics.agents().at(1)->itineraryId())->destination(), itineary.destination());
-    CHECK_EQ(dynamics.itineraries().at(dynamics.agents().at(2)->itineraryId())->source(), itineary3.source());
-    CHECK_EQ(dynamics.itineraries().at(dynamics.agents().at(2)->itineraryId())->destination(), itineary3.destination());
+    CHECK_EQ(dynamics.itineraries().at(dynamics.agents().at(0)->itineraryId())->source(), Itinerary2.source());
+    CHECK_EQ(dynamics.itineraries().at(dynamics.agents().at(0)->itineraryId())->destination(), Itinerary2.destination());
+    CHECK_EQ(dynamics.itineraries().at(dynamics.agents().at(1)->itineraryId())->source(), Itinerary.source());
+    CHECK_EQ(dynamics.itineraries().at(dynamics.agents().at(1)->itineraryId())->destination(), Itinerary.destination());
+    CHECK_EQ(dynamics.itineraries().at(dynamics.agents().at(2)->itineraryId())->source(), Itinerary3.source());
+    CHECK_EQ(dynamics.itineraries().at(dynamics.agents().at(2)->itineraryId())->destination(), Itinerary3.destination());
   }
   SUBCASE("addRandomAgents uniformly") {
     /// GIVEN: a dynamics object
@@ -75,21 +75,21 @@ TEST_CASE("Dynamics") {
     /// THEN: the number of agents is the same as the number of itineraries
     Dynamics dynamics(graph);
     dynamics.setSeed(69);
-    Itineary itineary{0, 0, 2}, itineary2{1, 1, 2}, itineary3{2, 0, 1};
-    dynamics.addItinerary(itineary);
-    dynamics.addItinerary(itineary2);
-    dynamics.addItinerary(itineary3);
+    Itinerary Itinerary{0, 0, 2}, Itinerary2{1, 1, 2}, Itinerary3{2, 0, 1};
+    dynamics.addItinerary(Itinerary);
+    dynamics.addItinerary(Itinerary2);
+    dynamics.addItinerary(Itinerary3);
     dynamics.addRandomAgents(3, true);
     CHECK_EQ(dynamics.agents().size(), 3);
-    CHECK_EQ(dynamics.itineraries().at(dynamics.agents().at(0)->itineraryId())->source(), itineary2.source());
-    CHECK_EQ(dynamics.itineraries().at(dynamics.agents().at(0)->itineraryId())->destination(), itineary2.destination());
+    CHECK_EQ(dynamics.itineraries().at(dynamics.agents().at(0)->itineraryId())->source(), Itinerary2.source());
+    CHECK_EQ(dynamics.itineraries().at(dynamics.agents().at(0)->itineraryId())->destination(), Itinerary2.destination());
     CHECK(dynamics.agents().at(0)->streetId().has_value());
     CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 3);
-    CHECK_EQ(dynamics.itineraries().at(dynamics.agents().at(1)->itineraryId())->source(), itineary3.source());
-    CHECK_EQ(dynamics.itineraries().at(dynamics.agents().at(1)->itineraryId())->destination(), itineary3.destination());
+    CHECK_EQ(dynamics.itineraries().at(dynamics.agents().at(1)->itineraryId())->source(), Itinerary3.source());
+    CHECK_EQ(dynamics.itineraries().at(dynamics.agents().at(1)->itineraryId())->destination(), Itinerary3.destination());
     CHECK_EQ(dynamics.agents().at(1)->streetId().value(), 8);
-    CHECK_EQ(dynamics.itineraries().at(dynamics.agents().at(2)->itineraryId())->source(), itineary2.source());
-    CHECK_EQ(dynamics.itineraries().at(dynamics.agents().at(2)->itineraryId())->destination(), itineary2.destination());
+    CHECK_EQ(dynamics.itineraries().at(dynamics.agents().at(2)->itineraryId())->source(), Itinerary2.source());
+    CHECK_EQ(dynamics.itineraries().at(dynamics.agents().at(2)->itineraryId())->destination(), Itinerary2.destination());
     CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 1);
   }
   SUBCASE("AddRandomAgents - exceptions") {
@@ -104,7 +104,7 @@ TEST_CASE("Dynamics") {
     /// WHEN: we add agents
     /// THEN: the agents are added
     Dynamics dynamics{graph};
-    Itineary itinerary{0, 0, 2};
+    Itinerary itinerary{0, 0, 2};
     dynamics.addItinerary(itinerary);
     CHECK_THROWS(dynamics.addAgents(1));
     dynamics.addAgents(0);
@@ -123,11 +123,45 @@ TEST_CASE("Dynamics") {
     graph2.addStreets(s1, s2, s3);
     graph2.buildAdj();
     Dynamics dynamics{graph2};
-    Itineary itinerary{0, 0, 2};
+    Itinerary itinerary{0, 0, 2};
     dynamics.addItinerary(itinerary);
     dynamics.updatePaths();
     CHECK_EQ(dynamics.itineraries().size(), 1);
     CHECK(dynamics.itineraries().at(0)->path()(0, 1));
+    for (auto const& it : dynamics.itineraries()) {
+      auto const& path = it.second->path();
+      for (uint16_t i{0}; i < path.getRowDim(); ++i) {
+        if (i == it.second->destination()) {
+          CHECK_FALSE(path.getRow(i).size());
+        } else {
+          CHECK(path.getRow(i).size());
+        }
+      }
+    }
+  }
+  SUBCASE("udatePaths - same destination") {
+    Graph graph2{};
+    graph2.importMatrix("./data/matrix.dat");
+    Itinerary it1{0, 10, 118};
+    Itinerary it2{1, 7, 118};
+    Itinerary it3{2, 4, 118};
+    Itinerary it4{3, 1, 118};
+    Dynamics dynamics{graph2};
+    dynamics.addItinerary(it1);
+    dynamics.addItinerary(it2);
+    dynamics.addItinerary(it3);
+    dynamics.addItinerary(it4);
+    dynamics.updatePaths();
+    for (auto const& it : dynamics.itineraries()) {
+      auto const& path = it.second->path();
+      for (uint16_t i{0}; i < path.getRowDim(); ++i) {
+        if (i == it.second->destination()) {
+          CHECK_FALSE(path.getRow(i).size());
+        } else {
+          CHECK(path.getRow(i).size());
+        }
+      }
+    }
   }
   SUBCASE("updatePaths - equal length") {
     /// GIVEN: a dynamics object
@@ -141,7 +175,7 @@ TEST_CASE("Dynamics") {
     graph2.addStreets(s1, s2, s3, s4);
     graph2.buildAdj();
     Dynamics dynamics{graph2};
-    Itineary itinerary{0, 0, 2};
+    Itinerary itinerary{0, 0, 2};
     dynamics.addItinerary(itinerary);
     dynamics.updatePaths();
     CHECK_EQ(dynamics.itineraries().size(), 1);
@@ -152,6 +186,16 @@ TEST_CASE("Dynamics") {
     CHECK(dynamics.itineraries().at(0)->path()(1, 2));
     CHECK(dynamics.itineraries().at(0)->path()(0, 3));
     CHECK(dynamics.itineraries().at(0)->path()(3, 2));
+    for (auto const& it : dynamics.itineraries()) {
+      auto const& path = it.second->path();
+      for (uint16_t i{0}; i < path.getRowDim(); ++i) {
+        if (i == it.second->destination()) {
+          CHECK_FALSE(path.getRow(i).size());
+        } else {
+          CHECK(path.getRow(i).size());
+        }
+      }
+    }
   }
   SUBCASE("evolve with one agent") {
     /// GIVEN: a dynamics object
@@ -165,7 +209,7 @@ TEST_CASE("Dynamics") {
     graph2.buildAdj();
     Dynamics dynamics{graph2};
     dynamics.setSeed(69);
-    Itineary itinerary{0, 0, 2};
+    Itinerary itinerary{0, 0, 2};
     dynamics.addItinerary(itinerary);
     dynamics.addRandomAgents(1);
     dynamics.updatePaths();
@@ -179,6 +223,30 @@ TEST_CASE("Dynamics") {
     CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 0);
     CHECK_EQ(dynamics.agents().at(0)->speed(), 13.8888888889);
   }
+  SUBCASE("agent travelled distance") {
+    /// GIVEN: a network with two streets and an angent
+    /// WHEN: the agent changes street
+    /// THEN: the agent has travelled the correct distance
+    Street s1{0, 1, 3., std::make_pair(0, 1)};
+    Street s2{1, 1, 1., std::make_pair(1, 2)};
+    Graph graph2;
+    graph2.addStreets(s1, s2);
+    graph2.buildAdj();
+    Dynamics dynamics{graph2};
+    dynamics.setSeed(69);
+    Itinerary itinerary{0, 0, 2};
+    dynamics.addItinerary(itinerary);
+    dynamics.addRandomAgents(1);
+    dynamics.updatePaths();
+    for (uint8_t i = 0; i < 2; ++i) {
+      dynamics.evolve(false);
+    }
+    CHECK_EQ(dynamics.agents().at(0)->time(), 2);
+    CHECK_EQ(dynamics.agents().at(0)->delay(), 0);
+    CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 0);
+    CHECK_EQ(dynamics.agents().at(0)->speed(), 13.8888888889);
+    CHECK_EQ(dynamics.agents().at(0)->distance(), 3.);
+  }
   SUBCASE("evolve without insertion") {
     /// GIVEN: a dynamics object
     /// WHEN: we evolve the dynamics
@@ -190,7 +258,7 @@ TEST_CASE("Dynamics") {
     graph2.buildAdj();
     Dynamics dynamics{graph2};
     dynamics.setSeed(69);
-    Itineary itinerary{0, 0, 1};
+    Itinerary itinerary{0, 0, 1};
     dynamics.addItinerary(itinerary);
     dynamics.addRandomAgents(1);
     dynamics.updatePaths();
@@ -201,6 +269,7 @@ TEST_CASE("Dynamics") {
     CHECK_EQ(dynamics.agents().at(0)->delay(), 0);
     CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 0);
     CHECK_EQ(dynamics.agents().at(0)->speed(), 13.8888888889);
+    CHECK_EQ(dynamics.agents().at(0)->distance(), 13.8888888889);
     dynamics.evolve(false);
     CHECK_EQ(dynamics.agents().size(), 0);
   }
@@ -215,7 +284,7 @@ TEST_CASE("Dynamics") {
     graph2.buildAdj();
     Dynamics dynamics{graph2};
     dynamics.setSeed(69);
-    Itineary itinerary{0, 0, 1};
+    Itinerary itinerary{0, 0, 1};
     dynamics.addItinerary(itinerary);
     dynamics.addRandomAgents(1);
     dynamics.updatePaths();
@@ -254,7 +323,7 @@ TEST_CASE("Dynamics") {
     graph2.buildAdj();
     Dynamics dynamics{graph2};
     dynamics.setSeed(69);
-    Itineary itinerary{0, 0, 2};
+    Itinerary itinerary{0, 0, 2};
     dynamics.addItinerary(itinerary);
     dynamics.updatePaths();
     dynamics.addRandomAgents(1);
@@ -266,6 +335,10 @@ TEST_CASE("Dynamics") {
       } else {
         CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 1);
       }
+      if (i == 2) {
+        CHECK_EQ(dynamics.agents().at(0)->distance(), 30.);
+      }
     }
+    CHECK_EQ(dynamics.agents().at(0)->distance(), 60.);
   }
 }

@@ -27,8 +27,8 @@ namespace dsm {
   /// @tparam Size, The type of the size of a street. It must be an unsigned integral type.
   /// @tparam Delay, The type of the agent's delay. It must be a numeric type (see utility/TypeTraits/is_numeric.hpp).
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             is_numeric_v<Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>)
   class Agent {
   private:
     Id m_id;
@@ -36,7 +36,8 @@ namespace dsm {
     std::optional<Id> m_streetId;
     Delay m_delay;
     double m_speed;
-    unsigned int m_time;
+    double m_distance; // Travelled distance
+    unsigned int m_time; // Travelled time
 
   public:
     Agent() = delete;
@@ -69,6 +70,12 @@ namespace dsm {
     /// @brief Decrement the agent's delay by 1
     /// @throw std::underflow_error, if delay has reached its minimum value
     void decrementDelay();
+    /// @brief Increment the agent's distance by its speed * 1 second
+    void incrementDistance();
+    /// @brief Increment the agent's distance by a given value
+    /// @param distance The value to increment the agent's distance byù
+    /// @throw std::invalid_argument, if distance is negative
+    void incrementDistance(double distance);
     /// @brief Increment the agent's time by 1
     /// @throw std::overflow_error, if time has reached its maximum value
     void incrementTime();
@@ -94,6 +101,9 @@ namespace dsm {
     /// @brief Get the agent's delay
     /// @return	The agent's delay
     Delay delay() const;
+    /// @brief Get the agent's travelled distance
+    /// @return The agent's travelled distance
+    double distance() const;
     /// @brief Get the agent's travel time
     /// @return The agent's travel time
     unsigned int time() const;
@@ -103,7 +113,7 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
   Agent<Id, Size, Delay>::Agent(Id id, Id itineraryId)
-      : m_id{id}, m_itineraryId{itineraryId}, m_delay{0}, m_speed{0.}, m_time{0} {}
+      : m_id{id}, m_itineraryId{itineraryId}, m_delay{0}, m_speed{0.}, m_distance{0.}, m_time{0} {}
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
@@ -114,6 +124,7 @@ namespace dsm {
         m_streetId{streetId},
         m_delay{0},
         m_speed{0.},
+        m_distance{0.},
         m_time{0} {}
 
   template <typename Id, typename Size, typename Delay>
@@ -170,13 +181,28 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
+  void Agent<Id, Size, Delay>::incrementDistance() {
+    m_distance += m_speed; // actually m_speed * 1 second
+  }
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>)
+  void Agent<Id, Size, Delay>::incrementDistance(double distance) {
+    if (distance < 0) {
+      throw std::invalid_argument(buildLog("Distance travelled must be positive"));
+    }
+    m_distance += distance;
+  }
+
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>)
   void Agent<Id, Size, Delay>::incrementTime() {
     if (m_time == std::numeric_limits<unsigned int>::max()) {
       throw std::overflow_error(buildLog("Time has reached its maximum value"));
     }
     ++m_time;
   }
-
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
@@ -213,6 +239,13 @@ namespace dsm {
              is_numeric_v<Delay>)
   Delay Agent<Id, Size, Delay>::delay() const {
     return m_delay;
+  }
+
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>)
+  double Agent<Id, Size, Delay>::distance() const {
+    return m_distance;
   }
 
   template <typename Id, typename Size, typename Delay>
