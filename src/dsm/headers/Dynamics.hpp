@@ -17,6 +17,7 @@
 #include <numeric>
 #include <unordered_map>
 #include <cmath>
+#include <cassert>
 
 #include "Agent.hpp"
 #include "Itinerary.hpp"
@@ -295,18 +296,14 @@ namespace dsm {
         if (this->m_uniformDist(this->m_generator) < this->m_errorProbability) {
           possibleMoves = this->m_graph->adjMatrix()->getRow(node->id());
         }
-        if (static_cast<Size>(possibleMoves.size()) == 0) {
-          continue;
-        }
+        assert(possibleMoves.size() > 0);
         std::uniform_int_distribution<Size> moveDist{
             0, static_cast<Size>(possibleMoves.size() - 1)};
         const auto p{moveDist(this->m_generator)};
         auto iterator = possibleMoves.begin();
         std::advance(iterator, p);
         const auto& streetResult{this->m_graph->street(node->id(), iterator->first)};
-        if (!streetResult.has_value()) {
-          continue;
-        }
+        assert(streetResult.has_value());
         auto nextStreet{streetResult.value()};
 
         if (nextStreet->density() < 1) {
