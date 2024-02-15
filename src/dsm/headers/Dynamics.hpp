@@ -16,6 +16,7 @@
 #include <span>
 #include <numeric>
 #include <unordered_map>
+#include <cmath>
 
 #include "Agent.hpp"
 #include "Itinerary.hpp"
@@ -311,8 +312,8 @@ namespace dsm {
           node->removeAgent(agentId);
           this->m_agents[agentId]->setStreetId(nextStreet->id());
           this->setAgentSpeed(this->m_agents[agentId]->id());
-          this->m_agents[agentId]->incrementDelay(nextStreet->length() /
-                                                  this->m_agents[agentId]->speed());
+          this->m_agents[agentId]->incrementDelay(std::ceil(nextStreet->length() /
+                                                  this->m_agents[agentId]->speed()));
           nextStreet->enqueue(this->m_agents[agentId]->id());
         } else {
           break;
@@ -328,29 +329,37 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::m_evolveAgents() {
-    for (auto& agentPair : this->m_agents) {
-      if (agentPair.second->streetId().has_value()) {
-        continue;
+    for (auto const& [agentId, agent] : this->m_agents) {
+      if (agent->time() > 0) {
+        if (agent->delay() > 0) {
+          if (agent->delay() > 1) {
+          agent->incrementDistance();
+          } else if (agent->streetId().has_value()) {
+            double distance{std::fmod(this->m_graph->streetSet()[agent->streetId().value()]->length(), agent->speed())};
+            if (distance < std::numeric_limits<double>::epsilon()) {
+              agent->incrementDistance();
+            } else {
+              agent->incrementDistance(distance);
+            }
+          }
+          agent->decrementDelay();
+        }
+      } else if (agent->time() == 0) {
+        auto srcNode{
+            this->m_graph
+                ->nodeSet()[this->m_itineraries[agent->itineraryId()]->source()]};
+        if (srcNode->isFull()) {
+          continue;
+        }
+        try {
+          srcNode->addAgent(agentId);
+        } catch (std::runtime_error& e) {
+          std::cerr << e.what() << '\n';
+          continue;
+        }
       }
-      auto srcNode{
-          this->m_graph
-              ->nodeSet()[this->m_itineraries[agentPair.second->itineraryId()]->source()]};
-      if (srcNode->isFull()) {
-        continue;
-      } try {
-        srcNode->addAgent(agentPair.second->id());
-      } catch (std::runtime_error& e) {
-        // std::cerr << e.what() << '\n';
-        continue;
-      }
+      agent->incrementTime();
     }
-    // decrement all agent delays
-    std::ranges::for_each(this->m_agents, [](auto& agent) {
-      if (agent.second->delay() > 0) {
-        agent.second->decrementDelay();
-      };
-      agent.second->incrementTime();
-    });
   }
 
   template <typename Id, typename Size, typename Delay>
