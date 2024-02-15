@@ -344,7 +344,7 @@ namespace dsm {
           }
           agent->decrementDelay();
         }
-      } else {
+      } else if (!agent->streetId().has_value()) {
         auto srcNode{
             this->m_graph
                 ->nodeSet()[this->m_itineraries[agent->itineraryId()]->source()]};
