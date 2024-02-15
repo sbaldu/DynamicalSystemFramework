@@ -344,7 +344,7 @@ namespace dsm {
           }
           agent->decrementDelay();
         }
-      } else if (agent->time() == 0) {
+      } else {
         auto srcNode{
             this->m_graph
                 ->nodeSet()[this->m_itineraries[agent->itineraryId()]->source()]};
