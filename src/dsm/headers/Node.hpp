@@ -26,7 +26,11 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   class Node {
   protected:
-    std::set<Id> m_agentIds;
+    std::multimap<int16_t, Id> m_agents;
+    /* I don't actually know if it is better yo use a std::map or a priority_queue...
+    Using the second one means that the node is blocked if an agent with priority cannot move.
+    The first is just like an ordering...
+    Need to discuss this.*/
     std::map<int16_t, Id> m_streetPriorities;
     std::pair<double, double> m_coords;
     Id m_id;
@@ -49,8 +53,19 @@ namespace dsm {
     /// @brief Set the node's capacity
     /// @param capacity The node's capacity
     void setCapacity(Size capacity);
-    /// @brief Puts an agent in the node
+    /// @brief Put an agent in the node
+    /// @param agent A std::pair containing the agent's angle difference and id
+    /// @details The agent's angle difference is used to order the agents in the node.
+    ///          The agent with the smallest angle difference is the first one to be
+    ///          removed from the node.
+    /// @throws std::runtime_error if the node is full
+    void addAgent(std::pair<double, Id> agent);
+    /// @brief Put an agent in the node
     /// @param agentId The agent's id
+    /// @details The agent's angle difference is used to order the agents in the node.
+    ///          The agent with the smallest angle difference is the first one to be
+    ///          removed from the node.
+    /// @throws std::runtime_error if the node is full
     void addAgent(Id agentId);
     /// @brief Removes an agent from the node
     /// @param agentId The agent's id
@@ -65,6 +80,7 @@ namespace dsm {
     virtual void increaseCounter(){};
 
     /// @brief Get the node's id
+    /// @return Id The node's id
     /// @return Id The node's id
     Id id() const;
     /// @brief Get the node's coordinates
@@ -82,7 +98,7 @@ namespace dsm {
     Size capacity() const;
     /// @brief Get the node's agent ids
     /// @return std::set<Id> A std::set containing the node's agent ids
-    std::set<Id> agentIds() const;
+    std::multimap<int16_t, Id> agents() const;
     /// @brief Returns true if the node is full
     /// @return bool True if the node is full
     bool isFull() const;
@@ -146,9 +162,9 @@ namespace dsm {
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   void Node<Id, Size>::setCapacity(Size capacity) {
-    if (capacity < m_agentIds.size()) {
-      throw std::invalid_argument(
-          buildLog("Node's queue capacity is smaller than the current queue size"));
+    if (capacity < m_agents.size()) {
+      throw std::runtime_error(
+          buildLog("Node capacity is smaller than the current queue size"));
     }
     m_capacity = capacity;
   }
@@ -156,21 +172,32 @@ namespace dsm {
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   void Node<Id, Size>::addAgent(Id agentId) {
-    if (m_agentIds.size() == m_capacity) {
+    if (m_agents.size() == m_capacity) {
       throw std::runtime_error(buildLog("Node is full"));
     }
-    m_agentIds.emplace(agentId);
+    for (auto const& agent : m_agents) {
+      if (agent.second == agentId) {
+        throw std::runtime_error(buildLog("Agent is already on the node"));
+      }
+    }
+    int lastKey{0};
+    if (!m_agents.empty()) {
+      lastKey = m_agents.rbegin()->first + 1;
+    }
+    m_agents.emplace(lastKey, agentId);
     ++m_agentCounter;
   }
 
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   void Node<Id, Size>::removeAgent(Id agentId) {
-    auto it = std::find(m_agentIds.begin(), m_agentIds.end(), agentId);
-    if (it == m_agentIds.end()) {
-      throw std::runtime_error(buildLog("Agent is not on the node"));
+    for (auto it{m_agents.begin()}; it != m_agents.end(); ++it) {
+      if (it->second == agentId) {
+        m_agents.erase(it);
+        return;
+      }
     }
-    m_agentIds.erase(it);
+    throw std::runtime_error(buildLog("Agent is not on the node"));
   }
 
   template <typename Id, typename Size>
@@ -193,14 +220,14 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
-  std::set<Id> Node<Id, Size>::agentIds() const {
-    return m_agentIds;
+  std::multimap<int16_t, Id> Node<Id, Size>::agents() const {
+    return m_agents;
   }
 
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   bool Node<Id, Size>::isFull() const {
-    return m_agentIds.size() == m_capacity;
+    return m_agents.size() == m_capacity;
   }
 
   template <typename Id, typename Size>

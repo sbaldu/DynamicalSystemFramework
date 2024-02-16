@@ -303,6 +303,14 @@ namespace dsm {
                            __FILE__ + ": " + "The street's queue is full."};
       throw std::runtime_error(errorMsg);
     }
+    for (auto const& id : m_queue) {
+      if (id == agentId) {
+        std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
+                             __FILE__ + ": " +
+                             "The agent is already in the street's queue."};
+        throw std::runtime_error(errorMsg);
+      }
+    }
     m_queue.push(agentId);
   }
   template <typename Id, typename Size>

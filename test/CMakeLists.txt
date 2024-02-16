@@ -17,7 +17,7 @@ include(FetchContent)
 # Get doctest
 FetchContent_Declare(doctest
   GIT_REPOSITORY https://github.com/doctest/doctest.git
-  GIT_TAG 7b9885133108ae301ddd16e2651320f54cafeba7
+  GIT_TAG v2.4.11
 )
 FetchContent_GetProperties(doctest)
 if(NOT doctest_POPULATED)
