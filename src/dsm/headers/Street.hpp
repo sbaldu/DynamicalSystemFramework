@@ -306,7 +306,8 @@ namespace dsm {
     for (auto const& id : m_queue) {
       if (id == agentId) {
         std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
-                             __FILE__ + ": " + "The agent is already in the street's queue."};
+                             __FILE__ + ": " +
+                             "The agent is already in the street's queue."};
         throw std::runtime_error(errorMsg);
       }
     }

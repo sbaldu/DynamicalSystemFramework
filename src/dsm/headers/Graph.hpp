@@ -152,14 +152,18 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   Graph<Id, Size>::Graph(const SparseMatrix<Id, bool>& adj)
       : m_adjacency{make_shared<SparseMatrix<Id, bool>>(adj)} {
-    std::ranges::for_each(std::views::iota(0, (int)adj.getColDim()), [this](auto i) -> void {
-      m_nodes.emplace(std::make_pair(i, make_shared<Node<Id, Size>>(i)));
-    });
+    std::ranges::for_each(
+        std::views::iota(0, (int)adj.getColDim()), [this](auto i) -> void {
+          m_nodes.emplace(std::make_pair(i, make_shared<Node<Id, Size>>(i)));
+        });
 
-    std::ranges::for_each(std::views::iota(0, (int)adj.size()), [this, adj](auto i) -> void {
-      this->m_streets.emplace(std::make_pair(
-          i, make_shared<Street<Id, Size>>(i, std::make_pair(i / adj.getColDim(), i % adj.getColDim()))));
-    });
+    std::ranges::for_each(
+        std::views::iota(0, (int)adj.size()), [this, adj](auto i) -> void {
+          this->m_streets.emplace(std::make_pair(
+              i,
+              make_shared<Street<Id, Size>>(
+                  i, std::make_pair(i / adj.getColDim(), i % adj.getColDim()))));
+        });
   }
 
   template <typename Id, typename Size>
@@ -225,7 +229,8 @@ namespace dsm {
         const Id node2{static_cast<Id>(index % cols)};
         m_nodes.emplace(node1, make_shared<Node<Id, Size>>(node1));
         m_nodes.emplace(node2, make_shared<Node<Id, Size>>(node2));
-        m_streets.emplace(index, make_shared<Street<Id, Size>>(index, std::make_pair(node1, node2)));
+        m_streets.emplace(
+            index, make_shared<Street<Id, Size>>(index, std::make_pair(node1, node2)));
         if (!isAdj) {
           m_streets[index]->setLength(val);
         }
@@ -257,8 +262,8 @@ namespace dsm {
           const Id node2{static_cast<Id>(index % cols)};
           m_nodes.emplace(node1, make_shared<Node<Id, Size>>(node1));
           m_nodes.emplace(node2, make_shared<Node<Id, Size>>(node2));
-          m_streets.emplace(index,
-                                     make_shared<Street<Id, Size>>(index, std::make_pair(node1, node2)));
+          m_streets.emplace(
+              index, make_shared<Street<Id, Size>>(index, std::make_pair(node1, node2)));
           if (!isAdj) {
             m_streets[index]->setLength(value);
           }
@@ -293,10 +298,9 @@ namespace dsm {
         std::getline(iss, lon, ';');
         std::getline(iss, highway, ';');
         Id nodeId{static_cast<Id>(std::stoul(id))};
-        m_nodes.emplace(
-            nodeIndex,
-            make_shared<Node<Id, Size>>(nodeIndex,
-                                        std::make_pair(std::stod(lat), std::stod(lon))));
+        m_nodes.emplace(nodeIndex,
+                        make_shared<Node<Id, Size>>(
+                            nodeIndex, std::make_pair(std::stod(lat), std::stod(lon))));
         m_nodeMapping.emplace(std::make_pair(nodeId, nodeIndex));
         ++nodeIndex;
       }
@@ -339,15 +343,14 @@ namespace dsm {
           maxspeed = "30";
         }
         Id streetId = std::stoul(sourceId) + std::stoul(targetId) * m_nodes.size();
-        m_streets.emplace(
-            streetId,
-            make_shared<Street<Id, Size>>(
-                streetId,
-                1,
-                std::stod(maxspeed),
-                std::stod(length),
-                std::make_pair(m_nodeMapping[std::stoul(sourceId)],
-                               m_nodeMapping[std::stoul(targetId)])));
+        m_streets.emplace(streetId,
+                          make_shared<Street<Id, Size>>(
+                              streetId,
+                              1,
+                              std::stod(maxspeed),
+                              std::stod(length),
+                              std::make_pair(m_nodeMapping[std::stoul(sourceId)],
+                                             m_nodeMapping[std::stoul(targetId)])));
       }
     } else {
       std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
@@ -452,12 +455,14 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  std::optional<shared<Street<Id, Size>>> Graph<Id, Size>::street(Id source, Id destination) const {
-    auto streetIt =
-        std::find_if(m_streets.begin(), m_streets.end(), [source, destination](const auto& street) -> bool {
-          return street.second->nodePair().first == source &&
-                 street.second->nodePair().second == destination;
-        });
+  std::optional<shared<Street<Id, Size>>> Graph<Id, Size>::street(Id source,
+                                                                  Id destination) const {
+    auto streetIt = std::find_if(m_streets.begin(),
+                                 m_streets.end(),
+                                 [source, destination](const auto& street) -> bool {
+                                   return street.second->nodePair().first == source &&
+                                          street.second->nodePair().second == destination;
+                                 });
     if (streetIt == m_streets.end()) {
       return std::nullopt;
     }
@@ -466,15 +471,16 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  std::optional<DijkstraResult<Id>> Graph<Id, Size>::shortestPath(const Node<Id, Size>& source,
-                                                                  const Node<Id, Size>& destination) const {
+  std::optional<DijkstraResult<Id>> Graph<Id, Size>::shortestPath(
+      const Node<Id, Size>& source, const Node<Id, Size>& destination) const {
     return this->shortestPath(source.id(), destination.id());
   }
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  std::optional<DijkstraResult<Id>> Graph<Id, Size>::shortestPath(Id source, Id destination) const {
-	const Id sourceId{source};
+  std::optional<DijkstraResult<Id>> Graph<Id, Size>::shortestPath(Id source,
+                                                                  Id destination) const {
+    const Id sourceId{source};
 
     std::unordered_map<Id, shared<Node<Id, Size>>> unvisitedNodes{m_nodes};
     if (!unvisitedNodes.contains(source)) {
@@ -497,10 +503,10 @@ namespace dsm {
     dist[source] = std::make_pair(source, 0.);
 
     std::vector<std::pair<Id, double>> prev(n_nodes);
-	std::for_each(prev.begin(), prev.end(), [](auto& pair) -> void {
-		  pair.first = std::numeric_limits<Id>::max();
-		  pair.second = std::numeric_limits<double>::max();
-		});
+    std::for_each(prev.begin(), prev.end(), [](auto& pair) -> void {
+      pair.first = std::numeric_limits<Id>::max();
+      pair.second = std::numeric_limits<double>::max();
+    });
     prev[source].second = 0.;
 
     while (unvisitedNodes.size() != 0) {
@@ -519,7 +525,7 @@ namespace dsm {
         if (visitedNodes.find(neighbour.first) != visitedNodes.end()) {
           continue;
         }
-        
+
         double streetLength = this->street(source, neighbour.first).value()->length();
         // if current path is shorter than the previous one, update the distance
         if (streetLength + dist[source].second < dist[neighbour.first].second) {
@@ -539,9 +545,9 @@ namespace dsm {
         return std::nullopt;
       }
       path.push_back(previous);
-	  if (previous == sourceId) {
-		break;
-	  }
+      if (previous == sourceId) {
+        break;
+      }
     }
 
     std::reverse(path.begin(), path.end());

@@ -7,8 +7,9 @@
 #include "is_numeric.hpp"
 
 namespace dsm {
-  template <typename Id, typename Size,typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
+  template <typename Id, typename Size, typename Delay>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>
   class Agent;
 
   // Alias for shared pointers
@@ -28,6 +29,6 @@ namespace dsm {
   template <typename T>
   inline constexpr bool is_agent_v = is_agent<T>::value;
 
-};  // namespace dmf
+};  // namespace dsm
 
 #endif
