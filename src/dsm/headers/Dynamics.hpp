@@ -290,9 +290,9 @@ namespace dsm {
         }
         auto possibleMoves{
             this->m_itineraries[this->m_agents[agentId]->itineraryId()]->path().getRow(
-                node->id())};
+                node->id(), true)};
         if (this->m_uniformDist(this->m_generator) < this->m_errorProbability) {
-          possibleMoves = this->m_graph->adjMatrix()->getRow(node->id());
+          possibleMoves = this->m_graph->adjMatrix()->getRow(node->id(), true);
         }
         if (static_cast<Size>(possibleMoves.size()) == 0) {
           continue;
@@ -302,11 +302,13 @@ namespace dsm {
         const auto p{moveDist(this->m_generator)};
         auto iterator = possibleMoves.begin();
         std::advance(iterator, p);
-        const auto& streetResult{this->m_graph->street(node->id(), iterator->first)};
-        if (!streetResult.has_value()) {
-          continue;
-        }
-        auto nextStreet{streetResult.value()};
+        const auto nextStreetId{iterator->first};
+        // const auto& streetResult{this->m_graph->street(node->id(), iterator->first)};
+        // if (!streetResult.has_value()) {
+        //   continue;
+        // }
+        // auto nextStreet{streetResult.value()};
+        auto nextStreet{this->m_graph->streetSet()[nextStreetId]};
 
         if (nextStreet->density() < 1) {
           node->removeAgent(agentId);
@@ -503,10 +505,8 @@ namespace dsm {
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::addAgent(const Agent<Id, Size, Delay>& agent) {
     if (this->m_agents.contains(agent.id())) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
-                           __FILE__ + ": " + "Agent " + std::to_string(agent.id()) +
-                           " already exists"};
-      throw std::invalid_argument(errorMsg);
+      throw std::invalid_argument(buildLog("Agent " + std::to_string(agent.id()) +
+                           " already exists."));
     }
     this->m_agents.emplace(agent.id(), std::make_unique<Agent<Id, Size, Delay>>(agent));
   }
@@ -515,10 +515,8 @@ namespace dsm {
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::addAgent(std::unique_ptr<Agent<Id, Size, Delay>> agent) {
     if (this->m_agents.contains(agent->id())) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
-                           __FILE__ + ": " + "Agent " + std::to_string(agent->id()) +
-                           " already exists"};
-      throw std::invalid_argument(errorMsg);
+      throw std::invalid_argument(buildLog("Agent " + std::to_string(agent->id()) +
+                           " already exists."));
     }
     this->m_agents.emplace(agent->id(), std::move(agent));
   }
@@ -571,10 +569,7 @@ namespace dsm {
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::addRandomAgents(Size nAgents, bool uniformly) {
     if (this->m_itineraries.empty()) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
-                           __FILE__ + ": " +
-                           "It is not possible to add random agents without itineraries"};
-      throw std::runtime_error(errorMsg);
+      throw std::runtime_error(buildLog("It is not possible to add random agents without itineraries."));
     }
     std::uniform_int_distribution<Size> itineraryDist{
         0, static_cast<Size>(this->m_itineraries.size() - 1)};
@@ -617,10 +612,8 @@ namespace dsm {
   void Dynamics<Id, Size, Delay>::removeAgent(Size agentId) {
     auto agentIt{m_agents.find(agentId)};
     if (agentIt == m_agents.end()) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
-                           __FILE__ + ": " + "Agent " + std::to_string(agentId) +
-                           " not found"};
-      throw std::invalid_argument(errorMsg);
+      throw std::invalid_argument(buildLog("Agent " + std::to_string(agentId) +
+                           " not found."));
     }
     m_agents.erase(agentId);
   }
