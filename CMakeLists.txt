@@ -7,4 +7,8 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+add_subdirectory(test)
+# copy files from test/data into build/data
+file(COPY ${PROJECT_SOURCE_DIR}/test/data/ DESTINATION ${PROJECT_BINARY_DIR}/data)
+
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/src/ DESTINATION /usr/include)
