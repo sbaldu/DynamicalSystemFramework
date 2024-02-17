@@ -19,10 +19,10 @@ int main() {
   Bench b(1000);
 
   std::cout << "Benchmarking enqueue\n";
-  b.benchmark([&street](Agent ag) -> void { street.enqueue(ag.id()); }, agent);
+  b.benchmark([&street](Agent ag) -> void { street.enqueue(ag.id()); street.dequeue(); }, agent);
   b.print();
 
-  std::cout << "Benchmarking dequeue\n";
-  b.benchmark([&street]() -> void { street.dequeue(); });
-  b.print();
+  // std::cout << "Benchmarking dequeue\n";
+  // b.benchmark([&street]() -> void { street.dequeue(); });
+  // b.print();
 }

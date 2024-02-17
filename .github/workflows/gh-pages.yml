@@ -12,7 +12,9 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+        with:
+          submodules: true
 
       - name: Switch to gh-pages branch and rebase
         run: |
@@ -20,11 +22,8 @@ jobs:
           git checkout gh-pages
           git reset --hard main
 
-      - name: Build Doxygen Documentation
-        run: |
-          sudo apt-get install doxygen
-          sudo apt-get install graphviz
-          doxygen Doxyfile
+      - name: Doxygen Action
+        uses: mattnotmitt/doxygen-action@edge
 
       - name: Set up git
         run: |
