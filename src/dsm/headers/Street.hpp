@@ -42,6 +42,12 @@ namespace dsm {
 
   public:
     Street() = delete;
+    /// @brief Construct a new Street object starting from an existing street
+    /// @details The new street has different id but same capacity, length, speed limit, and node pair as the
+    ///          existing street.
+    /// @param Street The existing street
+    /// @param id The new street's id
+    Street(Id id, const Street<Id, Size>&);
     /// @brief Construct a new Street object
     /// @param id The street's id
     /// @param nodePair The street's node pair
@@ -140,6 +146,17 @@ namespace dsm {
     /// @brief Remove an agent from the street's queue
     std::optional<Id> dequeue();
   };
+
+  template <typename Id, typename Size>
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
+  Street<Id, Size>::Street(Id id, const Street<Id, Size>& street)
+      : m_nodePair{street.nodePair()},
+        m_len{street.length()},
+        m_maxSpeed{street.maxSpeed()},
+        m_angle{street.angle()},
+        m_id{id},
+        m_capacity{street.capacity()},
+        m_transportCapacity{street.transportCapacity()} {}
 
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
