@@ -24,6 +24,7 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <cassert>
 
 #include "Node.hpp"
 #include "SparseMatrix.hpp"
@@ -52,6 +53,11 @@ namespace dsm {
     shared<SparseMatrix<Id, bool>> m_adjacency;
     std::unordered_map<Id, Id> m_nodeMapping;
 
+    /// @brief Reassign the street ids using the max node id
+    /// @details The street ids are reassigned using the max node id, i.e.
+    /// newStreetId = srcId * n + dstId, where n is the max node id.
+    void m_reassignIds();
+
   public:
     Graph();
     /// @brief Construct a new Graph object
@@ -62,6 +68,8 @@ namespace dsm {
     Graph(const std::unordered_map<Id, shared<Street<Id, Size>>>& streetSet);
 
     /// @brief Build the graph's adjacency matrix
+    /// @details The adjacency matrix is built using the graph's streets and nodes. N.B.: The street ids
+    /// are reassigned using the max node id, i.e. newStreetId = srcId * n + dstId, where n is the max node id.
     void buildAdj();
     /// @brief Build the graph's street angles using the node's coordinates
     void buildStreetAngles();
@@ -69,7 +77,7 @@ namespace dsm {
     /// @brief Import the graph's adjacency matrix from a file.
     /// If the file is not of a supported format, it will read the file as a matrix with the first two elements being
     /// the number of rows and columns and the following elements being the matrix elements.
-    /// @param fileName, The name of the file to import the adjacency matrix from.
+    /// @param fileName The name of the file to import the adjacency matrix from.
     /// @param isAdj A boolean value indicating if the file contains the adjacency matrix or the distance matrix.
     /// @throws std::invalid_argument if the file is not found or invalid
     /// The matrix format is deduced from the file extension. Currently only .dsm files are supported.
@@ -84,10 +92,10 @@ namespace dsm {
     void importOSMEdges(const std::string& fileName);
 
     /// @brief Add a node to the graph
-    /// @param node, A std::shared_ptr to the node to add
+    /// @param node A std::shared_ptr to the node to add
     void addNode(shared<Node<Id, Size>> node);
     /// @brief Add a node to the graph
-    /// @param node, A reference to the node to add
+    /// @param node A reference to the node to add
     void addNode(const Node<Id, Size>& node);
 
     template <typename... Tn>
@@ -152,18 +160,20 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   Graph<Id, Size>::Graph(const SparseMatrix<Id, bool>& adj)
       : m_adjacency{make_shared<SparseMatrix<Id, bool>>(adj)} {
-    std::ranges::for_each(
-        std::views::iota(0, (int)adj.getColDim()), [this](auto i) -> void {
-          m_nodes.emplace(std::make_pair(i, make_shared<Node<Id, Size>>(i)));
-        });
-
-    std::ranges::for_each(
-        std::views::iota(0, (int)adj.size()), [this, adj](auto i) -> void {
-          this->m_streets.emplace(std::make_pair(
-              i,
-              make_shared<Street<Id, Size>>(
-                  i, std::make_pair(i / adj.getColDim(), i % adj.getColDim()))));
-        });
+    assert(adj.getRowDim() == adj.getColDim());
+    auto n{static_cast<Size>(adj.getRowDim())};
+    for (const auto& [id, value] : adj) {
+      const auto srcId{static_cast<Id>(id / n)};
+      const auto dstId{static_cast<Id>(id % n)};
+      if (!m_nodes.contains(srcId)) {
+        m_nodes.emplace(srcId, make_shared<Node<Id, Size>>(srcId));
+      }
+      if (!m_nodes.contains(dstId)) {
+        m_nodes.emplace(dstId, make_shared<Node<Id, Size>>(dstId));
+      }
+      m_streets.emplace(
+          id, make_shared<Street<Id, Size>>(id, std::make_pair(srcId, dstId)));
+    }
   }
 
   template <typename Id, typename Size>
@@ -184,21 +194,40 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Graph<Id, Size>::m_reassignIds() {
+    const auto oldStreetSet{m_streets};
+    m_streets.clear();
+    const auto n{static_cast<Size>(m_nodes.size())};
+    for (const auto& [streetId, street] : oldStreetSet) {
+      const auto srcId{street->nodePair().first};
+      const auto dstId{street->nodePair().second};
+      const auto newStreetId{static_cast<Id>(srcId * n + dstId)};
+      if (m_streets.contains(newStreetId)) {
+        throw std::invalid_argument(buildLog("Street with same id already exists."));
+      }
+      auto newStreet = Street(newStreetId, *street);
+      m_streets.emplace(newStreetId, make_shared<Street<Id, Size>>(newStreet));
+    }
+  }
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Graph<Id, Size>::buildAdj() {
     // find max values in streets node pairs
-    const size_t maxNode{m_nodes.size()};
+    const auto maxNode{static_cast<Id>(m_nodes.size())};
     m_adjacency->reshape(maxNode, maxNode);
-    for (const auto& street : m_streets) {
+    for (const auto& [streetId, street] : m_streets) {
       m_adjacency->insert(
-          street.second->nodePair().first, street.second->nodePair().second, true);
+          street->nodePair().first, street->nodePair().second, true);
     }
+    this->m_reassignIds();
   }
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   void Graph<Id, Size>::buildStreetAngles() {
     for (const auto& street : m_streets) {
-      const auto& node1{m_nodes[street.second->nodePair().first]};
-      const auto& node2{m_nodes[street.second->nodePair().second]};
+      const auto node1{m_nodes[street.second->nodePair().first]};
+      const auto node2{m_nodes[street.second->nodePair().second]};
       street.second->setAngle(node1->coordinates(), node2->coordinates());
     }
   }
@@ -213,24 +242,30 @@ namespace dsm {
       if (!file.is_open()) {
         throw std::invalid_argument(buildLog("Cannot find file: " + fileName));
       }
-      Id rows, cols;
+      Size rows, cols;
       file >> rows >> cols;
       if (rows != cols) {
         throw std::invalid_argument(buildLog("Adjacency matrix must be square"));
       }
-      m_adjacency = make_shared<SparseMatrix<Id, bool>>(rows, cols);
-      // each line has (should have) 3 elements
+      Size n{rows};
+      m_adjacency = make_shared<SparseMatrix<Id, bool>>(n, n);
+      // each line has 3 elements
       while (!file.eof()) {
         Id index;
         bool val;
         file >> index >> val;
         m_adjacency->insert(index, val);
-        const Id node1{static_cast<Id>(index / rows)};
-        const Id node2{static_cast<Id>(index % cols)};
-        m_nodes.emplace(node1, make_shared<Node<Id, Size>>(node1));
-        m_nodes.emplace(node2, make_shared<Node<Id, Size>>(node2));
+        const auto srcId{static_cast<Id>(index / n)};
+        const auto dstId{static_cast<Id>(index % n)};
+        if (!m_nodes.contains(srcId)) {
+          m_nodes.emplace(srcId, make_shared<Node<Id, Size>>(srcId));
+        }
+        if (!m_nodes.contains(dstId)) {
+          m_nodes.emplace(dstId, make_shared<Node<Id, Size>>(dstId));
+        }
         m_streets.emplace(
-            index, make_shared<Street<Id, Size>>(index, std::make_pair(node1, node2)));
+            index, make_shared<Street<Id, Size>>(index, std::make_pair(srcId, dstId)));
+        assert(index == srcId * n + dstId);
         if (!isAdj) {
           m_streets[index]->setLength(val);
         }
@@ -242,12 +277,17 @@ namespace dsm {
       if (!file.is_open()) {
         throw std::invalid_argument(buildLog("Cannot find file: " + fileName));
       }
-      Id rows, cols;
+      Size rows, cols;
       file >> rows >> cols;
       if (rows != cols) {
-        throw std::invalid_argument(buildLog("Adjacency matrix must be square"));
+        throw std::invalid_argument(buildLog("Adjacency matrix must be square. Rows: " + std::to_string(rows) +
+                                            " Cols: " + std::to_string(cols)));
       }
-      m_adjacency = make_shared<SparseMatrix<Id, bool>>(rows, cols);
+      Size n{rows};
+      if (n * n > std::numeric_limits<Id>::max()) {
+        throw std::invalid_argument(buildLog("Matrix size is too large for the current type of Id."));
+      }
+      m_adjacency = make_shared<SparseMatrix<Id, bool>>(n, n);
       Id index{0};
       while (!file.eof()) {
         double value;
@@ -258,12 +298,17 @@ namespace dsm {
         }
         if (value > 0) {
           m_adjacency->insert(index, true);
-          const Id node1{static_cast<Id>(index / rows)};
-          const Id node2{static_cast<Id>(index % cols)};
-          m_nodes.emplace(node1, make_shared<Node<Id, Size>>(node1));
-          m_nodes.emplace(node2, make_shared<Node<Id, Size>>(node2));
+          const auto srcId{static_cast<Id>(index / n)};
+          const auto dstId{static_cast<Id>(index % n)};
+          if (!m_nodes.contains(srcId)) {
+            m_nodes.emplace(srcId, make_shared<Node<Id, Size>>(srcId));
+          }
+          if (!m_nodes.contains(dstId)) {
+            m_nodes.emplace(dstId, make_shared<Node<Id, Size>>(dstId));
+          }
           m_streets.emplace(
-              index, make_shared<Street<Id, Size>>(index, std::make_pair(node1, node2)));
+              index, make_shared<Street<Id, Size>>(index, std::make_pair(srcId, dstId)));
+          assert(index == srcId * n + dstId);
           if (!isAdj) {
             m_streets[index]->setLength(value);
           }
@@ -390,25 +435,39 @@ namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Graph<Id, Size>::addStreet(shared<Street<Id, Size>> street) {
+    if (m_streets.contains(street->id())) {
+      throw std::invalid_argument(buildLog("Street with same id already exists."));
+    }
+    // emplace nodes
+    const auto srcId{street.nodePair().first};
+    const auto dstId{street.nodePair().second};
+    if (!m_nodes.contains(srcId)) {
+      m_nodes.emplace(srcId, make_shared<Node<Id, Size>>(srcId));
+    }
+    if (!m_nodes.contains(dstId)) {
+      m_nodes.emplace(dstId, make_shared<Node<Id, Size>>(dstId));
+    }
     // emplace street
     m_streets.emplace(std::make_pair(street->id(), street));
-    // emplace nodes
-    const Id node1{street.nodePair().first};
-    const Id node2{street.nodePair().second};
-    m_nodes.emplace(node1);
-    m_nodes.emplace(node2);
   }
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Graph<Id, Size>::addStreet(const Street<Id, Size>& street) {
+    if (m_streets.contains(street.id())) {
+      throw std::invalid_argument(buildLog("Street with same id already exists."));
+    }
+    // emplace nodes
+    const auto srcId{street.nodePair().first};
+    const auto dstId{street.nodePair().second};
+    if (!m_nodes.contains(srcId)) {
+      m_nodes.emplace(srcId, make_shared<Node<Id, Size>>(srcId));
+    }
+    if (!m_nodes.contains(dstId)) {
+      m_nodes.emplace(dstId, make_shared<Node<Id, Size>>(dstId));
+    }
     // emplace street
     m_streets.emplace(std::make_pair(street.id(), make_shared<Street<Id, Size>>(street)));
-    // emplace nodes
-    const Id node1{street.nodePair().first};
-    const Id node2{street.nodePair().second};
-    m_nodes.emplace(node1, make_shared<Node<Id, Size>>(node1));
-    m_nodes.emplace(node2, make_shared<Node<Id, Size>>(node2));
   }
 
   template <typename Id, typename Size>
@@ -416,13 +475,20 @@ namespace dsm {
   template <typename T1>
     requires is_street_v<std::remove_reference_t<T1>>
   void Graph<Id, Size>::addStreets(T1&& street) {
+    if (m_streets.contains(street.id())) {
+      throw std::invalid_argument(buildLog("Street with same id already exists."));
+    }
+    // emplace nodes
+    const auto srcId{street.nodePair().first};
+    const auto dstId{street.nodePair().second};
+    if (!m_nodes.contains(srcId)) {
+      m_nodes.emplace(srcId, make_shared<Node<Id, Size>>(srcId));
+    }
+    if (!m_nodes.contains(dstId)) {
+      m_nodes.emplace(dstId, make_shared<Node<Id, Size>>(dstId));
+    }
     // emplace street
     m_streets.emplace(std::make_pair(street.id(), make_shared<Street<Id, Size>>(street)));
-    // emplace nodes
-    const Id node1{street.nodePair().first};
-    const Id node2{street.nodePair().second};
-    m_nodes.emplace(node1, make_shared<Node<Id, Size>>(node1));
-    m_nodes.emplace(node2, make_shared<Node<Id, Size>>(node2));
   }
 
   template <typename Id, typename Size>
@@ -465,6 +531,15 @@ namespace dsm {
                                  });
     if (streetIt == m_streets.end()) {
       return std::nullopt;
+    }
+    Size n = m_nodes.size();
+    auto id1 = streetIt->first;
+    auto id2 = source * n + destination;
+    assert (id1 == id2);
+    if (id1 != id2) {
+      std::cout << "node size: " << n << std::endl;
+      std::cout << "Street id: " << id1 << std::endl;
+      std::cout << "Nodes: " << id2 << std::endl;
     }
     return streetIt->second;
   }

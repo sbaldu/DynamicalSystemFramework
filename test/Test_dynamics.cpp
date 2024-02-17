@@ -241,7 +241,7 @@ TEST_CASE("Dynamics") {
     dynamics.evolve(false);
     CHECK_EQ(dynamics.agents().at(0)->time(), 2);
     CHECK_EQ(dynamics.agents().at(0)->delay(), 0);
-    CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 0);
+    CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 1);
     CHECK_EQ(dynamics.agents().at(0)->speed(), 13.8888888889);
   }
   SUBCASE("agent travelled distance") {
@@ -264,7 +264,7 @@ TEST_CASE("Dynamics") {
     }
     CHECK_EQ(dynamics.agents().at(0)->time(), 2);
     CHECK_EQ(dynamics.agents().at(0)->delay(), 0);
-    CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 0);
+    CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 1);
     CHECK_EQ(dynamics.agents().at(0)->speed(), 13.8888888889);
     CHECK_EQ(dynamics.agents().at(0)->distance(), 3.);
   }
@@ -288,7 +288,7 @@ TEST_CASE("Dynamics") {
     }
     CHECK_EQ(dynamics.agents().at(0)->time(), 2);
     CHECK_EQ(dynamics.agents().at(0)->delay(), 0);
-    CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 0);
+    CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 1);
     CHECK_EQ(dynamics.agents().at(0)->speed(), 13.8888888889);
     CHECK_EQ(dynamics.agents().at(0)->distance(), 13.8888888889);
     dynamics.evolve(false);
@@ -314,7 +314,7 @@ TEST_CASE("Dynamics") {
     }
     CHECK_EQ(dynamics.agents().at(0)->time(), 2);
     CHECK_EQ(dynamics.agents().at(0)->delay(), 0);
-    CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 0);
+    CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 1);
     CHECK_EQ(dynamics.agents().at(0)->speed(), 13.8888888889);
     dynamics.evolve(true);
     CHECK_EQ(dynamics.agents().size(), 1);
@@ -352,9 +352,9 @@ TEST_CASE("Dynamics") {
     for (uint8_t i{0}; i < 5; ++i) {
       dynamics.evolve(false);
       if (i < 3) {
-        CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 0);
-      } else {
         CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 1);
+      } else {
+        CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 7);
       }
       if (i == 2) {
         CHECK_EQ(dynamics.agents().at(0)->distance(), 30.);
