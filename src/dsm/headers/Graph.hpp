@@ -61,10 +61,10 @@ namespace dsm {
   public:
     Graph();
     /// @brief Construct a new Graph object
-    /// @param adj, An adjacency matrix made by a SparseMatrix representing the graph's adjacency matrix
+    /// @param adj An adjacency matrix made by a SparseMatrix representing the graph's adjacency matrix
     Graph(const SparseMatrix<Id, bool>& adj);
     /// @brief Construct a new Graph object
-    /// @param streetSet, A map of streets representing the graph's streets
+    /// @param streetSet A map of streets representing the graph's streets
     Graph(const std::unordered_map<Id, shared<Street<Id, Size>>>& streetSet);
 
     /// @brief Build the graph's adjacency matrix
@@ -108,10 +108,10 @@ namespace dsm {
     void addNodes(T1&& node, Tn&&... nodes);
 
     /// @brief Add a street to the graph
-    /// @param street, A std::shared_ptr to the street to add
+    /// @param street A std::shared_ptr to the street to add
     void addStreet(shared<Street<Id, Size>> street);
     /// @brief Add a street to the graph
-    /// @param street, A reference to the street to add
+    /// @param street A reference to the street to add
     void addStreet(const Street<Id, Size>& street);
 
     template <typename T1>
@@ -140,14 +140,14 @@ namespace dsm {
     std::optional<shared<Street<Id, Size>>> street(Id source, Id destination) const;
 
     /// @brief Get the shortest path between two nodes using dijkstra algorithm
-    /// @param source, The source node
-    /// @param destination, The destination node
+    /// @param source The source node
+    /// @param destination The destination node
     /// @return A DijkstraResult object containing the path and the distance
     std::optional<DijkstraResult<Id>> shortestPath(
         const Node<Id, Size>& source, const Node<Id, Size>& destination) const;
     /// @brief Get the shortest path between two nodes using dijkstra algorithm
-    /// @param source, The source node id
-    /// @param destination, The destination node id
+    /// @param source The source node id
+    /// @param destination The destination node id
     /// @return A DijkstraResult object containing the path and the distance
     std::optional<DijkstraResult<Id>> shortestPath(Id source, Id destination) const;
   };
