@@ -401,7 +401,7 @@ namespace dsm {
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> && is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::updatePaths() {
     const Size dimension = m_graph->adjMatrix()->getRowDim();
     // std::unordered_map<Id, SparseMatrix<Id, bool>> paths;
@@ -486,9 +486,8 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
-  const std::map<
-      Id,
-      std::unique_ptr<Agent<Id, Size, Delay>>>& Dynamics<Id, Size, Delay>::agents() const {
+  const std::map<Id, std::unique_ptr<Agent<Id, Size, Delay>>>&
+  Dynamics<Id, Size, Delay>::agents() const {
     return this->m_agents;
   }
 
