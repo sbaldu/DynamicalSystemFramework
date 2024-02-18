@@ -61,8 +61,11 @@ namespace dsm {
     std::uniform_real_distribution<double> m_uniformDist{0., 1.};
     std::vector<unsigned int> m_travelTimes;
 
-    Id m_nextStreetId(Id agentId, Id NodeId);
-
+    /// @brief Get the next street id
+    /// @param agentId The id of the agent
+    /// @param NodeId The id of the node
+    /// @return Id The id of the next street
+    virtual Id m_nextStreetId(Id agentId, Id NodeId);
     /// @brief Evolve the streets
     /// @details If possible, removes the first agent of each street queue, putting it in the destination node.
     virtual void m_evolveStreets(bool reinsert_agents);
