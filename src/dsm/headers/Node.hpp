@@ -173,9 +173,9 @@ namespace dsm {
     if (m_agents.size() == m_capacity) {
       throw std::runtime_error(buildLog("Node is full"));
     }
-    for (auto const& agent : m_agents) {
-      if (agent.second == agentId) {
-        throw std::runtime_error(buildLog("Agent is already on the node"));
+    for (auto const [angle, id] : m_agents) {
+      if (id == agentId) {
+        throw std::runtime_error(buildLog("Agent is already on the node."));
       }
     }
     int lastKey{0};
