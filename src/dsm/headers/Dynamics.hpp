@@ -241,12 +241,11 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::m_evolveStreets(bool reinsert_agents) {
-    for (auto& streetPair : this->m_graph->streetSet()) {
-      auto street{streetPair.second};
+    for (auto [streetId, street] : this->m_graph->streetSet()) {
       if (street->queue().empty()) {
         continue;
       }
-      Id agentId{street->queue().front()};
+      const Id agentId{street->queue().front()};
       if (this->m_agents[agentId]->delay() > 0) {
         continue;
       }
@@ -256,7 +255,7 @@ namespace dsm {
         continue;
       }
       if (std::dynamic_pointer_cast<TrafficLight<Id, Size, Delay>>(destinationNode) &&
-          !destinationNode->isGreen(street->id())) {
+          !destinationNode->isGreen(streetId)) {
         continue;
       }
       street->dequeue();
@@ -286,10 +285,8 @@ namespace dsm {
     By doing the angle difference, if the destination street is the same we can basically compare these differences (mod(pi)!, i.e. delta % std::numbers::pi):
     the smaller goes first.
     Anyway, this is not trivial as it seems so I will leave it as a comment.*/
-    for (auto& nodePair : this->m_graph->nodeSet()) {
-      auto node{nodePair.second};
-      for (const auto agent : node->agents()) {
-        Id agentId{agent.second};
+    for (auto [nodeId, node] : this->m_graph->nodeSet()) {
+      for (const auto [angle, agentId] : node->agents()) {
         auto possibleMoves{
             this->m_itineraries[this->m_agents[agentId]->itineraryId()]->path().getRow(
                 node->id(), true)};
@@ -303,20 +300,16 @@ namespace dsm {
         auto iterator = possibleMoves.begin();
         std::advance(iterator, p);
         const auto nextStreetId{iterator->first};
-        // const auto& streetResult{this->m_graph->street(node->id(), iterator->first)};
-        // if (!streetResult.has_value()) {
-        //   continue;
-        // }
-        // auto nextStreet{streetResult.value()};
+        assert(this->m_graph->streetSet().contains(nextStreetId));
         auto nextStreet{this->m_graph->streetSet()[nextStreetId]};
 
         if (nextStreet->density() < 1) {
           node->removeAgent(agentId);
           this->m_agents[agentId]->setStreetId(nextStreet->id());
-          this->setAgentSpeed(this->m_agents[agentId]->id());
+          this->setAgentSpeed(agentId);
           this->m_agents[agentId]->incrementDelay(std::ceil(nextStreet->length() /
                                                   this->m_agents[agentId]->speed()));
-          nextStreet->enqueue(this->m_agents[agentId]->id());
+          nextStreet->enqueue(agentId);
         } else {
           break;
         }
@@ -355,7 +348,7 @@ namespace dsm {
         }
         try {
           srcNode->addAgent(agentId);
-        } catch (std::runtime_error& e) {
+        } catch (const std::exception& e) {
           std::cerr << e.what() << '\n';
           continue;
         }
