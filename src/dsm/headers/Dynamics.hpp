@@ -60,6 +60,7 @@ namespace dsm {
     mutable std::mt19937_64 m_generator{std::random_device{}()};
     std::uniform_real_distribution<double> m_uniformDist{0., 1.};
     std::vector<unsigned int> m_travelTimes;
+    std::unordered_map<Id, Id> m_agentNextStreetId;
 
     /// @brief Get the next street id
     /// @param agentId The id of the agent
@@ -296,9 +297,12 @@ namespace dsm {
             this->removeAgent(agentId);
           }
           continue;
-        } else {
-          destinationNode->addAgent(agentId);
-      }
+        }
+        const auto nextStreetId{this->m_nextStreetId(agentId, destinationNode->id())};
+        assert(destinationNode->id() == this->m_graph->streetSet()[nextStreetId]->nodePair().first);
+        destinationNode->addAgent(agentId);
+        // this->m_agents[agentId]->setStreetId(nextStreetId);
+        this->m_agentNextStreetId.emplace(agentId, nextStreetId);
     }
   }
 
@@ -312,7 +316,8 @@ namespace dsm {
     Anyway, this is not trivial as it seems so I will leave it as a comment.*/
     for (auto [nodeId, node] : this->m_graph->nodeSet()) {
       for (const auto [angle, agentId] : node->agents()) {
-        const auto nextStreetId{this->m_nextStreetId(agentId, nodeId)};
+        // const auto nextStreetId{this->m_nextStreetId(agentId, nodeId)};
+        const auto nextStreetId{this->m_agentNextStreetId[agentId]};
         auto nextStreet{this->m_graph->streetSet()[nextStreetId]};
 
         if (nextStreet->density() < 1) {
@@ -322,6 +327,7 @@ namespace dsm {
           this->m_agents[agentId]->incrementDelay(std::ceil(nextStreet->length() /
                                                   this->m_agents[agentId]->speed()));
           nextStreet->enqueue(agentId);
+          this->m_agentNextStreetId.erase(agentId);
         } else {
           break;
         }
@@ -359,7 +365,10 @@ namespace dsm {
           continue;
         }
         try {
+          const auto nextStreetId{this->m_nextStreetId(agentId, srcNode->id())};
+          assert(srcNode->id() == this->m_graph->streetSet()[nextStreetId]->nodePair().first);
           srcNode->addAgent(agentId);
+          this->m_agentNextStreetId.emplace(agentId, nextStreetId);
         } catch (const std::exception& e) {
           std::cerr << e.what() << '\n';
           continue;
