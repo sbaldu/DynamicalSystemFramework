@@ -61,6 +61,8 @@ namespace dsm {
     std::uniform_real_distribution<double> m_uniformDist{0., 1.};
     std::vector<unsigned int> m_travelTimes;
 
+    Id m_nextStreetId(Id agentId, Id NodeId);
+
     /// @brief Evolve the streets
     /// @details If possible, removes the first agent of each street queue, putting it in the destination node.
     virtual void m_evolveStreets(bool reinsert_agents);
@@ -240,6 +242,26 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
+  Id Dynamics<Id, Size, Delay>::m_nextStreetId(Id agentId, Id nodeId) {
+    auto possibleMoves{
+        this->m_itineraries[this->m_agents[agentId]->itineraryId()]->path().
+            getRow(nodeId, true)};
+    if (this->m_uniformDist(this->m_generator) < this->m_errorProbability) {
+      possibleMoves = this->m_graph->adjMatrix()->getRow(nodeId, true);
+    }
+    assert(possibleMoves.size() > 0);
+    std::uniform_int_distribution<Size> moveDist{
+        0, static_cast<Size>(possibleMoves.size() - 1)};
+    const auto p{moveDist(this->m_generator)};
+    auto iterator = possibleMoves.begin();
+    std::advance(iterator, p);
+    assert(this->m_graph->streetSet().contains(iterator->first));
+    return iterator->first;
+  }
+
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::m_evolveStreets(bool reinsert_agents) {
     for (auto [streetId, street] : this->m_graph->streetSet()) {
       if (street->queue().empty()) {
@@ -287,20 +309,7 @@ namespace dsm {
     Anyway, this is not trivial as it seems so I will leave it as a comment.*/
     for (auto [nodeId, node] : this->m_graph->nodeSet()) {
       for (const auto [angle, agentId] : node->agents()) {
-        auto possibleMoves{
-            this->m_itineraries[this->m_agents[agentId]->itineraryId()]->path().getRow(
-                node->id(), true)};
-        if (this->m_uniformDist(this->m_generator) < this->m_errorProbability) {
-          possibleMoves = this->m_graph->adjMatrix()->getRow(node->id(), true);
-        }
-        assert(possibleMoves.size() > 0);
-        std::uniform_int_distribution<Size> moveDist{
-            0, static_cast<Size>(possibleMoves.size() - 1)};
-        const auto p{moveDist(this->m_generator)};
-        auto iterator = possibleMoves.begin();
-        std::advance(iterator, p);
-        const auto nextStreetId{iterator->first};
-        assert(this->m_graph->streetSet().contains(nextStreetId));
+        const auto nextStreetId{this->m_nextStreetId(agentId, nodeId)};
         auto nextStreet{this->m_graph->streetSet()[nextStreetId]};
 
         if (nextStreet->density() < 1) {
