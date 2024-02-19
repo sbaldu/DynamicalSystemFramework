@@ -334,10 +334,8 @@ TEST_CASE("Dynamics") {
     Street s2{1, 1, 30., 15., std::make_pair(1, 2)};
     Street s3{2, 1, 30., 15., std::make_pair(3, 1)};
     Street s4{3, 1, 30., 15., std::make_pair(1, 4)};
-    tl.addStreetPriority(0, 2);
-    tl.addStreetPriority(1, 1);
-    tl.addStreetPriority(2, -1);
-    tl.addStreetPriority(3, -2);
+    tl.addStreetPriority(0);
+    tl.addStreetPriority(1);
     Graph graph2;
     graph2.addNode(std::make_shared<TrafficLight>(tl));
     graph2.addStreets(s1, s2, s3, s4);
