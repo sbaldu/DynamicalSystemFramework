@@ -13,9 +13,7 @@ string(APPEND CMAKE_CXX_FLAGS "-Wall -Wextra -O3 -g -pg")
 # Set the folder for the executable
 set(EXECUTABLE_OUTPUT_PATH ../)
 
-# add as executable all cpp files into '.' folder
-file(GLOB SOURCES "*.cpp")
-
 # Define the executable
-add_executable(dsm_prof.out ${SOURCES})
+add_executable(dsm_prof.out main.cpp)
 target_include_directories(dsm_prof.out PRIVATE ../src/)
+add_executable(massif_parser.out massif_parser.cpp)
