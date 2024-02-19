@@ -7,7 +7,7 @@
 
 namespace dsm {
   template <typename Id>
-    requires std::unsigned_integral<Id>
+    requires(std::unsigned_integral<Id>)
   class Itinerary;
 
   // Alias for shared pointers
