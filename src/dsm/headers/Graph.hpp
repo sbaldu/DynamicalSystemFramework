@@ -91,6 +91,10 @@ namespace dsm {
     /// @throws std::invalid_argument if the file is not found, invalid or the format is not supported
     void importOSMEdges(const std::string& fileName);
 
+    /// @brief Export the graph's adjacency matrix to a file
+    /// @param isAdj A boolean value indicating if the file contains the adjacency matrix or the distance matrix.
+    void exportMatrix(bool isAdj = true);
+
     /// @brief Add a node to the graph
     /// @param node A std::shared_ptr to the node to add
     void addNode(shared<Node<Id, Size>> node);
@@ -415,6 +419,27 @@ namespace dsm {
       std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
                             __FILE__ + ": " + "File extension not supported"};
       throw std::invalid_argument(errrorMsg);
+    }
+  }
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Graph<Id, Size>::exportMatrix(bool isAdj) {
+    std::string fileName{"graph_matrix.dsm"};
+    std::ofstream file{fileName};
+    if (!file.is_open()) {
+      throw std::invalid_argument(buildLog("Cannot open file: " + fileName));
+    }
+    if (isAdj) {
+      file << m_adjacency->getRowDim() << " " << m_adjacency->getColDim() << '\n';
+      for (const auto& [id, value] : *m_adjacency) {
+        file << id << '\t' << value << '\n';
+      }
+    } else {
+      file << m_adjacency->getRowDim() << " " << m_adjacency->getColDim() << '\n';
+      for (const auto& [id, street] : m_streets) {
+        file << id << '\t' << street->length() << '\n';
+      }
     }
   }
 
