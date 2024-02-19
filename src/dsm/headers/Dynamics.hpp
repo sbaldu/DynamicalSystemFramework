@@ -775,7 +775,7 @@ namespace dsm {
     /// @brief Set the speed of an agent
     /// @param agentId The id of the agent
     /// @throw std::invalid_argument, If the agent is not found
-    void setAgentSpeed(Size agentId);
+    void setAgentSpeed(Id agentId) override;
   };
 
   template <typename Id, typename Size, typename Delay>
@@ -787,7 +787,7 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
-  void FirstOrderDynamics<Id, Size, Delay>::setAgentSpeed(Size agentId) {
+  void FirstOrderDynamics<Id, Size, Delay>::setAgentSpeed(Id agentId) {
     auto street{this->m_graph->streetSet()[this->m_agents[agentId]->streetId().value()]};
     double speed{street->maxSpeed() * (1. - this->m_minSpeedRateo * street->density())};
     this->m_agents[agentId]->setSpeed(speed);
@@ -797,13 +797,13 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   class SecondOrderDynamics : public Dynamics<Id, Size, double> {
   public:
-    void setAgentSpeed(Size agentId);
+    void setAgentSpeed(Id agentId);
     void setSpeed();
   };
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void SecondOrderDynamics<Id, Size>::setAgentSpeed(Size agentId) {}
+  void SecondOrderDynamics<Id, Size>::setAgentSpeed(Id agentId) {}
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
