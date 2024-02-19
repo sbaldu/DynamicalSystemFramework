@@ -45,7 +45,7 @@ namespace dsm {
   /// @tparam Id, The type of the graph's id. It must be an unsigned integral type.
   /// @tparam Size, The type of the graph's capacity. It must be an unsigned integral type.
   template <typename Id, typename Size>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   class Graph {
   private:
     std::unordered_map<Id, shared<Node<Id, Size>>> m_nodes;
@@ -171,8 +171,8 @@ namespace dsm {
       if (!m_nodes.contains(dstId)) {
         m_nodes.emplace(dstId, make_shared<Node<Id, Size>>(dstId));
       }
-      m_streets.emplace(
-          id, make_shared<Street<Id, Size>>(id, std::make_pair(srcId, dstId)));
+      m_streets.emplace(id,
+                        make_shared<Street<Id, Size>>(id, std::make_pair(srcId, dstId)));
     }
   }
 
@@ -230,13 +230,12 @@ namespace dsm {
     const auto maxNode{static_cast<Id>(m_nodes.size())};
     m_adjacency->reshape(maxNode, maxNode);
     for (const auto& [streetId, street] : m_streets) {
-      m_adjacency->insert(
-          street->nodePair().first, street->nodePair().second, true);
+      m_adjacency->insert(street->nodePair().first, street->nodePair().second, true);
     }
     this->m_reassignIds();
   }
   template <typename Id, typename Size>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Graph<Id, Size>::buildStreetAngles() {
     for (const auto& street : m_streets) {
       const auto node1{m_nodes[street.second->nodePair().first]};
@@ -293,12 +292,14 @@ namespace dsm {
       Size rows, cols;
       file >> rows >> cols;
       if (rows != cols) {
-        throw std::invalid_argument(buildLog("Adjacency matrix must be square. Rows: " + std::to_string(rows) +
-                                            " Cols: " + std::to_string(cols)));
+        throw std::invalid_argument(
+            buildLog("Adjacency matrix must be square. Rows: " + std::to_string(rows) +
+                     " Cols: " + std::to_string(cols)));
       }
       Size n{rows};
       if (n * n > std::numeric_limits<Id>::max()) {
-        throw std::invalid_argument(buildLog("Matrix size is too large for the current type of Id."));
+        throw std::invalid_argument(
+            buildLog("Matrix size is too large for the current type of Id."));
       }
       m_adjacency = make_shared<SparseMatrix<Id, bool>>(n, n);
       Id index{0};
@@ -548,7 +549,7 @@ namespace dsm {
     Size n = m_nodes.size();
     auto id1 = streetIt->first;
     auto id2 = source * n + destination;
-    assert (id1 == id2);
+    assert(id1 == id2);
     if (id1 != id2) {
       std::cout << "node size: " << n << std::endl;
       std::cout << "Street id: " << id1 << std::endl;
@@ -566,8 +567,9 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  std::optional<DijkstraResult<Id>> Graph<Id, Size>::shortestPath(Id source, Id destination) const {
-	const Id sourceId{source};
+  std::optional<DijkstraResult<Id>> Graph<Id, Size>::shortestPath(Id source,
+                                                                  Id destination) const {
+    const Id sourceId{source};
 
     std::unordered_map<Id, shared<Node<Id, Size>>> unvisitedNodes{m_nodes};
     if (!unvisitedNodes.contains(source)) {
@@ -631,9 +633,9 @@ namespace dsm {
         return std::nullopt;
       }
       path.push_back(previous);
-	  if (previous == sourceId) {
-		break;
-	  }
+      if (previous == sourceId) {
+        break;
+      }
     }
 
     std::reverse(path.begin(), path.end());

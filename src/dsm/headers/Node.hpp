@@ -31,7 +31,8 @@ namespace dsm {
     Using the second one means that the node is blocked if an agent with priority cannot move.
     The first is just like an ordering...
     Need to discuss this.*/
-    std::set<Id> m_streetPriorities; // A set containing the street ids that have priority - like main roads
+    std::set<Id>
+        m_streetPriorities;  // A set containing the street ids that have priority - like main roads
     std::pair<double, double> m_coords;
     Id m_id;
     Size m_capacity;
@@ -79,7 +80,7 @@ namespace dsm {
 
     virtual bool isGreen() const;
     virtual bool isGreen(Id) const;
-    virtual void increaseCounter() {};
+    virtual void increaseCounter(){};
 
     /// @brief Get the node's id
     /// @return Id The node's id
@@ -118,16 +119,18 @@ namespace dsm {
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   Node<Id, Size>::Node(Id id, std::pair<double, double> coords)
       : m_coords{std::move(coords)}, m_id{id}, m_capacity{1}, m_agentCounter{0} {}
-  
+
   template <typename Id, typename Size>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
-  bool Node<Id, Size>::isGreen() const {
-    throw std::runtime_error(buildLog("isGreen() is not implemented for this type of node."));
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> bool
+  Node<Id, Size>::isGreen() const {
+    throw std::runtime_error(
+        buildLog("isGreen() is not implemented for this type of node."));
   }
   template <typename Id, typename Size>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
-  bool Node<Id, Size>::isGreen(Id) const {
-    throw std::runtime_error(buildLog("isGreen() is not implemented for this type of node."));
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> bool
+  Node<Id, Size>::isGreen(Id) const {
+    throw std::runtime_error(
+        buildLog("isGreen() is not implemented for this type of node."));
   }
 
   template <typename Id, typename Size>
@@ -220,8 +223,8 @@ namespace dsm {
   }
 
   template <typename Id, typename Size>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
-  bool Node<Id, Size>::isFull() const {
+    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> bool
+  Node<Id, Size>::isFull() const {
     return m_agents.size() == m_capacity;
   }
 
@@ -247,7 +250,8 @@ namespace dsm {
   /* }; */
 
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>)
   class TrafficLight : public Node<Id, Size> {
   private:
     std::optional<std::pair<Delay, Delay>> m_delay;
@@ -287,21 +291,25 @@ namespace dsm {
   };
 
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>)
   TrafficLight<Id, Size, Delay>::TrafficLight(Id id) : Node<Id, Size>{id}, m_counter{0} {}
 
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>)
   void TrafficLight<Id, Size, Delay>::setDelay(Delay delay) {
     m_delay = std::make_pair(delay, delay);
   }
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>)
   void TrafficLight<Id, Size, Delay>::setDelay(std::pair<Delay, Delay> delay) {
     m_delay = std::move(delay);
   }
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>)
   void TrafficLight<Id, Size, Delay>::setPhase(Delay phase) {
     if (!m_delay.has_value()) {
       throw std::runtime_error(buildLog("TrafficLight's delay has not been set."));
@@ -309,10 +317,11 @@ namespace dsm {
     if (phase > m_delay.value().first + m_delay.value().second) {
       phase -= m_delay.value().first + m_delay.value().second;
     }
-    phase == 0 ? m_counter = 0 : m_counter = m_delay.value().first % phase; //fwefbewbfw
+    phase == 0 ? m_counter = 0 : m_counter = m_delay.value().first % phase;  //fwefbewbfw
   }
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>)
   void TrafficLight<Id, Size, Delay>::increaseCounter() {
     if (!m_delay.has_value()) {
       throw std::runtime_error(buildLog("TrafficLight's delay has not been set."));
@@ -324,21 +333,24 @@ namespace dsm {
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>)
   std::optional<Delay> TrafficLight<Id, Size, Delay>::delay() const {
     return m_delay;
   }
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
-  bool TrafficLight<Id, Size, Delay>::isGreen() const {
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>) bool
+  TrafficLight<Id, Size, Delay>::isGreen() const {
     if (!m_delay.has_value()) {
       throw std::runtime_error(buildLog("TrafficLight's delay has not been set."));
     }
     return m_counter < m_delay.value().first;
   }
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
-  bool TrafficLight<Id, Size, Delay>::isGreen(Id streetId) const {
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>) bool
+  TrafficLight<Id, Size, Delay>::isGreen(Id streetId) const {
     if (!m_delay.has_value()) {
       throw std::runtime_error(buildLog("TrafficLight's delay has not been set."));
     }

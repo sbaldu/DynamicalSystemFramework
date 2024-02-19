@@ -313,10 +313,7 @@ namespace dsm {
   template <typename Index, typename T>
     requires std::unsigned_integral<Index>
   SparseMatrix<Index, T>::SparseMatrix(Index index)
-      : _matrix{std::unordered_map<Index, T>()},
-        _rows{index},
-        _cols{1},
-        _defaultReturn{0} {}
+      : _matrix{std::unordered_map<Index, T>()}, _rows{index}, _cols{1}, _defaultReturn{0} {}
 
   template <typename Index, typename T>
     requires std::unsigned_integral<Index>

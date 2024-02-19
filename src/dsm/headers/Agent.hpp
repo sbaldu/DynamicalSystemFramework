@@ -36,8 +36,8 @@ namespace dsm {
     std::optional<Id> m_streetId;
     Delay m_delay;
     double m_speed;
-    double m_distance; // Travelled distance
-    unsigned int m_time; // Travelled time
+    double m_distance;    // Travelled distance
+    unsigned int m_time;  // Travelled time
 
   public:
     Agent() = delete;
@@ -113,7 +113,12 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
   Agent<Id, Size, Delay>::Agent(Id id, Id itineraryId)
-      : m_id{id}, m_itineraryId{itineraryId}, m_delay{0}, m_speed{0.}, m_distance{0.}, m_time{0} {}
+      : m_id{id},
+        m_itineraryId{itineraryId},
+        m_delay{0},
+        m_speed{0.},
+        m_distance{0.},
+        m_time{0} {}
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
@@ -182,7 +187,7 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
   void Agent<Id, Size, Delay>::incrementDistance() {
-    m_distance += m_speed; // actually m_speed * 1 second
+    m_distance += m_speed;  // actually m_speed * 1 second
   }
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
