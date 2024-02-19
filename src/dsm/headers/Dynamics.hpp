@@ -201,7 +201,9 @@ namespace dsm {
       requires std::is_invocable_v<F, Tn...>
     void evolve(F f, Tn... args);
 
-    virtual double streetMeanSpeed(Id streetId) const = 0;
+    virtual std::optional<double> streetMeanSpeed(Id) const = 0;
+    virtual Measurement<double> streetMeanSpeed() const = 0;
+    // virtual Measurement<double> streetMeanSpeed(double, bool) const = 0; // TODO
 
     /// @brief Get the mean speed of the agents
     /// @return Measurement<double> The mean speed of the agents and the standard deviation
@@ -740,8 +742,13 @@ namespace dsm {
     std::vector<double> flows;
     flows.reserve(m_graph->streetSet().size());
     for (const auto& [streetId, street] : m_graph->streetSet()) {
-      double flow{street->density() * this->streetMeanSpeed(streetId)};
-      flows.push_back(flow);
+      auto speedOpt{this->streetMeanSpeed(streetId)};
+      if (speedOpt.has_value()) {
+        double flow{street->density() * speedOpt.value()};
+        flows.push_back(flow);
+      } else {
+        flows.push_back(street->density()); // 0 * NaN = 0
+      }
     }
     const double mean{std::accumulate(flows.cbegin(), flows.cend(), 0.) / flows.size()};
     const double variance{std::accumulate(flows.cbegin(),
@@ -790,7 +797,10 @@ namespace dsm {
     /// \f$ v_{\text{mean}} = v_{\text{max}} \left(1 - \frac{\alpha}{2} \left( n - 1\right)  \right) \f$
     /// where \f$ v_{\text{max}} \f$ is the maximum speed of the street, \f$ \alpha \f$ is the minimum speed rateo divided by the capacity
     /// and \f$ n \f$ is the number of agents in the street
-    double streetMeanSpeed(Id streetId) const override;
+    std::optional<double> streetMeanSpeed(Id streetId) const override;
+    /// @brief Get the mean speed of the streets
+    /// @return Measurement The mean speed of the agents and the standard deviation
+    Measurement<double> streetMeanSpeed() const override;
   };
 
   template <typename Id, typename Size, typename Delay>
@@ -810,14 +820,39 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              std::unsigned_integral<Delay>)
-  double FirstOrderDynamics<Id, Size, Delay>::streetMeanSpeed(Id streetId) const {
+  std::optional<double> FirstOrderDynamics<Id, Size, Delay>::streetMeanSpeed(Id streetId) const {
     auto street{this->m_graph->streetSet()[streetId]};
     if (street->queue().empty()) {
-      return street->maxSpeed();
+      return std::nullopt;
     }
     auto n = static_cast<Size>(street->queue().size());
     double alpha{this->m_minSpeedRateo / street->capacity()};
     return street->maxSpeed() * (1 - 0.5 * alpha * (n - 1));
+  }
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>)
+  Measurement<double> FirstOrderDynamics<Id, Size, Delay>::streetMeanSpeed() const {
+    if (this->m_agents.size() == 0) {
+      return Measurement(0., 0.);
+    }
+    std::vector<double> speeds;
+    speeds.reserve(this->m_graph->streetSet().size());
+    for (const auto& [streetId, street] : this->m_graph->streetSet()) {
+      auto speedOpt{this->streetMeanSpeed(streetId)};
+      if (speedOpt.has_value()) {
+        speeds.push_back(speedOpt.value());
+      }
+    }
+    const double mean{std::accumulate(speeds.cbegin(), speeds.cend(), 0.) / speeds.size()};
+    const double variance{std::accumulate(speeds.cbegin(),
+                                    speeds.cend(),
+                                    0.,
+                                    [mean](double sum, const auto& speed) {
+                                      return sum + std::pow(speed - mean, 2);
+                                    }) /
+                    (speeds.size() - 1)};
+    return Measurement(mean, std::sqrt(variance));
   }
 
   template <typename Id, typename Size>

@@ -389,6 +389,8 @@ TEST_CASE("Dynamics") {
       meanSpeed += agent->speed();
     }
     meanSpeed /= dynamics.agents().size();
-    CHECK_EQ(dynamics.streetMeanSpeed(1), meanSpeed);
+    CHECK(dynamics.streetMeanSpeed(1).has_value());
+    CHECK_EQ(dynamics.streetMeanSpeed(1).value(), meanSpeed);
+    CHECK_EQ(dynamics.streetMeanSpeed().mean, dynamics.meanSpeed().mean);
   }
 }
