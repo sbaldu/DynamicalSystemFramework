@@ -4,7 +4,7 @@
 #include <cstdint>
 
 static constexpr uint8_t DSM_VERSION_MAJOR = 1;
-static constexpr uint8_t DSM_VERSION_MINOR = 0;
+static constexpr uint8_t DSM_VERSION_MINOR = 1;
 static constexpr uint8_t DSM_VERSION_PATCH = 0;
 
 #include <string>

@@ -31,7 +31,8 @@ namespace dsm {
     Using the second one means that the node is blocked if an agent with priority cannot move.
     The first is just like an ordering...
     Need to discuss this.*/
-    std::map<int16_t, Id> m_streetPriorities;
+    std::set<Id>
+        m_streetPriorities;  // A set containing the street ids that have priority - like main roads
     std::pair<double, double> m_coords;
     Id m_id;
     Size m_capacity;
@@ -70,10 +71,12 @@ namespace dsm {
     /// @brief Removes an agent from the node
     /// @param agentId The agent's id
     void removeAgent(Id agentId);
-    
-    void setStreetPriorities(std::map<int16_t, Id> streetPriorities);
-
-    void addStreetPriority(int16_t priority, Id streetId);
+    /// @brief Set the node streets with priority
+    /// @param streetPriorities A std::set containing the node's street priorities
+    void setStreetPriorities(std::set<Id> streetPriorities);
+    /// @brief Add a street to the node street priorities
+    /// @param streetId The street's id
+    void addStreetPriority(Id streetId);
 
     virtual bool isGreen() const;
     virtual bool isGreen(Id) const;
@@ -87,12 +90,11 @@ namespace dsm {
     /// @return std::pair<double,, double> A std::pair containing the node's coordinates
     const std::pair<double, double>& coords() const;
     /// @brief Get the node's street priorities
-    /// @return std::map<Id, Size> A std::map containing the node's street priorities
-    /// @details The keys of the map are intended as priorities, while the values are the ids of the streets.
-    ///          The streets are ordered by priority, from the highest to the lowest. You should have both positive
-    ///          and negative priorities, where the positive ones are the ones that have the green light, and the
-    ///          negative ones are the ones that have the red light (and viceversa)
-    virtual const std::map<int16_t, Id>& streetPriorities() const;
+    /// @details This function returns a std::set containing the node's street priorities.
+    ///        If a street has priority, it means that the agents that are on that street
+    ///        have priority over the agents that are on the other streets.
+    /// @return std::set<Id> A std::set containing the node's street priorities
+    virtual const std::set<Id>& streetPriorities() const;
     /// @brief Get the node's capacity
     /// @return Size The node's capacity
     Size capacity() const;
@@ -121,16 +123,14 @@ namespace dsm {
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   bool Node<Id, Size>::isGreen() const {
-    std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                         "isGreen() is not implemented for this type of node"};
-    throw std::runtime_error(errorMsg);
+    throw std::runtime_error(
+        buildLog("isGreen() is not implemented for this type of node."));
   }
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
   bool Node<Id, Size>::isGreen(Id) const {
-    std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                         "isGreen() is not implemented for this type of node"};
-    throw std::runtime_error(errorMsg);
+    throw std::runtime_error(
+        buildLog("isGreen() is not implemented for this type of node."));
   }
 
   template <typename Id, typename Size>
@@ -147,14 +147,14 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
-  void Node<Id, Size>::setStreetPriorities(std::map<int16_t, Id> streetPriorities) {
+  void Node<Id, Size>::setStreetPriorities(std::set<Id> streetPriorities) {
     m_streetPriorities = std::move(streetPriorities);
   }
 
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
-  void Node<Id, Size>::addStreetPriority(int16_t priority, Id streetId) {
-    m_streetPriorities.emplace(priority, streetId);
+  void Node<Id, Size>::addStreetPriority(Id streetId) {
+    m_streetPriorities.emplace(streetId);
   }
 
   template <typename Id, typename Size>
@@ -206,7 +206,7 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
-  const std::map<int16_t, Id>& Node<Id, Size>::streetPriorities() const {
+  const std::set<Id>& Node<Id, Size>::streetPriorities() const {
     return m_streetPriorities;
   }
 
@@ -250,7 +250,8 @@ namespace dsm {
   /* }; */
 
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>)
   class TrafficLight : public Node<Id, Size> {
   private:
     std::optional<std::pair<Delay, Delay>> m_delay;
@@ -277,7 +278,7 @@ namespace dsm {
     ///          when the simulation is running. It automatically resets the counter
     ///          when it reaches the double of the delay value.
     /// @throw std::runtime_error if the delay is not set
-    void increaseCounter();
+    void increaseCounter() override;
 
     /// @brief Get the node's delay
     /// @return std::optional<Delay> The node's delay
@@ -285,31 +286,33 @@ namespace dsm {
     Delay counter() const { return m_counter; }
     /// @brief Returns true if the traffic light is green
     /// @return bool True if the traffic light is green
-    bool isGreen() const;
-    bool isGreen(Id streetId) const;
+    bool isGreen() const override;
+    bool isGreen(Id streetId) const override;
   };
 
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>)
   TrafficLight<Id, Size, Delay>::TrafficLight(Id id) : Node<Id, Size>{id}, m_counter{0} {}
 
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>)
   void TrafficLight<Id, Size, Delay>::setDelay(Delay delay) {
     m_delay = std::make_pair(delay, delay);
   }
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>)
   void TrafficLight<Id, Size, Delay>::setDelay(std::pair<Delay, Delay> delay) {
     m_delay = std::move(delay);
   }
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>)
   void TrafficLight<Id, Size, Delay>::setPhase(Delay phase) {
     if (!m_delay.has_value()) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                           "TrafficLight's delay is not set"};
-      throw std::runtime_error(errorMsg);
+      throw std::runtime_error(buildLog("TrafficLight's delay has not been set."));
     }
     if (phase > m_delay.value().first + m_delay.value().second) {
       phase -= m_delay.value().first + m_delay.value().second;
@@ -317,12 +320,11 @@ namespace dsm {
     phase == 0 ? m_counter = 0 : m_counter = m_delay.value().first % phase; //fwefbewbfw
   }
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>)
   void TrafficLight<Id, Size, Delay>::increaseCounter() {
     if (!m_delay.has_value()) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                           "TrafficLight's delay is not set"};
-      throw std::runtime_error(errorMsg);
+      throw std::runtime_error(buildLog("TrafficLight's delay has not been set."));
     }
     ++m_counter;
     if (m_counter == m_delay.value().first + m_delay.value().second) {
@@ -331,32 +333,32 @@ namespace dsm {
   }
 
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>)
   std::optional<Delay> TrafficLight<Id, Size, Delay>::delay() const {
     return m_delay;
   }
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>)
   bool TrafficLight<Id, Size, Delay>::isGreen() const {
     if (!m_delay.has_value()) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                           "TrafficLight's delay is not set"};
-      throw std::runtime_error(errorMsg);
+      throw std::runtime_error(buildLog("TrafficLight's delay has not been set."));
     }
     return m_counter < m_delay.value().first;
   }
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> && std::unsigned_integral<Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>)
   bool TrafficLight<Id, Size, Delay>::isGreen(Id streetId) const {
     if (!m_delay.has_value()) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
-                           "TrafficLight's delay is not set"};
-      throw std::runtime_error(errorMsg);
+      throw std::runtime_error(buildLog("TrafficLight's delay has not been set."));
     }
+    bool hasPriority{this->streetPriorities().contains(streetId)};
     if (this->isGreen()) {
-      return this->streetPriorities().at(streetId) > 0;
+      return hasPriority;
     }
-    return this->streetPriorities().at(streetId) < 0;
+    return !hasPriority;
   }
 };  // namespace dsm
 
