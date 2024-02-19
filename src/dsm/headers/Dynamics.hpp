@@ -688,7 +688,7 @@ namespace dsm {
     if (m_agents.size() == 0) {
       return Measurement(0., 0.);
     }
-    double mean{std::accumulate(m_agents.cbegin(),
+    const double mean{std::accumulate(m_agents.cbegin(),
                                 m_agents.cend(),
                                 0.,
                                 [](double sum, const auto& agent) {
@@ -698,7 +698,7 @@ namespace dsm {
     if (m_agents.size() == 1) {
       return Measurement(mean, 0.);
     }
-    double variance{std::accumulate(m_agents.cbegin(),
+    const double variance{std::accumulate(m_agents.cbegin(),
                                     m_agents.cend(),
                                     0.,
                                     [mean](double sum, const auto& agent) {
@@ -716,14 +716,14 @@ namespace dsm {
     if (m_graph->streetSet().size() == 0) {
       return Measurement(0., 0.);
     }
-    double mean{std::accumulate(m_graph->streetSet().cbegin(),
+    const double mean{std::accumulate(m_graph->streetSet().cbegin(),
                                 m_graph->streetSet().cend(),
                                 0.,
                                 [](double sum, const auto& street) {
                                   return sum + street.second->density();
                                 }) /
                 m_graph->streetSet().size()};
-    double variance{std::accumulate(m_graph->streetSet().cbegin(),
+    const double variance{std::accumulate(m_graph->streetSet().cbegin(),
                                     m_graph->streetSet().cend(),
                                     0.,
                                     [mean](double sum, const auto& street) {
@@ -739,12 +739,12 @@ namespace dsm {
   Measurement<double> Dynamics<Id, Size, Delay>::meanFlow() const {
     std::vector<double> flows;
     flows.reserve(m_graph->streetSet().size());
-    for (const auto [streetId, street] : m_graph->streetSet()) {
+    for (const auto& [streetId, street] : m_graph->streetSet()) {
       double flow{street->density() * this->streetMeanSpeed(streetId)};
       flows.push_back(flow);
     }
-    double mean{std::accumulate(flows.cbegin(), flows.cend(), 0.) / flows.size()};
-    double variance{std::accumulate(flows.cbegin(),
+    const double mean{std::accumulate(flows.cbegin(), flows.cend(), 0.) / flows.size()};
+    const double variance{std::accumulate(flows.cbegin(),
                                     flows.cend(),
                                     0.,
                                     [mean](double sum, const auto& flow) {
@@ -760,9 +760,9 @@ namespace dsm {
     if (m_travelTimes.size() == 0) {
       return Measurement(0., 0.);
     }
-    double mean{std::accumulate(m_travelTimes.cbegin(), m_travelTimes.cend(), 0.) /
+    const double mean{std::accumulate(m_travelTimes.cbegin(), m_travelTimes.cend(), 0.) /
                 m_travelTimes.size()};
-    double variance{std::accumulate(m_travelTimes.cbegin(),
+    const double variance{std::accumulate(m_travelTimes.cbegin(),
                                     m_travelTimes.cend(),
                                     0.,
                                     [mean](double sum, const auto& travelTime) {
