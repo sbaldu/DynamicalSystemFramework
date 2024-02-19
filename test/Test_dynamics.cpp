@@ -241,8 +241,32 @@ TEST_CASE("Dynamics") {
     dynamics.evolve(false);
     CHECK_EQ(dynamics.agents().at(0)->time(), 2);
     CHECK_EQ(dynamics.agents().at(0)->delay(), 0);
-    CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 0);
+    CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 1);
     CHECK_EQ(dynamics.agents().at(0)->speed(), 13.8888888889);
+  }
+  SUBCASE("agent travelled distance") {
+    /// GIVEN: a network with two streets and an angent
+    /// WHEN: the agent changes street
+    /// THEN: the agent has travelled the correct distance
+    Street s1{0, 1, 3., std::make_pair(0, 1)};
+    Street s2{1, 1, 1., std::make_pair(1, 2)};
+    Graph graph2;
+    graph2.addStreets(s1, s2);
+    graph2.buildAdj();
+    Dynamics dynamics{graph2};
+    dynamics.setSeed(69);
+    Itinerary itinerary{0, 0, 2};
+    dynamics.addItinerary(itinerary);
+    dynamics.addRandomAgents(1);
+    dynamics.updatePaths();
+    for (uint8_t i = 0; i < 2; ++i) {
+      dynamics.evolve(false);
+    }
+    CHECK_EQ(dynamics.agents().at(0)->time(), 2);
+    CHECK_EQ(dynamics.agents().at(0)->delay(), 0);
+    CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 1);
+    CHECK_EQ(dynamics.agents().at(0)->speed(), 13.8888888889);
+    CHECK_EQ(dynamics.agents().at(0)->distance(), 3.);
   }
   SUBCASE("evolve without insertion") {
     /// GIVEN: a dynamics object
@@ -264,8 +288,9 @@ TEST_CASE("Dynamics") {
     }
     CHECK_EQ(dynamics.agents().at(0)->time(), 2);
     CHECK_EQ(dynamics.agents().at(0)->delay(), 0);
-    CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 0);
+    CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 1);
     CHECK_EQ(dynamics.agents().at(0)->speed(), 13.8888888889);
+    CHECK_EQ(dynamics.agents().at(0)->distance(), 13.8888888889);
     dynamics.evolve(false);
     CHECK_EQ(dynamics.agents().size(), 0);
   }
@@ -289,7 +314,7 @@ TEST_CASE("Dynamics") {
     }
     CHECK_EQ(dynamics.agents().at(0)->time(), 2);
     CHECK_EQ(dynamics.agents().at(0)->delay(), 0);
-    CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 0);
+    CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 1);
     CHECK_EQ(dynamics.agents().at(0)->speed(), 13.8888888889);
     dynamics.evolve(true);
     CHECK_EQ(dynamics.agents().size(), 1);
@@ -309,10 +334,8 @@ TEST_CASE("Dynamics") {
     Street s2{1, 1, 30., 15., std::make_pair(1, 2)};
     Street s3{2, 1, 30., 15., std::make_pair(3, 1)};
     Street s4{3, 1, 30., 15., std::make_pair(1, 4)};
-    tl.addStreetPriority(0, 2);
-    tl.addStreetPriority(1, 1);
-    tl.addStreetPriority(2, -1);
-    tl.addStreetPriority(3, -2);
+    tl.addStreetPriority(0);
+    tl.addStreetPriority(1);
     Graph graph2;
     graph2.addNode(std::make_shared<TrafficLight>(tl));
     graph2.addStreets(s1, s2, s3, s4);
@@ -327,10 +350,14 @@ TEST_CASE("Dynamics") {
     for (uint8_t i{0}; i < 5; ++i) {
       dynamics.evolve(false);
       if (i < 3) {
-        CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 0);
-      } else {
         CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 1);
+      } else {
+        CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 7);
+      }
+      if (i == 2) {
+        CHECK_EQ(dynamics.agents().at(0)->distance(), 30.);
       }
     }
+    CHECK_EQ(dynamics.agents().at(0)->distance(), 60.);
   }
 }

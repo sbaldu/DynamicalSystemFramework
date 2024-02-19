@@ -18,7 +18,7 @@ namespace dsm {
   /// @brief The Itinerary class represents an itinerary in the network.
   /// @tparam Id The type of the itinerary's id. It must be an unsigned integral type.
   template <typename Id>
-    requires std::unsigned_integral<Id>
+    requires(std::unsigned_integral<Id>)
   class Itinerary {
   private:
     Id m_id;
@@ -75,30 +75,30 @@ namespace dsm {
   };
 
   template <typename Id>
-    requires std::unsigned_integral<Id>
+    requires(std::unsigned_integral<Id>)
   Itinerary<Id>::Itinerary(Id id, Id source, Id destination)
       : m_id{id}, m_trip{std::make_pair(source, destination)} {}
   template <typename Id>
-    requires std::unsigned_integral<Id>
+    requires(std::unsigned_integral<Id>)
   Itinerary<Id>::Itinerary(Id id, Id source, Id destination, SparseMatrix<Id, bool> path)
       : m_id{id}, m_path{std::move(path)}, m_trip{std::make_pair(source, destination)} {}
   template <typename Id>
-    requires std::unsigned_integral<Id>
+    requires(std::unsigned_integral<Id>)
   Itinerary<Id>::Itinerary(Id id, std::pair<Id, Id> trip, SparseMatrix<Id, bool> path)
       : m_id{id}, m_path{std::move(path)}, m_trip{std::move(trip)} {}
 
   template <typename Id>
-    requires std::unsigned_integral<Id>
+    requires(std::unsigned_integral<Id>)
   void Itinerary<Id>::setSource(Id source) {
     m_trip.first = source;
   }
   template <typename Id>
-    requires std::unsigned_integral<Id>
+    requires(std::unsigned_integral<Id>)
   void Itinerary<Id>::setDestination(Id destination) {
     m_trip.second = destination;
   }
   template <typename Id>
-    requires std::unsigned_integral<Id>
+    requires(std::unsigned_integral<Id>)
   void Itinerary<Id>::setPath(SparseMatrix<Id, bool> path) {
     // if (!(m_trip.first < path.size()) || !(m_trip.second < path.size())) {
     //   std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " + __FILE__ + ": " +
@@ -109,27 +109,27 @@ namespace dsm {
   }
 
   template <typename Id>
-    requires std::unsigned_integral<Id>
+    requires(std::unsigned_integral<Id>)
   Id Itinerary<Id>::id() const {
     return m_id;
   }
   template <typename Id>
-    requires std::unsigned_integral<Id>
+    requires(std::unsigned_integral<Id>)
   Id Itinerary<Id>::source() const {
     return m_trip.first;
   }
   template <typename Id>
-    requires std::unsigned_integral<Id>
+    requires(std::unsigned_integral<Id>)
   Id Itinerary<Id>::destination() const {
     return m_trip.second;
   }
   template <typename Id>
-    requires std::unsigned_integral<Id>
+    requires(std::unsigned_integral<Id>)
   const std::pair<Id, Id>& Itinerary<Id>::trip() const {
     return m_trip;
   }
   template <typename Id>
-    requires std::unsigned_integral<Id>
+    requires(std::unsigned_integral<Id>)
   const SparseMatrix<Id, bool>& Itinerary<Id>::path() const {
     return m_path;
   }

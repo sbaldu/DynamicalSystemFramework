@@ -8,8 +8,8 @@
 
 namespace dsm {
   template <typename Id, typename Size, typename Delay>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             is_numeric_v<Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>)
   class Agent;
 
   // Alias for shared pointers

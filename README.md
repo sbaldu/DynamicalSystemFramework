@@ -5,16 +5,16 @@ This rework consists of a full code rewriting, in order to implement more featur
 
 ## Requirements
 
-Right now the project only requires `C++20` and `cmake`.
+The project only requires `C++20` and `cmake`.
 
 ## Installation
 The library can be installed using CMake. To do this build it with the commands:
-```
+```shell
 mkdir -p build && cd build
 cmake ..
 ```
 and then install it with:
-```
+```shell
 sudo make install
 ```
 
