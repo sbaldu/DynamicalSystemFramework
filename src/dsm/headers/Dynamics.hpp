@@ -221,33 +221,28 @@ namespace dsm {
     /// @param ...args The arguments of the function
     template <typename F, typename... Tn>
       requires std::is_invocable_v<F, Tn...>
-    void evolve(F f, Tn... args);
-
-    virtual std::optional<double> streetMeanSpeed(Id) const = 0;
-    virtual Measurement<double> streetMeanSpeed() const = 0;
-    virtual Measurement<double> streetMeanSpeed(double, bool) const = 0;
+    void evolve(F f, Tn... args);    
 
     /// @brief Get the mean speed of the agents
     /// @return Measurement<double> The mean speed of the agents and the standard deviation
     Measurement<double> meanSpeed() const;
-    /// @brief Compute the mean speed over nStreets randomly selected streets
-    /// @param nStreets The number of streets to select
-    /// @return Measurement<double> The mean speed of the streets and the standard deviation
-    Measurement<double> meanSpeed(Size nStreets) const;  // TODO: implement
+    // TODO: implement the following functions
+    // We can implement the base version of these functions by cycling over agents... I won't do it for now.
+    // Grufoony - 19/02/2024
+    virtual std::optional<double> streetMeanSpeed(Id) const = 0;
+    virtual Measurement<double> streetMeanSpeed() const = 0;
+    virtual Measurement<double> streetMeanSpeed(double, bool) const = 0;
     /// @brief Get the mean density of the streets
     /// @return Measurement<double> The mean density of the streets and the standard deviation
-    Measurement<double> meanDensity() const;
-    /// @brief Compute the mean density over nStreets randomly selected streets
-    /// @param nStreets The number of streets to select
-    /// @return Measurement<double> The mean density of the streets and the standard deviation
-    Measurement<double> meanDensity(Size nStreets) const;  // TODO: implement
+    Measurement<double> streetMeanDensity() const;
     /// @brief Get the mean flow of the streets
     /// @return Measurement<double> The mean flow of the streets and the standard deviation
-    Measurement<double> meanFlow() const;
-    /// @brief Compute the mean flow over nStreets randomly selected streets
-    /// @param nStreets The number of streets to select
+    Measurement<double> streetMeanFlow() const;
+    /// @brief Get the mean flow of the streets
+    /// @param threshold The density threshold to consider
+    /// @param above If true, the function returns the mean flow of the streets with a density above the threshold, otherwise below
     /// @return Measurement<double> The mean flow of the streets and the standard deviation
-    Measurement<double> meanFlow(Size nStreets) const;
+    Measurement<double> streetMeanFlow(double threshold, bool above) const;
     /// @brief Get the mean travel time of the agents
     /// @return Measurement<double> The mean travel time of the agents and the standard
     Measurement<double> meanTravelTime() const;
@@ -731,7 +726,7 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
-  Measurement<double> Dynamics<Id, Size, Delay>::meanDensity() const {
+  Measurement<double> Dynamics<Id, Size, Delay>::streetMeanDensity() const {
     if (m_graph->streetSet().size() == 0) {
       return Measurement(0., 0.);
     }
@@ -755,7 +750,7 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
-  Measurement<double> Dynamics<Id, Size, Delay>::meanFlow() const {
+  Measurement<double> Dynamics<Id, Size, Delay>::streetMeanFlow() const {
     std::vector<double> flows;
     flows.reserve(m_graph->streetSet().size());
     for (const auto& [streetId, street] : m_graph->streetSet()) {
@@ -765,6 +760,33 @@ namespace dsm {
         flows.push_back(flow);
       } else {
         flows.push_back(street->density()); // 0 * NaN = 0
+      }
+    }
+    return Measurement(flows);
+  }
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>)
+  Measurement<double> Dynamics<Id, Size, Delay>::streetMeanFlow(double threshold, bool above) const {
+    std::vector<double> flows;
+    flows.reserve(m_graph->streetSet().size());
+    for (const auto& [streetId, street] : m_graph->streetSet()) {
+      if (above && street->density() > threshold) {
+        auto speedOpt{this->streetMeanSpeed(streetId)};
+        if (speedOpt.has_value()) {
+          double flow{street->density() * speedOpt.value()};
+          flows.push_back(flow);
+        } else {
+          flows.push_back(street->density()); // 0 * NaN = 0
+        }
+      } else if (!above && street->density() < threshold) {
+        auto speedOpt{this->streetMeanSpeed(streetId)};
+        if (speedOpt.has_value()) {
+          double flow{street->density() * speedOpt.value()};
+          flows.push_back(flow);
+        } else {
+          flows.push_back(street->density()); // 0 * NaN = 0
+        }
       }
     }
     return Measurement(flows);

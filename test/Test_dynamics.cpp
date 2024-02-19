@@ -29,12 +29,12 @@ TEST_CASE("Dynamics") {
     CHECK_EQ(dynamics.meanSpeed().error, 0.);
     // CHECK_EQ(dynamics.meanSpeed(2).first, 0.);
     // CHECK_EQ(dynamics.meanSpeed(2).second, 0.);
-    CHECK_EQ(dynamics.meanDensity().mean, 0.);
-    CHECK_EQ(dynamics.meanDensity().error, 0.);
-    // CHECK_EQ(dynamics.meanDensity(3).first, 0.);
-    // CHECK_EQ(dynamics.meanDensity(3).second, 0.);
-    CHECK_EQ(dynamics.meanFlow().mean, 0.);
-    CHECK_EQ(dynamics.meanFlow().error, 0.);
+    CHECK_EQ(dynamics.streetMeanDensity().mean, 0.);
+    CHECK_EQ(dynamics.streetMeanDensity().error, 0.);
+    // CHECK_EQ(dynamics.streetMeanDensity(3).first, 0.);
+    // CHECK_EQ(dynamics.streetMeanDensity(3).second, 0.);
+    CHECK_EQ(dynamics.streetMeanFlow().mean, 0.);
+    CHECK_EQ(dynamics.streetMeanFlow().error, 0.);
     CHECK_EQ(dynamics.meanTravelTime().mean, 0.);
     CHECK_EQ(dynamics.meanTravelTime().error, 0.);
   }
