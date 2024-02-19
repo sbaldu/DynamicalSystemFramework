@@ -40,6 +40,28 @@ namespace dsm {
     T error;
 
     Measurement(T mean, T error) : mean{mean}, error{error} {}
+    Measurement(const std::vector<T>& data) {
+      if (data.size() == 0) {
+        mean = 0.;
+        error = 0.;
+      } else {
+        const double cmean{std::accumulate(data.cbegin(), data.cend(), 0.) / data.size()};
+        if (data.size() < 2) {
+          mean = cmean;
+          error = 0.;
+        } else {
+          const double cvariance{std::accumulate(data.cbegin(),
+                                      data.cend(),
+                                      0.,
+                                      [cmean](double sum, const auto& value) {
+                                        return sum + std::pow(value - cmean, 2);
+                                      }) /
+                      (data.size() - 1)};
+          mean = cmean;
+          error = std::sqrt(cvariance);
+        }
+      }
+    }
   };
 
   /// @brief The Dynamics class represents the dynamics of the network.
@@ -203,7 +225,7 @@ namespace dsm {
 
     virtual std::optional<double> streetMeanSpeed(Id) const = 0;
     virtual Measurement<double> streetMeanSpeed() const = 0;
-    // virtual Measurement<double> streetMeanSpeed(double, bool) const = 0; // TODO
+    virtual Measurement<double> streetMeanSpeed(double, bool) const = 0;
 
     /// @brief Get the mean speed of the agents
     /// @return Measurement<double> The mean speed of the agents and the standard deviation
@@ -307,11 +329,6 @@ namespace dsm {
         auto iterator = possibleMoves.begin();
         std::advance(iterator, p);
         const auto nextStreetId{iterator->first};
-        // const auto& streetResult{this->m_graph->street(node->id(), iterator->first)};
-        // if (!streetResult.has_value()) {
-        //   continue;
-        // }
-        // auto nextStreet{streetResult.value()};
         auto nextStreet{this->m_graph->streetSet()[nextStreetId]};
 
         if (nextStreet->density() < 1) {
@@ -750,15 +767,7 @@ namespace dsm {
         flows.push_back(street->density()); // 0 * NaN = 0
       }
     }
-    const double mean{std::accumulate(flows.cbegin(), flows.cend(), 0.) / flows.size()};
-    const double variance{std::accumulate(flows.cbegin(),
-                                    flows.cend(),
-                                    0.,
-                                    [mean](double sum, const auto& flow) {
-                                      return sum + std::pow(flow - mean, 2);
-                                    }) /
-                    (flows.size() - 1)};
-    return Measurement(mean, std::sqrt(variance));
+    return Measurement(flows);
   }
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
@@ -801,6 +810,11 @@ namespace dsm {
     /// @brief Get the mean speed of the streets
     /// @return Measurement The mean speed of the agents and the standard deviation
     Measurement<double> streetMeanSpeed() const override;
+    /// @brief Get the mean speed of the streets
+    /// @param threshold The density threshold to consider
+    /// @param above If true, the function returns the mean speed of the streets with a density above the threshold, otherwise below
+    /// @return Measurement The mean speed of the agents and the standard deviation
+    Measurement<double> streetMeanSpeed(double threshold, bool above) const override;
   };
 
   template <typename Id, typename Size, typename Delay>
@@ -844,15 +858,36 @@ namespace dsm {
         speeds.push_back(speedOpt.value());
       }
     }
-    const double mean{std::accumulate(speeds.cbegin(), speeds.cend(), 0.) / speeds.size()};
-    const double variance{std::accumulate(speeds.cbegin(),
-                                    speeds.cend(),
-                                    0.,
-                                    [mean](double sum, const auto& speed) {
-                                      return sum + std::pow(speed - mean, 2);
-                                    }) /
-                    (speeds.size() - 1)};
-    return Measurement(mean, std::sqrt(variance));
+    return Measurement(speeds);
+  }
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>)
+  Measurement<double> FirstOrderDynamics<Id, Size, Delay>::streetMeanSpeed(double threshold,
+                                                                          bool above) const {
+    if (this->m_agents.size() == 0) {
+      return Measurement(0., 0.);
+    }
+    std::vector<double> speeds;
+    speeds.reserve(this->m_graph->streetSet().size());
+    for (const auto& [streetId, street] : this->m_graph->streetSet()) {
+      if (above) {
+        if (street->density() > threshold) {
+          auto speedOpt{this->streetMeanSpeed(streetId)};
+          if (speedOpt.has_value()) {
+            speeds.push_back(speedOpt.value());
+          }
+        }
+      } else {
+        if (street->density() < threshold) {
+          auto speedOpt{this->streetMeanSpeed(streetId)};
+          if (speedOpt.has_value()) {
+            speeds.push_back(speedOpt.value());
+          }
+        }
+      }
+    }
+    return Measurement(speeds);
   }
 
   template <typename Id, typename Size>

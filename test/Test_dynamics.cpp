@@ -392,5 +392,10 @@ TEST_CASE("Dynamics") {
     CHECK(dynamics.streetMeanSpeed(1).has_value());
     CHECK_EQ(dynamics.streetMeanSpeed(1).value(), meanSpeed);
     CHECK_EQ(dynamics.streetMeanSpeed().mean, dynamics.meanSpeed().mean);
+    CHECK_EQ(dynamics.streetMeanSpeed().error, 0.);
+    CHECK_EQ(dynamics.streetMeanSpeed(0.2, true).mean, meanSpeed);
+    CHECK_EQ(dynamics.streetMeanSpeed(0.2, true).error, 0.);
+    CHECK_EQ(dynamics.streetMeanSpeed(0.2, false).mean, 0.);
+    CHECK_EQ(dynamics.streetMeanSpeed(0.2, false).error, 0.);
   }
 }
