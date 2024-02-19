@@ -393,6 +393,7 @@ TEST_CASE("Dynamics") {
     CHECK_EQ(dynamics.streetMeanSpeed(1).value(), meanSpeed);
     CHECK_EQ(dynamics.streetMeanSpeed().mean, dynamics.meanSpeed().mean);
     CHECK_EQ(dynamics.streetMeanSpeed().error, 0.);
+    // street 1 density should be 0.4 so...
     CHECK_EQ(dynamics.streetMeanSpeed(0.2, true).mean, meanSpeed);
     CHECK_EQ(dynamics.streetMeanSpeed(0.2, true).error, 0.);
     CHECK_EQ(dynamics.streetMeanSpeed(0.2, false).mean, 0.);
