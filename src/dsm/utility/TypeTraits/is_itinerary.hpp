@@ -7,7 +7,7 @@
 
 namespace dsm {
   template <typename Id>
-    requires std::unsigned_integral<Id>
+    requires(std::unsigned_integral<Id>)
   class Itinerary;
 
   // Alias for shared pointers
@@ -27,6 +27,6 @@ namespace dsm {
   template <typename T>
   inline constexpr bool is_itinerary_v = is_itinerary<T>::value;
 
-};  // namespace dmf
+};  // namespace dsm
 
 #endif
