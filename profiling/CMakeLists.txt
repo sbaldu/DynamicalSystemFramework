@@ -16,4 +16,4 @@ set(EXECUTABLE_OUTPUT_PATH ../)
 # Define the executable
 add_executable(dsm_prof.out main.cpp)
 target_include_directories(dsm_prof.out PRIVATE ../src/)
-add_executable(massif_parser.out massif_parser.cpp)
+add_executable(parse_massif.out parse_massif.cpp)
