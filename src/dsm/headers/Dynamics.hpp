@@ -737,16 +737,20 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
   Measurement<double> Dynamics<Id, Size, Delay>::meanFlow() const {
-    auto meanSpeed{this->meanSpeed()};
-    auto meanDensity{this->meanDensity()};
-
-    double mean{meanSpeed.mean * meanDensity.mean};
-    if (mean == 0.) {
-      return Measurement(0., 0.);
+    std::vector<double> flows;
+    flows.reserve(m_graph->streetSet().size());
+    for (const auto [streetId, street] : m_graph->streetSet()) {
+      double flow{street->density() * this->streetMeanSpeed(streetId)};
+      flows.push_back(flow);
     }
-    double variance{(meanSpeed.mean * std::pow(meanDensity.error, 2) +
-                     std::pow(meanSpeed.error, 2) * meanDensity.mean) /
-                    mean};
+    double mean{std::accumulate(flows.cbegin(), flows.cend(), 0.) / flows.size()};
+    double variance{std::accumulate(flows.cbegin(),
+                                    flows.cend(),
+                                    0.,
+                                    [mean](double sum, const auto& flow) {
+                                      return sum + std::pow(flow - mean, 2);
+                                    }) /
+                    (flows.size() - 1)};
     return Measurement(mean, std::sqrt(variance));
   }
   template <typename Id, typename Size, typename Delay>
