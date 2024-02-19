@@ -360,4 +360,35 @@ TEST_CASE("Dynamics") {
     }
     CHECK_EQ(dynamics.agents().at(0)->distance(), 60.);
   }
+  SUBCASE("streetMeanSpeed") {
+    /// GIVEN: a dynamics object
+    /// WHEN: we evolve the dynamics
+    /// THEN: the agent mean speed is the same as the street mean speed
+    Street s1{0, 10, 100., 20., std::make_pair(0, 1)};
+    Street s2{1, 10, 30., 15., std::make_pair(1, 2)};
+    Street s3{2, 10, 30., 15., std::make_pair(3, 1)};
+    Street s4{3, 10, 30., 15., std::make_pair(1, 4)};
+    Graph graph2;
+    graph2.addStreets(s1, s2, s3, s4);
+    graph2.buildAdj();
+    for (auto& [nodeId, node] : graph2.nodeSet()) {
+      node->setCapacity(4);
+    }
+    Dynamics dynamics{graph2};
+    dynamics.setMinSpeedRateo(0.5);
+    dynamics.setSeed(69);
+    Itinerary itinerary{0, 0, 2};
+    dynamics.addItinerary(itinerary);
+    dynamics.updatePaths();
+    dynamics.addAgents(0, 4);
+    dynamics.evolve(false);
+    dynamics.evolve(false);
+    // std::cout << dynamics.graph().streetSet().at(1)->queue().size() << '\n';
+    double meanSpeed{0.};
+    for (const auto& [agentId, agent] : dynamics.agents()) {
+      meanSpeed += agent->speed();
+    }
+    meanSpeed /= dynamics.agents().size();
+    CHECK_EQ(dynamics.streetMeanSpeed(1), meanSpeed);
+  }
 }
