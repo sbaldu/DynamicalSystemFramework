@@ -198,6 +198,7 @@ namespace dsm {
     const auto oldStreetSet{m_streets};
     m_streets.clear();
     const auto n{static_cast<Size>(m_nodes.size())};
+    std::unordered_map<Id, Id> newStreetIds;
     for (const auto& [streetId, street] : oldStreetSet) {
       const auto srcId{street->nodePair().first};
       const auto dstId{street->nodePair().second};
@@ -207,6 +208,18 @@ namespace dsm {
       }
       auto newStreet = Street(newStreetId, *street);
       m_streets.emplace(newStreetId, make_shared<Street<Id, Size>>(newStreet));
+      newStreetIds.emplace(streetId, newStreetId);
+    }
+    for (auto [nodeId, node] : m_nodes) {
+      // This is probably not the best way to do this
+      if (std::dynamic_pointer_cast<TrafficLight<Id, Size, uint32_t>>(node)) {
+        const auto& oldStreetPriorities{node->streetPriorities()};
+        std::set<Id> newStreetPriorities;
+        for (const auto streetId : oldStreetPriorities) {
+          newStreetPriorities.emplace(newStreetIds[streetId]);
+        }
+        node->setStreetPriorities(newStreetPriorities);
+      }
     }
   }
 
