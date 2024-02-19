@@ -236,7 +236,7 @@ namespace dsm {
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             is_numeric_v<Delay>)
+                 is_numeric_v<Delay>)
   Dynamics<Id, Size, Delay>::Dynamics(const Graph<Id, Size>& graph)
       : m_time{0},
         m_graph{std::make_unique<Graph<Id, Size>>(graph)},
@@ -271,7 +271,7 @@ namespace dsm {
       if (street->queue().empty()) {
         continue;
       }
-      const Size agentId{street->queue().front()};
+      const auto agentId{street->queue().front()};
       if (this->m_agents[agentId]->delay() > 0) {
         continue;
       }
@@ -346,11 +346,9 @@ namespace dsm {
       if (agent->time() > 0) {
         if (agent->delay() > 0) {
           if (agent->delay() > 1) {
-            agent->incrementDistance();
+          agent->incrementDistance();
           } else if (agent->streetId().has_value()) {
-            double distance{
-                std::fmod(this->m_graph->streetSet()[agent->streetId().value()]->length(),
-                          agent->speed())};
+            double distance{std::fmod(this->m_graph->streetSet()[agent->streetId().value()]->length(), agent->speed())};
             if (distance < std::numeric_limits<double>::epsilon()) {
               agent->incrementDistance();
             } else {
@@ -361,7 +359,8 @@ namespace dsm {
         }
       } else if (!agent->streetId().has_value()) {
         auto srcNode{
-            this->m_graph->nodeSet()[this->m_itineraries[agent->itineraryId()]->source()]};
+            this->m_graph
+                ->nodeSet()[this->m_itineraries[agent->itineraryId()]->source()]};
         if (srcNode->isFull()) {
           continue;
         }
@@ -521,8 +520,8 @@ namespace dsm {
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::addAgent(const Agent<Id, Size, Delay>& agent) {
     if (this->m_agents.contains(agent.id())) {
-      throw std::invalid_argument(
-          buildLog("Agent " + std::to_string(agent.id()) + " already exists."));
+      throw std::invalid_argument(buildLog("Agent " + std::to_string(agent.id()) +
+                           " already exists."));
     }
     this->m_agents.emplace(agent.id(), std::make_unique<Agent<Id, Size, Delay>>(agent));
   }
@@ -531,8 +530,8 @@ namespace dsm {
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::addAgent(std::unique_ptr<Agent<Id, Size, Delay>> agent) {
     if (this->m_agents.contains(agent->id())) {
-      throw std::invalid_argument(
-          buildLog("Agent " + std::to_string(agent->id()) + " already exists."));
+      throw std::invalid_argument(buildLog("Agent " + std::to_string(agent->id()) +
+                           " already exists."));
     }
     this->m_agents.emplace(agent->id(), std::move(agent));
   }
@@ -585,8 +584,7 @@ namespace dsm {
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::addRandomAgents(Size nAgents, bool uniformly) {
     if (this->m_itineraries.empty()) {
-      throw std::runtime_error(
-          buildLog("It is not possible to add random agents without itineraries."));
+      throw std::runtime_error(buildLog("It is not possible to add random agents without itineraries."));
     }
     std::uniform_int_distribution<Size> itineraryDist{
         0, static_cast<Size>(this->m_itineraries.size() - 1)};
@@ -629,8 +627,8 @@ namespace dsm {
   void Dynamics<Id, Size, Delay>::removeAgent(Size agentId) {
     auto agentIt{m_agents.find(agentId)};
     if (agentIt == m_agents.end()) {
-      throw std::invalid_argument(
-          buildLog("Agent " + std::to_string(agentId) + " not found."));
+      throw std::invalid_argument(buildLog("Agent " + std::to_string(agentId) +
+                           " not found."));
     }
     m_agents.erase(agentId);
   }
@@ -792,7 +790,7 @@ namespace dsm {
     /// @brief Set the speed of an agent
     /// @param agentId The id of the agent
     /// @throw std::invalid_argument, If the agent is not found
-    void setAgentSpeed(Size agentId) override;
+    void setAgentSpeed(Size agentId);
   };
 
   template <typename Id, typename Size, typename Delay>
