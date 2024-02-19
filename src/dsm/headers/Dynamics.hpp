@@ -245,7 +245,7 @@ namespace dsm {
       if (street->queue().empty()) {
         continue;
       }
-      Id agentId{street->queue().front()};
+      Size agentId{street->queue().front()};
       if (this->m_agents[agentId]->delay() > 0) {
         continue;
       }
@@ -273,7 +273,7 @@ namespace dsm {
     for (auto& nodePair : this->m_graph->nodeSet()) {
       auto node{nodePair.second};
       for (const auto agent : node->agents()) {
-        Id agentId{agent.second};
+        Size agentId{agent.second};
         if (node->id() ==
             this->m_itineraries[this->m_agents[agentId]->itineraryId()]->destination()) {
           node->removeAgent(agentId);
@@ -531,7 +531,7 @@ namespace dsm {
       throw std::invalid_argument(
           buildLog("Itinerary " + std::to_string(itineraryId) + " not found"));
     }
-    Id agentId{0};
+    Size agentId{0};
     if (!this->m_agents.empty()) {
       agentId = this->m_agents.rbegin()->first + 1;
     }
@@ -580,7 +580,7 @@ namespace dsm {
         0, static_cast<Size>(this->m_graph->streetSet().size() - 1)};
     for (Size i{0}; i < nAgents; ++i) {
       Size itineraryId{itineraryDist(this->m_generator)};
-      Id agentId{0};
+      Size agentId{0};
       if (!this->m_agents.empty()) {
         agentId = this->m_agents.rbegin()->first + 1;
       }
@@ -778,7 +778,7 @@ namespace dsm {
     /// @brief Set the speed of an agent
     /// @param agentId The id of the agent
     /// @throw std::invalid_argument, If the agent is not found
-    void setAgentSpeed(Id agentId) override;
+    void setAgentSpeed(Size agentId) override;
   };
 
   template <typename Id, typename Size, typename Delay>
@@ -790,7 +790,7 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
-  void FirstOrderDynamics<Id, Size, Delay>::setAgentSpeed(Id agentId) {
+  void FirstOrderDynamics<Id, Size, Delay>::setAgentSpeed(Size agentId) {
     auto street{this->m_graph->streetSet()[this->m_agents[agentId]->streetId().value()]};
     double speed{street->maxSpeed() * (1. - this->m_minSpeedRateo * street->density())};
     this->m_agents[agentId]->setSpeed(speed);
@@ -800,13 +800,13 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   class SecondOrderDynamics : public Dynamics<Id, Size, double> {
   public:
-    void setAgentSpeed(Id agentId);
+    void setAgentSpeed(Size agentId);
     void setSpeed();
   };
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void SecondOrderDynamics<Id, Size>::setAgentSpeed(Id agentId) {}
+  void SecondOrderDynamics<Id, Size>::setAgentSpeed(Size agentId) {}
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
