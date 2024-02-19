@@ -482,16 +482,16 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
-  const std::unordered_map<Id, std::unique_ptr<Itinerary<Id>>>& Dynamics<Id, Size, Delay>::
-      itineraries() const {
+  const std::unordered_map<Id, std::unique_ptr<Itinerary<Id>>>&
+  Dynamics<Id, Size, Delay>::itineraries() const {
     return m_itineraries;
   }
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
-  const std::map<Id, std::unique_ptr<Agent<Id, Size, Delay>>>& Dynamics<Id, Size, Delay>::
-      agents() const {
+  const std::map<Id, std::unique_ptr<Agent<Id, Size, Delay>>>&
+  Dynamics<Id, Size, Delay>::agents() const {
     return this->m_agents;
   }
 

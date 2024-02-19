@@ -313,7 +313,10 @@ namespace dsm {
   template <typename Index, typename T>
     requires(std::unsigned_integral<Index>)
   SparseMatrix<Index, T>::SparseMatrix(Index index)
-      : _matrix{std::unordered_map<Index, T>()}, _rows{index}, _cols{1}, _defaultReturn{0} {}
+      : _matrix{std::unordered_map<Index, T>()},
+        _rows{index},
+        _cols{1},
+        _defaultReturn{0} {}
 
   template <typename Index, typename T>
     requires(std::unsigned_integral<Index>)
@@ -463,8 +466,8 @@ namespace dsm {
   }
 
   template <typename Index, typename T>
-    requires(std::unsigned_integral<Index>) bool
-  SparseMatrix<Index, T>::contains(Index i, Index j) const {
+    requires(std::unsigned_integral<Index>)
+  bool SparseMatrix<Index, T>::contains(Index i, Index j) const {
     if (i >= _rows || j >= _cols) {
       throw std::out_of_range(buildLog("Index out of range"));
     }
@@ -472,8 +475,8 @@ namespace dsm {
   }
 
   template <typename Index, typename T>
-    requires(std::unsigned_integral<Index>) bool
-  SparseMatrix<Index, T>::contains(Index const index) const {
+    requires(std::unsigned_integral<Index>)
+  bool SparseMatrix<Index, T>::contains(Index const index) const {
     if (index > _rows * _cols - 1) {
       throw std::out_of_range(buildLog("Index out of range"));
     }
@@ -663,15 +666,15 @@ namespace dsm {
 
   template <typename Index, typename T>
     requires(std::unsigned_integral<Index>)
-  typename std::unordered_map<Index, T>::const_iterator
-      SparseMatrix<Index, T>::begin() const {
+  typename std::unordered_map<Index, T>::const_iterator SparseMatrix<Index, T>::begin()
+      const {
     return _matrix.begin();
   }
 
   template <typename Index, typename T>
     requires(std::unsigned_integral<Index>)
-  typename std::unordered_map<Index, T>::const_iterator
-      SparseMatrix<Index, T>::end() const {
+  typename std::unordered_map<Index, T>::const_iterator SparseMatrix<Index, T>::end()
+      const {
     return _matrix.end();
   }
 
