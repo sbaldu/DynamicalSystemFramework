@@ -8,12 +8,16 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Set the C++ flags
-string(APPEND CMAKE_CXX_FLAGS "-Wall -Wextra -O3 -g -pg")
+string(APPEND CMAKE_CXX_FLAGS "-Wall -Wextra -O3 -g")
 
 # Set the folder for the executable
 set(EXECUTABLE_OUTPUT_PATH ../)
 
 # Define the executable
-add_executable(dsm_prof.out main.cpp)
-target_include_directories(dsm_prof.out PRIVATE ../src/)
+add_executable(prof.out main.cpp)
+target_include_directories(prof.out PRIVATE ../src/)
+target_compile_options(prof.out PRIVATE -pg)
+target_link_options(prof.out PRIVATE -pg)
+add_executable(mem.out main.cpp)
+target_include_directories(mem.out PRIVATE ../src/)
 add_executable(parse_massif.out parse_massif.cpp)
