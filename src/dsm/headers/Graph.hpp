@@ -103,8 +103,8 @@ namespace dsm {
     void addNodes(Tn&&... nodes);
 
     template <typename T1, typename... Tn>
-      requires is_node_v<std::remove_reference_t<T1>> &&
-               (is_node_v<std::remove_reference_t<Tn>> && ...)
+      requires(is_node_v<std::remove_reference_t<T1>> &&
+               (is_node_v<std::remove_reference_t<Tn>> && ...))
     void addNodes(T1&& node, Tn&&... nodes);
 
     /// @brief Add a street to the graph
@@ -115,12 +115,12 @@ namespace dsm {
     void addStreet(const Street<Id, Size>& street);
 
     template <typename T1>
-      requires is_street_v<std::remove_reference_t<T1>>
+      requires(is_street_v<std::remove_reference_t<T1>>)
     void addStreets(T1&& street);
 
     template <typename T1, typename... Tn>
-      requires is_street_v<std::remove_reference_t<T1>> &&
-               (is_street_v<std::remove_reference_t<Tn>> && ...)
+      requires(is_street_v<std::remove_reference_t<T1>> &&
+               (is_street_v<std::remove_reference_t<Tn>> && ...))
     void addStreets(T1&& street, Tn&&... streets);
 
     /// @brief Get the graph's adjacency matrix
@@ -439,8 +439,8 @@ namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   template <typename T1, typename... Tn>
-    requires is_node_v<std::remove_reference_t<T1>> &&
-             (is_node_v<std::remove_reference_t<Tn>> && ...)
+    requires(is_node_v<std::remove_reference_t<T1>> &&
+             (is_node_v<std::remove_reference_t<Tn>> && ...))
   void Graph<Id, Size>::addNodes(T1&& node, Tn&&... nodes) {
     addNode(std::forward<T1>(node));
     addNodes(std::forward<Tn>(nodes)...);
@@ -487,7 +487,7 @@ namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   template <typename T1>
-    requires is_street_v<std::remove_reference_t<T1>>
+    requires(is_street_v<std::remove_reference_t<T1>>)
   void Graph<Id, Size>::addStreets(T1&& street) {
     if (m_streets.contains(street.id())) {
       throw std::invalid_argument(buildLog("Street with same id already exists."));
@@ -508,8 +508,8 @@ namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   template <typename T1, typename... Tn>
-    requires is_street_v<std::remove_reference_t<T1>> &&
-             (is_street_v<std::remove_reference_t<Tn>> && ...)
+    requires(is_street_v<std::remove_reference_t<T1>> &&
+             (is_street_v<std::remove_reference_t<Tn>> && ...))
   void Graph<Id, Size>::addStreets(T1&& street, Tn&&... streets) {
     addStreet(std::forward<T1>(street));
     addStreets(std::forward<Tn>(streets)...);

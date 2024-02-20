@@ -229,7 +229,7 @@ namespace dsm {
     /// @return the sum of the two matrices
     /// @throw std::runtime_error if the dimensions do not match
     template <typename I, typename U>
-      requires std::unsigned_integral<I>
+      requires(std::unsigned_integral<I>)
     SparseMatrix<Index, T> operator+(const SparseMatrix<I, U>& other) {
       if (this->_rows != other._rows || this->_cols != other._cols) {
         throw std::runtime_error(buildLog("Dimensions do not match"));
@@ -255,7 +255,7 @@ namespace dsm {
     /// @return the difference of the two matrices
     /// @throw std::runtime_error if the dimensions do not match
     template <typename I, typename U>
-      requires std::unsigned_integral<I>
+      requires(std::unsigned_integral<I>)
     SparseMatrix<Index, T> operator-(const SparseMatrix<I, U>& other) {
       if (this->_rows != other._rows || this->_cols != other._cols) {
         throw std::runtime_error(buildLog("Dimensions do not match"));
@@ -285,7 +285,7 @@ namespace dsm {
     /// @return the sum of the two matrices
     /// @throw std::runtime_error if the dimensions do not match
     template <typename I, typename U>
-      requires std::unsigned_integral<I>
+      requires(std::unsigned_integral<I>)
     SparseMatrix& operator+=(const SparseMatrix<I, U>& other);
 
     /// @brief difference of two matrices
@@ -293,7 +293,7 @@ namespace dsm {
     /// @return the difference of the two matrices
     /// @throw std::runtime_error if the dimensions do not match
     template <typename I, typename U>
-      requires std::unsigned_integral<I>
+      requires(std::unsigned_integral<I>)
     SparseMatrix& operator-=(const SparseMatrix<I, U>& other);
   };
 
@@ -313,10 +313,7 @@ namespace dsm {
   template <typename Index, typename T>
     requires(std::unsigned_integral<Index>)
   SparseMatrix<Index, T>::SparseMatrix(Index index)
-      : _matrix{std::unordered_map<Index, T>()},
-        _rows{index},
-        _cols{1},
-        _defaultReturn{0} {}
+      : _matrix{std::unordered_map<Index, T>()}, _rows{index}, _cols{1}, _defaultReturn{0} {}
 
   template <typename Index, typename T>
     requires(std::unsigned_integral<Index>)
@@ -466,8 +463,8 @@ namespace dsm {
   }
 
   template <typename Index, typename T>
-    requires(std::unsigned_integral<Index>)
-  bool SparseMatrix<Index, T>::contains(Index i, Index j) const {
+    requires(std::unsigned_integral<Index>) bool
+  SparseMatrix<Index, T>::contains(Index i, Index j) const {
     if (i >= _rows || j >= _cols) {
       throw std::out_of_range(buildLog("Index out of range"));
     }
@@ -475,8 +472,8 @@ namespace dsm {
   }
 
   template <typename Index, typename T>
-    requires(std::unsigned_integral<Index>)
-  bool SparseMatrix<Index, T>::contains(Index const index) const {
+    requires(std::unsigned_integral<Index>) bool
+  SparseMatrix<Index, T>::contains(Index const index) const {
     if (index > _rows * _cols - 1) {
       throw std::out_of_range(buildLog("Index out of range"));
     }
@@ -666,15 +663,15 @@ namespace dsm {
 
   template <typename Index, typename T>
     requires(std::unsigned_integral<Index>)
-  typename std::unordered_map<Index, T>::const_iterator SparseMatrix<Index, T>::begin()
-      const {
+  typename std::unordered_map<Index, T>::const_iterator
+      SparseMatrix<Index, T>::begin() const {
     return _matrix.begin();
   }
 
   template <typename Index, typename T>
     requires(std::unsigned_integral<Index>)
-  typename std::unordered_map<Index, T>::const_iterator SparseMatrix<Index, T>::end()
-      const {
+  typename std::unordered_map<Index, T>::const_iterator
+      SparseMatrix<Index, T>::end() const {
     return _matrix.end();
   }
 
@@ -731,7 +728,7 @@ namespace dsm {
   template <typename Index, typename T>
     requires(std::unsigned_integral<Index>)
   template <typename I, typename U>
-    requires std::unsigned_integral<I>
+    requires(std::unsigned_integral<I>)
   SparseMatrix<Index, T>& SparseMatrix<Index, T>::operator+=(
       const SparseMatrix<I, U>& other) {
     if (this->_rows != other._rows || this->_cols != other._cols) {
@@ -748,7 +745,7 @@ namespace dsm {
   template <typename Index, typename T>
     requires(std::unsigned_integral<Index>)
   template <typename I, typename U>
-    requires std::unsigned_integral<I>
+    requires(std::unsigned_integral<I>)
   SparseMatrix<Index, T>& SparseMatrix<Index, T>::operator-=(
       const SparseMatrix<I, U>& other) {
     if (this->_rows != other._rows || this->_cols != other._cols) {
