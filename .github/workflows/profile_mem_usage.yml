@@ -16,8 +16,8 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Install valgrind
-      run: sudo apt install -y valgrind
+    # - name: Install valgrind
+      # run: sudo apt install -y valgrind
 
     - name: Build test simulation
       working-directory: ${{github.workspace}}/profiling
@@ -26,7 +26,7 @@ jobs:
     - name: Generate the massif file and print report
       working-directory: ${{github.workspace}}/profiling
       run: |
-        valgring --tool=massif ./dsm_prof.out
+        valgrind --tool=massif ./dsm_prof.out
         ms_print ./massif.out.*
 
     - name: Get peak and integral of memory usage graph
