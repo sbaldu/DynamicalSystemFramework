@@ -16,6 +16,9 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: Install valgrind
+      run: sudo apt install -y valgrind
+
     - name: Build test simulation
       working-directory: ${{github.workspace}}/profiling
       run: cmake -B build && make -C build
