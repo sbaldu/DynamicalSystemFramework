@@ -21,7 +21,7 @@ int main() {
   for (auto& streetPair : graph.streetSet()) {
     auto street = streetPair.second;
     street->setCapacity(100);
-    street->setMaxSpeed(50.);
+    street->setMaxSpeed(10.);
   }
   for (auto& nodePair : graph.nodeSet()) {
     auto node = nodePair.second;
