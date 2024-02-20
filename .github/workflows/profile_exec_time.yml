@@ -24,4 +24,4 @@ jobs:
       working-directory: ${{github.workspace}}/profiling
       run: |
         ./dsm_prof.out
-        gprof -b ./dsm_prof.out
+        gprof -b ./prof.out

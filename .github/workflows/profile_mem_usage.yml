@@ -26,7 +26,7 @@ jobs:
     - name: Generate the massif file and print report
       working-directory: ${{github.workspace}}/profiling
       run: |
-        valgrind --tool=massif ./dsm_prof.out
+        valgrind --tool=massif ./mem.out
         ms_print ./massif.out.*
 
     - name: Get peak and integral of memory usage graph
