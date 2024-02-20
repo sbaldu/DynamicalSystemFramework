@@ -23,5 +23,5 @@ jobs:
     - name: Generate the gprof file and re-run
       working-directory: ${{github.workspace}}/profiling
       run: |
-        ./dsm_prof.out
+        ./prof.out
         gprof -b ./prof.out
