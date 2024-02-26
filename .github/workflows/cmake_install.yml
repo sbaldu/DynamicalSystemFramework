@@ -24,7 +24,7 @@ jobs:
         sudo cmake --install .
 
     - name: Test include
-      working-directory: /app
+      working-directory: /home
       run: |
         touch test.cpp
         echo "#include <dsm/dsm.hpp>" >> test.cpp
