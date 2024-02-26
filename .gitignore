@@ -12,6 +12,10 @@
 
 # valgrind generated files
 *vgcore.*
+*massif.*
+
+# profiling log files
+*.log
 
 # cache files
 *cache
