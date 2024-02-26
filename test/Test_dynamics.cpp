@@ -29,12 +29,12 @@ TEST_CASE("Dynamics") {
     CHECK_EQ(dynamics.meanSpeed().error, 0.);
     // CHECK_EQ(dynamics.meanSpeed(2).first, 0.);
     // CHECK_EQ(dynamics.meanSpeed(2).second, 0.);
-    CHECK_EQ(dynamics.meanDensity().mean, 0.);
-    CHECK_EQ(dynamics.meanDensity().error, 0.);
-    // CHECK_EQ(dynamics.meanDensity(3).first, 0.);
-    // CHECK_EQ(dynamics.meanDensity(3).second, 0.);
-    CHECK_EQ(dynamics.meanFlow().mean, 0.);
-    CHECK_EQ(dynamics.meanFlow().error, 0.);
+    CHECK_EQ(dynamics.streetMeanDensity().mean, 0.);
+    CHECK_EQ(dynamics.streetMeanDensity().error, 0.);
+    // CHECK_EQ(dynamics.streetMeanDensity(3).first, 0.);
+    // CHECK_EQ(dynamics.streetMeanDensity(3).second, 0.);
+    CHECK_EQ(dynamics.streetMeanFlow().mean, 0.);
+    CHECK_EQ(dynamics.streetMeanFlow().error, 0.);
     CHECK_EQ(dynamics.meanTravelTime().mean, 0.);
     CHECK_EQ(dynamics.meanTravelTime().error, 0.);
   }
@@ -359,5 +359,56 @@ TEST_CASE("Dynamics") {
       }
     }
     CHECK_EQ(dynamics.agents().at(0)->distance(), 60.);
+  }
+  SUBCASE("streetMeanSpeed") {
+    /// GIVEN: a dynamics object
+    /// WHEN: we evolve the dynamics
+    /// THEN: the agent mean speed is the same as the street mean speed
+    Street s1{0, 10, 20., 20., std::make_pair(0, 1)};
+    Street s2{1, 10, 30., 15., std::make_pair(1, 2)};
+    Street s3{2, 10, 30., 15., std::make_pair(3, 1)};
+    Street s4{3, 10, 30., 15., std::make_pair(1, 4)};
+    Graph graph2;
+    graph2.addStreets(s1, s2, s3, s4);
+    graph2.buildAdj();
+    for (auto& [nodeId, node] : graph2.nodeSet()) {
+      node->setCapacity(4);
+    }
+    Dynamics dynamics{graph2};
+    dynamics.setMinSpeedRateo(0.5);
+    dynamics.setSeed(69);
+    Itinerary itinerary{0, 0, 2};
+    dynamics.addItinerary(itinerary);
+    dynamics.updatePaths();
+    dynamics.addAgents(0, 4);
+    dynamics.evolve(false);
+    dynamics.evolve(false);
+    double meanSpeed{0.};
+    for (const auto& [agentId, agent] : dynamics.agents()) {
+      meanSpeed += agent->speed();
+    }
+    meanSpeed /= dynamics.graph().streetSet().at(1)->queue().size();
+    CHECK(dynamics.streetMeanSpeed(1).has_value());
+    CHECK_EQ(dynamics.streetMeanSpeed(1).value(), meanSpeed);
+    CHECK_EQ(dynamics.streetMeanSpeed().mean, dynamics.meanSpeed().mean);
+    CHECK_EQ(dynamics.streetMeanSpeed().error, 0.);
+    // street 1 density should be 0.4 so...
+    CHECK_EQ(dynamics.streetMeanSpeed(0.2, true).mean, meanSpeed);
+    CHECK_EQ(dynamics.streetMeanSpeed(0.2, true).error, 0.);
+    CHECK_EQ(dynamics.streetMeanSpeed(0.2, false).mean, 0.);
+    CHECK_EQ(dynamics.streetMeanSpeed(0.2, false).error, 0.);
+    dynamics.addAgents(0, 10);
+    dynamics.evolve(false);
+    meanSpeed = 0.;
+    for (const auto& [agentId, agent] : dynamics.agents()) {
+      if(!agent->streetId().has_value()) continue;
+      if (agent->streetId().value() == 1) {
+        meanSpeed += agent->speed();
+      }
+    }
+    meanSpeed /= dynamics.graph().streetSet().at(1)->queue().size();
+    CHECK_EQ(dynamics.graph().streetSet().at(1)->queue().size(), 3);
+    CHECK(dynamics.streetMeanSpeed(1).has_value());
+    CHECK_EQ(dynamics.streetMeanSpeed(1).value(), meanSpeed);
   }
 }
