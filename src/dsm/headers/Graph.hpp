@@ -92,8 +92,10 @@ namespace dsm {
     void importOSMEdges(const std::string& fileName);
 
     /// @brief Export the graph's adjacency matrix to a file
+    /// @param path The path to the file to export the adjacency matrix to.
     /// @param isAdj A boolean value indicating if the file contains the adjacency matrix or the distance matrix.
-    void exportMatrix(bool isAdj = true);
+    /// @throws std::invalid_argument if the file is not found or invalid
+    void exportMatrix(std::string path = "./matrix.dsm", bool isAdj = true);
 
     /// @brief Add a node to the graph
     /// @param node A std::shared_ptr to the node to add
@@ -265,10 +267,10 @@ namespace dsm {
       }
       Size n{rows};
       m_adjacency = make_shared<SparseMatrix<Id, bool>>(n, n);
-      // each line has 3 elements
+      // each line has 2 elements
       while (!file.eof()) {
         Id index;
-        bool val;
+        double val;
         file >> index >> val;
         m_adjacency->insert(index, val);
         const auto srcId{static_cast<Id>(index / n)};
@@ -424,11 +426,10 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Graph<Id, Size>::exportMatrix(bool isAdj) {
-    std::string fileName{"graph_matrix.dsm"};
-    std::ofstream file{fileName};
+  void Graph<Id, Size>::exportMatrix(std::string path, bool isAdj) {
+    std::ofstream file{path};
     if (!file.is_open()) {
-      throw std::invalid_argument(buildLog("Cannot open file: " + fileName));
+      throw std::invalid_argument(buildLog("Cannot open file: " + path));
     }
     if (isAdj) {
       file << m_adjacency->getRowDim() << " " << m_adjacency->getColDim() << '\n';
