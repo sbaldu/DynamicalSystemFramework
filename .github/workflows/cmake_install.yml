@@ -22,3 +22,11 @@ jobs:
         mkdir -p build && cd build
         cmake ..
         sudo cmake --install .
+
+    - name: Test include
+      working-director: ${{/home/}}
+      run: |
+        touch test.cpp
+        echo "#include <dsm/dsm.hpp>" >> test.cpp
+        echo "int main() {}" >> test.cpp
+        g++ test.cpp -std=c++20
