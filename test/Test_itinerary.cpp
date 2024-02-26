@@ -4,67 +4,52 @@
 
 #include "doctest.h"
 
-using Itinerary = dsm::Itinerary<uint16_t>;
+using Itinerary = dsm::Itinerary<uint8_t>;
 
 TEST_CASE("Itinerary") {
-  SUBCASE("Constructor_1") {
-    /*This tests the constructor that takes two Ids.
-    GIVEN: Two Ids
-    WHEN: An Itinerary is constructed
-    THEN: The source and destination are set correctly
-    */
-    Itinerary itinerary{0, 1, 2};
-    CHECK_EQ(itinerary.id(), 0);
-    CHECK_EQ(itinerary.source(), 1);
-    CHECK_EQ(itinerary.destination(), 2);
+  SUBCASE("Constructors") {
+    GIVEN("An itinerary and its destination ids") {
+      uint8_t itineraryId{0};
+      uint8_t destinationId{2};
+      WHEN("the Itinerary is constructed") {
+        Itinerary itinerary{itineraryId, destinationId};
+        THEN("The source and destination are set correctly") {
+          CHECK_EQ(itinerary.id(), itineraryId);
+          CHECK_EQ(itinerary.destination(), destinationId);
+        }
+      }
+    }
+    GIVEN("An itinerary id, its destination id and a transition matrix") {
+      uint8_t itineraryId{0};
+      uint8_t destinationId{2};
+      dsm::SparseMatrix<uint8_t, bool> path{1, 1};
+      WHEN("the Itinerary is constructed") {
+        Itinerary itinerary{itineraryId, destinationId, path};
+        THEN("The source, destination, and path are set correctly") {
+          CHECK_EQ(itinerary.id(), itineraryId);
+          CHECK_EQ(itinerary.destination(), destinationId);
+          CHECK_EQ(itinerary.path().getRowDim(), 1);
+          CHECK_EQ(itinerary.path().getColDim(), 1);
+        }
+      }
+    }
   }
-  SUBCASE("Constructor_2") {
-    /*This tests the constructor that takes a pair of Ids.
-    GIVEN: A pair of Ids
-    WHEN: An Itinerary is constructed
-    THEN: The source and destination are set correctly
-    */
-    Itinerary itinerary{0, std::pair{1, 2}};
-    CHECK_EQ(itinerary.id(), 0);
-    CHECK_EQ(itinerary.source(), 1);
-    CHECK_EQ(itinerary.destination(), 2);
-  }
-  SUBCASE("Constructor_3") {
-    /*This tests the constructor that takes two Ids and a SparseMatrix.
-    GIVEN: Two Ids and a SparseMatrix
-    WHEN: An Itinerary is constructed
-    THEN: The source, destination, and path are set correctly
-    */
-    Itinerary itinerary{0, 1, 2, dsm::SparseMatrix<uint16_t, bool>{1, 1}};
-    CHECK_EQ(itinerary.id(), 0);
-    CHECK_EQ(itinerary.source(), 1);
-    CHECK_EQ(itinerary.destination(), 2);
-    CHECK(itinerary.path().getRowDim() == 1);
-    CHECK(itinerary.path().getColDim() == 1);
-  }
-  SUBCASE("Constructor_4") {
-    /*This tests the constructor that takes a pair of Ids and a SparseMatrix.
-    GIVEN: A pair of Ids and a SparseMatrix
-    WHEN: An Itinerary is constructed
-    THEN: The source, destination, and path are set correctly
-    */
-    Itinerary itinerary{0, std::pair{1, 2}, dsm::SparseMatrix<uint16_t, bool>{1, 1}};
-    CHECK_EQ(itinerary.id(), 0);
-    CHECK_EQ(itinerary.source(), 1);
-    CHECK_EQ(itinerary.destination(), 2);
-    CHECK(itinerary.path().getRowDim() == 1);
-    CHECK(itinerary.path().getColDim() == 1);
-  }
-  SUBCASE("Copy constructor") {
-    /*This tests the copy constructor.
-    GIVEN: An Itinerary
-    WHEN: An Itinerary is constructed from the first Itinerary
-    THEN: The source and destination are set correctly
-    */
-    Itinerary itinerary{0, 1, 2};
-    Itinerary copy{itinerary};
-    CHECK_EQ(copy.id(), 0);
-    CHECK_EQ(copy.source(), 1);
-    CHECK_EQ(copy.destination(), 2);
+  SUBCASE("Set destination") {
+    GIVEN("An itinerary id, its destination id and a transition matrix") {
+      uint8_t itineraryId{0};
+      uint8_t destinationId{2};
+      dsm::SparseMatrix<uint8_t, bool> path{1, 1};
+      Itinerary itinerary{itineraryId, destinationId, path};
+      WHEN("the destination is set") {
+        uint8_t newDestinationId{3};
+        itinerary.setDestination(newDestinationId);
+        THEN("The destination is set correctly and the path is cleared") {
+          CHECK_EQ(itinerary.destination(), newDestinationId);
+          CHECK_EQ(itinerary.path().getRowDim(), 0);
+          CHECK_EQ(itinerary.path().getColDim(), 0);
+          CHECK_EQ(itinerary.path().size(), 0);
+        }
+      }
+    }
   }
 }
