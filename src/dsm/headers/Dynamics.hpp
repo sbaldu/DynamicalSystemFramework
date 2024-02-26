@@ -45,20 +45,18 @@ namespace dsm {
         mean = 0.;
         error = 0.;
       } else {
-        const double cmean{std::accumulate(data.cbegin(), data.cend(), 0.) / data.size()};
+        mean = std::accumulate(data.cbegin(), data.cend(), 0.) / data.size();
         if (data.size() < 2) {
-          mean = cmean;
           error = 0.;
         } else {
           const double cvariance{std::accumulate(data.cbegin(),
                                                  data.cend(),
                                                  0.,
-                                                 [cmean](double sum, const auto& value) {
+                                                 [this](double sum, const auto& value) {
                                                    return sum +
-                                                          std::pow(value - cmean, 2);
+                                                          std::pow(value - mean, 2);
                                                  }) /
                                  (data.size() - 1)};
-          mean = cmean;
           error = std::sqrt(cvariance);
         }
       }
