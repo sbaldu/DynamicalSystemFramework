@@ -861,9 +861,16 @@ namespace dsm {
     if (street->queue().empty()) {
       return std::nullopt;
     }
-    auto n = static_cast<Size>(street->queue().size());
-    double alpha{this->m_minSpeedRateo / street->capacity()};
-    return street->maxSpeed() * (1 - 0.5 * alpha * (n - 1));
+    if (this->m_agents.at(street->queue().front())->delay() > 0) {
+      auto n = static_cast<Size>(street->queue().size());
+      double alpha{this->m_minSpeedRateo / street->capacity()};
+      return street->maxSpeed() * (1 - 0.5 * alpha * (n - 1));
+    }
+    double meanSpeed{0.};
+    for (const auto& agentId : street->queue()) {
+      meanSpeed += this->m_agents.at(agentId)->speed();
+    }
+    return meanSpeed / street->queue().size();
   }
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
