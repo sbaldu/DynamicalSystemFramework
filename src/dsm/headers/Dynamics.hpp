@@ -53,8 +53,7 @@ namespace dsm {
                                                  data.cend(),
                                                  0.,
                                                  [this](double sum, const auto& value) {
-                                                   return sum +
-                                                          std::pow(value - mean, 2);
+                                                   return sum + std::pow(value - mean, 2);
                                                  }) /
                                  (data.size() - 1)};
           error = std::sqrt(cvariance);
