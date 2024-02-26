@@ -364,7 +364,7 @@ namespace dsm {
         }
       } else if (!agent->streetId().has_value()) {
         auto srcNode{
-            this->m_graph->nodeSet()[this->m_itineraries[agent->itineraryId()]->source()]};
+            this->m_graph->nodeSet()[agent->srcNodeId().value()]};
         if (srcNode->isFull()) {
           continue;
         }
@@ -610,11 +610,13 @@ namespace dsm {
           streetId = streetIt->first;
         } while (this->m_graph->streetSet()[streetId]->density() == 1);
         auto street{this->m_graph->streetSet()[streetId]};
-        Agent<Id, Size, Delay> agent{agentId, itineraryId, streetId};
+        Id srcNodeId{street->nodePair().first};
+        Agent<Id, Size, Delay> agent{agentId, itineraryId, srcNodeId};
+        agent.setStreetId(streetId);
         this->addAgent(agent);
         this->setAgentSpeed(agentId);
-        this->m_agents[agentId]->incrementDelay(street->length() /
-                                                this->m_agents[agentId]->speed());
+        this->m_agents[agentId]->incrementDelay(std::ceil(street->length() /
+                                                this->m_agents[agentId]->speed()));
         street->enqueue(agentId);
       } else {
         this->addAgent(Agent<Id, Size, Delay>{agentId, itineraryId});
