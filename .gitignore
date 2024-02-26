@@ -16,4 +16,4 @@
 # cache files
 *cache
 
-test/*.dsm
+temp*

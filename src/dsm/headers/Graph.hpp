@@ -432,7 +432,7 @@ namespace dsm {
       throw std::invalid_argument(buildLog("Cannot open file: " + path));
     }
     if (isAdj) {
-      file << m_adjacency->getRowDim() << " " << m_adjacency->getColDim() << '\n';
+      file << m_adjacency->getRowDim() << '\t' << m_adjacency->getColDim() << '\n';
       for (const auto& [id, value] : *m_adjacency) {
         file << id << '\t' << value << '\n';
       }
