@@ -2,7 +2,9 @@
 #define Logger_hpp
 
 #include <string>
+#ifdef __cpp_lib_source_location
 #include <source_location>
+#endif
 
 namespace dsm {
 
