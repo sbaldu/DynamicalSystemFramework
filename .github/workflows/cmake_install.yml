@@ -1,4 +1,4 @@
-name: Test the installation using CMake
+name: Test the installation on Linux
 
 on:
   push:
