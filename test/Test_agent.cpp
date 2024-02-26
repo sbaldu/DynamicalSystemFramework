@@ -13,7 +13,7 @@ TEST_CASE("Agent") {
     GIVEN("An agent and its itinerary ids") {
       uint16_t agentId{1};
       uint16_t itineraryId{0};
-      WHEN("the Agent is constructed") {
+      WHEN("The Agent is constructed") {
         Agent agent{agentId, itineraryId};
         THEN("The agent and itinerary ids are set correctly") {
           CHECK_EQ(agent.id(), agentId);
@@ -30,7 +30,7 @@ TEST_CASE("Agent") {
       uint16_t agentId{1};
       uint16_t itineraryId{0};
       uint16_t srcNodeId{0};
-      WHEN("the Agent is constructed") {
+      WHEN("The Agent is constructed") {
         Agent agent{agentId, itineraryId, srcNodeId};
         THEN("The agent and itinerary ids are set correctly") {
           CHECK_EQ(agent.id(), agentId);
