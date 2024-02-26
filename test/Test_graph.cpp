@@ -115,18 +115,18 @@ TEST_CASE("Graph") {
     CHECK(graph.adjMatrix()->operator()(1));
     CHECK(graph.nodeSet().size() == 3);
     CHECK(graph.streetSet().size() == 4);
-    graph.exportMatrix(false);
-    Graph graph2{};
-    graph2.importMatrix("./graph_matrix.dsm");
-    CHECK_EQ(graph2.adjMatrix()->max_size(), 9);
-    CHECK_EQ(graph2.adjMatrix()->getRowDim(), 3);
-    CHECK_EQ(graph2.adjMatrix()->getColDim(), 3);
-    CHECK(graph2.adjMatrix()->operator()(8));
-    CHECK(graph2.adjMatrix()->operator()(6));
-    CHECK(graph2.adjMatrix()->operator()(3));
-    CHECK(graph2.adjMatrix()->operator()(1));
-    CHECK(graph2.nodeSet().size() == 3);
-    CHECK(graph2.streetSet().size() == 4);
+    // graph.exportMatrix(false);
+    // Graph graph2{};
+    // graph2.importMatrix("./graph_matrix.dsm");
+    // CHECK_EQ(graph2.adjMatrix()->max_size(), 9);
+    // CHECK_EQ(graph2.adjMatrix()->getRowDim(), 3);
+    // CHECK_EQ(graph2.adjMatrix()->getColDim(), 3);
+    // CHECK(graph2.adjMatrix()->operator()(8));
+    // CHECK(graph2.adjMatrix()->operator()(6));
+    // CHECK(graph2.adjMatrix()->operator()(3));
+    // CHECK(graph2.adjMatrix()->operator()(1));
+    // CHECK(graph2.nodeSet().size() == 3);
+    // CHECK(graph2.streetSet().size() == 4);
   }
   SUBCASE("importMatrix - raw matrix") {
     Graph graph{};

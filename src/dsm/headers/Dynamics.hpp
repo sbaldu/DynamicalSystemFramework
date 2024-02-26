@@ -686,14 +686,14 @@ namespace dsm {
     m_time = 0;
   }
 
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             is_numeric_v<Delay>)
-  template <typename F, typename... Tn>
-    requires(std::is_invocable_v<F, Tn...>)
-  void Dynamics<Id, Size, Delay>::evolve(F f, Tn... args) {
-    f(args...);
-  }
+  // template <typename Id, typename Size, typename Delay>
+  //   requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+  //            is_numeric_v<Delay>)
+  // template <typename F, typename... Tn>
+  //   requires(std::is_invocable_v<F, Tn...>)
+  // void Dynamics<Id, Size, Delay>::evolve(F f, Tn... args) {
+  //   f(args...);
+  // }
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
@@ -812,7 +812,7 @@ namespace dsm {
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             std::unsigned_integral<Delay>)
+             is_numeric_v<Delay>)
   class FirstOrderDynamics : public Dynamics<Id, Size, Delay> {
   public:
     FirstOrderDynamics() = delete;
@@ -855,7 +855,7 @@ namespace dsm {
   }
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             std::unsigned_integral<Delay>)
+             is_numeric_v<Delay>)
   std::optional<double> FirstOrderDynamics<Id, Size, Delay>::streetMeanSpeed(Id streetId) const {
     auto street{this->m_graph->streetSet()[streetId]};
     if (street->queue().empty()) {
@@ -867,7 +867,7 @@ namespace dsm {
   }
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             std::unsigned_integral<Delay>)
+             is_numeric_v<Delay>)
   Measurement<double> FirstOrderDynamics<Id, Size, Delay>::streetMeanSpeed() const {
     if (this->m_agents.size() == 0) {
       return Measurement(0., 0.);
@@ -884,7 +884,7 @@ namespace dsm {
   }
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             std::unsigned_integral<Delay>)
+             is_numeric_v<Delay>)
   Measurement<double> FirstOrderDynamics<Id, Size, Delay>::streetMeanSpeed(double threshold,
                                                                           bool above) const {
     if (this->m_agents.size() == 0) {
