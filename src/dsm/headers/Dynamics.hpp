@@ -219,7 +219,7 @@ namespace dsm {
     /// @param ...args The arguments of the function
     template <typename F, typename... Tn>
       requires std::is_invocable_v<F, Tn...>
-    void evolve(F f, Tn... args);    
+    void evolve(F f, Tn... args);
 
     /// @brief Get the mean speed of the agents
     /// @return Measurement<double> The mean speed of the agents and the standard deviation
@@ -855,7 +855,8 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
-  std::optional<double> FirstOrderDynamics<Id, Size, Delay>::streetMeanSpeed(Id streetId) const {
+  std::optional<double> FirstOrderDynamics<Id, Size, Delay>::streetMeanSpeed(
+      Id streetId) const {
     auto street{this->m_graph->streetSet()[streetId]};
     if (street->queue().empty()) {
       return std::nullopt;
@@ -891,8 +892,8 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
-  Measurement<double> FirstOrderDynamics<Id, Size, Delay>::streetMeanSpeed(double threshold,
-                                                                          bool above) const {
+  Measurement<double> FirstOrderDynamics<Id, Size, Delay>::streetMeanSpeed(
+      double threshold, bool above) const {
     if (this->m_agents.size() == 0) {
       return Measurement(0., 0.);
     }
