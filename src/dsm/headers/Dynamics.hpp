@@ -422,20 +422,14 @@ namespace dsm {
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::updatePaths() {
     const Size dimension = m_graph->adjMatrix()->getRowDim();
-    // std::unordered_map<Id, SparseMatrix<Id, bool>> paths;
-    for (auto& itineraryPair : m_itineraries) {
-      // if (this->m_time == 0 && itineraryPair.second->path().size() == 0 &&
-      //     paths.contains(itineraryPair.second->destination())) {
-      //   itineraryPair.second->setPath(paths.at(itineraryPair.second->destination()));
-      //   continue;
-      // }
+    for (const auto& [itineraryId, itinerary] : m_itineraries) {
       SparseMatrix<Id, bool> path{dimension, dimension};
       // cycle over the nodes
       for (Size i{0}; i < dimension; ++i) {
-        if (i == itineraryPair.second->destination()) {
+        if (i == itinerary->destination()) {
           continue;
         }
-        auto result{m_graph->shortestPath(i, itineraryPair.second->destination())};
+        auto result{m_graph->shortestPath(i, itinerary->destination())};
         if (!result.has_value()) {
           continue;
         }
@@ -452,11 +446,11 @@ namespace dsm {
           auto streetLength{streetResult.value()->length()};
           // TimePoint expectedTravelTime{
           //     streetLength};  // / street->maxSpeed()};  // TODO: change into input velocity
-          result = m_graph->shortestPath(node.first, itineraryPair.second->destination());
+          result = m_graph->shortestPath(node.first, itinerary->destination());
           if (result.has_value()) {
             // if the shortest path exists, save the distance
             distance = result.value().distance();
-          } else if (node.first != itineraryPair.second->destination()) {
+          } else if (node.first != itinerary->destination()) {
             // if the node is the destination, the distance is zero, otherwise the iteration is skipped
             continue;
           }
@@ -466,8 +460,7 @@ namespace dsm {
             path.insert(i, node.first, true);
           }
         }
-        itineraryPair.second->setPath(path);
-        // paths.emplace(itineraryPair.second->destination(), path);
+        itinerary->setPath(path);
       }
     }
   }

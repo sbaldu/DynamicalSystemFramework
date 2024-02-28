@@ -39,11 +39,16 @@ TEST_CASE("Dynamics") {
       }
     }
   }
-  SUBCASE("Add agents random") {
+  SUBCASE("AddrabdinAgentss") {
     GIVEN("A dynamics object and an itinerary") {
       auto graph = Graph{};
       graph.importMatrix("./data/matrix.dsm");
       Dynamics dynamics(graph);
+      WHEN("We add agents without adding itineraries") {
+        THEN("An exception is thrown") {
+          CHECK_THROWS(dynamics.addRandomAgents(1));
+        }
+      }
       Itinerary itinerary{0, 2};
       WHEN("We add a random agent") {
         dynamics.addItinerary(itinerary);
@@ -61,6 +66,8 @@ TEST_CASE("Dynamics") {
     /// GIVEN: a dynamics object
     /// WHEN: we add many itineraries
     /// THEN: the number of agents is the same as the number of itineraries
+    auto graph = Graph{};
+    graph.importMatrix("./data/matrix.dsm");
     Dynamics dynamics(graph);
     dynamics.setSeed(69);
     Itinerary Itinerary{0, 2}, Itinerary2{1, 2}, Itinerary3{2, 1};
@@ -83,6 +90,8 @@ TEST_CASE("Dynamics") {
     /// GIVEN: a dynamics object
     /// WHEN: we add many itineraries
     /// THEN: the number of agents is the same as the number of itineraries
+    auto graph = Graph{};
+    graph.importMatrix("./data/matrix.dsm");
     Dynamics dynamics(graph);
     dynamics.setSeed(69);
     Itinerary Itinerary{0, 2}, Itinerary2{1, 2}, Itinerary3{2, 1};
@@ -105,17 +114,12 @@ TEST_CASE("Dynamics") {
         Itinerary2.destination());
     CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 1);
   }
-  SUBCASE("AddRandomAgents - exceptions") {
-    /// GIVEN: a dynamics object
-    /// WHEN: we add a random agent with a negative number of agents
-    /// THEN: an exception is thrown
-    Dynamics dynamics(graph);
-    CHECK_THROWS(dynamics.addRandomAgents(1));
-  }
   SUBCASE("addAgents") {
     /// GIVEN: a dynamics object
     /// WHEN: we add agents
     /// THEN: the agents are added
+    auto graph = Graph{};
+    graph.importMatrix("./data/matrix.dsm");
     Dynamics dynamics{graph};
     Itinerary itinerary{0, 2};
     dynamics.addItinerary(itinerary);
@@ -157,39 +161,38 @@ TEST_CASE("Dynamics") {
       }
     }
     GIVEN("A dynamics objects, many streets and many itinearies with same destination") {
-      //TODOOOOOOOOO
-      // Graph graph2{};
-      // graph2.importMatrix("./data/matrix.dat");
-      // Itinerary it1{0, 10, 118};
-      // Itinerary it2{1, 7, 118};
-      // Itinerary it3{2, 4, 118};
-      // Itinerary it4{3, 1, 118};
-      // Dynamics dynamics{graph2};
-      // dynamics.addItinerary(it1);
-      // dynamics.addItinerary(it2);
-      // dynamics.addItinerary(it3);
-      // dynamics.addItinerary(it4);
-      // dynamics.updatePaths();
-      // for (auto const& it : dynamics.itineraries()) {
-      //   auto const& path = it.second->path();
-      //   for (uint16_t i{0}; i < path.getRowDim(); ++i) {
-      //     if (i == it.second->destination()) {
-      //       CHECK_FALSE(path.getRow(i).size());
-      //     } else {
-      //       CHECK(path.getRow(i).size());
-      //     }
-      //   }
-      // }
+      Graph graph2{};
+      graph2.importMatrix("./data/matrix.dat");
+      Itinerary it1{0, 118};
+      Itinerary it2{1, 118};
+      Itinerary it3{2, 118};
+      Itinerary it4{3, 118};
+      Dynamics dynamics{graph2};
+      dynamics.addItinerary(it1);
+      dynamics.addItinerary(it2);
+      dynamics.addItinerary(it3);
+      dynamics.addItinerary(it4);
+      dynamics.updatePaths();
+      for (auto const& it : dynamics.itineraries()) {
+        auto const& path = it.second->path();
+        for (uint16_t i{0}; i < path.getRowDim(); ++i) {
+          if (i == it.second->destination()) {
+            CHECK_FALSE(path.getRow(i).size());
+          } else {
+            CHECK(path.getRow(i).size());
+          }
+        }
+      }
     }
     GIVEN("A dynamics objects, many streets and an itinerary with bifurcations") {
       Street s1{0, 1, 5., std::make_pair(0, 1)};
       Street s2{1, 1, 5., std::make_pair(1, 2)};
       Street s3{2, 1, 5., std::make_pair(0, 3)};
       Street s4{3, 1, 5., std::make_pair(3, 2)};
-      Graph graph2;
-      graph2.addStreets(s1, s2, s3, s4);
-      graph2.buildAdj();
-      Dynamics dynamics{graph2};
+      Graph graph;
+      graph.addStreets(s1, s2, s3, s4);
+      graph.buildAdj();
+      Dynamics dynamics{graph};
       Itinerary itinerary{0, 2};
       dynamics.addItinerary(itinerary);
       WHEN("We update the paths") {
