@@ -91,6 +91,12 @@ namespace dsm {
     /// @throws std::invalid_argument if the file is not found, invalid or the format is not supported
     void importOSMEdges(const std::string& fileName);
 
+    /// @brief Export the graph's adjacency matrix to a file
+    /// @param path The path to the file to export the adjacency matrix to.
+    /// @param isAdj A boolean value indicating if the file contains the adjacency matrix or the distance matrix.
+    /// @throws std::invalid_argument if the file is not found or invalid
+    void exportMatrix(std::string path = "./matrix.dsm", bool isAdj = true);
+
     /// @brief Add a node to the graph
     /// @param node A std::shared_ptr to the node to add
     void addNode(shared<Node<Id, Size>> node);
@@ -261,10 +267,10 @@ namespace dsm {
       }
       Size n{rows};
       m_adjacency = make_shared<SparseMatrix<Id, bool>>(n, n);
-      // each line has 3 elements
+      // each line has 2 elements
       while (!file.eof()) {
         Id index;
-        bool val;
+        double val;
         file >> index >> val;
         m_adjacency->insert(index, val);
         const auto srcId{static_cast<Id>(index / n)};
@@ -415,6 +421,26 @@ namespace dsm {
       std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
                             __FILE__ + ": " + "File extension not supported"};
       throw std::invalid_argument(errrorMsg);
+    }
+  }
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Graph<Id, Size>::exportMatrix(std::string path, bool isAdj) {
+    std::ofstream file{path};
+    if (!file.is_open()) {
+      throw std::invalid_argument(buildLog("Cannot open file: " + path));
+    }
+    if (isAdj) {
+      file << m_adjacency->getRowDim() << '\t' << m_adjacency->getColDim() << '\n';
+      for (const auto& [id, value] : *m_adjacency) {
+        file << id << '\t' << value << '\n';
+      }
+    } else {
+      file << m_adjacency->getRowDim() << " " << m_adjacency->getColDim() << '\n';
+      for (const auto& [id, street] : m_streets) {
+        file << id << '\t' << street->length() << '\n';
+      }
     }
   }
 
