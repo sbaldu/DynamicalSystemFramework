@@ -163,7 +163,7 @@ namespace dsm {
     /// @param nAgents The number of agents to add
     /// @throw std::invalid_argument If the itinerary is not found
     /// @details adds nAgents agents with the same itinerary of id itineraryId
-    void addAgents(Id itineraryId, Size nAgents = 1);
+    void addAgents(Id itineraryId, Size nAgents = 1, std::optional<Id> srcNodeId = std::nullopt);
     /// @brief Add a pack of agents to the simulation
     /// @param agents Parameter pack of agents
     template <typename... Tn>
@@ -182,7 +182,7 @@ namespace dsm {
     /// @param nAgents The number of agents to add
     /// @param uniformly If true, the agents are added uniformly on the streets
     /// @throw std::runtime_error If there are no itineraries
-    virtual void addRandomAgents(Size nAgents, bool uniformly = false);
+    virtual void addAgentsUniformly(Size nAgents, std::optional<Id> itineraryId = std::nullopt);
 
     /// @brief Remove an agent from the simulation
     /// @param agentId the id of the agent to remove
@@ -310,6 +310,9 @@ namespace dsm {
           if (reinsert_agents) {
             Agent<Id, Size, Delay> newAgent{this->m_agents[agentId]->id(),
                                             this->m_agents[agentId]->itineraryId()};
+            if (this->m_agents[agentId]->srcNodeId().has_value()) {
+              newAgent.setSourceNodeId(this->m_agents[agentId]->srcNodeId().value());
+            }
             this->removeAgent(agentId);
             this->addAgent(newAgent);
           } else {
@@ -377,9 +380,9 @@ namespace dsm {
           agent->decrementDelay();
         }
       } else if (!agent->streetId().has_value()) {
+        assert(agent->srcNodeId().has_value());
         auto srcNode{
-            this->m_graph
-                ->nodeSet()[this->m_itineraries[agent->itineraryId()]->source()]};
+            this->m_graph->nodeSet()[agent->srcNodeId().value()]};
         if (srcNode->isFull()) {
           continue;
         }
@@ -440,13 +443,7 @@ namespace dsm {
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::updatePaths() {
     const Size dimension = m_graph->adjMatrix()->getRowDim();
-    // std::unordered_map<Id, SparseMatrix<Id, bool>> paths;
     for (const auto& [itineraryId, itinerary] : m_itineraries) {
-      // if (this->m_time == 0 && itineraryPair.second->path().size() == 0 &&
-      //     paths.contains(itineraryPair.second->destination())) {
-      //   itineraryPair.second->setPath(paths.at(itineraryPair.second->destination()));
-      //   continue;
-      // }
       SparseMatrix<Id, bool> path{dimension, dimension};
       // cycle over the nodes
       for (Size i{0}; i < dimension; ++i) {
@@ -485,7 +482,6 @@ namespace dsm {
           }
         }
         itinerary->setPath(path);
-        // paths.emplace(itineraryPair.second->destination(), path);
       }
     }
   }
@@ -557,7 +553,7 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
-  void Dynamics<Id, Size, Delay>::addAgents(Id itineraryId, Size nAgents) {
+  void Dynamics<Id, Size, Delay>::addAgents(Id itineraryId, Size nAgents, std::optional<Id> srcNodeId) {
     auto itineraryIt{m_itineraries.find(itineraryId)};
     if (itineraryIt == m_itineraries.end()) {
       throw std::invalid_argument(
@@ -569,6 +565,9 @@ namespace dsm {
     }
     for (auto i{0}; i < nAgents; ++i, ++agentId) {
       this->addAgent(Agent<Id, Size, Delay>{agentId, itineraryId});
+      if (srcNodeId.has_value()) {
+        this->m_agents[agentId]->setSourceNodeId(srcNodeId.value());
+      }
     }
   }
 
@@ -601,41 +600,43 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
-  void Dynamics<Id, Size, Delay>::addRandomAgents(Size nAgents, bool uniformly) {
+  void Dynamics<Id, Size, Delay>::addAgentsUniformly(Size nAgents, std::optional<Id> itineraryId) {
     if (this->m_itineraries.empty()) {
-      throw std::runtime_error(buildLog("It is not possible to add random agents without itineraries."));
+      // TODO: make this possible for random agents
+      throw std::runtime_error(
+          buildLog("It is not possible to add random agents without itineraries."));
     }
+    const bool randomItinerary{!itineraryId.has_value()};
     std::uniform_int_distribution<Size> itineraryDist{
         0, static_cast<Size>(this->m_itineraries.size() - 1)};
     std::uniform_int_distribution<Size> streetDist{
         0, static_cast<Size>(this->m_graph->streetSet().size() - 1)};
     for (Size i{0}; i < nAgents; ++i) {
-      Size itineraryId{itineraryDist(this->m_generator)};
-      Size agentId{0};
+      if (randomItinerary) {
+        itineraryId = itineraryDist(this->m_generator);
+      }
+      Id agentId{0};
       if (!this->m_agents.empty()) {
         agentId = this->m_agents.rbegin()->first + 1;
       }
-      if (uniformly) {
-        Size streetId{0};
-        do {
-          // I dunno why this works and the following doesn't
-          auto streetSet = this->m_graph->streetSet();
-          auto streetIt = streetSet.begin();
-          // auto streetIt = this->m_graph->streetSet().begin();
-          Size step = streetDist(this->m_generator);
-          std::advance(streetIt, step);
-          streetId = streetIt->first;
-        } while (this->m_graph->streetSet()[streetId]->density() == 1);
-        auto street{this->m_graph->streetSet()[streetId]};
-        Agent<Id, Size, Delay> agent{agentId, itineraryId, streetId};
-        this->addAgent(agent);
-        this->setAgentSpeed(agentId);
-        this->m_agents[agentId]->incrementDelay(street->length() /
-                                                this->m_agents[agentId]->speed());
-        street->enqueue(agentId);
-      } else {
-        this->addAgent(Agent<Id, Size, Delay>{agentId, itineraryId});
-      }
+      Id streetId{0};
+      do {
+        // I dunno why this works and the following doesn't
+        auto streetSet = this->m_graph->streetSet();
+        auto streetIt = streetSet.begin();
+        // auto streetIt = this->m_graph->streetSet().begin();
+        Size step = streetDist(this->m_generator);
+        std::advance(streetIt, step);
+        streetId = streetIt->first;
+      } while (this->m_graph->streetSet()[streetId]->density() == 1);
+      auto street{this->m_graph->streetSet()[streetId]};
+      Agent<Id, Size, Delay> agent{agentId, itineraryId.value(), street->nodePair().first};
+      agent.setStreetId(streetId);
+      this->addAgent(agent);
+      this->setAgentSpeed(agentId);
+      this->m_agents[agentId]->incrementDelay(std::ceil(street->length() /
+                                              this->m_agents[agentId]->speed()));
+      street->enqueue(agentId);
       ++agentId;
     }
   }
@@ -857,13 +858,13 @@ namespace dsm {
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             is_numeric_v<Delay>)
+             std::unsigned_integral<Delay>)
   FirstOrderDynamics<Id, Size, Delay>::FirstOrderDynamics(const Graph<Id, Size>& graph)
       : Dynamics<Id, Size, Delay>(graph) {}
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             is_numeric_v<Delay>)
+             std::unsigned_integral<Delay>)
   void FirstOrderDynamics<Id, Size, Delay>::setAgentSpeed(Size agentId) {
     auto street{this->m_graph->streetSet()[this->m_agents[agentId]->streetId().value()]};
     double speed{street->maxSpeed() * (1. - this->m_minSpeedRateo * street->density())};
