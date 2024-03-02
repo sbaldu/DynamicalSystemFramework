@@ -256,13 +256,17 @@ namespace dsm {
   private:
     std::optional<std::pair<Delay, Delay>> m_delay;
     Delay m_counter;
+    Delay m_yellowDelay{5};
 
   public:
-    TrafficLight() = default;
+    TrafficLight() = delete;
     /// @brief Construct a new TrafficLight object
     /// @param id The node's id
-    TrafficLight(Id id);
+    explicit TrafficLight(Id id);
 
+    /// @brief Set the node's yellow delay
+    /// @param delay The node's yellow delay
+    void setYellowDelay(Delay delay);
     /// @brief Set the node's delay
     /// @param delay The node's delay
     void setDelay(Delay delay);
@@ -293,8 +297,14 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              std::unsigned_integral<Delay>)
-  TrafficLight<Id, Size, Delay>::TrafficLight(Id id) : Node<Id, Size>{id}, m_counter{0} {}
+  TrafficLight<Id, Size, Delay>::TrafficLight(Id id) : Node<Id, Size>{id}, m_counter{0}, m_yellowDelay{5} {}
 
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>)
+  void TrafficLight<Id, Size, Delay>::setYellowDelay(Delay delay) {
+    m_yellowDelay = delay;
+  }
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              std::unsigned_integral<Delay>)
