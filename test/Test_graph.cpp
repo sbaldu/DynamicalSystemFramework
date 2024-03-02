@@ -115,7 +115,7 @@ TEST_CASE("Graph") {
     CHECK(graph.adjMatrix()->operator()(1));
     CHECK(graph.nodeSet().size() == 3);
     CHECK(graph.streetSet().size() == 4);
-    graph.exportMatrix("./data/temp.dsm" ,false);
+    graph.exportMatrix("./data/temp.dsm", false);
     Graph graph2{};
     graph2.importMatrix("./data/temp.dsm");
     CHECK_EQ(graph2.adjMatrix()->max_size(), 9);

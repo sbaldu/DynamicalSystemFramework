@@ -43,7 +43,7 @@ namespace dsm {
     /// @brief SparseMatrix constructor - colum
     /// @param index number of rows
     /// @throw std::invalid_argument if index is < 0
-    SparseMatrix(Index index);
+    explicit SparseMatrix(Index index);
 
     /// @brief insert a value in the matrix
     /// @param i row index
