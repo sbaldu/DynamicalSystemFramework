@@ -74,10 +74,15 @@ namespace dsm {
   template <typename Id>
     requires(std::unsigned_integral<Id>)
   void Itinerary<Id>::setPath(SparseMatrix<Id, bool> path) {
-    if (path.getRowDim() != path.getColDim()){
-      throw std::invalid_argument(buildLog("The path's row and column dimensions must be equal."));}
-    if (path.getRowDim() < m_destination){
-      throw std::invalid_argument(buildLog("The path's row and column dimensions must be greater than the itinerary's destination."));}
+    if (path.getRowDim() != path.getColDim()) {
+      throw std::invalid_argument(
+          buildLog("The path's row and column dimensions must be equal."));
+    }
+    if (path.getRowDim() < m_destination) {
+      throw std::invalid_argument(
+          buildLog("The path's row and column dimensions must be greater than the "
+                   "itinerary's destination."));
+    }
     m_path = std::move(path);
   }
 
