@@ -85,6 +85,10 @@ namespace dsm {
     /// @brief Import the graph's nodes from a file
     /// @param fileName The name of the file to import the nodes from.
     /// @throws std::invalid_argument if the file is not found, invalid or the format is not supported
+    void importCoordinates(const std::string& fileName);
+    /// @brief Import the graph's nodes from a file
+    /// @param fileName The name of the file to import the nodes from.
+    /// @throws std::invalid_argument if the file is not found, invalid or the format is not supported
     void importOSMNodes(const std::string& fileName);
     /// @brief Import the graph's streets from a file
     /// @param fileName The name of the file to import the streets from.
@@ -335,6 +339,33 @@ namespace dsm {
         }
         ++index;
       }
+    }
+  }
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Graph<Id, Size>::importCoordinates(const std::string& fileName) {
+    std::string fileExt = fileName.substr(fileName.find_last_of(".") + 1);
+    if (fileExt == "dsm") {
+      // first input number is the number of nodes
+      std::ifstream file{fileName};
+      if (!file.is_open()) {
+        throw std::invalid_argument(buildLog("Cannot find file: " + fileName));
+      }
+      Size n;
+      file >> n;
+      if (n < m_nodes.size()) {
+        throw std::invalid_argument(buildLog("Number of node cordinates in file is too small."));
+      }
+      double lat, lon;
+      for (Size i{0}; i < n; ++i) {
+        file >> lat >> lon;
+        if (m_nodes.contains(i)) {
+          m_nodes[i]->setCoords(std::make_pair(lat, lon));
+        }
+      }
+    } else {
+      throw std::invalid_argument(buildLog("File extension not supported."));
     }
   }
 
