@@ -46,19 +46,20 @@ TEST_CASE("Dynamics") {
       graph.importMatrix("./data/matrix.dsm");
       Dynamics dynamics(graph);
       WHEN("We add agents without adding itineraries") {
-        THEN("An exception is thrown") {
-          CHECK_THROWS(dynamics.addAgentsUniformly(1));
-        }
+        THEN("An exception is thrown") { CHECK_THROWS(dynamics.addAgentsUniformly(1)); }
       }
       Itinerary itinerary{0, 2};
       WHEN("We add a random agent") {
         dynamics.addItinerary(itinerary);
         dynamics.addAgentsUniformly(1);
-        THEN("The number of agents is 1 and the destination is the same as the itinerary") {
+        THEN(
+            "The number of agents is 1 and the destination is the same as the "
+            "itinerary") {
           CHECK_EQ(dynamics.agents().size(), 1);
-          CHECK_EQ(
-              dynamics.itineraries().at(dynamics.agents().at(0)->itineraryId())->destination(),
-              itinerary.destination());
+          CHECK_EQ(dynamics.itineraries()
+                       .at(dynamics.agents().at(0)->itineraryId())
+                       ->destination(),
+                   itinerary.destination());
         }
       }
     }
@@ -72,21 +73,26 @@ TEST_CASE("Dynamics") {
       dynamics.addItinerary(Itinerary2);
       WHEN("We add many agents") {
         dynamics.addAgentsUniformly(3);
-        THEN("The number of agents is 3, the destination and the street is the same as the itinerary") {
+        THEN(
+            "The number of agents is 3, the destination and the street is the same as "
+            "the itinerary") {
           CHECK_EQ(dynamics.agents().size(), 3);
-          CHECK_EQ(
-              dynamics.itineraries().at(dynamics.agents().at(0)->itineraryId())->destination(),
-              Itinerary2.destination());
+          CHECK_EQ(dynamics.itineraries()
+                       .at(dynamics.agents().at(0)->itineraryId())
+                       ->destination(),
+                   Itinerary2.destination());
           CHECK(dynamics.agents().at(0)->streetId().has_value());
           CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 3);
-          CHECK_EQ(
-              dynamics.itineraries().at(dynamics.agents().at(1)->itineraryId())->destination(),
-              Itinerary2.destination());
+          CHECK_EQ(dynamics.itineraries()
+                       .at(dynamics.agents().at(1)->itineraryId())
+                       ->destination(),
+                   Itinerary2.destination());
           CHECK(dynamics.agents().at(1)->streetId().has_value());
           CHECK_EQ(dynamics.agents().at(1)->streetId().value(), 8);
-          CHECK_EQ(
-              dynamics.itineraries().at(dynamics.agents().at(2)->itineraryId())->destination(),
-              Itinerary1.destination());
+          CHECK_EQ(dynamics.itineraries()
+                       .at(dynamics.agents().at(2)->itineraryId())
+                       ->destination(),
+                   Itinerary1.destination());
           CHECK(dynamics.agents().at(2)->streetId().has_value());
           CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 1);
         }
@@ -101,24 +107,23 @@ TEST_CASE("Dynamics") {
       Itinerary itinerary{0, 2};
       dynamics.addItinerary(itinerary);
       WHEN("We add an agent with itinerary 1") {
-        THEN("An exception is thrown") {
-          CHECK_THROWS(dynamics.addAgents(1));
-        }
+        THEN("An exception is thrown") { CHECK_THROWS(dynamics.addAgents(1)); }
       }
       WHEN("We add and agent with itinerary 0") {
         dynamics.addAgents(0);
-        THEN("The number of agents is 1 and the destination is the same as the itinerary") {
+        THEN(
+            "The number of agents is 1 and the destination is the same as the "
+            "itinerary") {
           CHECK_EQ(dynamics.agents().size(), 1);
-          CHECK_EQ(
-              dynamics.itineraries().at(dynamics.agents().at(0)->itineraryId())->destination(),
-              itinerary.destination());
+          CHECK_EQ(dynamics.itineraries()
+                       .at(dynamics.agents().at(0)->itineraryId())
+                       ->destination(),
+                   itinerary.destination());
         }
       }
       WHEN("We add 69 agents with itinerary 0") {
         dynamics.addAgents(0, 69);
-        THEN("The number of agents is 69") {
-          CHECK_EQ(dynamics.agents().size(), 69);
-        }
+        THEN("The number of agents is 69") { CHECK_EQ(dynamics.agents().size(), 69); }
       }
     }
   }
@@ -135,7 +140,9 @@ TEST_CASE("Dynamics") {
       WHEN("We add an itinerary and update the paths") {
         dynamics.addItinerary(itinerary);
         dynamics.updatePaths();
-        THEN("The number of itineraries is 1 and the path is updated and correctly formed") {
+        THEN(
+            "The number of itineraries is 1 and the path is updated and correctly "
+            "formed") {
           CHECK_EQ(dynamics.itineraries().size(), 1);
           CHECK(dynamics.itineraries().at(0)->path()(0, 1));
           CHECK(dynamics.itineraries().at(0)->path()(1, 2));
@@ -294,7 +301,7 @@ TEST_CASE("Dynamics") {
       Itinerary itinerary{0, 1};
       dynamics.addItinerary(itinerary);
       dynamics.updatePaths();
-      dynamics.addAgent(Agent(0, 0, 0));     
+      dynamics.addAgent(Agent(0, 0, 0));
       WHEN("We evolve the dynamics with reinsertion") {
         dynamics.evolve(true);
         dynamics.evolve(true);
@@ -313,7 +320,6 @@ TEST_CASE("Dynamics") {
           CHECK_FALSE(dynamics.agents().at(0)->streetId().has_value());
           CHECK_EQ(dynamics.agents().at(0)->speed(), 0.);
         }
-      
       }
     }
   }
@@ -339,8 +345,10 @@ TEST_CASE("Dynamics") {
       dynamics.addAgent(Agent(0, 0, 0));
       WHEN("We evolve the dynamics") {
         dynamics.evolve(false);
-        THEN("The agent is ready to go through the traffic light at time 3 but the traffic light is red"
-             " until time 4, so the agent waits until time 4") {
+        THEN(
+            "The agent is ready to go through the traffic light at time 3 but the "
+            "traffic light is red"
+            " until time 4, so the agent waits until time 4") {
           for (uint8_t i{0}; i < 5; ++i) {
             dynamics.evolve(false);
             if (i < 3) {
@@ -424,7 +432,8 @@ TEST_CASE("Dynamics") {
     dynamics.evolve(false);
     meanSpeed = 0.;
     for (const auto& [agentId, agent] : dynamics.agents()) {
-      if(!agent->streetId().has_value()) continue;
+      if (!agent->streetId().has_value())
+        continue;
       if (agent->streetId().value() == 1) {
         meanSpeed += agent->speed();
       }
