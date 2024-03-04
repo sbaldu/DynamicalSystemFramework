@@ -256,7 +256,6 @@ namespace dsm {
   private:
     std::optional<std::pair<Delay, Delay>> m_delay;
     Delay m_counter;
-    Delay m_yellowDelay{5};
 
   public:
     TrafficLight() = delete;
@@ -264,17 +263,22 @@ namespace dsm {
     /// @param id The node's id
     explicit TrafficLight(Id id);
 
-    /// @brief Set the node's yellow delay
-    /// @param delay The node's yellow delay
-    void setYellowDelay(Delay delay);
     /// @brief Set the node's delay
+    /// @details This function is used to set the node's delay.
+    ///          If the delay is already set, the function will check the counter:
+    ///          - if the counter is more than the sum of the new green and red delays, it
+    ///            will be set to the new sum minus one, i.e. one more red cycle.
+    ///          - if the counter is less than the old green delay but more than the new green delay,
+    ///            it will be set to the new green delay minus the difference between the old and the new delay.
     /// @param delay The node's delay
     void setDelay(Delay delay);
     /// @brief Set the node's delay
     /// @details This function is used to set the node's delay.
-    ///          If the delay is already set, the function will check if the counter
-    ///          is in the range of the new delay and the old delay. If it is, the counter
-    ///          will be adjusted to the new delay, taking into account the yellow delay.
+    ///          If the delay is already set, the function will check the counter:
+    ///          - if the counter is more than the sum of the new green and red delays, it
+    ///            will be set to the new sum minus one, i.e. one more red cycle.
+    ///          - if the counter is less than the old green delay but more than the new green delay,
+    ///            it will be set to the new green delay minus the difference between the old and the new delay.
     /// @param delay The node's delay
     void setDelay(std::pair<Delay, Delay> delay);
     /// @brief Set the node's phase
@@ -301,29 +305,18 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              std::unsigned_integral<Delay>)
-  TrafficLight<Id, Size, Delay>::TrafficLight(Id id) : Node<Id, Size>{id}, m_counter{0}, m_yellowDelay{0} {}
+  TrafficLight<Id, Size, Delay>::TrafficLight(Id id) : Node<Id, Size>{id}, m_counter{0} {}
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              std::unsigned_integral<Delay>)
-  void TrafficLight<Id, Size, Delay>::setYellowDelay(Delay delay) {
-    m_yellowDelay = delay;
-  }
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             std::unsigned_integral<Delay>)
   void TrafficLight<Id, Size, Delay>::setDelay(Delay delay) {
-    if (delay < m_yellowDelay) {
-      throw std::runtime_error(buildLog("TrafficLight's delay cannot be less than the yellow delay, which is " + std::to_string(m_yellowDelay) + " seconds."));
-    }
     if (m_delay.has_value()) {
-      if (delay < m_delay.value().first) {
-        if (m_counter >= delay && m_counter < m_delay.value().first) {
-          m_counter -= m_yellowDelay;
-        }
-      } else if (delay < m_delay.value().second) {
-        if (m_counter >= delay + m_delay.value().second) {
-          m_counter = delay + m_delay.value().second - m_yellowDelay;
+      if (m_counter >= delay + m_delay.value().second) {
+          m_counter = delay + m_delay.value().second - 1;
+      } else if (delay < m_delay.value().first) {
+        if (m_counter >= delay && m_counter <= m_delay.value().first) {
+          m_counter = delay - (m_delay.value().first - m_counter);
         }
       }
     }
@@ -333,17 +326,12 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              std::unsigned_integral<Delay>)
   void TrafficLight<Id, Size, Delay>::setDelay(std::pair<Delay, Delay> delay) {
-    if(delay.first < m_yellowDelay || delay.second < m_yellowDelay) {
-      throw std::runtime_error(buildLog("TrafficLight's delay cannot be less than the yellow delay, which is " + std::to_string(m_yellowDelay) + " seconds."));
-    }
     if(m_delay.has_value()) {
-      if(delay.first < m_delay.value().first) {
-        if(m_counter >= delay.first && m_counter < m_delay.value().first) {
-          m_counter -= m_yellowDelay;
-        }
-      } else if (delay.second < m_delay.value().second) {
-        if(m_counter >= delay.first + delay.second) {
-          m_counter = delay.first + delay.second - m_yellowDelay;
+      if(m_counter >= delay.first + delay.second) {
+        m_counter = delay.first + delay.second - 1;
+      } else if(delay.first < m_delay.value().first) {
+        if(m_counter >= delay.first && m_counter <= m_delay.value().first) {
+          m_counter = delay.first - (m_delay.value().first - m_counter);
         }
       }
     }
