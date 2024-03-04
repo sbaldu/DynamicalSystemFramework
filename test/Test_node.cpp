@@ -107,4 +107,36 @@ TEST_CASE("TrafficLight") {
     }
     CHECK(trafficLight.isGreen());
   }
+  SUBCASE("Dynamic traffic light") {
+    GIVEN("A traffic ligth object with set delay") {
+      TrafficLight tl{0};
+      tl.setDelay(std::make_pair(5, 3));
+      WHEN("The delay is set with a green value smaller than the previous one") {
+        tl.increaseCounter();
+        tl.increaseCounter();
+        tl.increaseCounter();
+        tl.setDelay(std::make_pair(2, 3));
+        THEN("It is green for two cycles") {
+          CHECK(tl.isGreen());
+          tl.increaseCounter();
+          CHECK(tl.isGreen());
+          tl.increaseCounter();
+          CHECK_FALSE(tl.isGreen());
+        }
+      }
+      WHEN("The delay is set with a red value smaller than the previous one") {
+        tl.increaseCounter();
+        tl.increaseCounter();
+        tl.increaseCounter();
+        tl.increaseCounter();
+        tl.increaseCounter();
+        tl.setDelay(std::make_pair(1, 3));
+        THEN("It is red for one cycles") {
+          CHECK_FALSE(tl.isGreen());
+          tl.increaseCounter();
+          CHECK(tl.isGreen());
+        }
+      }
+    }
+  }
 }
