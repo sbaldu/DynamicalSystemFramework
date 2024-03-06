@@ -39,6 +39,7 @@ namespace dsm {
     Id m_id;
     Size m_capacity;
     Size m_transportCapacity;
+    bool m_isSpire;
 
   public:
     Street() = delete;
@@ -110,6 +111,11 @@ namespace dsm {
     /// @param angle The street's angle
     /// @throw std::invalid_argument If the angle is negative or greater than 2 * pi
     void setAngle(double angle);
+    /// @brief Set the street's spire status
+    /// @param isSpire The street's spire status
+    /// @details A spire is a street from which you can extract data, e.g. density. However, this
+    ///          parameter must be managed by the dynamics.
+    void setIsSpire(bool isSpire);
 
     /// @brief Get the street's id
     /// @return Id, The street's id
@@ -145,6 +151,9 @@ namespace dsm {
     void enqueue(Id agentId);
     /// @brief Remove an agent from the street's queue
     std::optional<Id> dequeue();
+    /// @brief Check if the street is a spire
+    /// @return bool True if the street is a spire, false otherwise
+    bool isSpire() const;
   };
 
   template <typename Id, typename Size>
@@ -156,7 +165,8 @@ namespace dsm {
         m_angle{street.angle()},
         m_id{id},
         m_capacity{street.capacity()},
-        m_transportCapacity{street.transportCapacity()} {}
+        m_transportCapacity{street.transportCapacity()},
+        m_isSpire{true} {}
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
@@ -167,7 +177,8 @@ namespace dsm {
         m_angle{0.},
         m_id{index},
         m_capacity{1},
-        m_transportCapacity{std::numeric_limits<Size>::max()} {}
+        m_transportCapacity{std::numeric_limits<Size>::max()},
+        m_isSpire{true} {}
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
@@ -178,7 +189,8 @@ namespace dsm {
         m_angle{0.},
         m_id{id},
         m_capacity{capacity},
-        m_transportCapacity{std::numeric_limits<Size>::max()} {}
+        m_transportCapacity{std::numeric_limits<Size>::max()},
+        m_isSpire{true} {}
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
@@ -189,7 +201,8 @@ namespace dsm {
         m_angle{0.},
         m_id{id},
         m_capacity{capacity},
-        m_transportCapacity{std::numeric_limits<Size>::max()} {
+        m_transportCapacity{std::numeric_limits<Size>::max()},
+        m_isSpire{true} {
     this->setMaxSpeed(maxSpeed);
   }
 
@@ -266,6 +279,11 @@ namespace dsm {
     }
     m_angle = angle;
   }
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Street<Id, Size>::setIsSpire(bool isSpire) {
+    m_isSpire = isSpire;
+  }
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
@@ -336,6 +354,11 @@ namespace dsm {
     Id id = m_queue.front();
     m_queue.pop();
     return id;
+  }
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  bool Street<Id, Size>::isSpire() const {
+    return m_isSpire;
   }
 
 };  // namespace dsm

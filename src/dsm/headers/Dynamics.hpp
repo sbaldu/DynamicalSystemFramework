@@ -252,8 +252,9 @@ namespace dsm {
     /// @return Measurement<double> The mean flow of the streets and the standard deviation
     Measurement<double> streetMeanFlow(double threshold, bool above) const;
     /// @brief Get the mean travel time of the agents
+    /// @param clearData If true, the travel times are cleared after the computation
     /// @return Measurement<double> The mean travel time of the agents and the standard
-    Measurement<double> meanTravelTime() const;
+    Measurement<double> meanTravelTime(bool clearData = false);
   };
 
   template <typename Id, typename Size, typename Delay>
@@ -756,6 +757,9 @@ namespace dsm {
                                       m_graph->streetSet().cend(),
                                       0.,
                                       [](double sum, const auto& street) {
+                                        if(!street.second->isSpire()) {
+                                          return sum;
+                                        }
                                         return sum + street.second->density();
                                       }) /
                       m_graph->streetSet().size()};
@@ -764,6 +768,9 @@ namespace dsm {
                         m_graph->streetSet().cend(),
                         0.,
                         [mean](double sum, const auto& street) {
+                          if(!street.second->isSpire()) {
+                            return sum;
+                          }
                           return sum + std::pow(street.second->density() - mean, 2);
                         }) /
         (m_graph->streetSet().size() - 1)};
@@ -776,6 +783,9 @@ namespace dsm {
     std::vector<double> flows;
     flows.reserve(m_graph->streetSet().size());
     for (const auto& [streetId, street] : m_graph->streetSet()) {
+      if (!street->isSpire()) {
+        continue;
+      }
       auto speedOpt{this->streetMeanSpeed(streetId)};
       if (speedOpt.has_value()) {
         double flow{street->density() * speedOpt.value()};
@@ -794,6 +804,9 @@ namespace dsm {
     std::vector<double> flows;
     flows.reserve(m_graph->streetSet().size());
     for (const auto& [streetId, street] : m_graph->streetSet()) {
+      if (!street->isSpire()) {
+        continue;
+      }
       if (above && street->density() > threshold) {
         auto speedOpt{this->streetMeanSpeed(streetId)};
         if (speedOpt.has_value()) {
@@ -817,7 +830,7 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
-  Measurement<double> Dynamics<Id, Size, Delay>::meanTravelTime() const {
+  Measurement<double> Dynamics<Id, Size, Delay>::meanTravelTime(bool clearData) {
     if (m_travelTimes.size() == 0) {
       return Measurement(0., 0.);
     }
@@ -830,6 +843,9 @@ namespace dsm {
                                             return sum + std::pow(travelTime - mean, 2);
                                           }) /
                           (m_travelTimes.size() - 1)};
+    if(clearData) {
+      m_travelTimes.clear();
+    }
     return Measurement(mean, std::sqrt(variance));
   }
 
@@ -882,7 +898,7 @@ namespace dsm {
   std::optional<double> FirstOrderDynamics<Id, Size, Delay>::streetMeanSpeed(
       Id streetId) const {
     auto street{this->m_graph->streetSet()[streetId]};
-    if (street->queue().empty()) {
+    if (street->queue().empty() || !street->isSpire()) {
       return std::nullopt;
     }
     if (this->m_agents.at(street->queue().front())->delay() > 0) {
@@ -924,6 +940,9 @@ namespace dsm {
     std::vector<double> speeds;
     speeds.reserve(this->m_graph->streetSet().size());
     for (const auto& [streetId, street] : this->m_graph->streetSet()) {
+      if(!street->isSpire()) {
+        continue;
+      }
       if (above) {
         if (street->density() > threshold) {
           auto speedOpt{this->streetMeanSpeed(streetId)};

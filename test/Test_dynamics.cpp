@@ -442,5 +442,7 @@ TEST_CASE("Dynamics") {
     CHECK_EQ(dynamics.graph().streetSet().at(1)->queue().size(), 3);
     CHECK(dynamics.streetMeanSpeed(1).has_value());
     CHECK_EQ(dynamics.streetMeanSpeed(1).value(), meanSpeed);
+    dynamics.graph().streetSet().at(1)->setIsSpire(false);
+    CHECK_FALSE(dynamics.streetMeanSpeed(1).has_value());
   }
 }
