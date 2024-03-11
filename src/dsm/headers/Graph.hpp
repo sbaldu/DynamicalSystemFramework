@@ -358,7 +358,8 @@ namespace dsm {
       Size n;
       file >> n;
       if (n < m_nodes.size()) {
-        throw std::invalid_argument(buildLog("Number of node cordinates in file is too small."));
+        throw std::invalid_argument(
+            buildLog("Number of node cordinates in file is too small."));
       }
       double lat, lon;
       for (Size i{0}; i < n; ++i) {
