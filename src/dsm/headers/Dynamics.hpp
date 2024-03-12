@@ -245,8 +245,9 @@ namespace dsm {
     /// @return Measurement<double> The mean flow of the streets and the standard deviation
     Measurement<double> streetMeanFlow(double threshold, bool above) const;
     /// @brief Get the mean travel time of the agents
+    /// @param clearData If true, the travel times are cleared after the computation
     /// @return Measurement<double> The mean travel time of the agents and the standard
-    Measurement<double> meanTravelTime() const;
+    Measurement<double> meanTravelTime(bool clearData = false);
   };
 
   template <typename Id, typename Size, typename Delay>
@@ -800,7 +801,7 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
-  Measurement<double> Dynamics<Id, Size, Delay>::meanTravelTime() const {
+  Measurement<double> Dynamics<Id, Size, Delay>::meanTravelTime(bool clearData) {
     if (m_travelTimes.size() == 0) {
       return Measurement(0., 0.);
     }
@@ -813,6 +814,9 @@ namespace dsm {
                                             return sum + std::pow(travelTime - mean, 2);
                                           }) /
                           (m_travelTimes.size() - 1)};
+    if (clearData) {
+      m_travelTimes.clear();
+    }
     return Measurement(mean, std::sqrt(variance));
   }
 
