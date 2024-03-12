@@ -826,7 +826,7 @@ namespace dsm {
                                             return sum + std::pow(travelTime - mean, 2);
                                           }) /
                           (m_travelTimes.size() - 1)};
-    if(clearData) {
+    if (clearData) {
       m_travelTimes.clear();
     }
     return Measurement(mean, std::sqrt(variance));

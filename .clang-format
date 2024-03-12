@@ -15,7 +15,6 @@ BinPackParameters: false
 AlwaysBreakTemplateDeclarations: Yes
 ReflowComments: false
 BinPackArguments: false
-BinPackParameters: false
 DerivePointerAlignment: false
 PointerAlignment: Left
 ReferenceAlignment: Left
