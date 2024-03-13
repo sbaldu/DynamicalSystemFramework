@@ -740,7 +740,7 @@ namespace dsm {
                                       m_graph->streetSet().cend(),
                                       0.,
                                       [](double sum, const auto& street) {
-                                        if(!street.second->isSpire()) {
+                                        if (!street.second->isSpire()) {
                                           return sum;
                                         }
                                         return sum + street.second->density();
@@ -751,7 +751,7 @@ namespace dsm {
                         m_graph->streetSet().cend(),
                         0.,
                         [mean](double sum, const auto& street) {
-                          if(!street.second->isSpire()) {
+                          if (!street.second->isSpire()) {
                             return sum;
                           }
                           return sum + std::pow(street.second->density() - mean, 2);
@@ -923,7 +923,7 @@ namespace dsm {
     std::vector<double> speeds;
     speeds.reserve(this->m_graph->streetSet().size());
     for (const auto& [streetId, street] : this->m_graph->streetSet()) {
-      if(!street->isSpire()) {
+      if (!street->isSpire()) {
         continue;
       }
       if (above) {
