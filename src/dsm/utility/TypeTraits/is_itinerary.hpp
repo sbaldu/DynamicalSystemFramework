@@ -18,7 +18,7 @@ namespace dsm {
   struct is_itinerary<Agent<Id, Size, Delay>> : std::true_type {};
 
   template <typename Id, typename Size, typename Delay>
-  struct is_itinerary<shared<Agent<Id, Size, Delay>>> : std::true_type {};
+  struct is_itinerary<std::shared_ptr<Agent<Id, Size, Delay>>> : std::true_type {};
 
   template <typename T>
   inline constexpr bool is_itinerary_v = is_itinerary<T>::value;

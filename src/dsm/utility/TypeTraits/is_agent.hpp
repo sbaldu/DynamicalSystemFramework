@@ -20,7 +20,7 @@ namespace dsm {
   struct is_agent<Agent<Id, Size, Delay>> : std::true_type {};
 
   template <typename Id, typename Size, typename Delay>
-  struct is_agent<shared<Agent<Id, Size, Delay>>> : std::true_type {};
+  struct is_agent<std::shared_ptr<Agent<Id, Size, Delay>>> : std::true_type {};
 
   template <typename T>
   inline constexpr bool is_agent_v = is_agent<T>::value;

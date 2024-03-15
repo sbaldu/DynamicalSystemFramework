@@ -24,7 +24,7 @@ namespace dsm {
   struct is_street<const Street<Id, Size>&> : std::true_type {};
 
   template <typename Id, typename Size>
-  struct is_street<shared<Street<Id, Size>>> : std::true_type {};
+  struct is_street<std::shared_ptr<Street<Id, Size>>> : std::true_type {};
 
   template <typename T>
   inline constexpr bool is_street_v = is_street<T>::value;
