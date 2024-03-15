@@ -85,6 +85,9 @@ namespace dsm {
     /// @brief Import the graph's nodes from a file
     /// @param fileName The name of the file to import the nodes from.
     /// @throws std::invalid_argument if the file is not found, invalid or the format is not supported
+    /// @details The file format is deduced from the file extension. Currently only .dsm files are supported.
+    ///           The first input number is the number of nodes, followed by the coordinates of each node.
+    ///           In the i-th row of the file, the (i - 1)-th node's coordinates are expected.
     void importCoordinates(const std::string& fileName);
     /// @brief Import the graph's nodes from a file
     /// @param fileName The name of the file to import the nodes from.
@@ -363,7 +366,8 @@ namespace dsm {
       Size n;
       file >> n;
       if (n < m_nodes.size()) {
-        throw std::invalid_argument(buildLog("Number of node cordinates in file is too small."));
+        throw std::invalid_argument(
+            buildLog("Number of node cordinates in file is too small."));
       }
       double lat, lon;
       for (Size i{0}; i < n; ++i) {
