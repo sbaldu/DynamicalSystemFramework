@@ -10,10 +10,6 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   class Street;
 
-  // Alias for shared pointers
-  template <typename T>
-  using shared = std::shared_ptr<T>;
-
   // define the is_street type trait
   template <typename T>
   struct is_street : std::false_type {};

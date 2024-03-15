@@ -12,10 +12,6 @@ namespace dsm {
              is_numeric_v<Delay>)
   class Agent;
 
-  // Alias for shared pointers
-  template <typename T>
-  using shared = std::shared_ptr<T>;
-
   // define is_node type trait
   template <typename T>
   struct is_agent : std::false_type {};

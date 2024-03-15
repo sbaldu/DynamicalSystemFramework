@@ -7,9 +7,6 @@
 #include <type_traits>
 
 namespace dsm {
-  // Alias for shared pointers
-  template <typename T>
-  using shared = std::shared_ptr<T>;
 
   // define is_numeric_v type trait
   template <typename T>

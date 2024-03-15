@@ -10,10 +10,6 @@ namespace dsm {
     requires(std::unsigned_integral<Id>)
   class Itinerary;
 
-  // Alias for shared pointers
-  template <typename T>
-  using shared = std::shared_ptr<T>;
-
   // define is_node type trait
   template <typename T>
   struct is_itinerary : std::false_type {};
