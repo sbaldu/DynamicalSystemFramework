@@ -188,6 +188,20 @@ TEST_CASE("Graph") {
     CHECK_EQ(street2->capacity(), 1);
     CHECK(!graph.street(1, 0).has_value());
   }
+  SUBCASE("make trafficlight") {
+    GIVEN("A graph object with two nodes and one street") {
+      Graph graph{};
+      graph.addStreet(Street{1, 1, 1., std::make_pair(0, 1)});
+      graph.buildAdj();
+      WHEN("We make node 0 a traffic light") {
+        graph.makeTrafficLight<uint8_t>(0);
+        THEN("The node 0 is a traffic light") {
+          CHECK(std::dynamic_pointer_cast<dsm::TrafficLight<uint, uint, uint8_t>>(
+              graph.nodeSet().at(0)));
+        }
+      }
+    }
+  }
 }
 
 TEST_CASE("Dijkstra") {
