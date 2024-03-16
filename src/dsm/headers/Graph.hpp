@@ -525,8 +525,9 @@ namespace dsm {
     }
     auto& pNode = m_nodes[nodeId];
     auto pTrafficLight = std::dynamic_pointer_cast<TrafficLight<Id, Size, Delay>>(pNode);
-    if(!pTrafficLight) {
-      pTrafficLight = std::make_shared<TrafficLight<Id, Size, Delay>>(*static_cast<TrafficLight<Id, Size, Delay>*>(pNode.get()));
+    if (!pTrafficLight) {
+      pTrafficLight = std::make_shared<TrafficLight<Id, Size, Delay>>(
+          *static_cast<TrafficLight<Id, Size, Delay>*>(pNode.get()));
     }
     pNode = pTrafficLight;
   }
