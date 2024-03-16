@@ -196,8 +196,7 @@ TEST_CASE("Graph") {
       WHEN("We make node 0 a traffic light") {
         graph.makeTrafficLight<uint8_t>(0);
         THEN("The node 0 is a traffic light") {
-          CHECK(std::dynamic_pointer_cast<dsm::TrafficLight<uint, uint, uint8_t>>(
-              graph.nodeSet().at(0)));
+          CHECK(graph.nodeSet().at(0)->isTrafficLight());
         }
       }
     }
