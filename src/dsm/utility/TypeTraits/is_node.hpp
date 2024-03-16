@@ -24,7 +24,7 @@ namespace dsm {
   struct is_node<const Node<Id, Size>&> : std::true_type {};
 
   template <typename Id, typename Size>
-  struct is_node<std::shared_ptr<Node<Id, Size>>> : std::true_type {};
+  struct is_node<std::unique_ptr<Node<Id, Size>>> : std::true_type {};
 
   template <typename T>
   inline constexpr bool is_node_v = is_node<T>::value;
