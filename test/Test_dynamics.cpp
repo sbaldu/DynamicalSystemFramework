@@ -334,7 +334,7 @@ TEST_CASE("Dynamics") {
       tl.addStreetPriority(0);
       tl.addStreetPriority(1);
       Graph graph2;
-      graph2.addNode(std::make_shared<TrafficLight>(tl));
+      graph2.addNode(std::make_unique<TrafficLight>(tl));
       graph2.addStreets(s1, s2, s3, s4);
       graph2.buildAdj();
       Dynamics dynamics{graph2};
