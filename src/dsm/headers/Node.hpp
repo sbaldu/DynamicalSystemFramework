@@ -48,6 +48,8 @@ namespace dsm {
     /// @param coords A std::pair containing the node's coordinates
     Node(Id id, std::pair<double, double> coords);
 
+	virtual ~Node() = default;
+
     /// @brief Set the node's coordinates
     /// @param coords A std::pair containing the node's coordinates
     void setCoords(std::pair<double, double> coords);
