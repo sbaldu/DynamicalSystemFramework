@@ -255,7 +255,7 @@ namespace dsm {
              is_numeric_v<Delay>)
   Dynamics<Id, Size, Delay>::Dynamics(const Graph<Id, Size>& graph)
       : m_time{0},
-        m_graph{(std::move(graph))},
+        m_graph{graph},
         m_errorProbability{0.},
         m_minSpeedRateo{0.} {}
 
@@ -841,7 +841,7 @@ namespace dsm {
     FirstOrderDynamics() = delete;
     /// @brief Construct a new First Order Dynamics object
     /// @param graph, The graph representing the network
-    FirstOrderDynamics(Graph<Id, Size> graph);
+    FirstOrderDynamics(const Graph<Id, Size>& graph);
     /// @brief Set the speed of an agent
     /// @param agentId The id of the agent
     /// @throw std::invalid_argument, If the agent is not found
@@ -865,8 +865,8 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              std::unsigned_integral<Delay>)
-  FirstOrderDynamics<Id, Size, Delay>::FirstOrderDynamics(Graph<Id, Size> graph)
-      : Dynamics<Id, Size, Delay>(std::move(graph)) {}
+  FirstOrderDynamics<Id, Size, Delay>::FirstOrderDynamics(const Graph<Id, Size>& graph)
+      : Dynamics<Id, Size, Delay>(graph) {}
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
