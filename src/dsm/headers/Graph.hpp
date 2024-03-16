@@ -555,15 +555,12 @@ namespace dsm {
     if (!m_nodes.contains(nodeId)) {
       throw std::invalid_argument(buildLog("Node does not exist."));
     }
-    auto& pNode = m_nodes[nodeId];
-    auto pTrafficLight = std::dynamic_pointer_cast<TrafficLight<Id, Size, Delay>>(pNode);
-    if (!pTrafficLight) {
-      pTrafficLight = std::make_shared<TrafficLight<Id, Size, Delay>>(
-          *static_cast<TrafficLight<Id, Size, Delay>*>(pNode.get()));
-    }
-    pNode = pTrafficLight;
+	auto& pNode = m_nodes[nodeId];
+    pNode = std::make_unique<TrafficLight<Id, Size, Delay>>(pNode->id());;
   }
 
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Graph<Id, Size>::addStreet(std::shared_ptr<Street<Id, Size>> street) {
     if (m_streets.contains(street->id())) {
       throw std::invalid_argument(buildLog("Street with same id already exists."));
