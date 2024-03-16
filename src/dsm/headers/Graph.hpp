@@ -60,7 +60,13 @@ namespace dsm {
     Graph(const SparseMatrix<Id, bool>& adj);
     /// @brief Construct a new Graph object
     /// @param streetSet A map of streets representing the graph's streets
-    Graph(const std::unordered_map<Id, std::shared_ptr<Street<Id, Size>>>& streetSet);
+    Graph(const std::unordered_map<Id, std::unique_ptr<Street<Id, Size>>>& streetSet);
+
+	Graph(const Graph<Id, Size>&) = delete;
+	Graph& operator=(const Graph<Id, Size>&) = delete;
+
+	Graph(Graph<Id, Size>&&) = default;
+	Graph& operator=(Graph<Id, Size>&&) = default;
 
     /// @brief Build the graph's adjacency matrix
     /// @details The adjacency matrix is built using the graph's streets and nodes. N.B.: The street ids
@@ -200,7 +206,7 @@ namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   Graph<Id, Size>::Graph(
-      const std::unordered_map<Id, std::shared_ptr<Street<Id, Size>>>& streetSet)
+      const std::unordered_map<Id, std::unique_ptr<Street<Id, Size>>>& streetSet)
       : m_adjacency{std::make_unique<SparseMatrix<Id, bool>>()} {
     for (const auto& street : streetSet) {
       m_streets.emplace(std::make_pair(street->id(), street));
