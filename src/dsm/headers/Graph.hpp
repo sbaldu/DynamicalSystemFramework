@@ -149,6 +149,10 @@ namespace dsm {
     template <typename Delay>
       requires(std::unsigned_integral<Delay>)
     void makeTrafficLight(Id nodeId);
+    /// @brief Convert an existing street into a spire street
+    /// @param streetId The id of the street to convert to a spire street
+    /// @throws std::invalid_argument if the street does not exist
+    void makeSpireStreet(Id streetId);
 
     /// @brief Add a street to the graph
     /// @param street A std::shared_ptr to the street to add
@@ -557,6 +561,15 @@ namespace dsm {
     }
 	auto& pNode = m_nodes[nodeId];
     pNode = std::make_unique<TrafficLight<Id, Size, Delay>>(*pNode);
+  }
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Graph<Id, Size>::makeSpireStreet(Id streetId) {
+    if (!m_streets.contains(streetId)) {
+      throw std::invalid_argument(buildLog("Street does not exist."));
+    }
+    auto& pStreet = m_streets[streetId];
+    pStreet = std::make_unique<SpireStreet<Id, Size>>(pStreet->id(), *pStreet);
   }
 
   template <typename Id, typename Size>
