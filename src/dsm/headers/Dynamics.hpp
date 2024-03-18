@@ -292,19 +292,18 @@ namespace dsm {
     By doing the angle difference, if the destination street is the same we can basically compare these differences (mod(pi)!, i.e. delta % std::numbers::pi):
     the smaller goes first.
     Anyway, this is not trivial as it seems so I will leave it as a comment.*/
-    for (auto& nodePair : this->m_graph.nodeSet()) {
-      auto& node{nodePair.second};
-      for (const auto agent : node->agents()) {
-        Size agentId{agent.second};
-        if (node->id() ==
-            this->m_itineraries[this->m_agents[agentId]->itineraryId()]->destination()) {
+    for (auto& [nodeId, node] : this->m_graph.nodeSet()) {
+      for (const auto [priority, agentId] : node->agents()) {
+        auto& agent = m_agents[agentId];
+        if (nodeId ==
+            this->m_itineraries[agent->itineraryId()]->destination()) {
           node->removeAgent(agentId);
-          this->m_travelTimes.push_back(this->m_agents[agentId]->time());
+          this->m_travelTimes.push_back(agent->time());
           if (reinsert_agents) {
-            Agent<Id, Size, Delay> newAgent{this->m_agents[agentId]->id(),
-                                            this->m_agents[agentId]->itineraryId()};
-            if (this->m_agents[agentId]->srcNodeId().has_value()) {
-              newAgent.setSourceNodeId(this->m_agents[agentId]->srcNodeId().value());
+            Agent<Id, Size, Delay> newAgent{agent->id(),
+                                            agent->itineraryId()};
+            if (agent->srcNodeId().has_value()) {
+              newAgent.setSourceNodeId(agent->srcNodeId().value());
             }
             this->removeAgent(agentId);
             this->addAgent(newAgent);
@@ -314,8 +313,8 @@ namespace dsm {
           continue;
         }
         auto possibleMoves{
-            this->m_itineraries[this->m_agents[agentId]->itineraryId()]->path().getRow(
-                node->id(), true)};
+            this->m_itineraries[agent->itineraryId()]->path().getRow(
+                nodeId, true)};
         if (this->m_uniformDist(this->m_generator) < this->m_errorProbability) {
           possibleMoves = this->m_graph.adjMatrix().getRow(node->id(), true);
         }
@@ -327,16 +326,16 @@ namespace dsm {
         const auto p{moveDist(this->m_generator)};
         auto iterator = possibleMoves.begin();
         std::advance(iterator, p);
-        const auto nextStreetId{iterator->first};
-        auto& nextStreet{this->m_graph.streetSet()[nextStreetId]};
+
+        auto& nextStreet{this->m_graph.streetSet()[iterator->first]};
 
         if (nextStreet->density() < 1) {
           node->removeAgent(agentId);
-          this->m_agents[agentId]->setStreetId(nextStreet->id());
-          this->setAgentSpeed(this->m_agents[agentId]->id());
-          this->m_agents[agentId]->incrementDelay(
-              std::ceil(nextStreet->length() / this->m_agents[agentId]->speed()));
-          nextStreet->enqueue(this->m_agents[agentId]->id());
+          agent->setStreetId(nextStreet->id());
+          this->setAgentSpeed(agentId);
+          agent->incrementDelay(
+              std::ceil(nextStreet->length() / agent->speed()));
+          nextStreet->enqueue(agentId);
         } else {
           break;
         }
