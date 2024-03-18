@@ -263,8 +263,7 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::m_evolveStreets() {
-    for (auto& streetPair : this->m_graph.streetSet()) {
-      const auto& street{streetPair.second};
+    for (auto& [streetId, street] : this->m_graph.streetSet()) {
       if (street->queue().empty()) {
         continue;
       }
@@ -278,7 +277,7 @@ namespace dsm {
         continue;
       }
       if (destinationNode->isTrafficLight() &&
-          !destinationNode->isGreen(street->id())) {
+          !destinationNode->isGreen(streetId)) {
         continue;
       }
       destinationNode->addAgent(street->dequeue().value());
@@ -441,7 +440,7 @@ namespace dsm {
           continue;
         }
         // save the minimum distance between i and the destination
-        auto minDistance{result.value().distance()};
+        const auto minDistance{result.value().distance()};
         for (auto const& node : m_graph.adjMatrix().getRow(i)) {
           // init distance from a neighbor node to the destination to zero
           double distance{0.};
@@ -464,7 +463,10 @@ namespace dsm {
           }
 
           // if (!(distance > minDistance + expectedTravelTime)) {
-          if (!(distance > minDistance + streetLength)) {
+          if (minDistance == distance + streetLength) {
+            // std::cout << "minDistance: " << minDistance << " distance: " << distance
+            //           << " streetLength: " << streetLength << '\n';
+            // std::cout << "Inserting " << i << ';' << node.first << '\n';
             path.insert(i, node.first, true);
           }
         }
