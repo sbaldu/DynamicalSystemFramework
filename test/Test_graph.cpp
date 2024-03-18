@@ -181,12 +181,12 @@ TEST_CASE("Graph") {
     Street street{1, 1, 1., std::make_pair(0, 1)};
     graph.addStreet(street);
     auto result = graph.street(0, 1);
-    CHECK(result != nullptr);
+    CHECK(result);
     const auto& street2 = *result;
     CHECK_EQ(street2->id(), 1);
     CHECK_EQ(street2->length(), 1.);
     CHECK_EQ(street2->capacity(), 1);
-    CHECK_EQ(graph.street(1, 0), nullptr);
+    CHECK_FALSE(graph.street(1, 0));
   }
   SUBCASE("make trafficlight") {
     GIVEN("A graph object with two nodes and one street") {
@@ -439,12 +439,12 @@ TEST_CASE("Dijkstra") {
     Street street{1, 1, 1., std::make_pair(0, 1)};
     graph.addStreet(street);
     auto result = graph.street(0, 1);
-    CHECK(result != nullptr);
+    CHECK(result);
     const auto& street2 = *result;
     CHECK_EQ(street2->id(), 1);
     CHECK_EQ(street2->length(), 1.);
     CHECK_EQ(street2->capacity(), 1);
-    CHECK_EQ(graph.street(1, 0), nullptr);
+    CHECK_FALSE(graph.street(1, 0));
   }
 
   SUBCASE("equal length") {
