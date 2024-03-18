@@ -369,7 +369,7 @@ namespace dsm {
         }
       } else if (!agent->streetId().has_value()) {
         assert(agent->srcNodeId().has_value());
-        auto& srcNode{this->m_graph.nodeSet()[agent->srcNodeId().value()]};
+        const auto& srcNode{this->m_graph.nodeSet()[agent->srcNodeId().value()]};
         if (srcNode->isFull()) {
           continue;
         }
@@ -883,7 +883,7 @@ namespace dsm {
              std::unsigned_integral<Delay>)
   std::optional<double> FirstOrderDynamics<Id, Size, Delay>::streetMeanSpeed(
       Id streetId) const {
-    auto& street{this->m_graph.streetSet().at(streetId)};
+    const auto& street{this->m_graph.streetSet().at(streetId)};
     if (street->queue().empty() || !street->isSpire()) {
       return std::nullopt;
     }
