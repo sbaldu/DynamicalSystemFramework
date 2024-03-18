@@ -146,6 +146,7 @@ TEST_CASE("Dynamics") {
           CHECK_EQ(dynamics.itineraries().size(), 1);
           CHECK(dynamics.itineraries().at(0)->path()(0, 1));
           CHECK(dynamics.itineraries().at(0)->path()(1, 2));
+          CHECK_FALSE(dynamics.itineraries().at(0)->path()(0, 2));
           for (auto const& it : dynamics.itineraries()) {
             auto const& path = it.second->path();
             for (uint16_t i{0}; i < path.getRowDim(); ++i) {
