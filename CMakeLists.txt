@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16.0)
 
-project(dms VERSION 1.1.5 LANGUAGES CXX)
+project(dms VERSION 1.2.1 LANGUAGES CXX)
 
 # set the C++ standard
 set(CMAKE_CXX_STANDARD 20)
