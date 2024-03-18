@@ -440,7 +440,7 @@ namespace dsm {
         }
         // save the minimum distance between i and the destination
         const auto minDistance{result.value().distance()};
-        for (auto const& node : m_graph.adjMatrix().getRow(i)) {
+        for (const auto& node : m_graph.adjMatrix().getRow(i)) {
           // init distance from a neighbor node to the destination to zero
           double distance{0.};
 
