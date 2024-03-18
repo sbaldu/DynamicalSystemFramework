@@ -556,7 +556,7 @@ namespace dsm {
       throw std::invalid_argument(buildLog("Node does not exist."));
     }
 	auto& pNode = m_nodes[nodeId];
-    pNode = std::make_unique<TrafficLight<Id, Size, Delay>>(pNode->id());;
+    pNode = std::make_unique<TrafficLight<Id, Size, Delay>>(*pNode);
   }
 
   template <typename Id, typename Size>
