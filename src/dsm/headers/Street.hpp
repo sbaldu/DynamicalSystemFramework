@@ -39,7 +39,6 @@ namespace dsm {
     Id m_id;
     Size m_capacity;
     Size m_transportCapacity;
-    bool m_isSpire;
   public:
     Street() = delete;
     /// @brief Construct a new Street object starting from an existing street
@@ -68,8 +67,6 @@ namespace dsm {
     /// @param maxSpeed The street's speed limit
     /// @param nodePair The street's node pair
     Street(Id id, Size capacity, double len, double maxSpeed, std::pair<Id, Id> nodePair);
-
-    virtual ~Street() = default;
 
     /// @brief Set the street's id
     /// @param id The street's id
@@ -112,11 +109,6 @@ namespace dsm {
     /// @param angle The street's angle
     /// @throw std::invalid_argument If the angle is negative or greater than 2 * pi
     void setAngle(double angle);
-    /// @brief Set the street's spire status
-    /// @param isSpire The street's spire status
-    /// @details A spire is a street from which you can extract data, e.g. density. However, this
-    ///          parameter must be managed by the dynamics.
-    void setIsSpire(bool isSpire);
 
     /// @brief Get the street's id
     /// @return Id, The street's id
@@ -155,7 +147,7 @@ namespace dsm {
     virtual std::optional<Id> dequeue();
     /// @brief Check if the street is a spire
     /// @return bool True if the street is a spire, false otherwise
-    bool isSpire() const;
+    virtual bool isSpire() const { return false; };
   };
 
   template <typename Id, typename Size>
@@ -167,8 +159,7 @@ namespace dsm {
         m_angle{street.angle()},
         m_id{id},
         m_capacity{street.capacity()},
-        m_transportCapacity{street.transportCapacity()},
-        m_isSpire{true} {}
+        m_transportCapacity{street.transportCapacity()} {}
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
@@ -179,8 +170,7 @@ namespace dsm {
         m_angle{0.},
         m_id{index},
         m_capacity{1},
-        m_transportCapacity{std::numeric_limits<Size>::max()},
-        m_isSpire{true} {}
+        m_transportCapacity{std::numeric_limits<Size>::max()} {}
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
@@ -191,8 +181,7 @@ namespace dsm {
         m_angle{0.},
         m_id{id},
         m_capacity{capacity},
-        m_transportCapacity{std::numeric_limits<Size>::max()},
-        m_isSpire{true} {}
+        m_transportCapacity{std::numeric_limits<Size>::max()} {}
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
@@ -203,8 +192,7 @@ namespace dsm {
         m_angle{0.},
         m_id{id},
         m_capacity{capacity},
-        m_transportCapacity{std::numeric_limits<Size>::max()},
-        m_isSpire{true} {
+        m_transportCapacity{std::numeric_limits<Size>::max()} {
     this->setMaxSpeed(maxSpeed);
   }
 
@@ -281,11 +269,6 @@ namespace dsm {
     }
     m_angle = angle;
   }
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Street<Id, Size>::setIsSpire(bool isSpire) {
-    m_isSpire = isSpire;
-  }
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
@@ -355,11 +338,6 @@ namespace dsm {
     m_queue.pop();
     return id;
   }
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  bool Street<Id, Size>::isSpire() const {
-    return m_isSpire;
-  }
 
   /// @brief The SpireStreet class represents a street which is able to count agent flows in both input and output.
   /// @tparam Id The type of the street's id
@@ -412,6 +390,9 @@ namespace dsm {
     /// @brief Remove an agent from the street's queue
     /// @return std::optional<Id> The id of the agent removed from the street's queue
     std::optional<Id> dequeue() override;
+    /// @brief Check if the street is a spire
+    /// @return bool True if the street is a spire, false otherwise
+    bool isSpire() const override { return true; };
   };
 
   template <typename Id, typename Size>
