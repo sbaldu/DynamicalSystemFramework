@@ -134,7 +134,7 @@ namespace dsm {
 
     /// @brief Get the graph
     /// @return const Graph<Id, Size>&, The graph
-    const Graph<Id, Size>& graph() const;
+    Graph<Id, Size>& graph();
     /// @brief Get the itineraries
     /// @return const std::unordered_map<Id, Itinerary<Id>>&, The itineraries
     const std::unordered_map<Id, std::unique_ptr<Itinerary<Id>>>& itineraries() const;
@@ -255,7 +255,7 @@ namespace dsm {
              is_numeric_v<Delay>)
   Dynamics<Id, Size, Delay>::Dynamics(const Graph<Id, Size>& graph)
       : m_time{0},
-        m_graph{graph},
+        m_graph{std::move(graph)},
         m_errorProbability{0.},
         m_minSpeedRateo{0.} {}
 
@@ -491,7 +491,7 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
-  const Graph<Id, Size>& Dynamics<Id, Size, Delay>::graph() const {
+  Graph<Id, Size>& Dynamics<Id, Size, Delay>::graph() {
     return m_graph;
   }
 

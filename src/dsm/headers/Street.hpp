@@ -68,6 +68,8 @@ namespace dsm {
     /// @param nodePair The street's node pair
     Street(Id id, Size capacity, double len, double maxSpeed, std::pair<Id, Id> nodePair);
 
+    virtual ~Street() = default;
+
     /// @brief Set the street's id
     /// @param id The street's id
     void setId(Id id);
