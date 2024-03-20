@@ -21,6 +21,7 @@ TEST_CASE("Dynamics") {
     GIVEN("A graph object") {
       auto graph = Graph{};
       graph.importMatrix("./data/matrix.dsm");
+      graph.buildAdj();
       WHEN("A dynamics object is created") {
         Dynamics dynamics(graph);
         THEN("The node and the street sets are the same") {
@@ -36,6 +37,13 @@ TEST_CASE("Dynamics") {
           CHECK_EQ(dynamics.streetMeanFlow().error, 0.);
           CHECK_EQ(dynamics.meanTravelTime().mean, 0.);
           CHECK_EQ(dynamics.meanTravelTime().error, 0.);
+        }
+      }
+      WHEN("We transform a node into a traffic light and create the dynamics") {
+        graph.makeTrafficLight<uint16_t>(0);
+        Dynamics dynamics(graph);
+        THEN("The node is a traffic light") {
+          CHECK(dynamics.graph().nodeSet().at(0)->isTrafficLight());
         }
       }
     }
