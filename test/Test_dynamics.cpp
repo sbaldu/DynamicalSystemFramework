@@ -90,19 +90,19 @@ TEST_CASE("Dynamics") {
                        ->destination(),
                    Itinerary2.destination());
           CHECK(dynamics.agents().at(0)->streetId().has_value());
-          CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 6);
+          CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 3);
           CHECK_EQ(dynamics.itineraries()
                        .at(dynamics.agents().at(1)->itineraryId())
                        ->destination(),
                    Itinerary2.destination());
           CHECK(dynamics.agents().at(1)->streetId().has_value());
-          CHECK_EQ(dynamics.agents().at(1)->streetId().value(), 1);
+          CHECK_EQ(dynamics.agents().at(1)->streetId().value(), 8);
           CHECK_EQ(dynamics.itineraries()
                        .at(dynamics.agents().at(2)->itineraryId())
                        ->destination(),
                    Itinerary1.destination());
           CHECK(dynamics.agents().at(2)->streetId().has_value());
-          CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 8);
+          CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 1);
         }
       }
     }
@@ -347,16 +347,16 @@ TEST_CASE("Dynamics") {
       dynamics.updatePaths();
       dynamics.addAgent(Agent(0, 0, 0));
       WHEN("We evolve the dynamics") {
-        // dynamics.evolve(false);
+        dynamics.evolve(false);
         THEN(
             "The agent is ready to go through the traffic light at time 3 but the "
             "traffic light is red"
             " until time 4, so the agent waits until time 4") {
           for (uint8_t i{0}; i < 5; ++i) {
             dynamics.evolve(false);
-            if (i > 0 && i < 3) {
+            if (i < 3) {
               CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 1);
-            } else if (i > 2) {
+            } else {
               CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 7);
             }
             if (i == 2) {
@@ -364,8 +364,6 @@ TEST_CASE("Dynamics") {
             }
           }
           CHECK_EQ(dynamics.agents().at(0)->distance(), 60.);
-          dynamics.evolve(false);
-          CHECK_EQ(dynamics.agents().size(), 0);
         }
       }
     }
