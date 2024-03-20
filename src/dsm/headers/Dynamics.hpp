@@ -105,7 +105,7 @@ namespace dsm {
     void setItineraries(std::span<Itinerary<Id>> itineraries);
     /// @brief Set the seed for the graph's random number generator
     /// @param seed The seed
-    void setSeed(unsigned int seed);
+    void setSeed(unsigned int seed) { m_generator.seed(seed); };
     /// @brief Set the minim speed rateo, i.e. the minim speed with respect to the speed limit
     /// @param minSpeedRateo The minim speed rateo
     /// @throw std::invalid_argument If the minim speed rateo is not between 0 and 1
@@ -137,13 +137,13 @@ namespace dsm {
     const Graph<Id, Size>& graph() { return m_graph; };
     /// @brief Get the itineraries
     /// @return const std::unordered_map<Id, Itinerary<Id>>&, The itineraries
-    const std::unordered_map<Id, std::unique_ptr<Itinerary<Id>>>& itineraries() const;
+    const std::unordered_map<Id, std::unique_ptr<Itinerary<Id>>>& itineraries() const { return m_itineraries; };
     /// @brief Get the agents
     /// @return const std::unordered_map<Id, Agent<Id>>&, The agents
-    const std::map<Id, std::unique_ptr<Agent<Id, Size, Delay>>>& agents() const;
+    const std::map<Id, std::unique_ptr<Agent<Id, Size, Delay>>>& agents() const { return m_agents; };
     /// @brief Get the time
     /// @return TimePoint The time
-    TimePoint time() const;
+    TimePoint time() const { return m_time; };
 
     /// @brief Add an agent to the simulation
     /// @param agent The agent
@@ -391,13 +391,6 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
-  void Dynamics<Id, Size, Delay>::setSeed(unsigned int seed) {
-    m_generator.seed(seed);
-  }
-
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::setMinSpeedRateo(double minSpeedRateo) {
     if (minSpeedRateo < 0. || minSpeedRateo > 1.) {
       throw std::invalid_argument(
@@ -481,29 +474,6 @@ namespace dsm {
     this->m_evolveAgents();
     // increment time simulation
     ++this->m_time;
-  }
-
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             is_numeric_v<Delay>)
-  const std::unordered_map<Id, std::unique_ptr<Itinerary<Id>>>&
-  Dynamics<Id, Size, Delay>::itineraries() const {
-    return m_itineraries;
-  }
-
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             is_numeric_v<Delay>)
-  const std::map<Id, std::unique_ptr<Agent<Id, Size, Delay>>>&
-  Dynamics<Id, Size, Delay>::agents() const {
-    return this->m_agents;
-  }
-
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             is_numeric_v<Delay>)
-  TimePoint Dynamics<Id, Size, Delay>::time() const {
-    return m_time;
   }
 
   template <typename Id, typename Size, typename Delay>
@@ -818,7 +788,7 @@ namespace dsm {
     FirstOrderDynamics() = delete;
     /// @brief Construct a new First Order Dynamics object
     /// @param graph, The graph representing the network
-    FirstOrderDynamics(Graph<Id, Size>& graph);
+    FirstOrderDynamics(Graph<Id, Size>& graph) : Dynamics<Id, Size, Delay>(graph) {};
     /// @brief Set the speed of an agent
     /// @param agentId The id of the agent
     /// @throw std::invalid_argument, If the agent is not found
@@ -838,12 +808,6 @@ namespace dsm {
     /// @return Measurement The mean speed of the agents and the standard deviation
     Measurement<double> streetMeanSpeed(double threshold, bool above) const override;
   };
-
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             std::unsigned_integral<Delay>)
-  FirstOrderDynamics<Id, Size, Delay>::FirstOrderDynamics(Graph<Id, Size>& graph)
-      : Dynamics<Id, Size, Delay>(graph) {}
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
