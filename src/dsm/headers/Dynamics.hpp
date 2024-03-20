@@ -134,7 +134,7 @@ namespace dsm {
 
     /// @brief Get the graph
     /// @return const Graph<Id, Size>&, The graph
-    Graph<Id, Size>& graph();
+    const Graph<Id, Size>& graph() { return m_graph; };
     /// @brief Get the itineraries
     /// @return const std::unordered_map<Id, Itinerary<Id>>&, The itineraries
     const std::unordered_map<Id, std::unique_ptr<Itinerary<Id>>>& itineraries() const;
@@ -486,13 +486,6 @@ namespace dsm {
     this->m_evolveAgents();
     // increment time simulation
     ++this->m_time;
-  }
-
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             is_numeric_v<Delay>)
-  Graph<Id, Size>& Dynamics<Id, Size, Delay>::graph() {
-    return m_graph;
   }
 
   template <typename Id, typename Size, typename Delay>
