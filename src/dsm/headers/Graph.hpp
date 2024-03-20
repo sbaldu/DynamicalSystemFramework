@@ -63,27 +63,32 @@ namespace dsm {
     Graph(const std::unordered_map<Id, std::unique_ptr<Street<Id, Size>>>& streetSet);
 
     Graph(const Graph<Id, Size>& other) {
-	  std::for_each(other.m_nodes.begin(), other.m_nodes.end(), [this](const auto& pair) {
+      std::for_each(other.m_nodes.begin(), other.m_nodes.end(), [this](const auto& pair) {
         this->m_nodes.emplace(pair.first, std::make_unique<Node<Id, Size>>(*pair.second));
       });
-      std::for_each(other.m_streets.begin(), other.m_streets.end(), [this](const auto& pair) {
-		this->m_streets.emplace(pair.first, std::make_unique<Street<Id, Size>>(*pair.second));
-      });
+      std::for_each(
+          other.m_streets.begin(), other.m_streets.end(), [this](const auto& pair) {
+            this->m_streets.emplace(pair.first,
+                                    std::make_unique<Street<Id, Size>>(*pair.second));
+          });
       m_nodeMapping = other.m_nodeMapping;
       m_adjacency = other.m_adjacency;
-	}
+    }
 
     Graph& operator=(const Graph<Id, Size>& other) {
-	  std::for_each(other.m_nodes.begin(), other.m_nodes.end(), [this](const auto& pair) {
-        this->m_nodes.insert_or_assign(pair.first, std::make_unique<Node<Id, Size>>(*pair.second));
+      std::for_each(other.m_nodes.begin(), other.m_nodes.end(), [this](const auto& pair) {
+        this->m_nodes.insert_or_assign(pair.first,
+                                       std::make_unique<Node<Id, Size>>(*pair.second));
       });
-      std::for_each(other.m_streets.begin(), other.m_streets.end(), [this](const auto& pair) {
-		this->m_streets.insert_or_assign(pair.first, std::make_unique<Street<Id, Size>>(*pair.second));
-      });
+      std::for_each(
+          other.m_streets.begin(), other.m_streets.end(), [this](const auto& pair) {
+            this->m_streets.insert_or_assign(
+                pair.first, std::make_unique<Street<Id, Size>>(*pair.second));
+          });
       m_nodeMapping = other.m_nodeMapping;
       m_adjacency = other.m_adjacency;
 
-	  return *this;
+      return *this;
     }
 
     Graph(Graph<Id, Size>&&) = default;
