@@ -19,12 +19,12 @@ int main() {
   std::cout << "Number of nodes: " << graph.nodeSet().size() << '\n'
             << "Number of streets: " << graph.streetSet().size() << '\n';
   for (auto& streetPair : graph.streetSet()) {
-    auto street = streetPair.second;
+    auto& street = streetPair.second;
     street->setCapacity(100);
     street->setMaxSpeed(10.);
   }
   for (auto& nodePair : graph.nodeSet()) {
-    auto node = nodePair.second;
+    auto& node = nodePair.second;
     node->setCapacity(10);
   }
   std::cout << "Done.\n";

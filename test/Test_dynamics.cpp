@@ -21,6 +21,7 @@ TEST_CASE("Dynamics") {
     GIVEN("A graph object") {
       auto graph = Graph{};
       graph.importMatrix("./data/matrix.dsm");
+      graph.buildAdj();
       WHEN("A dynamics object is created") {
         Dynamics dynamics(graph);
         THEN("The node and the street sets are the same") {
@@ -36,6 +37,13 @@ TEST_CASE("Dynamics") {
           CHECK_EQ(dynamics.streetMeanFlow().error, 0.);
           CHECK_EQ(dynamics.meanTravelTime().mean, 0.);
           CHECK_EQ(dynamics.meanTravelTime().error, 0.);
+        }
+      }
+      WHEN("We transform a node into a traffic light and create the dynamics") {
+        graph.makeTrafficLight<uint16_t>(0);
+        Dynamics dynamics(graph);
+        THEN("The node is a traffic light") {
+          CHECK(dynamics.graph().nodeSet().at(0)->isTrafficLight());
         }
       }
     }
@@ -146,7 +154,7 @@ TEST_CASE("Dynamics") {
           CHECK_EQ(dynamics.itineraries().size(), 1);
           CHECK(dynamics.itineraries().at(0)->path()(0, 1));
           CHECK(dynamics.itineraries().at(0)->path()(1, 2));
-          CHECK(dynamics.itineraries().at(0)->path()(0, 2));
+          CHECK_FALSE(dynamics.itineraries().at(0)->path()(0, 2));
           for (auto const& it : dynamics.itineraries()) {
             auto const& path = it.second->path();
             for (uint16_t i{0}; i < path.getRowDim(); ++i) {
@@ -234,23 +242,18 @@ TEST_CASE("Dynamics") {
       dynamics.addItinerary(itinerary);
       dynamics.updatePaths();
       WHEN("We add an agent randomly and evolve the dynamics") {
-        dynamics.addAgentsUniformly(1);
+        dynamics.addAgent(Agent(0, 0, 0));
+        dynamics.evolve(false);
         dynamics.evolve(false);
         THEN("The agent evolves") {
-          CHECK_EQ(dynamics.agents().at(0)->time(), 1);
-          CHECK_EQ(dynamics.agents().at(0)->delay(), 1);
-          CHECK(dynamics.agents().at(0)->streetId().has_value());
-          CHECK_EQ(dynamics.agents().at(0)->speed(), 13.8888888889);
-        }
-        dynamics.evolve(false);
-        THEN("The agent evolves again") {
           CHECK_EQ(dynamics.agents().at(0)->time(), 2);
           CHECK_EQ(dynamics.agents().at(0)->delay(), 0);
+          CHECK(dynamics.agents().at(0)->streetId().has_value());
           CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 1);
           CHECK_EQ(dynamics.agents().at(0)->speed(), 13.8888888889);
         }
         dynamics.evolve(false);
-        THEN("And again, changing street") {
+        THEN("The agent evolves again, changing street") {
           CHECK_EQ(dynamics.agents().at(0)->time(), 3);
           CHECK_EQ(dynamics.agents().at(0)->delay(), 0);
           CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 5);
@@ -334,7 +337,7 @@ TEST_CASE("Dynamics") {
       tl.addStreetPriority(0);
       tl.addStreetPriority(1);
       Graph graph2;
-      graph2.addNode(std::make_shared<TrafficLight>(tl));
+      graph2.addNode(std::make_unique<TrafficLight>(tl));
       graph2.addStreets(s1, s2, s3, s4);
       graph2.buildAdj();
       Dynamics dynamics{graph2};

@@ -73,7 +73,7 @@ namespace dsm {
     std::unordered_map<Id, std::unique_ptr<Itinerary<Id>>> m_itineraries;
     std::map<Id, std::unique_ptr<Agent<Id, Size, Delay>>> m_agents;
     TimePoint m_time;
-    std::unique_ptr<Graph<Id, Size>> m_graph;
+    Graph<Id, Size> m_graph;
     double m_errorProbability;
     double m_minSpeedRateo;
     mutable std::mt19937_64 m_generator{std::random_device{}()};
@@ -98,7 +98,7 @@ namespace dsm {
     Dynamics() = delete;
     /// @brief Construct a new Dynamics object
     /// @param graph The graph representing the network
-    Dynamics(const Graph<Id, Size>& graph);
+    Dynamics(Graph<Id, Size>& graph);
 
     /// @brief Set the itineraries
     /// @param itineraries The itineraries
@@ -253,9 +253,9 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
-  Dynamics<Id, Size, Delay>::Dynamics(const Graph<Id, Size>& graph)
+  Dynamics<Id, Size, Delay>::Dynamics(Graph<Id, Size>& graph)
       : m_time{0},
-        m_graph{std::make_unique<Graph<Id, Size>>(graph)},
+        m_graph{std::move(graph)},
         m_errorProbability{0.},
         m_minSpeedRateo{0.} {}
 
@@ -263,8 +263,7 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::m_evolveStreets() {
-    for (auto& streetPair : this->m_graph->streetSet()) {
-      auto street{streetPair.second};
+    for (auto& [streetId, street] : this->m_graph.streetSet()) {
       if (street->queue().empty()) {
         continue;
       }
@@ -273,12 +272,11 @@ namespace dsm {
         continue;
       }
       this->m_agents[agentId]->setSpeed(0.);
-      auto destinationNode{this->m_graph->nodeSet()[street->nodePair().second]};
+      auto& destinationNode{this->m_graph.nodeSet()[street->nodePair().second]};
       if (destinationNode->isFull()) {
         continue;
       }
-      if (std::dynamic_pointer_cast<TrafficLight<Id, Size, Delay>>(destinationNode) &&
-          !destinationNode->isGreen(street->id())) {
+      if (destinationNode->isTrafficLight() && !destinationNode->isGreen(streetId)) {
         continue;
       }
       destinationNode->addAgent(street->dequeue().value());
@@ -293,19 +291,16 @@ namespace dsm {
     By doing the angle difference, if the destination street is the same we can basically compare these differences (mod(pi)!, i.e. delta % std::numbers::pi):
     the smaller goes first.
     Anyway, this is not trivial as it seems so I will leave it as a comment.*/
-    for (auto& nodePair : this->m_graph->nodeSet()) {
-      auto node{nodePair.second};
-      for (const auto agent : node->agents()) {
-        Size agentId{agent.second};
-        if (node->id() ==
-            this->m_itineraries[this->m_agents[agentId]->itineraryId()]->destination()) {
+    for (auto& [nodeId, node] : this->m_graph.nodeSet()) {
+      for (const auto [priority, agentId] : node->agents()) {
+        auto& agent = m_agents[agentId];
+        if (nodeId == this->m_itineraries[agent->itineraryId()]->destination()) {
           node->removeAgent(agentId);
-          this->m_travelTimes.push_back(this->m_agents[agentId]->time());
+          this->m_travelTimes.push_back(agent->time());
           if (reinsert_agents) {
-            Agent<Id, Size, Delay> newAgent{this->m_agents[agentId]->id(),
-                                            this->m_agents[agentId]->itineraryId()};
-            if (this->m_agents[agentId]->srcNodeId().has_value()) {
-              newAgent.setSourceNodeId(this->m_agents[agentId]->srcNodeId().value());
+            Agent<Id, Size, Delay> newAgent{agent->id(), agent->itineraryId()};
+            if (agent->srcNodeId().has_value()) {
+              newAgent.setSourceNodeId(agent->srcNodeId().value());
             }
             this->removeAgent(agentId);
             this->addAgent(newAgent);
@@ -315,10 +310,9 @@ namespace dsm {
           continue;
         }
         auto possibleMoves{
-            this->m_itineraries[this->m_agents[agentId]->itineraryId()]->path().getRow(
-                node->id(), true)};
+            this->m_itineraries[agent->itineraryId()]->path().getRow(nodeId, true)};
         if (this->m_uniformDist(this->m_generator) < this->m_errorProbability) {
-          possibleMoves = this->m_graph->adjMatrix()->getRow(node->id(), true);
+          possibleMoves = this->m_graph.adjMatrix().getRow(node->id(), true);
         }
         if (static_cast<Size>(possibleMoves.size()) == 0) {
           continue;
@@ -328,21 +322,20 @@ namespace dsm {
         const auto p{moveDist(this->m_generator)};
         auto iterator = possibleMoves.begin();
         std::advance(iterator, p);
-        const auto nextStreetId{iterator->first};
-        auto nextStreet{this->m_graph->streetSet()[nextStreetId]};
+
+        auto& nextStreet{this->m_graph.streetSet()[iterator->first]};
 
         if (nextStreet->density() < 1) {
           node->removeAgent(agentId);
-          this->m_agents[agentId]->setStreetId(nextStreet->id());
-          this->setAgentSpeed(this->m_agents[agentId]->id());
-          this->m_agents[agentId]->incrementDelay(
-              std::ceil(nextStreet->length() / this->m_agents[agentId]->speed()));
-          nextStreet->enqueue(this->m_agents[agentId]->id());
+          agent->setStreetId(nextStreet->id());
+          this->setAgentSpeed(agentId);
+          agent->incrementDelay(std::ceil(nextStreet->length() / agent->speed()));
+          nextStreet->enqueue(agentId);
         } else {
           break;
         }
       }
-      if (std::dynamic_pointer_cast<TrafficLight<Id, Size, Delay>>(node)) {
+      if (node->isTrafficLight()) {
         node->increaseCounter();
       }
     }
@@ -352,14 +345,14 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::m_evolveAgents() {
-    for (auto const& [agentId, agent] : this->m_agents) {
+    for (const auto& [agentId, agent] : this->m_agents) {
       if (agent->time() > 0) {
         if (agent->delay() > 0) {
           if (agent->delay() > 1) {
             agent->incrementDistance();
           } else if (agent->streetId().has_value()) {
             double distance{
-                std::fmod(this->m_graph->streetSet()[agent->streetId().value()]->length(),
+                std::fmod(this->m_graph.streetSet()[agent->streetId().value()]->length(),
                           agent->speed())};
             if (distance < std::numeric_limits<double>::epsilon()) {
               agent->incrementDistance();
@@ -371,7 +364,7 @@ namespace dsm {
         }
       } else if (!agent->streetId().has_value()) {
         assert(agent->srcNodeId().has_value());
-        auto srcNode{this->m_graph->nodeSet()[agent->srcNodeId().value()]};
+        const auto& srcNode{this->m_graph.nodeSet()[agent->srcNodeId().value()]};
         if (srcNode->isFull()) {
           continue;
         }
@@ -428,7 +421,7 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::updatePaths() {
-    const Size dimension = m_graph->adjMatrix()->getRowDim();
+    const Size dimension = m_graph.adjMatrix().getRowDim();
     for (const auto& [itineraryId, itinerary] : m_itineraries) {
       SparseMatrix<Id, bool> path{dimension, dimension};
       // cycle over the nodes
@@ -436,24 +429,25 @@ namespace dsm {
         if (i == itinerary->destination()) {
           continue;
         }
-        auto result{m_graph->shortestPath(i, itinerary->destination())};
+        auto result{m_graph.shortestPath(i, itinerary->destination())};
         if (!result.has_value()) {
           continue;
         }
         // save the minimum distance between i and the destination
-        auto minDistance{result.value().distance()};
-        for (auto const& node : m_graph->adjMatrix()->getRow(i)) {
+        const auto minDistance{result.value().distance()};
+        for (const auto& node : m_graph.adjMatrix().getRow(i)) {
           // init distance from a neighbor node to the destination to zero
           double distance{0.};
 
-          auto streetResult = m_graph->street(i, node.first);
-          if (!streetResult.has_value()) {
+          // can't dereference because risk undefined behavior
+          auto streetResult = m_graph.street(i, node.first);
+          if (streetResult == nullptr) {
             continue;
           }
-          auto streetLength{streetResult.value()->length()};
+          auto streetLength{(*streetResult)->length()};
           // TimePoint expectedTravelTime{
           //     streetLength};  // / street->maxSpeed()};  // TODO: change into input velocity
-          result = m_graph->shortestPath(node.first, itinerary->destination());
+          result = m_graph.shortestPath(node.first, itinerary->destination());
           if (result.has_value()) {
             // if the shortest path exists, save the distance
             distance = result.value().distance();
@@ -463,7 +457,10 @@ namespace dsm {
           }
 
           // if (!(distance > minDistance + expectedTravelTime)) {
-          if (!(distance > minDistance + streetLength)) {
+          if (minDistance == distance + streetLength) {
+            // std::cout << "minDistance: " << minDistance << " distance: " << distance
+            //           << " streetLength: " << streetLength << '\n';
+            // std::cout << "Inserting " << i << ';' << node.first << '\n';
             path.insert(i, node.first, true);
           }
         }
@@ -490,7 +487,7 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
   const Graph<Id, Size>& Dynamics<Id, Size, Delay>::graph() const {
-    return *m_graph;
+    return m_graph;
   }
 
   template <typename Id, typename Size, typename Delay>
@@ -599,7 +596,7 @@ namespace dsm {
     std::uniform_int_distribution<Size> itineraryDist{
         0, static_cast<Size>(this->m_itineraries.size() - 1)};
     std::uniform_int_distribution<Size> streetDist{
-        0, static_cast<Size>(this->m_graph->streetSet().size() - 1)};
+        0, static_cast<Size>(this->m_graph.streetSet().size() - 1)};
     for (Size i{0}; i < nAgents; ++i) {
       if (randomItinerary) {
         itineraryId = itineraryDist(this->m_generator);
@@ -611,14 +608,14 @@ namespace dsm {
       Id streetId{0};
       do {
         // I dunno why this works and the following doesn't
-        auto streetSet = this->m_graph->streetSet();
+        const auto& streetSet = this->m_graph.streetSet();
         auto streetIt = streetSet.begin();
         // auto streetIt = this->m_graph->streetSet().begin();
         Size step = streetDist(this->m_generator);
         std::advance(streetIt, step);
         streetId = streetIt->first;
-      } while (this->m_graph->streetSet()[streetId]->density() == 1);
-      auto street{this->m_graph->streetSet()[streetId]};
+      } while (this->m_graph.streetSet()[streetId]->density() == 1);
+      auto& street{this->m_graph.streetSet()[streetId]};
       Agent<Id, Size, Delay> agent{
           agentId, itineraryId.value(), street->nodePair().first};
       agent.setStreetId(streetId);
@@ -733,11 +730,11 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
   Measurement<double> Dynamics<Id, Size, Delay>::streetMeanDensity() const {
-    if (m_graph->streetSet().size() == 0) {
+    if (m_graph.streetSet().size() == 0) {
       return Measurement(0., 0.);
     }
-    const double mean{std::accumulate(m_graph->streetSet().cbegin(),
-                                      m_graph->streetSet().cend(),
+    const double mean{std::accumulate(m_graph.streetSet().cbegin(),
+                                      m_graph.streetSet().cend(),
                                       0.,
                                       [](double sum, const auto& street) {
                                         if (!street.second->isSpire()) {
@@ -745,10 +742,10 @@ namespace dsm {
                                         }
                                         return sum + street.second->density();
                                       }) /
-                      m_graph->streetSet().size()};
+                      m_graph.streetSet().size()};
     const double variance{
-        std::accumulate(m_graph->streetSet().cbegin(),
-                        m_graph->streetSet().cend(),
+        std::accumulate(m_graph.streetSet().cbegin(),
+                        m_graph.streetSet().cend(),
                         0.,
                         [mean](double sum, const auto& street) {
                           if (!street.second->isSpire()) {
@@ -756,7 +753,7 @@ namespace dsm {
                           }
                           return sum + std::pow(street.second->density() - mean, 2);
                         }) /
-        (m_graph->streetSet().size() - 1)};
+        (m_graph.streetSet().size() - 1)};
     return Measurement(mean, std::sqrt(variance));
   }
   template <typename Id, typename Size, typename Delay>
@@ -764,8 +761,8 @@ namespace dsm {
              is_numeric_v<Delay>)
   Measurement<double> Dynamics<Id, Size, Delay>::streetMeanFlow() const {
     std::vector<double> flows;
-    flows.reserve(m_graph->streetSet().size());
-    for (const auto& [streetId, street] : m_graph->streetSet()) {
+    flows.reserve(m_graph.streetSet().size());
+    for (const auto& [streetId, street] : m_graph.streetSet()) {
       if (!street->isSpire()) {
         continue;
       }
@@ -785,8 +782,8 @@ namespace dsm {
   Measurement<double> Dynamics<Id, Size, Delay>::streetMeanFlow(double threshold,
                                                                 bool above) const {
     std::vector<double> flows;
-    flows.reserve(m_graph->streetSet().size());
-    for (const auto& [streetId, street] : m_graph->streetSet()) {
+    flows.reserve(m_graph.streetSet().size());
+    for (const auto& [streetId, street] : m_graph.streetSet()) {
       if (!street->isSpire()) {
         continue;
       }
@@ -840,7 +837,7 @@ namespace dsm {
     FirstOrderDynamics() = delete;
     /// @brief Construct a new First Order Dynamics object
     /// @param graph, The graph representing the network
-    FirstOrderDynamics(const Graph<Id, Size>& graph);
+    FirstOrderDynamics(Graph<Id, Size>& graph);
     /// @brief Set the speed of an agent
     /// @param agentId The id of the agent
     /// @throw std::invalid_argument, If the agent is not found
@@ -864,23 +861,25 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              std::unsigned_integral<Delay>)
-  FirstOrderDynamics<Id, Size, Delay>::FirstOrderDynamics(const Graph<Id, Size>& graph)
+  FirstOrderDynamics<Id, Size, Delay>::FirstOrderDynamics(Graph<Id, Size>& graph)
       : Dynamics<Id, Size, Delay>(graph) {}
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              std::unsigned_integral<Delay>)
   void FirstOrderDynamics<Id, Size, Delay>::setAgentSpeed(Size agentId) {
-    auto street{this->m_graph->streetSet()[this->m_agents[agentId]->streetId().value()]};
+    const auto& street{
+        this->m_graph.streetSet()[this->m_agents[agentId]->streetId().value()]};
     double speed{street->maxSpeed() * (1. - this->m_minSpeedRateo * street->density())};
     this->m_agents[agentId]->setSpeed(speed);
   }
+
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              std::unsigned_integral<Delay>)
   std::optional<double> FirstOrderDynamics<Id, Size, Delay>::streetMeanSpeed(
       Id streetId) const {
-    auto street{this->m_graph->streetSet()[streetId]};
+    const auto& street{this->m_graph.streetSet().at(streetId)};
     if (street->queue().empty() || !street->isSpire()) {
       return std::nullopt;
     }
@@ -895,6 +894,7 @@ namespace dsm {
     }
     return meanSpeed / street->queue().size();
   }
+
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              std::unsigned_integral<Delay>)
@@ -903,8 +903,8 @@ namespace dsm {
       return Measurement(0., 0.);
     }
     std::vector<double> speeds;
-    speeds.reserve(this->m_graph->streetSet().size());
-    for (const auto& [streetId, street] : this->m_graph->streetSet()) {
+    speeds.reserve(this->m_graph.streetSet().size());
+    for (const auto& [streetId, street] : this->m_graph.streetSet()) {
       auto speedOpt{this->streetMeanSpeed(streetId)};
       if (speedOpt.has_value()) {
         speeds.push_back(speedOpt.value());
@@ -921,8 +921,8 @@ namespace dsm {
       return Measurement(0., 0.);
     }
     std::vector<double> speeds;
-    speeds.reserve(this->m_graph->streetSet().size());
-    for (const auto& [streetId, street] : this->m_graph->streetSet()) {
+    speeds.reserve(this->m_graph.streetSet().size());
+    for (const auto& [streetId, street] : this->m_graph.streetSet()) {
       if (!street->isSpire()) {
         continue;
       }

@@ -48,6 +48,8 @@ namespace dsm {
     /// @param coords A std::pair containing the node's coordinates
     Node(Id id, std::pair<double, double> coords);
 
+    virtual ~Node() = default;
+
     /// @brief Set the node's coordinates
     /// @param coords A std::pair containing the node's coordinates
     void setCoords(std::pair<double, double> coords);
@@ -81,6 +83,8 @@ namespace dsm {
     virtual bool isGreen() const;
     virtual bool isGreen(Id) const;
     virtual void increaseCounter(){};
+
+    virtual bool isTrafficLight() const { return false; }
 
     /// @brief Get the node's id
     /// @return Id The node's id
@@ -262,6 +266,9 @@ namespace dsm {
     /// @brief Construct a new TrafficLight object
     /// @param id The node's id
     explicit TrafficLight(Id id);
+    /// @brief Construct a new TrafficLight object
+    /// @param node A Node object
+    TrafficLight(Node<Id, Size> node);
 
     /// @brief Set the node's delay
     /// @details This function is used to set the node's delay.
@@ -300,12 +307,22 @@ namespace dsm {
     /// @return bool True if the traffic light is green
     bool isGreen() const override;
     bool isGreen(Id streetId) const override;
+    bool isTrafficLight() const override { return true; }
   };
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              std::unsigned_integral<Delay>)
   TrafficLight<Id, Size, Delay>::TrafficLight(Id id) : Node<Id, Size>{id}, m_counter{0} {}
+
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>)
+  TrafficLight<Id, Size, Delay>::TrafficLight(Node<Id, Size> node)
+      : Node<Id, Size>{node.id()}, m_counter{0} {
+    this->setCoords(node.coords());
+    this->setCapacity(node.capacity());
+  }
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
