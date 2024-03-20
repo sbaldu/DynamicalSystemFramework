@@ -276,8 +276,7 @@ namespace dsm {
       if (destinationNode->isFull()) {
         continue;
       }
-      if (destinationNode->isTrafficLight() &&
-          !destinationNode->isGreen(streetId)) {
+      if (destinationNode->isTrafficLight() && !destinationNode->isGreen(streetId)) {
         continue;
       }
       destinationNode->addAgent(street->dequeue().value());
@@ -295,13 +294,11 @@ namespace dsm {
     for (auto& [nodeId, node] : this->m_graph.nodeSet()) {
       for (const auto [priority, agentId] : node->agents()) {
         auto& agent = m_agents[agentId];
-        if (nodeId ==
-            this->m_itineraries[agent->itineraryId()]->destination()) {
+        if (nodeId == this->m_itineraries[agent->itineraryId()]->destination()) {
           node->removeAgent(agentId);
           this->m_travelTimes.push_back(agent->time());
           if (reinsert_agents) {
-            Agent<Id, Size, Delay> newAgent{agent->id(),
-                                            agent->itineraryId()};
+            Agent<Id, Size, Delay> newAgent{agent->id(), agent->itineraryId()};
             if (agent->srcNodeId().has_value()) {
               newAgent.setSourceNodeId(agent->srcNodeId().value());
             }
@@ -313,8 +310,7 @@ namespace dsm {
           continue;
         }
         auto possibleMoves{
-            this->m_itineraries[agent->itineraryId()]->path().getRow(
-                nodeId, true)};
+            this->m_itineraries[agent->itineraryId()]->path().getRow(nodeId, true)};
         if (this->m_uniformDist(this->m_generator) < this->m_errorProbability) {
           possibleMoves = this->m_graph.adjMatrix().getRow(node->id(), true);
         }
@@ -333,8 +329,7 @@ namespace dsm {
           node->removeAgent(agentId);
           agent->setStreetId(nextStreet->id());
           this->setAgentSpeed(agentId);
-          agent->incrementDelay(
-              std::ceil(nextStreet->length() / agent->speed()));
+          agent->incrementDelay(std::ceil(nextStreet->length() / agent->speed()));
           nextStreet->enqueue(agentId);
         } else {
           break;
@@ -444,7 +439,7 @@ namespace dsm {
           // init distance from a neighbor node to the destination to zero
           double distance{0.};
 
-		  // can't dereference because risk undefined behavior
+          // can't dereference because risk undefined behavior
           auto streetResult = m_graph.street(i, node.first);
           if (streetResult == nullptr) {
             continue;
@@ -873,7 +868,8 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              std::unsigned_integral<Delay>)
   void FirstOrderDynamics<Id, Size, Delay>::setAgentSpeed(Size agentId) {
-    const auto& street{this->m_graph.streetSet()[this->m_agents[agentId]->streetId().value()]};
+    const auto& street{
+        this->m_graph.streetSet()[this->m_agents[agentId]->streetId().value()]};
     double speed{street->maxSpeed() * (1. - this->m_minSpeedRateo * street->density())};
     this->m_agents[agentId]->setSpeed(speed);
   }

@@ -48,7 +48,7 @@ namespace dsm {
     /// @param coords A std::pair containing the node's coordinates
     Node(Id id, std::pair<double, double> coords);
 
-	virtual ~Node() = default;
+    virtual ~Node() = default;
 
     /// @brief Set the node's coordinates
     /// @param coords A std::pair containing the node's coordinates
@@ -84,7 +84,7 @@ namespace dsm {
     virtual bool isGreen(Id) const;
     virtual void increaseCounter(){};
 
-	virtual bool isTrafficLight() const { return false; }
+    virtual bool isTrafficLight() const { return false; }
 
     /// @brief Get the node's id
     /// @return Id The node's id
@@ -307,7 +307,7 @@ namespace dsm {
     /// @return bool True if the traffic light is green
     bool isGreen() const override;
     bool isGreen(Id streetId) const override;
-	bool isTrafficLight() const override { return true; }
+    bool isTrafficLight() const override { return true; }
   };
 
   template <typename Id, typename Size, typename Delay>
