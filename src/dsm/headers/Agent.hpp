@@ -53,13 +53,13 @@ namespace dsm {
     Agent(Id id, Id itineraryId, Id srcNodeId);
     /// @brief Set the street occupied by the agent
     /// @param streetId The id of the street currently occupied by the agent
-    void setStreetId(Id streetId);
+    void setStreetId(Id streetId) { m_streetId = streetId; };
     /// @brief Set the source node id of the agent
     /// @param srcNodeId The id of the source node of the agent
-    void setSourceNodeId(Id srcNodeId);
+    void setSourceNodeId(Id srcNodeId) { m_srcNodeId = srcNodeId; };
     /// @brief Set the agent's itinerary
     /// @param itineraryId The agent's itinerary
-    void setItineraryId(Id itineraryId);
+    void setItineraryId(Id itineraryId) { m_itineraryId = itineraryId; };
     /// @brief Set the agent's speed
     /// @param speed, The agent's speed
     /// @throw std::invalid_argument, if speed is negative
@@ -92,28 +92,28 @@ namespace dsm {
 
     /// @brief Get the agent's id
     /// @return The agent's id
-    Id id() const;
+    Id id() const { return m_id; };
     /// @brief Get the agent's itinerary
     /// @return The agent's itinerary
-    Id itineraryId() const;
+    Id itineraryId() const { return m_itineraryId; };
     /// @brief Get the id of the street currently occupied by the agent
     /// @return The id of the street currently occupied by the agent
-    std::optional<Id> streetId() const;
+    std::optional<Id> streetId() const { return m_streetId; };
     /// @brief Get the id of the source node of the agent
     /// @return The id of the source node of the agent
-    std::optional<Id> srcNodeId() const;
+    std::optional<Id> srcNodeId() const { return m_srcNodeId; };
     /// @brief Get the agent's speed
     /// @return The agent's speed
-    double speed() const;
+    double speed() const { return m_speed; };
     /// @brief Get the agent's delay
     /// @return	The agent's delay
-    Delay delay() const;
+    Delay delay() const { return m_delay; };
     /// @brief Get the agent's travelled distance
     /// @return The agent's travelled distance
-    double distance() const;
+    double distance() const { return m_distance; };
     /// @brief Get the agent's travel time
     /// @return The agent's travel time
-    unsigned int time() const;
+    unsigned int time() const { return m_time; };
   };
 
   template <typename Id, typename Size, typename Delay>
@@ -138,25 +138,6 @@ namespace dsm {
         m_speed{0.},
         m_distance{0.},
         m_time{0} {}
-
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             is_numeric_v<Delay>)
-  void Agent<Id, Size, Delay>::setStreetId(Id streetId) {
-    m_streetId = streetId;
-  }
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             is_numeric_v<Delay>)
-  void Agent<Id, Size, Delay>::setSourceNodeId(Id srcNodeId) {
-    m_srcNodeId = srcNodeId;
-  }
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             is_numeric_v<Delay>)
-  void Agent<Id, Size, Delay>::setItineraryId(Id itineraryId) {
-    m_itineraryId = itineraryId;
-  }
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
@@ -228,60 +209,6 @@ namespace dsm {
       throw std::overflow_error(buildLog("Time has reached its maximum value"));
     }
     m_time += time;
-  }
-
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             is_numeric_v<Delay>)
-  Id Agent<Id, Size, Delay>::id() const {
-    return m_id;
-  }
-
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             is_numeric_v<Delay>)
-  std::optional<Id> Agent<Id, Size, Delay>::streetId() const {
-    return m_streetId;
-  }
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             is_numeric_v<Delay>)
-  std::optional<Id> Agent<Id, Size, Delay>::srcNodeId() const {
-    return m_srcNodeId;
-  }
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             is_numeric_v<Delay>)
-  double Agent<Id, Size, Delay>::speed() const {
-    return m_speed;
-  }
-
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             is_numeric_v<Delay>)
-  Delay Agent<Id, Size, Delay>::delay() const {
-    return m_delay;
-  }
-
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             is_numeric_v<Delay>)
-  double Agent<Id, Size, Delay>::distance() const {
-    return m_distance;
-  }
-
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             is_numeric_v<Delay>)
-  unsigned int Agent<Id, Size, Delay>::time() const {
-    return m_time;
-  }
-
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             is_numeric_v<Delay>)
-  Id Agent<Id, Size, Delay>::itineraryId() const {
-    return m_itineraryId;
   }
 };  // namespace dsm
 
