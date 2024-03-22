@@ -9,6 +9,7 @@ RUN dnf install -y gcc-c++ \
 				   cmake \
 				   gdb \
 				   valgrind \
+				   git \
 				   python3-pip \
 				   vim
 
