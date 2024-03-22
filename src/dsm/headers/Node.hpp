@@ -260,7 +260,7 @@ namespace dsm {
   private:
     std::optional<std::pair<Delay, Delay>> m_delay;
     Delay m_counter;
-    Delay m_phase{0};
+    Delay m_phase;
 
   public:
     TrafficLight() = delete;
@@ -318,13 +318,14 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              std::unsigned_integral<Delay>)
-  TrafficLight<Id, Size, Delay>::TrafficLight(Id id) : Node<Id, Size>{id}, m_counter{0} {}
+  TrafficLight<Id, Size, Delay>::TrafficLight(Id id)
+      : Node<Id, Size>{id}, m_counter{0}, m_phase{0} {}
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              std::unsigned_integral<Delay>)
   TrafficLight<Id, Size, Delay>::TrafficLight(Node<Id, Size> node)
-      : Node<Id, Size>{node.id()}, m_counter{0} {
+      : Node<Id, Size>{node.id()}, m_counter{0}, m_phase{0} {
     this->setCoords(node.coords());
     this->setCapacity(node.capacity());
   }
