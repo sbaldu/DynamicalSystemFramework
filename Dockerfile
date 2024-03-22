@@ -1,8 +1,13 @@
 
 FROM almalinux:9
 
-COPY ./ /app
+# copy the source in a directory for testing
+COPY ./ /app/test/
+# create an empty directory for development where
+# the host directory will have to be mounted
+RUN mkdir /app/develop/
 
+# install the necessary packages
 RUN dnf install -y gcc-c++ \
 				   clang-tools-extra \
 				   make \
