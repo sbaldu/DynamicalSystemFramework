@@ -54,3 +54,4 @@ for f in ./*.out ; do ./$f ; done
   publisher = {GitHub},
   howpublished = {\url{https://github.com/sbaldu/DynamicalSystemFramework}}
 }
+```

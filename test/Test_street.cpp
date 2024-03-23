@@ -11,6 +11,7 @@
 using Agent = dsm::Agent<uint16_t, uint16_t, double>;
 using Node = dsm::Node<uint16_t, uint16_t>;
 using Street = dsm::Street<uint16_t, uint16_t>;
+using SpireStreet = dsm::SpireStreet<uint16_t, uint16_t>;
 
 TEST_CASE("Street") {
   SUBCASE("Constructor_1") {
@@ -160,5 +161,68 @@ TEST_CASE("Street") {
     // exceptions
     CHECK_THROWS(street.setAngle(-0.1));
     CHECK_THROWS(street.setAngle(7.));
+  }
+}
+
+TEST_CASE("SpireStreet") {
+  SUBCASE("Input flow") {
+    GIVEN("A spire street") {
+      SpireStreet street{1, 4, 3.5, std::make_pair(0, 1)};
+      WHEN("An agent is enqueued") {
+        street.enqueue(1);
+        THEN("The density is updated") { CHECK_EQ(street.density(), 0.25); }
+        THEN("Input flow is one") { CHECK_EQ(street.inputFlow(), 1); }
+        THEN("Output flow is zero") { CHECK_EQ(street.outputFlow(), 0); }
+        THEN("Mean flow is one") { CHECK_EQ(street.meanFlow(), 1); }
+      }
+      WHEN("Three agents are enqueued") {
+        street.enqueue(1);
+        street.enqueue(2);
+        street.enqueue(3);
+        THEN("The density is updated") { CHECK_EQ(street.density(), 0.75); }
+        THEN("Input flow is three") { CHECK_EQ(street.inputFlow(), 3); }
+        THEN("Output flow is zero") { CHECK_EQ(street.outputFlow(), 0); }
+        THEN("Mean flow is three") { CHECK_EQ(street.meanFlow(), 3); }
+      }
+      WHEN("An agent is dequeued") {
+        street.enqueue(1);
+        street.dequeue();
+        THEN("The density is updated") { CHECK_EQ(street.density(), 0); }
+        THEN("Input flow is one") { CHECK_EQ(street.inputFlow(), 1); }
+        THEN("Output flow is one") { CHECK_EQ(street.outputFlow(), 1); }
+        THEN("Mean flow is zero") { CHECK_EQ(street.meanFlow(), 0); }
+      }
+      WHEN("Three agents are dequeued") {
+        street.enqueue(1);
+        street.enqueue(2);
+        street.enqueue(3);
+        street.dequeue();
+        street.dequeue();
+        street.dequeue();
+        THEN("The density is updated") { CHECK_EQ(street.density(), 0); }
+        THEN("Input flow is three") { CHECK_EQ(street.inputFlow(), 3); }
+        THEN("Output flow is three") { CHECK_EQ(street.outputFlow(), 3); }
+        THEN("Mean flow is zero") { CHECK_EQ(street.meanFlow(), 0); }
+      }
+      WHEN("Input is greater than output") {
+        street.enqueue(1);
+        street.enqueue(2);
+        street.dequeue();
+        street.dequeue();
+        street.enqueue(3);
+        THEN("The density is updated") { CHECK_EQ(street.density(), 0.25); }
+        THEN("Mean flow is one") { CHECK_EQ(street.meanFlow(), 1); }
+      }
+      WHEN("Output is greater than input") {
+        street.enqueue(1);
+        street.enqueue(2);
+        street.meanFlow();
+        street.enqueue(3);
+        street.dequeue();
+        street.dequeue();
+        THEN("The density is updated") { CHECK_EQ(street.density(), 0.25); }
+        THEN("Mean flow is minus one") { CHECK_EQ(street.meanFlow(), -1); }
+      }
+    }
   }
 }

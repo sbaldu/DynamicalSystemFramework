@@ -39,8 +39,6 @@ namespace dsm {
     Id m_id;
     Size m_capacity;
     Size m_transportCapacity;
-    bool m_isSpire;
-
   public:
     Street() = delete;
     /// @brief Construct a new Street object starting from an existing street
@@ -69,6 +67,8 @@ namespace dsm {
     /// @param maxSpeed The street's speed limit
     /// @param nodePair The street's node pair
     Street(Id id, Size capacity, double len, double maxSpeed, std::pair<Id, Id> nodePair);
+
+    virtual ~Street() = default;
 
     /// @brief Set the street's id
     /// @param id The street's id
@@ -111,11 +111,6 @@ namespace dsm {
     /// @param angle The street's angle
     /// @throw std::invalid_argument If the angle is negative or greater than 2 * pi
     void setAngle(double angle);
-    /// @brief Set the street's spire status
-    /// @param isSpire The street's spire status
-    /// @details A spire is a street from which you can extract data, e.g. density. However, this
-    ///          parameter must be managed by the dynamics.
-    void setIsSpire(bool isSpire);
 
     /// @brief Get the street's id
     /// @return Id, The street's id
@@ -148,12 +143,13 @@ namespace dsm {
     double angle() const;
     /// @brief Add an agent to the street's queue
     /// @param agentId The id of the agent to add to the street's queue
-    void enqueue(Id agentId);
+    /// @throw std::runtime_error If the street's queue is full
+    virtual void enqueue(Id agentId);
     /// @brief Remove an agent from the street's queue
-    std::optional<Id> dequeue();
+    virtual std::optional<Id> dequeue();
     /// @brief Check if the street is a spire
     /// @return bool True if the street is a spire, false otherwise
-    bool isSpire() const;
+    virtual bool isSpire() const { return false; };
   };
 
   template <typename Id, typename Size>
@@ -165,8 +161,7 @@ namespace dsm {
         m_angle{street.angle()},
         m_id{id},
         m_capacity{street.capacity()},
-        m_transportCapacity{street.transportCapacity()},
-        m_isSpire{true} {}
+        m_transportCapacity{street.transportCapacity()} {}
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
@@ -177,8 +172,7 @@ namespace dsm {
         m_angle{0.},
         m_id{index},
         m_capacity{1},
-        m_transportCapacity{std::numeric_limits<Size>::max()},
-        m_isSpire{true} {}
+        m_transportCapacity{std::numeric_limits<Size>::max()} {}
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
@@ -189,8 +183,7 @@ namespace dsm {
         m_angle{0.},
         m_id{id},
         m_capacity{capacity},
-        m_transportCapacity{std::numeric_limits<Size>::max()},
-        m_isSpire{true} {}
+        m_transportCapacity{std::numeric_limits<Size>::max()} {}
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
@@ -201,8 +194,7 @@ namespace dsm {
         m_angle{0.},
         m_id{id},
         m_capacity{capacity},
-        m_transportCapacity{std::numeric_limits<Size>::max()},
-        m_isSpire{true} {
+        m_transportCapacity{std::numeric_limits<Size>::max()} {
     this->setMaxSpeed(maxSpeed);
   }
 
@@ -279,11 +271,6 @@ namespace dsm {
     }
     m_angle = angle;
   }
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Street<Id, Size>::setIsSpire(bool isSpire) {
-    m_isSpire = isSpire;
-  }
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
@@ -334,9 +321,7 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Street<Id, Size>::enqueue(Id agentId) {
     if (m_queue.size() == m_capacity) {
-      std::string errorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
-                           __FILE__ + ": " + "The street's queue is full."};
-      throw std::runtime_error(errorMsg);
+      throw std::runtime_error(buildLog("The street's queue is full."));
     }
     for (auto const& id : m_queue) {
       if (id == agentId) {
@@ -355,10 +340,119 @@ namespace dsm {
     m_queue.pop();
     return id;
   }
+
+  /// @brief The SpireStreet class represents a street which is able to count agent flows in both input and output.
+  /// @tparam Id The type of the street's id
+  /// @tparam Size The type of the street's capacity
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  bool Street<Id, Size>::isSpire() const {
-    return m_isSpire;
+  class SpireStreet : public Street<Id, Size> {
+  private:
+    Size m_agentCounterIn;
+    Size m_agentCounterOut;
+  public:
+    SpireStreet() = delete;
+    /// @brief Construct a new SpireStreet object starting from an existing street
+    /// @param id The street's id
+    /// @param street The existing street
+    SpireStreet(Id id, const Street<Id, Size>& street);
+    /// @brief Construct a new SpireStreet object
+    /// @param id The street's id
+    /// @param capacity The street's capacity
+    /// @param len The street's length
+    /// @param nodePair The street's node pair
+    SpireStreet(Id id, Size capacity, double len, std::pair<Id, Id> nodePair);
+    /// @brief Construct a new SpireStreet object
+    /// @param id The street's id
+    /// @param capacity The street's capacity
+    /// @param len The street's length
+    /// @param maxSpeed The street's speed limit
+    /// @param nodePair The street's node pair
+    SpireStreet(Id id, Size capacity, double len, double maxSpeed, std::pair<Id, Id> nodePair);
+    ~SpireStreet() = default;
+
+    /// @brief Add an agent to the street's queue
+    /// @param agentId The id of the agent to add to the street's queue
+    /// @throw std::runtime_error If the street's queue is full
+    void enqueue(Id agentId) override;
+
+    /// @brief Get the input flow of the street
+    /// @return Size The input flow of the street
+    /// @details Once the input flow is retrieved, it is reset to 0 together with the output flow.
+    Size inputFlow();
+    /// @brief Get the output flow of the street
+    /// @return Size The output flow of the street
+    /// @details Once the output flow is retrieved, it is reset to 0 together with the input flow.
+    Size outputFlow();
+    /// @brief Get the mean flow of the street
+    /// @return int The flow of the street, i.e. the difference between input and output flows
+    /// @details Once the flow is retrieved, bothh the input and output flows are reset to 0.
+    ///     Notice that this flow is positive iff the input flow is greater than the output flow.
+    int meanFlow();
+    /// @brief Remove an agent from the street's queue
+    /// @return std::optional<Id> The id of the agent removed from the street's queue
+    std::optional<Id> dequeue() override;
+    /// @brief Check if the street is a spire
+    /// @return bool True if the street is a spire, false otherwise
+    bool isSpire() const override { return true; };
+  };
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  SpireStreet<Id, Size>::SpireStreet(Id id, const Street<Id, Size>& street)
+      : Street<Id, Size>(id, street), m_agentCounterIn{0}, m_agentCounterOut{0} {}
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  SpireStreet<Id, Size>::SpireStreet(Id id, Size capacity, double len, std::pair<Id, Id> nodePair)
+      : Street<Id, Size>(id, capacity, len, nodePair), m_agentCounterIn{0}, m_agentCounterOut{0} {}
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  SpireStreet<Id, Size>::SpireStreet(
+      Id id, Size capacity, double len, double maxSpeed, std::pair<Id, Id> nodePair)
+      : Street<Id, Size>(id, capacity, len, maxSpeed, nodePair), m_agentCounterIn{0}, m_agentCounterOut{0} {}
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void SpireStreet<Id, Size>::enqueue(Id agentId) {
+    Street<Id, Size>::enqueue(agentId);
+    ++m_agentCounterIn;
+  }
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  Size SpireStreet<Id, Size>::inputFlow() {
+    Size flow = m_agentCounterIn;
+    m_agentCounterIn = 0;
+    m_agentCounterOut = 0;
+    return flow;
+  }
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  Size SpireStreet<Id, Size>::outputFlow() {
+    Size flow = m_agentCounterOut;
+    m_agentCounterIn = 0;
+    m_agentCounterOut = 0;
+    return flow;
+  }
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  int SpireStreet<Id, Size>::meanFlow() {
+    int flow = static_cast<int>(m_agentCounterIn) - static_cast<int>(m_agentCounterOut);
+    m_agentCounterIn = 0;
+    m_agentCounterOut = 0; 
+    return flow;
+  }
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  std::optional<Id> SpireStreet<Id, Size>::dequeue() {
+    std::optional<Id> id = Street<Id, Size>::dequeue();
+    if (id.has_value()) {
+      ++m_agentCounterOut;
+    }
+    return id;
   }
 
 };  // namespace dsm

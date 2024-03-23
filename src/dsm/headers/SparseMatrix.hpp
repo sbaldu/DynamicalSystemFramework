@@ -127,17 +127,17 @@ namespace dsm {
     /// @brief get the input degree of all nodes
     /// @return a SparseMatrix vector with the input degree of all nodes
     /// @throw std::runtime_error if the matrix is not square
-    SparseMatrix<Index, int> getDegreeVector();
+    SparseMatrix<Index, int> getDegreeVector() const;
 
     /// @brief get the strength of all nodes
     /// @return a SparseMatrix vector with the strength of all nodes
     /// @throw std::runtime_error if the matrix is not square
-    SparseMatrix<Index, double> getStrengthVector();
+    SparseMatrix<Index, double> getStrengthVector() const;
 
     /// @brief get the laplacian matrix
     /// @return the laplacian matrix
     /// @throw std::runtime_error if the matrix is not square
-    SparseMatrix<Index, int> getLaplacian();
+    SparseMatrix<Index, int> getLaplacian() const;
 
     /// @brief get a row as a row vector
     /// @param index row index
@@ -485,7 +485,7 @@ namespace dsm {
 
   template <typename Index, typename T>
     requires(std::unsigned_integral<Index>)
-  SparseMatrix<Index, int> SparseMatrix<Index, T>::getDegreeVector() {
+  SparseMatrix<Index, int> SparseMatrix<Index, T>::getDegreeVector() const {
     if (_rows != _cols) {
       throw std::runtime_error(buildLog("getDegreeVector only works on square matrices"));
     }
@@ -499,7 +499,7 @@ namespace dsm {
 
   template <typename Index, typename T>
     requires(std::unsigned_integral<Index>)
-  SparseMatrix<Index, double> SparseMatrix<Index, T>::getStrengthVector() {
+  SparseMatrix<Index, double> SparseMatrix<Index, T>::getStrengthVector() const {
     if (_rows != _cols) {
       throw std::runtime_error(
           buildLog("getStrengthVector only works on square matrices"));
@@ -514,7 +514,7 @@ namespace dsm {
 
   template <typename Index, typename T>
     requires(std::unsigned_integral<Index>)
-  SparseMatrix<Index, int> SparseMatrix<Index, T>::getLaplacian() {
+  SparseMatrix<Index, int> SparseMatrix<Index, T>::getLaplacian() const {
     if (_rows != _cols) {
       throw std::runtime_error(buildLog("getLaplacian only works on square matrices"));
     }
