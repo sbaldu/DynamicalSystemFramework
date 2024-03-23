@@ -81,13 +81,14 @@ TEST_CASE("TrafficLight") {
   SUBCASE("Phase") {
     /// This tests the phase.
     /// GIVEN: A TrafficLight
-    /// WHEN: The phase is set
-    /// THEN: The phase is set correctly
+    /// WHEN: The phase is set to update after a green-red cycle
+    /// THEN: It's checked that the current gree-red cycle is not affected
+    /// and ultimately it's checked that on the next green-red cycle the phase is updated correctly
     TrafficLight trafficLight{0};
     trafficLight.setDelay(std::make_pair(5, 7));
     trafficLight.setPhaseAfterCycle(6);
 
-    for (int i = 0; i < 12; i++) {
+    for (int i = 0; i < 12; ++i) {
       trafficLight.increaseCounter();
     }
     CHECK_FALSE(trafficLight.isGreen());
@@ -97,7 +98,7 @@ TEST_CASE("TrafficLight") {
     trafficLight.setPhase(0);
     CHECK(trafficLight.isGreen());
 
-    for (int i = 0; i < 12; i++) {
+    for (int i = 0; i < 12; ++i) {
       trafficLight.increaseCounter();
     }
     CHECK(trafficLight.isGreen());
