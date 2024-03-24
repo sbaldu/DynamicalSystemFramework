@@ -295,11 +295,11 @@ namespace dsm {
         continue;
       }
       const auto agentId{street->queue().front()};
-      if (this->m_agents[agentId]->delay() > 0) {
+      if (m_agents[agentId]->delay() > 0) {
         continue;
       }
-      this->m_agents[agentId]->setSpeed(0.);
-      auto& destinationNode{this->m_graph.nodeSet()[street->nodePair().second]};
+      m_agents[agentId]->setSpeed(0.);
+      const auto& destinationNode{this->m_graph.nodeSet()[street->nodePair().second]};
       if (destinationNode->isFull()) {
         continue;
       }
@@ -309,11 +309,11 @@ namespace dsm {
       }
       street->dequeue();
       if (destinationNode->id() ==
-            this->m_itineraries[this->m_agents[agentId]->itineraryId()]->destination()) {
-          this->m_travelTimes.push_back(this->m_agents[agentId]->time());
+            m_itineraries[m_agents[agentId]->itineraryId()]->destination()) {
+          m_travelTimes.push_back(m_agents[agentId]->time());
           if (reinsert_agents) {
-            Agent<Id, Size, Delay> newAgent{this->m_agents[agentId]->id(), this->m_agents[agentId]->itineraryId(), this->m_agents[agentId]->srcNodeId().value()};
-            if (this->m_agents[agentId]->srcNodeId().has_value()) {
+            Agent<Id, Size, Delay> newAgent{m_agents[agentId]->id(), m_agents[agentId]->itineraryId(), m_agents[agentId]->srcNodeId().value()};
+            if (m_agents[agentId]->srcNodeId().has_value()) {
               newAgent.setSourceNodeId(this->m_agents[agentId]->srcNodeId().value());
             }
             this->removeAgent(agentId);
@@ -327,7 +327,7 @@ namespace dsm {
         assert(destinationNode->id() == m_graph.streetSet()[nextStreetId]->nodePair().first);
         destinationNode->addAgent(agentId);
         // this->m_agents[agentId]->setStreetId(nextStreetId);
-        this->m_agentNextStreetId.emplace(agentId, nextStreetId);
+        m_agentNextStreetId.emplace(agentId, nextStreetId);
     }
   }
 
@@ -342,17 +342,16 @@ namespace dsm {
     for (const auto& [nodeId, node] : m_graph.nodeSet()) {
       for (const auto [angle, agentId] : node->agents()) {
         // const auto nextStreetId{this->m_nextStreetId(agentId, nodeId)};
-        const auto nextStreetId{this->m_agentNextStreetId[agentId]};
-        const auto& nextStreet{m_graph.streetSet()[nextStreetId]};
+        const auto& nextStreet{m_graph.streetSet()[m_agentNextStreetId[agentId]]};
 
         if (nextStreet->density() < 1) {
           node->removeAgent(agentId);
-          this->m_agents[agentId]->setStreetId(nextStreet->id());
+          m_agents[agentId]->setStreetId(nextStreet->id());
           this->setAgentSpeed(agentId);
-          this->m_agents[agentId]->incrementDelay(std::ceil(nextStreet->length() /
-                                                  this->m_agents[agentId]->speed()));
+          m_agents[agentId]->incrementDelay(std::ceil(nextStreet->length() /
+                                                  m_agents[agentId]->speed()));
           nextStreet->enqueue(agentId);
-          this->m_agentNextStreetId.erase(agentId);
+          m_agentNextStreetId.erase(agentId);
         } else {
           break;
         }
@@ -394,7 +393,7 @@ namespace dsm {
           const auto nextStreetId{this->m_nextStreetId(agentId, srcNode->id())};
           assert(srcNode->id() == m_graph.streetSet()[nextStreetId]->nodePair().first);
           srcNode->addAgent(agentId);
-          this->m_agentNextStreetId.emplace(agentId, nextStreetId);
+          m_agentNextStreetId.emplace(agentId, nextStreetId);
         } catch (const std::exception& e) {
           std::cerr << e.what() << '\n';
           continue;
