@@ -62,7 +62,7 @@ namespace dsm {
     ///          The agent with the smallest angle difference is the first one to be
     ///          removed from the node.
     /// @throws std::runtime_error if the node is full
-    void addAgent(std::pair<double, Id> agent);
+    void addAgent(double angle, Id agentId);
     /// @brief Put an agent in the node
     /// @param agentId The agent's id
     /// @details The agent's angle difference is used to order the agents in the node.
@@ -169,6 +169,22 @@ namespace dsm {
           buildLog("Node capacity is smaller than the current queue size"));
     }
     m_capacity = capacity;
+  }
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Node<Id, Size>::addAgent(double angle, Id agentId) {
+    if (m_agents.size() == m_capacity) {
+      throw std::runtime_error(buildLog("Node is full"));
+    }
+    for (auto const [angle, id] : m_agents) {
+      if (id == agentId) {
+        throw std::runtime_error(buildLog("Agent is already on the node."));
+      }
+    }
+    auto iAngle{static_cast<int16_t>(angle * 100)};
+    m_agents.emplace(iAngle, agentId);
+    ++m_agentCounter;
   }
 
   template <typename Id, typename Size>
