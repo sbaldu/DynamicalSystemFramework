@@ -269,7 +269,7 @@ namespace dsm {
     explicit TrafficLight(Id id);
     /// @brief Construct a new TrafficLight object
     /// @param node A Node object
-    TrafficLight(Node<Id, Size> node);
+    TrafficLight(const Node<Id, Size>& node);
 
     /// @brief Set the node's delay
     /// @details This function is used to set the node's delay.
@@ -324,7 +324,7 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              std::unsigned_integral<Delay>)
-  TrafficLight<Id, Size, Delay>::TrafficLight(Node<Id, Size> node)
+  TrafficLight<Id, Size, Delay>::TrafficLight(const Node<Id, Size>& node)
       : Node<Id, Size>{node.id()}, m_counter{0}, m_phase{0} {
     this->setCoords(node.coords());
     this->setCapacity(node.capacity());
