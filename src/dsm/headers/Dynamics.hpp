@@ -325,22 +325,9 @@ namespace dsm {
         }
         const auto& nextStreet{m_graph.streetSet()[m_nextStreetId(agentId, destinationNode->id())]};
         assert(destinationNode->id() == nextStreet->nodePair().first);
-        double finalAngle{std::atan((m_graph.nodeSet().at(nextStreet->nodePair().second)->coords().first - m_graph.nodeSet().at(nextStreet->nodePair().first)->coords().first) / (m_graph.nodeSet().at(nextStreet->nodePair().second)->coords().second - m_graph.nodeSet().at(nextStreet->nodePair().first)->coords().second))};
-        if (m_graph.nodeSet().at(nextStreet->nodePair().second)->coords().second - m_graph.nodeSet().at(nextStreet->nodePair().first)->coords().second < 0) {
-          finalAngle += std::numbers::pi;
-        } else if (m_graph.nodeSet().at(nextStreet->nodePair().second)->coords().first - m_graph.nodeSet().at(nextStreet->nodePair().first)->coords().first < 0) {
-          finalAngle += 2 * std::numbers::pi;
-        }
-        double initialAngle{std::atan((m_graph.nodeSet().at(street->nodePair().second)->coords().first - m_graph.nodeSet().at(street->nodePair().first)->coords().first) / (m_graph.nodeSet().at(street->nodePair().second)->coords().second - m_graph.nodeSet().at(street->nodePair().first)->coords().second))};
-        if (m_graph.nodeSet().at(street->nodePair().second)->coords().second - m_graph.nodeSet().at(street->nodePair().first)->coords().second < 0) {
-          initialAngle += std::numbers::pi;
-        } else if (m_graph.nodeSet().at(street->nodePair().second)->coords().first - m_graph.nodeSet().at(street->nodePair().first)->coords().first < 0) {
-          initialAngle += 2 * std::numbers::pi;
-        }
+        double finalAngle{std::atan2(m_graph.nodeSet().at(nextStreet->nodePair().second)->coords().first - m_graph.nodeSet().at(nextStreet->nodePair().first)->coords().first, m_graph.nodeSet().at(nextStreet->nodePair().second)->coords().second - m_graph.nodeSet().at(nextStreet->nodePair().first)->coords().second)};
+        double initialAngle{std::atan2(m_graph.nodeSet().at(street->nodePair().second)->coords().first - m_graph.nodeSet().at(street->nodePair().first)->coords().first, m_graph.nodeSet().at(street->nodePair().second)->coords().second - m_graph.nodeSet().at(street->nodePair().first)->coords().second)};
         double delta{finalAngle - initialAngle};
-        if (std::abs(delta) > std::numbers::pi) {
-          delta += 2 * std::numbers::pi;
-        }
         delta = -std::fmod(delta, std::numbers::pi);
         destinationNode->addAgent(delta, agentId);
         m_agentNextStreetId.emplace(agentId, nextStreet->id());

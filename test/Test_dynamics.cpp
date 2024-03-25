@@ -486,13 +486,15 @@ TEST_CASE("Dynamics") {
       dynamics.graph().nodeSet().at(0)->setCapacity(3);
       dynamics.setSeed(69);
       Itinerary itinerary{0, 2};
+      Itinerary itinerary2{1, 1};
       dynamics.addItinerary(itinerary);
+      dynamics.addItinerary(itinerary2);
       dynamics.updatePaths();
-      // add an agent in C, D, A
-      dynamics.addAgent(Agent(0, 0, 4));
-      dynamics.addAgent(Agent(1, 0, 3));
-      dynamics.addAgent(Agent(2, 0, 1));
-      WHEN("We evolve the dynamics") {
+      WHEN("We add agents and evolve the dynamics") {
+        // add an agent in C, D, A
+        dynamics.addAgent(Agent(0, 0, 4));
+        dynamics.addAgent(Agent(1, 0, 3));
+        dynamics.addAgent(Agent(2, 0, 1));
         dynamics.evolve(false);
         dynamics.evolve(false);
         dynamics.evolve(false);
@@ -508,6 +510,26 @@ TEST_CASE("Dynamics") {
         }
         dynamics.evolve(false);
         THEN("The agent in A passes last") { CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 2); }
+      }
+      WHEN("We add agents of another itinerary and update the dynamics") {
+        dynamics.addAgent(Agent(0, 1, 2));
+        dynamics.addAgent(Agent(1, 1, 3));
+        dynamics.addAgent(Agent(2, 1, 4));
+        dynamics.evolve(false);
+        dynamics.evolve(false);
+        dynamics.evolve(false);
+        THEN("The agent in B passes first") {
+          CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 1);
+          CHECK_EQ(dynamics.agents().at(1)->streetId().value(), 15);
+          CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 20);
+        }
+        dynamics.evolve(false);
+        THEN("The agent in C passes second") {
+          CHECK_EQ(dynamics.agents().at(1)->streetId().value(), 1);
+          CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 20);
+        }
+        dynamics.evolve(false);
+        THEN("The agent in C passes last") { CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 1); }
       }
     }
   }
