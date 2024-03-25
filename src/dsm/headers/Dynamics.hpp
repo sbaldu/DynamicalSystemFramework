@@ -325,10 +325,7 @@ namespace dsm {
         }
         const auto& nextStreet{m_graph.streetSet()[m_nextStreetId(agentId, destinationNode->id())]};
         assert(destinationNode->id() == nextStreet->nodePair().first);
-        double finalAngle{std::atan2(m_graph.nodeSet().at(nextStreet->nodePair().second)->coords().first - m_graph.nodeSet().at(nextStreet->nodePair().first)->coords().first, m_graph.nodeSet().at(nextStreet->nodePair().second)->coords().second - m_graph.nodeSet().at(nextStreet->nodePair().first)->coords().second)};
-        double initialAngle{std::atan2(m_graph.nodeSet().at(street->nodePair().second)->coords().first - m_graph.nodeSet().at(street->nodePair().first)->coords().first, m_graph.nodeSet().at(street->nodePair().second)->coords().second - m_graph.nodeSet().at(street->nodePair().first)->coords().second)};
-        double delta{finalAngle - initialAngle};
-        delta = -std::fmod(delta, std::numbers::pi);
+        const auto delta = std::fmod(street->angle() - nextStreet->angle(), std::numbers::pi);
         destinationNode->addAgent(delta, agentId);
         m_agentNextStreetId.emplace(agentId, nextStreet->id());
     }

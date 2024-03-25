@@ -33,7 +33,7 @@ namespace dsm {
     Need to discuss this.*/
     std::set<Id>
         m_streetPriorities;  // A set containing the street ids that have priority - like main roads
-    std::pair<double, double> m_coords;
+    std::optional<std::pair<double, double>> m_coords;
     Id m_id;
     Size m_capacity;
     Size m_agentCounter;
@@ -92,7 +92,7 @@ namespace dsm {
     Id id() const;
     /// @brief Get the node's coordinates
     /// @return std::pair<double,, double> A std::pair containing the node's coordinates
-    const std::pair<double, double>& coords() const;
+    const std::optional<std::pair<double, double>>& coords() const;
     /// @brief Get the node's street priorities
     /// @details This function returns a std::set containing the node's street priorities.
     ///        If a street has priority, it means that the agents that are on that street
@@ -220,7 +220,7 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  const std::pair<double, double>& Node<Id, Size>::coords() const {
+  const std::optional<std::pair<double, double>>& Node<Id, Size>::coords() const {
     return m_coords;
   }
 
@@ -336,7 +336,9 @@ namespace dsm {
              std::unsigned_integral<Delay>)
   TrafficLight<Id, Size, Delay>::TrafficLight(Node<Id, Size> node)
       : Node<Id, Size>{node.id()}, m_counter{0} {
-    this->setCoords(node.coords());
+    if (node.coords().has_value()) {
+      this->setCoords(node.coords().value());
+    }
     this->setCapacity(node.capacity());
   }
 

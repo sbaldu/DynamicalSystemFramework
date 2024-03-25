@@ -52,6 +52,9 @@ namespace dsm {
     /// @details The street ids are reassigned using the max node id, i.e.
     /// newStreetId = srcId * n + dstId, where n is the max node id.
     void m_reassignIds();
+    /// @brief If every node has coordinates, set the street angles
+    /// @details The street angles are set using the node's coordinates.
+    void m_setStreetAngles();
 
   public:
     Graph();
@@ -284,6 +287,18 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Graph<Id, Size>::m_setStreetAngles() {
+    for (const auto& [streetId, street] : m_streets) {
+      const auto& srcNode{m_nodes[street->nodePair().first]};
+      const auto& dstNode{m_nodes[street->nodePair().second]};
+      if (srcNode->coords().has_value() && dstNode->coords().has_value()) {
+        street->setAngle(srcNode->coords().value(), dstNode->coords().value());
+      }
+    }
+  }
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Graph<Id, Size>::buildAdj() {
     // find max values in streets node pairs
     const auto maxNode{static_cast<Id>(m_nodes.size())};
@@ -292,6 +307,7 @@ namespace dsm {
       m_adjacency.insert(street->nodePair().first, street->nodePair().second, true);
     }
     this->m_reassignIds();
+    this->m_setStreetAngles();
   }
 
   template <typename Id, typename Size>
