@@ -88,7 +88,7 @@ TEST_CASE("TrafficLight") {
     trafficLight.setDelay(std::make_pair(5, 7));
     trafficLight.setPhaseAfterCycle(6);
 
-    for (int i = 0; i < 12; ++i) {
+    for (size_t i = 0; i < 12; ++i) {
       trafficLight.increaseCounter();
     }
     CHECK_FALSE(trafficLight.isGreen());
@@ -98,7 +98,7 @@ TEST_CASE("TrafficLight") {
     trafficLight.setPhase(0);
     CHECK(trafficLight.isGreen());
 
-    for (int i = 0; i < 12; ++i) {
+    for (size_t i = 0; i < 12; ++i) {
       trafficLight.increaseCounter();
     }
     CHECK(trafficLight.isGreen());
@@ -110,7 +110,7 @@ TEST_CASE("TrafficLight") {
     /// THEN: The asymmetric traffic light is set correctly
     TrafficLight trafficLight{0};
     trafficLight.setDelay(std::make_pair(5, 3));
-    for (int i = 0; i < 8; ++i) {
+    for (size_t i = 0; i < 8; ++i) {
       if (i < 5) {
         CHECK(trafficLight.isGreen());
       } else {
