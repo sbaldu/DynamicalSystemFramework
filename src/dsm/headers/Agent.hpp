@@ -88,7 +88,7 @@ namespace dsm {
     /// @throw std::overflow_error, if time has reached its maximum value
     void incrementTime(unsigned int time);
     /// @brief Reset the agent's time to 0
-    void resetTime();
+    void resetTime() { m_time = 0; }
 
     /// @brief Get the agent's id
     /// @return The agent's id
