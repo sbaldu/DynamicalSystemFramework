@@ -564,7 +564,7 @@ namespace dsm {
     if (!m_nodes.contains(nodeId)) {
       throw std::invalid_argument(buildLog("Node does not exist."));
     }
-	auto& pNode = m_nodes[nodeId];
+    auto& pNode = m_nodes[nodeId];
     pNode = std::make_unique<TrafficLight<Id, Size, Delay>>(*pNode);
   }
   template <typename Id, typename Size>
