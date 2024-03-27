@@ -157,6 +157,10 @@ namespace dsm {
     template <typename Delay>
       requires(std::unsigned_integral<Delay>)
     void makeTrafficLight(Id nodeId);
+    /// @brief Convert an existing node into a roundabout
+    /// @param nodeId The id of the node to convert to a roundabout
+    /// @throws std::invalid_argument if the node does not exist
+    void makeRoundabout(Id nodeId);
     /// @brief Convert an existing street into a spire street
     /// @param streetId The id of the street to convert to a spire street
     /// @throws std::invalid_argument if the street does not exist
@@ -583,6 +587,15 @@ namespace dsm {
     }
 	auto& pNode = m_nodes[nodeId];
     pNode = std::make_unique<TrafficLight<Id, Size, Delay>>(*pNode);
+  }
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Graph<Id, Size>::makeRoundabout(Id nodeId) {
+    if (!m_nodes.contains(nodeId)) {
+      throw std::invalid_argument(buildLog("Node does not exist."));
+    }
+    auto& pNode = m_nodes[nodeId];
+    pNode = std::make_unique<Roundabout<Id, Size>>(*pNode);
   }
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)

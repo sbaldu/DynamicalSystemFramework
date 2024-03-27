@@ -453,6 +453,9 @@ namespace dsm {
       /// @param coords A std::pair containing the node's coordinates
       Roundabout(Id id, std::pair<double, double> coords)
           : NodeConcept<Id, Size>{id, coords} {};
+      /// @brief Construct a new Roundabout object
+      /// @param node A Node object
+      Roundabout(const NodeConcept<Id, Size>& node);
 
       virtual ~Roundabout() = default;
 
@@ -474,6 +477,15 @@ namespace dsm {
       /// @return bool True if the node is a roundabout
       bool isRoundabout() const noexcept override { return true; }
   };
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  Roundabout<Id, Size>::Roundabout(const NodeConcept<Id, Size>& node)
+          : NodeConcept<Id, Size>{node.id()} {
+        if (node.coords().has_value()) {
+          this->setCoords(node.coords().value());
+        }
+        this->setCapacity(node.capacity());
+      }
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Roundabout<Id, Size>::enqueue(Id agentId) {
