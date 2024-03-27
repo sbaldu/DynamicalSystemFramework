@@ -864,16 +864,17 @@ namespace dsm {
     if (street->queue().empty()) {
       return std::nullopt;
     }
-    // if (this->m_agents.at(street->queue().front())->delay() > 0) {
-    //   auto n = static_cast<Size>(street->queue().size());
-    //   double alpha{this->m_minSpeedRateo / street->capacity()};
-    //   return street->maxSpeed() * (1 - 0.5 * alpha * (n - 1));
-    // }
     double meanSpeed{0.};
     Size n{0};
-    for (const auto& agentId : street->queue()) {
-      meanSpeed += this->m_agents.at(agentId)->speed();
-      ++n;
+    if (this->m_agents.at(street->queue().front())->delay() > 0) {
+      n = static_cast<Size>(street->queue().size());
+      double alpha{this->m_minSpeedRateo / street->capacity()};
+      meanSpeed = street->maxSpeed() * n * (1. - 0.5 * alpha * (n - 1.));
+    } else {
+      for (const auto& agentId : street->queue()) {
+        meanSpeed += this->m_agents.at(agentId)->speed();
+        ++n;
+      }
     }
     for (const auto& [angle, agentId] : this->m_graph.nodeSet().at(street->nodePair().second)->agents()) {
       const auto& agent{this->m_agents.at(agentId)};
