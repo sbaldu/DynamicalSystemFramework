@@ -483,29 +483,6 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
-  const std::unordered_map<Id, std::unique_ptr<Itinerary<Id>>>&
-  Dynamics<Id, Size, Delay>::itineraries() const {
-    return m_itineraries;
-  }
-
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             is_numeric_v<Delay>)
-  const std::map<Id, std::unique_ptr<Agent<Id, Size, Delay>>>&
-  Dynamics<Id, Size, Delay>::agents() const {
-    return this->m_agents;
-  }
-
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             is_numeric_v<Delay>)
-  TimePoint Dynamics<Id, Size, Delay>::time() const {
-    return m_time;
-  }
-
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::addAgent(const Agent<Id, Size, Delay>& agent) {
     if (this->m_agents.contains(agent.id())) {
       throw std::invalid_argument(
