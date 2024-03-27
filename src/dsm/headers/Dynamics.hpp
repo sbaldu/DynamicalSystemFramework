@@ -143,7 +143,7 @@ namespace dsm {
     /// If the agent is in the destination node, it is removed from the simulation (and then reinserted if reinsert_agents is true)
     /// - Cycle over agents and update their times
     /// @param reinsert_agents If true, the agents are reinserted in the simulation after they reach their destination
-    virtual void evolve(bool reinsert_agents = false, bool force_priorities = false);
+    virtual void evolve(bool reinsert_agents = false);
 
     /// @brief Get the graph
     /// @return const Graph<Id, Size>&, The graph
@@ -500,11 +500,11 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
-  void Dynamics<Id, Size, Delay>::evolve(bool reinsert_agents, bool force_priorities) {
+  void Dynamics<Id, Size, Delay>::evolve(bool reinsert_agents) {
     // move the first agent of each street queue, if possible, putting it in the next node
     this->m_evolveStreets(reinsert_agents);
     // move all the agents from each node, if possible
-    this->m_evolveNodes(force_priorities);
+    this->m_evolveNodes();
     // cycle over agents and update their times
     this->m_evolveAgents();
     // increment time simulation
