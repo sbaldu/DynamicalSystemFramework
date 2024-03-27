@@ -46,14 +46,14 @@ namespace dsm {
 
     /// @brief Get the itinerary's id
     /// @return Id, The itinerary's id
-    Id id() const;
+    Id id() const noexcept { return m_id; };
     /// @brief Get the itinerary's destination
     /// @return Id, The itinerary's destination
-    Id destination() const;
+    Id destination() const noexcept { return m_destination; };
     /// @brief Get the itinerary's path
     /// @return SparseMatrix<Id, bool>, An adjacency matrix made by a SparseMatrix representing the
     /// itinerary's path
-    const SparseMatrix<Id, bool>& path() const;
+    const SparseMatrix<Id, bool>& path() const noexcept { return m_path; };
   };
 
   template <typename Id>
@@ -85,23 +85,6 @@ namespace dsm {
     }
     m_path = std::move(path);
   }
-
-  template <typename Id>
-    requires(std::unsigned_integral<Id>)
-  Id Itinerary<Id>::id() const {
-    return m_id;
-  }
-  template <typename Id>
-    requires(std::unsigned_integral<Id>)
-  Id Itinerary<Id>::destination() const {
-    return m_destination;
-  }
-  template <typename Id>
-    requires(std::unsigned_integral<Id>)
-  const SparseMatrix<Id, bool>& Itinerary<Id>::path() const {
-    return m_path;
-  }
-
 };  // namespace dsm
 
 #endif
