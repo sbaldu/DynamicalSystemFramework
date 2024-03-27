@@ -25,8 +25,8 @@ TEST_CASE("Node") {
     */
     Node node{1, std::make_pair(2.5, 3.5)};
     CHECK(node.id() == 1);
-    CHECK(node.coords().first == 2.5);
-    CHECK(node.coords().second == 3.5);
+    CHECK(node.coords().value().first == 2.5);
+    CHECK(node.coords().value().second == 3.5);
   }
   SUBCASE("isGreen exception") {
     /*This tests the isGreen function.

@@ -52,6 +52,9 @@ namespace dsm {
     /// @details The street ids are reassigned using the max node id, i.e.
     /// newStreetId = srcId * n + dstId, where n is the max node id.
     void m_reassignIds();
+    /// @brief If every node has coordinates, set the street angles
+    /// @details The street angles are set using the node's coordinates.
+    void m_setStreetAngles();
 
   public:
     Graph();
@@ -154,6 +157,10 @@ namespace dsm {
     template <typename Delay>
       requires(std::unsigned_integral<Delay>)
     void makeTrafficLight(Id nodeId);
+    /// @brief Convert an existing street into a spire street
+    /// @param streetId The id of the street to convert to a spire street
+    /// @throws std::invalid_argument if the street does not exist
+    void makeSpireStreet(Id streetId);
 
     /// @brief Add a street to the graph
     /// @param street A std::shared_ptr to the street to add
@@ -246,7 +253,7 @@ namespace dsm {
     buildAdj();
   }
 
-  template <typename Id, typename Size>
+   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Graph<Id, Size>::m_reassignIds() {
     // not sure about this, might need a bit more work
@@ -280,6 +287,18 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Graph<Id, Size>::m_setStreetAngles() {
+    for (const auto& [streetId, street] : m_streets) {
+      const auto& srcNode{m_nodes[street->nodePair().first]};
+      const auto& dstNode{m_nodes[street->nodePair().second]};
+      if (srcNode->coords().has_value() && dstNode->coords().has_value()) {
+        street->setAngle(srcNode->coords().value(), dstNode->coords().value());
+      }
+    }
+  }
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Graph<Id, Size>::buildAdj() {
     // find max values in streets node pairs
     const auto maxNode{static_cast<Id>(m_nodes.size())};
@@ -288,6 +307,7 @@ namespace dsm {
       m_adjacency.insert(street->nodePair().first, street->nodePair().second, true);
     }
     this->m_reassignIds();
+    this->m_setStreetAngles();
   }
 
   template <typename Id, typename Size>
@@ -560,8 +580,17 @@ namespace dsm {
     if (!m_nodes.contains(nodeId)) {
       throw std::invalid_argument(buildLog("Node does not exist."));
     }
-    auto& pNode = m_nodes[nodeId];
+	auto& pNode = m_nodes[nodeId];
     pNode = std::make_unique<TrafficLight<Id, Size, Delay>>(*pNode);
+  }
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Graph<Id, Size>::makeSpireStreet(Id streetId) {
+    if (!m_streets.contains(streetId)) {
+      throw std::invalid_argument(buildLog("Street does not exist."));
+    }
+    auto& pStreet = m_streets[streetId];
+    pStreet = std::make_unique<SpireStreet<Id, Size>>(pStreet->id(), *pStreet);
   }
 
   template <typename Id, typename Size>
@@ -701,9 +730,8 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  std::optional<DijkstraResult<Id>> Graph<Id, Size>::shortestPath(Id source,
-                                                                  Id destination) const {
-    const Id sourceId{source};
+  std::optional<DijkstraResult<Id>> Graph<Id, Size>::shortestPath(Id source, Id destination) const {
+	const Id sourceId{source};
 
     std::unordered_set<Id> unvisitedNodes;
     bool source_found{false};
@@ -778,9 +806,9 @@ namespace dsm {
         return std::nullopt;
       }
       path.push_back(previous);
-      if (previous == sourceId) {
-        break;
-      }
+	  if (previous == sourceId) {
+		break;
+	  }
     }
 
     std::reverse(path.begin(), path.end());
