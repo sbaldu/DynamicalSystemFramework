@@ -167,19 +167,19 @@ namespace dsm {
 
     /// @brief get the number of rows
     /// @return number of rows
-    Index getRowDim() const;
+    Index getRowDim() const { return _rows; }
 
     /// @brief get the number of columns
     /// @return number of columns
-    Index getColDim() const;
+    Index getColDim() const { return _cols; }
 
     /// @brief get the number of non zero elements in the matrix
     /// @return number of non zero elements
-    Index size() const;
+    Index size() const { return _matrix.size(); };
 
     /// @brief get the maximum number of elements in the matrix
     /// @return maximum number of elements
-    Index max_size() const;
+    Index max_size() const { return _rows * _cols; }
 
     /// @brief symmetrize the matrix
     void symmetrize();
@@ -192,11 +192,15 @@ namespace dsm {
 
     /// @brief return the begin iterator of the matrix
     /// @return the begin iterator
-    typename std::unordered_map<Index, T>::const_iterator begin() const;
+    typename std::unordered_map<Index, T>::const_iterator begin() const {
+      return _matrix.begin();
+    }
 
     /// @brief return the end iterator of the matrix
     /// @return the end iterator
-    typename std::unordered_map<Index, T>::const_iterator end() const;
+    typename std::unordered_map<Index, T>::const_iterator end() const {
+      return _matrix.end();
+    }
 
     /// @brief access an element of the matrix
     /// @param i row index
@@ -607,30 +611,6 @@ namespace dsm {
 
   template <typename Index, typename T>
     requires(std::unsigned_integral<Index>)
-  Index SparseMatrix<Index, T>::getRowDim() const {
-    return this->_rows;
-  }
-
-  template <typename Index, typename T>
-    requires(std::unsigned_integral<Index>)
-  Index SparseMatrix<Index, T>::getColDim() const {
-    return this->_cols;
-  }
-
-  template <typename Index, typename T>
-    requires(std::unsigned_integral<Index>)
-  Index SparseMatrix<Index, T>::size() const {
-    return _matrix.size();
-  }
-
-  template <typename Index, typename T>
-    requires(std::unsigned_integral<Index>)
-  Index SparseMatrix<Index, T>::max_size() const {
-    return this->_rows * this->_cols;
-  }
-
-  template <typename Index, typename T>
-    requires(std::unsigned_integral<Index>)
   void SparseMatrix<Index, T>::symmetrize() {
     *this += this->operator++();
   }
@@ -662,20 +642,6 @@ namespace dsm {
         this->insert_or_assign(it.first, it.second);
       }
     }
-  }
-
-  template <typename Index, typename T>
-    requires(std::unsigned_integral<Index>)
-  typename std::unordered_map<Index, T>::const_iterator SparseMatrix<Index, T>::begin()
-      const {
-    return _matrix.begin();
-  }
-
-  template <typename Index, typename T>
-    requires(std::unsigned_integral<Index>)
-  typename std::unordered_map<Index, T>::const_iterator SparseMatrix<Index, T>::end()
-      const {
-    return _matrix.end();
   }
 
   template <typename Index, typename T>

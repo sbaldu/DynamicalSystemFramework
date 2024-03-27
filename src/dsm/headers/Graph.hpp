@@ -177,19 +177,25 @@ namespace dsm {
 
     /// @brief Get the graph's adjacency matrix
     /// @return A std::shared_ptr to the graph's adjacency matrix
-    const SparseMatrix<Id, bool>& adjMatrix() const;
+    const SparseMatrix<Id, bool>& adjMatrix() const { return m_adjacency; }
     /// @brief Get the graph's node map
     /// @return A std::unordered_map containing the graph's nodes
-    const std::unordered_map<Id, std::unique_ptr<Node<Id, Size>>>& nodeSet() const;
+    const std::unordered_map<Id, std::unique_ptr<Node<Id, Size>>>& nodeSet() const {
+      return m_nodes;
+    }
     /// @brief Get the graph's node map
     /// @return A std::unordered_map containing the graph's nodes
-    std::unordered_map<Id, std::unique_ptr<Node<Id, Size>>>& nodeSet();
+    std::unordered_map<Id, std::unique_ptr<Node<Id, Size>>>& nodeSet() { return m_nodes; }
     /// @brief Get the graph's street map
     /// @return A std::unordered_map containing the graph's streets
-    const std::unordered_map<Id, std::unique_ptr<Street<Id, Size>>>& streetSet() const;
+    const std::unordered_map<Id, std::unique_ptr<Street<Id, Size>>>& streetSet() const {
+      return m_streets;
+    }
     /// @brief Get the graph's street map
     /// @return A std::unordered_map containing the graph's streets
-    std::unordered_map<Id, std::unique_ptr<Street<Id, Size>>>& streetSet();
+    std::unordered_map<Id, std::unique_ptr<Street<Id, Size>>>& streetSet() {
+      return m_streets;
+    }
     /// @brief Get a street from the graph
     /// @param source The source node
     /// @param destination The destination node
@@ -646,38 +652,6 @@ namespace dsm {
   void Graph<Id, Size>::addStreets(T1&& street, Tn&&... streets) {
     addStreet(std::forward<T1>(street));
     addStreets(std::forward<Tn>(streets)...);
-  }
-
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  const SparseMatrix<Id, bool>& Graph<Id, Size>::adjMatrix() const {
-    return m_adjacency;
-  }
-
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  const std::unordered_map<Id, std::unique_ptr<Node<Id, Size>>>&
-  Graph<Id, Size>::nodeSet() const {
-    return m_nodes;
-  }
-
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  std::unordered_map<Id, std::unique_ptr<Node<Id, Size>>>& Graph<Id, Size>::nodeSet() {
-    return m_nodes;
-  }
-
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  const std::unordered_map<Id, std::unique_ptr<Street<Id, Size>>>&
-  Graph<Id, Size>::streetSet() const {
-    return m_streets;
-  }
-
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  std::unordered_map<Id, std::unique_ptr<Street<Id, Size>>>& Graph<Id, Size>::streetSet() {
-    return m_streets;
   }
 
   template <typename Id, typename Size>

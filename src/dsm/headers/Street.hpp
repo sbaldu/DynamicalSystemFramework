@@ -73,33 +73,35 @@ namespace dsm {
 
     /// @brief Set the street's id
     /// @param id The street's id
-    void setId(Id id);
+    void setId(Id id) { m_id = id; }
     /// @brief Set the street's capacity
     /// @param capacity The street's capacity
-    void setCapacity(Size capacity);
+    void setCapacity(Size capacity) { m_capacity = capacity; }
     /// @brief Set the street's transport capacity
     /// @details The transport capacity is the maximum number of agents that can traverse the street
     ///          in a time step.
     /// @param capacity The street's transport capacity
-    void setTransportCapacity(Size capacity);
+    void setTransportCapacity(Size capacity) { m_transportCapacity = capacity; }
     /// @brief Set the street's length
     /// @param len The street's length
     /// @throw std::invalid_argument, If the length is negative
     void setLength(double len);
     /// @brief Set the street's queue
     /// @param queue The street's queue
-    void setQueue(dsm::queue<Size> queue);
+    void setQueue(dsm::queue<Size> queue) { m_queue = std::move(queue); }
     /// @brief Set the street's node pair
     /// @param node1 The source node of the street
     /// @param node2 The destination node of the street
-    void setNodePair(Id node1, Id node2);
+    void setNodePair(Id node1, Id node2) { m_nodePair = std::make_pair(node1, node2); }
     /// @brief Set the street's node pair
     /// @param node1 The source node of the street
     /// @param node2 The destination node of the street
-    void setNodePair(const Node<Id, Size>& node1, const Node<Id, Size>& node2);
+    void setNodePair(const Node<Id, Size>& node1, const Node<Id, Size>& node2) {
+      m_nodePair = std::make_pair(node1.id(), node2.id());
+    }
     /// @brief Set the street's node pair
     /// @param pair The street's node pair
-    void setNodePair(std::pair<Id, Id> pair);
+    void setNodePair(std::pair<Id, Id> pair) { m_nodePair = std::move(pair); }
     /// @brief Set the street's speed limit
     /// @param speed The street's speed limit
     /// @throw std::invalid_argument, If the speed is negative
@@ -115,33 +117,33 @@ namespace dsm {
 
     /// @brief Get the street's id
     /// @return Id, The street's id
-    Id id() const;
+    Id id() const { return m_id; }
     /// @brief Get the street's capacity
     /// @return Size, The street's capacity
-    Size capacity() const;
+    Size capacity() const { return m_capacity; }
     /// @brief Get the street's transport capacity
     /// @details The transport capacity is the maximum number of agents that can traverse the street
     ///          in a time step.
     /// @return Size, The street's transport capacity
-    Size transportCapacity() const;
+    Size transportCapacity() const { return m_transportCapacity; }
     /// @brief Get the street's length
     /// @return double, The street's length
-    double length() const;
+    double length() const { return m_len; }
     /// @brief Get the street's queue
     /// @return dsm::queue<Size>, The street's queue
-    const dsm::queue<Size>& queue() const;
+    const dsm::queue<Size>& queue() const { return m_queue; }
     /// @brief Get the street's node pair
     /// @return std::pair<Id, Id>, The street's node pair
-    const std::pair<Id, Id>& nodePair() const;
+    const std::pair<Id, Id>& nodePair() const { return m_nodePair; }
     /// @brief Get the street's density
     /// @return double, The street's density
-    double density() const;
+    double density() const { return static_cast<double>(m_queue.size()) / m_capacity; }
     /// @brief Get the street's speed limit
     /// @return double, The street's speed limit
-    double maxSpeed() const;
+    double maxSpeed() const { return m_maxSpeed; }
     /// @brief Get the street's angle
     /// @return double The street's angle
-    double angle() const;
+    double angle() const { return m_angle; }
     /// @brief Add an agent to the street's queue
     /// @param agentId The id of the agent to add to the street's queue
     /// @throw std::runtime_error If the street's queue is full
@@ -201,47 +203,11 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Street<Id, Size>::setId(Id id) {
-    m_id = id;
-  }
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Street<Id, Size>::setCapacity(Size capacity) {
-    m_capacity = capacity;
-  }
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Street<Id, Size>::setTransportCapacity(Size capacity) {
-    m_transportCapacity = capacity;
-  }
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Street<Id, Size>::setLength(double len) {
     if (len < 0.) {
       throw std::invalid_argument(buildLog("The length of a street cannot be negative."));
     }
     m_len = len;
-  }
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Street<Id, Size>::setQueue(dsm::queue<Size> queue) {
-    m_queue = std::move(queue);
-  }
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Street<Id, Size>::setNodePair(Id node1, Id node2) {
-    m_nodePair = std::make_pair(node1, node2);
-  }
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Street<Id, Size>::setNodePair(const Node<Id, Size>& node1,
-                                     const Node<Id, Size>& node2) {
-    m_nodePair = std::make_pair(node1.id(), node2.id());
-  }
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Street<Id, Size>::setNodePair(std::pair<Id, Id> pair) {
-    m_nodePair = std::move(pair);
   }
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
@@ -273,51 +239,6 @@ namespace dsm {
     m_angle = angle;
   }
 
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  Id Street<Id, Size>::id() const {
-    return m_id;
-  }
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  Size Street<Id, Size>::capacity() const {
-    return m_capacity;
-  }
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  Size Street<Id, Size>::transportCapacity() const {
-    return m_transportCapacity;
-  }
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  double Street<Id, Size>::length() const {
-    return m_len;
-  }
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  const dsm::queue<Size>& Street<Id, Size>::queue() const {
-    return m_queue;
-  }
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  const std::pair<Id, Id>& Street<Id, Size>::nodePair() const {
-    return m_nodePair;
-  }
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  double Street<Id, Size>::density() const {
-    return static_cast<double>(m_queue.size()) / m_capacity;
-  }
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  double Street<Id, Size>::maxSpeed() const {
-    return m_maxSpeed;
-  }
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  double Street<Id, Size>::angle() const {
-    return m_angle;
-  }
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Street<Id, Size>::enqueue(Id agentId) {
