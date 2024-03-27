@@ -46,14 +46,14 @@ namespace dsm {
 
     /// @brief Get the itinerary's id
     /// @return Id, The itinerary's id
-    Id id() const noexcept { return m_id; }
+    Id id() const { return m_id; }
     /// @brief Get the itinerary's destination
     /// @return Id, The itinerary's destination
-    Id destination() const noexcept { return m_destination; }
+    Id destination() const { return m_destination; }
     /// @brief Get the itinerary's path
     /// @return SparseMatrix<Id, bool>, An adjacency matrix made by a SparseMatrix representing the
     /// itinerary's path
-    const SparseMatrix<Id, bool>& path() const noexcept { return m_path; }
+    const SparseMatrix<Id, bool>& path() const { return m_path; }
   };
 
   template <typename Id>

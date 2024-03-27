@@ -72,35 +72,35 @@ namespace dsm {
 
     /// @brief Set the street's id
     /// @param id The street's id
-    void setId(Id id) noexcept { m_id = id; }
+    void setId(Id id) { m_id = id; }
     /// @brief Set the street's capacity
     /// @param capacity The street's capacity
-    void setCapacity(Size capacity) noexcept { m_capacity = capacity; }
+    void setCapacity(Size capacity) { m_capacity = capacity; }
     /// @brief Set the street's transport capacity
     /// @details The transport capacity is the maximum number of agents that can traverse the street
     ///          in a time step.
     /// @param capacity The street's transport capacity
-    void setTransportCapacity(Size capacity) noexcept { m_transportCapacity = capacity; }
+    void setTransportCapacity(Size capacity) { m_transportCapacity = capacity; }
     /// @brief Set the street's length
     /// @param len The street's length
     /// @throw std::invalid_argument, If the length is negative
     void setLength(double len);
     /// @brief Set the street's queue
     /// @param queue The street's queue
-    void setQueue(dsm::queue<Size> queue) noexcept { m_queue = std::move(queue); }
+    void setQueue(dsm::queue<Size> queue) { m_queue = std::move(queue); }
     /// @brief Set the street's node pair
     /// @param node1 The source node of the street
     /// @param node2 The destination node of the street
-    void setNodePair(Id node1, Id node2) noexcept { m_nodePair = std::make_pair(node1, node2); }
+    void setNodePair(Id node1, Id node2) { m_nodePair = std::make_pair(node1, node2); }
     /// @brief Set the street's node pair
     /// @param node1 The source node of the street
     /// @param node2 The destination node of the street
-    void setNodePair(const Node<Id, Size>& node1, const Node<Id, Size>& node2) noexcept {
+    void setNodePair(const Node<Id, Size>& node1, const Node<Id, Size>& node2) {
       m_nodePair = std::make_pair(node1.id(), node2.id());
     }
     /// @brief Set the street's node pair
     /// @param pair The street's node pair
-    void setNodePair(std::pair<Id, Id> pair) noexcept { m_nodePair = std::move(pair); }
+    void setNodePair(std::pair<Id, Id> pair) { m_nodePair = std::move(pair); }
     /// @brief Set the street's speed limit
     /// @param speed The street's speed limit
     /// @throw std::invalid_argument, If the speed is negative
@@ -116,33 +116,33 @@ namespace dsm {
 
     /// @brief Get the street's id
     /// @return Id, The street's id
-    Id id() const noexcept { return m_id; }
+    Id id() const { return m_id; }
     /// @brief Get the street's capacity
     /// @return Size, The street's capacity
-    Size capacity() const noexcept { return m_capacity; }
+    Size capacity() const { return m_capacity; }
     /// @brief Get the street's transport capacity
     /// @details The transport capacity is the maximum number of agents that can traverse the street
     ///          in a time step.
     /// @return Size, The street's transport capacity
-    Size transportCapacity() const noexcept { return m_transportCapacity; }
+    Size transportCapacity() const { return m_transportCapacity; }
     /// @brief Get the street's length
     /// @return double, The street's length
-    double length() const noexcept { return m_len; }
+    double length() const { return m_len; }
     /// @brief Get the street's queue
     /// @return dsm::queue<Size>, The street's queue
-    const dsm::queue<Size>& queue() const noexcept { return m_queue; }
+    const dsm::queue<Size>& queue() const { return m_queue; }
     /// @brief Get the street's node pair
     /// @return std::pair<Id, Id>, The street's node pair
-    const std::pair<Id, Id>& nodePair() const noexcept { return m_nodePair; }
+    const std::pair<Id, Id>& nodePair() const { return m_nodePair; }
     /// @brief Get the street's density
     /// @return double, The street's density
-    double density() const noexcept { return static_cast<double>(m_queue.size()) / m_capacity; }
+    double density() const { return static_cast<double>(m_queue.size()) / m_capacity; }
     /// @brief Get the street's speed limit
     /// @return double, The street's speed limit
-    double maxSpeed() const noexcept { return m_maxSpeed; }
+    double maxSpeed() const { return m_maxSpeed; }
     /// @brief Get the street's angle
     /// @return double The street's angle
-    double angle() const noexcept { return m_angle; }
+    double angle() const { return m_angle; }
     /// @brief Add an agent to the street's queue
     /// @param agentId The id of the agent to add to the street's queue
     /// @throw std::runtime_error If the street's queue is full
@@ -151,7 +151,7 @@ namespace dsm {
     virtual std::optional<Id> dequeue();
     /// @brief Check if the street is a spire
     /// @return bool True if the street is a spire, false otherwise
-    virtual bool isSpire() const noexcept { return false; };
+    virtual bool isSpire() const { return false; };
   };
 
   template <typename Id, typename Size>
@@ -315,7 +315,7 @@ namespace dsm {
     std::optional<Id> dequeue() override;
     /// @brief Check if the street is a spire
     /// @return bool True if the street is a spire, false otherwise
-    bool isSpire() const noexcept override { return true; };
+    bool isSpire() const override { return true; };
   };
 
   template <typename Id, typename Size>

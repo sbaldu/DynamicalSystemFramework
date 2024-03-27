@@ -75,7 +75,7 @@ namespace dsm {
     /// @throw std::underflow_error, if delay has reached its minimum value
     void decrementDelay();
     /// @brief Increment the agent's distance by its speed * 1 second
-    void incrementDistance() noexcept { m_distance += m_speed; }
+    void incrementDistance() { m_distance += m_speed; }
     /// @brief Increment the agent's distance by a given value
     /// @param distance The value to increment the agent's distance byù
     /// @throw std::invalid_argument, if distance is negative
@@ -92,28 +92,28 @@ namespace dsm {
 
     /// @brief Get the agent's id
     /// @return The agent's id
-    Id id() const noexcept { return m_id; }
+    Id id() const { return m_id; }
     /// @brief Get the agent's itinerary
     /// @return The agent's itinerary
-    Id itineraryId() const noexcept { return m_itineraryId; }
+    Id itineraryId() const { return m_itineraryId; }
     /// @brief Get the id of the street currently occupied by the agent
     /// @return The id of the street currently occupied by the agent
-    std::optional<Id> streetId() const noexcept { return m_streetId; }
+    std::optional<Id> streetId() const { return m_streetId; }
     /// @brief Get the id of the source node of the agent
     /// @return The id of the source node of the agent
-    std::optional<Id> srcNodeId() const noexcept { return m_srcNodeId; }
+    std::optional<Id> srcNodeId() const { return m_srcNodeId; }
     /// @brief Get the agent's speed
     /// @return The agent's speed
-    double speed() const noexcept { return m_speed; }
+    double speed() const { return m_speed; }
     /// @brief Get the agent's delay
     /// @return	The agent's delay
-    Delay delay() const noexcept { return m_delay; }
+    Delay delay() const { return m_delay; }
     /// @brief Get the agent's travelled distance
     /// @return The agent's travelled distance
-    double distance() const noexcept { return m_distance; }
+    double distance() const { return m_distance; }
     /// @brief Get the agent's travel time
     /// @return The agent's travel time
-    unsigned int time() const noexcept { return m_time; }
+    unsigned int time() const { return m_time; }
   };
 
   template <typename Id, typename Size, typename Delay>

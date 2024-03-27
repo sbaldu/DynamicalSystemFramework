@@ -167,19 +167,19 @@ namespace dsm {
 
     /// @brief get the number of rows
     /// @return number of rows
-    Index getRowDim() const noexcept { return _rows; }
+    Index getRowDim() const { return _rows; }
 
     /// @brief get the number of columns
     /// @return number of columns
-    Index getColDim() const noexcept { return _cols; }
+    Index getColDim() const { return _cols; }
 
     /// @brief get the number of non zero elements in the matrix
     /// @return number of non zero elements
-    Index size() const noexcept { return _matrix.size(); };
+    Index size() const { return _matrix.size(); };
 
     /// @brief get the maximum number of elements in the matrix
     /// @return maximum number of elements
-    Index max_size() const noexcept {
+    Index max_size() const {
       return _rows * _cols;
     }
 
@@ -194,13 +194,13 @@ namespace dsm {
 
     /// @brief return the begin iterator of the matrix
     /// @return the begin iterator
-    typename std::unordered_map<Index, T>::const_iterator begin() const noexcept {
+    typename std::unordered_map<Index, T>::const_iterator begin() const {
       return _matrix.begin();
     }
 
     /// @brief return the end iterator of the matrix
     /// @return the end iterator
-    typename std::unordered_map<Index, T>::const_iterator end() const noexcept {
+    typename std::unordered_map<Index, T>::const_iterator end() const {
       return _matrix.end();
     }
 

@@ -134,16 +134,16 @@ namespace dsm {
 
     /// @brief Get the graph
     /// @return const Graph<Id, Size>&, The graph
-    const Graph<Id, Size>& graph() noexcept { return m_graph; }
+    const Graph<Id, Size>& graph() { return m_graph; }
     /// @brief Get the itineraries
     /// @return const std::unordered_map<Id, Itinerary<Id>>&, The itineraries
-    const std::unordered_map<Id, std::unique_ptr<Itinerary<Id>>>& itineraries() const noexcept { return m_itineraries; }
+    const std::unordered_map<Id, std::unique_ptr<Itinerary<Id>>>& itineraries() const { return m_itineraries; }
     /// @brief Get the agents
     /// @return const std::unordered_map<Id, Agent<Id>>&, The agents
-    const std::map<Id, std::unique_ptr<Agent<Id, Size, Delay>>>& agents() const noexcept { return m_agents; }
+    const std::map<Id, std::unique_ptr<Agent<Id, Size, Delay>>>& agents() const { return m_agents; }
     /// @brief Get the time
     /// @return TimePoint The time
-    TimePoint time() const noexcept { return m_time; }
+    TimePoint time() const { return m_time; }
 
     /// @brief Add an agent to the simulation
     /// @param agent The agent
