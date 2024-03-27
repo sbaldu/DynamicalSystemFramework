@@ -276,6 +276,7 @@ namespace dsm {
   private:
     std::optional<std::pair<Delay, Delay>> m_delay;
     Delay m_counter;
+    Delay m_phase;
 
   public:
     TrafficLight() = delete;
@@ -284,7 +285,7 @@ namespace dsm {
     explicit TrafficLight(Id id);
     /// @brief Construct a new TrafficLight object
     /// @param node A Node object
-    TrafficLight(Node<Id, Size> node);
+    TrafficLight(const Node<Id, Size>& node);
 
     /// @brief Set the node's delay
     /// @details This function is used to set the node's delay.
@@ -315,6 +316,10 @@ namespace dsm {
     /// @throw std::runtime_error if the delay is not set
     void increaseCounter() override;
 
+    /// @brief  Set the phase of the node after the current red-green cycle has passed
+    /// @param phase The new node phase
+    void setPhaseAfterCycle(Delay phase);
+
     /// @brief Get the node's delay
     /// @return std::optional<Delay> The node's delay
     std::optional<Delay> delay() const;
@@ -329,13 +334,14 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              std::unsigned_integral<Delay>)
-  TrafficLight<Id, Size, Delay>::TrafficLight(Id id) : Node<Id, Size>{id}, m_counter{0} {}
+  TrafficLight<Id, Size, Delay>::TrafficLight(Id id)
+      : Node<Id, Size>{id}, m_counter{0}, m_phase{0} {}
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              std::unsigned_integral<Delay>)
-  TrafficLight<Id, Size, Delay>::TrafficLight(Node<Id, Size> node)
-      : Node<Id, Size>{node.id()}, m_counter{0} {
+  TrafficLight<Id, Size, Delay>::TrafficLight(const Node<Id, Size>& node)
+      : Node<Id, Size>{node.id()}, m_counter{0}, m_phase{0} {
     if (node.coords().has_value()) {
       this->setCoords(node.coords().value());
     }
@@ -382,8 +388,20 @@ namespace dsm {
     if (phase > m_delay.value().first + m_delay.value().second) {
       phase -= m_delay.value().first + m_delay.value().second;
     }
-    phase == 0 ? m_counter = 0 : m_counter = m_delay.value().first % phase;
+    m_counter = phase;
+    m_phase = 0;
   }
+
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>)
+  void TrafficLight<Id, Size, Delay>::setPhaseAfterCycle(Delay phase) {
+    if (phase > m_delay.value().first + m_delay.value().second) {
+      phase -= m_delay.value().first + m_delay.value().second;
+    }
+    m_phase = phase;
+  }
+
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              std::unsigned_integral<Delay>)
@@ -393,7 +411,12 @@ namespace dsm {
     }
     ++m_counter;
     if (m_counter == m_delay.value().first + m_delay.value().second) {
-      m_counter = 0;
+      if (m_phase != 0) {
+        m_counter = m_phase;
+        m_phase = 0;
+      } else {
+        m_counter = 0;
+      }
     }
   }
 
