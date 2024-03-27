@@ -82,7 +82,7 @@ namespace dsm {
 
     virtual bool isGreen() const;
     virtual bool isGreen(Id) const;
-    virtual void increaseCounter() {};
+    virtual void increaseCounter(){};
 
     virtual bool isTrafficLight() const { return false; }
 

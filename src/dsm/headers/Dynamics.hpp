@@ -134,7 +134,7 @@ namespace dsm {
 
     /// @brief Get the graph
     /// @return const Graph<Id, Size>&, The graph
-    const Graph<Id, Size>& graph() { return m_graph; };
+    const Graph<Id, Size>& graph() const { return m_graph; };
     /// @brief Get the itineraries
     /// @return const std::unordered_map<Id, Itinerary<Id>>&, The itineraries
     const std::unordered_map<Id, std::unique_ptr<Itinerary<Id>>>& itineraries() const;

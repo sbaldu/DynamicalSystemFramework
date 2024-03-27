@@ -368,7 +368,8 @@ namespace dsm {
     /// @param len The street's length
     /// @param maxSpeed The street's speed limit
     /// @param nodePair The street's node pair
-    SpireStreet(Id id, Size capacity, double len, double maxSpeed, std::pair<Id, Id> nodePair);
+    SpireStreet(
+        Id id, Size capacity, double len, double maxSpeed, std::pair<Id, Id> nodePair);
     ~SpireStreet() = default;
 
     /// @brief Add an agent to the street's queue
@@ -404,14 +405,21 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  SpireStreet<Id, Size>::SpireStreet(Id id, Size capacity, double len, std::pair<Id, Id> nodePair)
-      : Street<Id, Size>(id, capacity, len, nodePair), m_agentCounterIn{0}, m_agentCounterOut{0} {}
+  SpireStreet<Id, Size>::SpireStreet(Id id,
+                                     Size capacity,
+                                     double len,
+                                     std::pair<Id, Id> nodePair)
+      : Street<Id, Size>(id, capacity, len, nodePair),
+        m_agentCounterIn{0},
+        m_agentCounterOut{0} {}
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   SpireStreet<Id, Size>::SpireStreet(
       Id id, Size capacity, double len, double maxSpeed, std::pair<Id, Id> nodePair)
-      : Street<Id, Size>(id, capacity, len, maxSpeed, nodePair), m_agentCounterIn{0}, m_agentCounterOut{0} {}
+      : Street<Id, Size>(id, capacity, len, maxSpeed, nodePair),
+        m_agentCounterIn{0},
+        m_agentCounterOut{0} {}
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
@@ -441,7 +449,7 @@ namespace dsm {
   int SpireStreet<Id, Size>::meanFlow() {
     int flow = static_cast<int>(m_agentCounterIn) - static_cast<int>(m_agentCounterOut);
     m_agentCounterIn = 0;
-    m_agentCounterOut = 0; 
+    m_agentCounterOut = 0;
     return flow;
   }
 
