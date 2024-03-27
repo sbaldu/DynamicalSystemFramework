@@ -359,8 +359,6 @@ namespace dsm {
           m_agentNextStreetId.erase(agentId);
         } else if (m_forcePriorities) {
           break;
-        } else {
-          continue;
         }
       }
       if (node->isTrafficLight()) {
