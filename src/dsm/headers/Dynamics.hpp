@@ -137,10 +137,14 @@ namespace dsm {
     const Graph<Id, Size>& graph() { return m_graph; }
     /// @brief Get the itineraries
     /// @return const std::unordered_map<Id, Itinerary<Id>>&, The itineraries
-    const std::unordered_map<Id, std::unique_ptr<Itinerary<Id>>>& itineraries() const { return m_itineraries; }
+    const std::unordered_map<Id, std::unique_ptr<Itinerary<Id>>>& itineraries() const {
+      return m_itineraries;
+    }
     /// @brief Get the agents
     /// @return const std::unordered_map<Id, Agent<Id>>&, The agents
-    const std::map<Id, std::unique_ptr<Agent<Id, Size, Delay>>>& agents() const { return m_agents; }
+    const std::map<Id, std::unique_ptr<Agent<Id, Size, Delay>>>& agents() const {
+      return m_agents;
+    }
     /// @brief Get the time
     /// @return TimePoint The time
     TimePoint time() const { return m_time; }
@@ -788,7 +792,7 @@ namespace dsm {
     FirstOrderDynamics() = delete;
     /// @brief Construct a new First Order Dynamics object
     /// @param graph, The graph representing the network
-    FirstOrderDynamics(Graph<Id, Size>& graph) : Dynamics<Id, Size, Delay>(graph) {};
+    FirstOrderDynamics(Graph<Id, Size>& graph) : Dynamics<Id, Size, Delay>(graph){};
     /// @brief Set the speed of an agent
     /// @param agentId The id of the agent
     /// @throw std::invalid_argument, If the agent is not found

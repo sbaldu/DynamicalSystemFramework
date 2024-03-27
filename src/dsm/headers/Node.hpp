@@ -75,14 +75,16 @@ namespace dsm {
     void removeAgent(Id agentId);
     /// @brief Set the node streets with priority
     /// @param streetPriorities A std::set containing the node's street priorities
-    void setStreetPriorities(std::set<Id> streetPriorities) { m_streetPriorities = std::move(streetPriorities); }
+    void setStreetPriorities(std::set<Id> streetPriorities) {
+      m_streetPriorities = std::move(streetPriorities);
+    }
     /// @brief Add a street to the node street priorities
     /// @param streetId The street's id
     void addStreetPriority(Id streetId) { m_streetPriorities.emplace(streetId); }
 
     virtual bool isGreen() const;
     virtual bool isGreen(Id) const;
-    virtual void increaseCounter() {};
+    virtual void increaseCounter(){};
 
     virtual bool isTrafficLight() const { return false; }
 

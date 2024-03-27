@@ -179,9 +179,7 @@ namespace dsm {
 
     /// @brief get the maximum number of elements in the matrix
     /// @return maximum number of elements
-    Index max_size() const {
-      return _rows * _cols;
-    }
+    Index max_size() const { return _rows * _cols; }
 
     /// @brief symmetrize the matrix
     void symmetrize();
