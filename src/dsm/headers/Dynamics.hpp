@@ -374,6 +374,23 @@ namespace dsm {
           auto& tl = dynamic_cast<TrafficLight<Id, Size, Delay>&>(*node);
           tl.increaseCounter();
         }
+      } else if (node->isRoundabout()) {
+        auto& roundabout = dynamic_cast<Roundabout<Id, Size>&>(*node);
+        for (size_t i{0}; i < roundabout.agents().size(); ++i) {
+          const auto agentId{roundabout.agents().front()};
+          const auto& nextStreet{m_graph.streetSet()[m_agentNextStreetId[agentId]]};
+          if (nextStreet->density() < 1) {
+            roundabout.dequeue();
+            m_agents[agentId]->setStreetId(nextStreet->id());
+            this->setAgentSpeed(agentId);
+            m_agents[agentId]->incrementDelay(std::ceil(nextStreet->length() /
+                                                    m_agents[agentId]->speed()));
+            nextStreet->enqueue(agentId);
+            m_agentNextStreetId.erase(agentId);
+          } else {
+            break;
+          }
+        }
       }
     }
   }
@@ -922,6 +939,15 @@ namespace dsm {
     if (node->isIntersection()) {
       auto& intersection = dynamic_cast<Node<Id, Size>&>(*node);
       for (const auto& [angle, agentId] : intersection.agents()) {
+        const auto& agent{this->m_agents.at(agentId)};
+        if (agent->streetId().has_value() && agent->streetId().value() == streetId) {
+          meanSpeed += agent->speed();
+          ++n;
+        }
+      }
+    } else if (node->isRoundabout()) {
+      auto& roundabout = dynamic_cast<Roundabout<Id, Size>&>(*node);
+      for (const auto& agentId : roundabout.agents()) {
         const auto& agent{this->m_agents.at(agentId)};
         if (agent->streetId().has_value() && agent->streetId().value() == streetId) {
           meanSpeed += agent->speed();

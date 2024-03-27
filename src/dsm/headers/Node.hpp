@@ -463,6 +463,9 @@ namespace dsm {
       /// @brief Removes the first agent from the node
       /// @return Id The agent's id
       Id dequeue();
+      /// @brief Get the node's queue
+      /// @return dsm::queue<Id> The node's queue
+      const dsm::queue<Id>& agents() const { return m_agents; }
 
       /// @brief Returns true if the node is full
       /// @return bool True if the node is full
