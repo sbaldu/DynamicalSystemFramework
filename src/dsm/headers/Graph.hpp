@@ -177,10 +177,10 @@ namespace dsm {
 
     /// @brief Get the graph's adjacency matrix
     /// @return A std::shared_ptr to the graph's adjacency matrix
-    const SparseMatrix<Id, bool>& adjMatrix() const noexcept { return m_adjacency; };
+    const SparseMatrix<Id, bool>& adjMatrix() const noexcept { return m_adjacency; }
     /// @brief Get the graph's node map
     /// @return A std::unordered_map containing the graph's nodes
-    const std::unordered_map<Id, std::unique_ptr<Node<Id, Size>>>& nodeSet() const noexcept { return m_nodes; };
+    const std::unordered_map<Id, std::unique_ptr<Node<Id, Size>>>& nodeSet() const noexcept { return m_nodes; }
     /// @brief Get the graph's node map
     /// @return A std::unordered_map containing the graph's nodes
     std::unordered_map<Id, std::unique_ptr<Node<Id, Size>>>& nodeSet() noexcept { return m_nodes; }

@@ -53,13 +53,13 @@ namespace dsm {
     Agent(Id id, Id itineraryId, Id srcNodeId);
     /// @brief Set the street occupied by the agent
     /// @param streetId The id of the street currently occupied by the agent
-    void setStreetId(Id streetId) { m_streetId = streetId; };
+    void setStreetId(Id streetId) { m_streetId = streetId; }
     /// @brief Set the source node id of the agent
     /// @param srcNodeId The id of the source node of the agent
-    void setSourceNodeId(Id srcNodeId) { m_srcNodeId = srcNodeId; };
+    void setSourceNodeId(Id srcNodeId) { m_srcNodeId = srcNodeId; }
     /// @brief Set the agent's itinerary
     /// @param itineraryId The agent's itinerary
-    void setItineraryId(Id itineraryId) { m_itineraryId = itineraryId; };
+    void setItineraryId(Id itineraryId) { m_itineraryId = itineraryId; }
     /// @brief Set the agent's speed
     /// @param speed, The agent's speed
     /// @throw std::invalid_argument, if speed is negative
@@ -92,28 +92,28 @@ namespace dsm {
 
     /// @brief Get the agent's id
     /// @return The agent's id
-    Id id() const noexcept { return m_id; };
+    Id id() const noexcept { return m_id; }
     /// @brief Get the agent's itinerary
     /// @return The agent's itinerary
-    Id itineraryId() const noexcept { return m_itineraryId; };
+    Id itineraryId() const noexcept { return m_itineraryId; }
     /// @brief Get the id of the street currently occupied by the agent
     /// @return The id of the street currently occupied by the agent
-    std::optional<Id> streetId() const noexcept { return m_streetId; };
+    std::optional<Id> streetId() const noexcept { return m_streetId; }
     /// @brief Get the id of the source node of the agent
     /// @return The id of the source node of the agent
-    std::optional<Id> srcNodeId() const noexcept { return m_srcNodeId; };
+    std::optional<Id> srcNodeId() const noexcept { return m_srcNodeId; }
     /// @brief Get the agent's speed
     /// @return The agent's speed
-    double speed() const noexcept { return m_speed; };
+    double speed() const noexcept { return m_speed; }
     /// @brief Get the agent's delay
     /// @return	The agent's delay
-    Delay delay() const noexcept { return m_delay; };
+    Delay delay() const noexcept { return m_delay; }
     /// @brief Get the agent's travelled distance
     /// @return The agent's travelled distance
-    double distance() const noexcept { return m_distance; };
+    double distance() const noexcept { return m_distance; }
     /// @brief Get the agent's travel time
     /// @return The agent's travel time
-    unsigned int time() const noexcept { return m_time; };
+    unsigned int time() const noexcept { return m_time; }
   };
 
   template <typename Id, typename Size, typename Delay>

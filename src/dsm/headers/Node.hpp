@@ -52,7 +52,7 @@ namespace dsm {
 
     /// @brief Set the node's coordinates
     /// @param coords A std::pair containing the node's coordinates
-    void setCoords(std::pair<double, double> coords) noexcept { m_coords = std::move(coords); };
+    void setCoords(std::pair<double, double> coords) noexcept { m_coords = std::move(coords); }
     /// @brief Set the node's capacity
     /// @param capacity The node's capacity
     void setCapacity(Size capacity);
@@ -75,10 +75,10 @@ namespace dsm {
     void removeAgent(Id agentId);
     /// @brief Set the node streets with priority
     /// @param streetPriorities A std::set containing the node's street priorities
-    void setStreetPriorities(std::set<Id> streetPriorities) noexcept { m_streetPriorities = std::move(streetPriorities); };
+    void setStreetPriorities(std::set<Id> streetPriorities) noexcept { m_streetPriorities = std::move(streetPriorities); }
     /// @brief Add a street to the node street priorities
     /// @param streetId The street's id
-    void addStreetPriority(Id streetId) noexcept { m_streetPriorities.emplace(streetId); };
+    void addStreetPriority(Id streetId) noexcept { m_streetPriorities.emplace(streetId); }
 
     virtual bool isGreen() const;
     virtual bool isGreen(Id) const;
@@ -98,16 +98,16 @@ namespace dsm {
     ///        If a street has priority, it means that the agents that are on that street
     ///        have priority over the agents that are on the other streets.
     /// @return std::set<Id> A std::set containing the node's street priorities
-    virtual const std::set<Id>& streetPriorities() const noexcept { return m_streetPriorities; };
+    virtual const std::set<Id>& streetPriorities() const noexcept { return m_streetPriorities; }
     /// @brief Get the node's capacity
     /// @return Size The node's capacity
-    Size capacity() const noexcept { return m_capacity; };
+    Size capacity() const noexcept { return m_capacity; }
     /// @brief Get the node's agent ids
     /// @return std::set<Id> A std::set containing the node's agent ids
-    std::multimap<int16_t, Id> agents() const noexcept { return m_agents; };
+    std::multimap<int16_t, Id> agents() const noexcept { return m_agents; }
     /// @brief Returns true if the node is full
     /// @return bool True if the node is full
-    bool isFull() const noexcept { return m_agents.size() == m_capacity; };
+    bool isFull() const noexcept { return m_agents.size() == m_capacity; }
     /// @brief Returns the number of agents that have passed through the node
     /// @return Size The number of agents that have passed through the node
     /// @details This function returns the number of agents that have passed through the node
@@ -247,7 +247,7 @@ namespace dsm {
 
     /// @brief Get the node's delay
     /// @return std::optional<Delay> The node's delay
-    std::optional<std::pair<Delay, Delay>> delay() const noexcept { return m_delay; };
+    std::optional<std::pair<Delay, Delay>> delay() const noexcept { return m_delay; }
     Delay counter() const noexcept { return m_counter; }
     /// @brief Returns true if the traffic light is green
     /// @return bool True if the traffic light is green
