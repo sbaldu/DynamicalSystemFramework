@@ -180,16 +180,22 @@ namespace dsm {
     const SparseMatrix<Id, bool>& adjMatrix() const { return m_adjacency; }
     /// @brief Get the graph's node map
     /// @return A std::unordered_map containing the graph's nodes
-    const std::unordered_map<Id, std::unique_ptr<Node<Id, Size>>>& nodeSet() const { return m_nodes; }
+    const std::unordered_map<Id, std::unique_ptr<Node<Id, Size>>>& nodeSet() const {
+      return m_nodes;
+    }
     /// @brief Get the graph's node map
     /// @return A std::unordered_map containing the graph's nodes
     std::unordered_map<Id, std::unique_ptr<Node<Id, Size>>>& nodeSet() { return m_nodes; }
     /// @brief Get the graph's street map
     /// @return A std::unordered_map containing the graph's streets
-    const std::unordered_map<Id, std::unique_ptr<Street<Id, Size>>>& streetSet() const { return m_streets; }
+    const std::unordered_map<Id, std::unique_ptr<Street<Id, Size>>>& streetSet() const {
+      return m_streets;
+    }
     /// @brief Get the graph's street map
     /// @return A std::unordered_map containing the graph's streets
-    std::unordered_map<Id, std::unique_ptr<Street<Id, Size>>>& streetSet() { return m_streets; }
+    std::unordered_map<Id, std::unique_ptr<Street<Id, Size>>>& streetSet() {
+      return m_streets;
+    }
     /// @brief Get a street from the graph
     /// @param source The source node
     /// @param destination The destination node
@@ -564,7 +570,7 @@ namespace dsm {
     if (!m_nodes.contains(nodeId)) {
       throw std::invalid_argument(buildLog("Node does not exist."));
     }
-	auto& pNode = m_nodes[nodeId];
+    auto& pNode = m_nodes[nodeId];
     pNode = std::make_unique<TrafficLight<Id, Size, Delay>>(*pNode);
   }
   template <typename Id, typename Size>
