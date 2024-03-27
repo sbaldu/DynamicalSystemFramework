@@ -134,7 +134,7 @@ namespace dsm {
 
     /// @brief Get the graph
     /// @return const Graph<Id, Size>&, The graph
-    const Graph<Id, Size>& graph() { return m_graph; }
+    const Graph<Id, Size>& graph() const { return m_graph; };
     /// @brief Get the itineraries
     /// @return const std::unordered_map<Id, Itinerary<Id>>&, The itineraries
     const std::unordered_map<Id, std::unique_ptr<Itinerary<Id>>>& itineraries() const {
@@ -478,6 +478,29 @@ namespace dsm {
     this->m_evolveAgents();
     // increment time simulation
     ++this->m_time;
+  }
+
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>)
+  const std::unordered_map<Id, std::unique_ptr<Itinerary<Id>>>&
+  Dynamics<Id, Size, Delay>::itineraries() const {
+    return m_itineraries;
+  }
+
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>)
+  const std::map<Id, std::unique_ptr<Agent<Id, Size, Delay>>>&
+  Dynamics<Id, Size, Delay>::agents() const {
+    return this->m_agents;
+  }
+
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>)
+  TimePoint Dynamics<Id, Size, Delay>::time() const {
+    return m_time;
   }
 
   template <typename Id, typename Size, typename Delay>
@@ -844,6 +867,7 @@ namespace dsm {
         ++n;
       }
     }
+
     for (const auto& [angle, agentId] : this->m_graph.nodeSet().at(street->nodePair().second)->agents()) {
       const auto& agent{this->m_agents.at(agentId)};
       if (agent->streetId().has_value() && agent->streetId().value() == streetId) {
