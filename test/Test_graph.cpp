@@ -213,7 +213,6 @@ TEST_CASE("Graph") {
         }
       }
     }
-  
   }
 }
 
