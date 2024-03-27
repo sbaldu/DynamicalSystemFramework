@@ -43,7 +43,7 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   class Graph {
   private:
-    std::unordered_map<Id, std::unique_ptr<Node<Id, Size>>> m_nodes;
+    std::unordered_map<Id, std::unique_ptr<NodeConcept<Id, Size>>> m_nodes;
     std::unordered_map<Id, std::unique_ptr<Street<Id, Size>>> m_streets;
     std::unordered_map<Id, Id> m_nodeMapping;
     SparseMatrix<Id, bool> m_adjacency;
@@ -183,10 +183,10 @@ namespace dsm {
     const SparseMatrix<Id, bool>& adjMatrix() const;
     /// @brief Get the graph's node map
     /// @return A std::unordered_map containing the graph's nodes
-    const std::unordered_map<Id, std::unique_ptr<Node<Id, Size>>>& nodeSet() const;
+    const std::unordered_map<Id, std::unique_ptr<NodeConcept<Id, Size>>>& nodeSet() const;
     /// @brief Get the graph's node map
     /// @return A std::unordered_map containing the graph's nodes
-    std::unordered_map<Id, std::unique_ptr<Node<Id, Size>>>& nodeSet();
+    std::unordered_map<Id, std::unique_ptr<NodeConcept<Id, Size>>>& nodeSet();
     /// @brief Get the graph's street map
     /// @return A std::unordered_map containing the graph's streets
     const std::unordered_map<Id, std::unique_ptr<Street<Id, Size>>>& streetSet() const;
@@ -274,13 +274,14 @@ namespace dsm {
     }
     for (const auto& [nodeId, node] : m_nodes) {
       // This is probably not the best way to do this
-      if (node->isTrafficLight()) {
-        const auto& oldStreetPriorities{node->streetPriorities()};
+      if (node->isIntersection()) {
+        auto& intersection = dynamic_cast<Node<Id, Size>&>(*node);
+        const auto& oldStreetPriorities{intersection.streetPriorities()};
         std::set<Id> newStreetPriorities;
         for (const auto streetId : oldStreetPriorities) {
           newStreetPriorities.emplace(newStreetIds[streetId]);
         }
-        node->setStreetPriorities(newStreetPriorities);
+        intersection.setStreetPriorities(newStreetPriorities);
       }
     }
   }
@@ -672,14 +673,14 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  const std::unordered_map<Id, std::unique_ptr<Node<Id, Size>>>&
+  const std::unordered_map<Id, std::unique_ptr<NodeConcept<Id, Size>>>&
   Graph<Id, Size>::nodeSet() const {
     return m_nodes;
   }
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  std::unordered_map<Id, std::unique_ptr<Node<Id, Size>>>& Graph<Id, Size>::nodeSet() {
+  std::unordered_map<Id, std::unique_ptr<NodeConcept<Id, Size>>>& Graph<Id, Size>::nodeSet() {
     return m_nodes;
   }
 

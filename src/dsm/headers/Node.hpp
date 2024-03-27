@@ -18,8 +18,12 @@
 #include <map>
 
 #include "../utility/Logger.hpp"
+#include "../utility/queue.hpp"
 
 namespace dsm {
+  /// @brief The NodeConcept class represents the concept of a node in the network.
+  /// @tparam Id The type of the node's id
+  /// @tparam Size The type of the node's capacity
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   class NodeConcept {
@@ -60,11 +64,9 @@ namespace dsm {
 
       virtual bool isFull() const = 0;
 
-      // Traffic light functions
+      virtual bool isIntersection() const noexcept { return false; }
       virtual bool isTrafficLight() const noexcept { return false; }
-      // virtual bool isGreen() const { return true;};
-      // virtual bool isGreen(Id) const { return true; };
-      // virtual void increaseCounter() = 0;
+      virtual bool isRoundabout() const noexcept { return false; }
   };
   /// @brief The Node class represents a node in the network.
   /// @tparam Id The type of the node's id. It must be an unsigned integral type.
@@ -140,6 +142,8 @@ namespace dsm {
     /// @details This function returns the number of agents that have passed through the node
     ///          since the last time this function was called. It also resets the counter.
     Size agentCounter();
+
+    virtual bool isIntersection() const noexcept override final { return true; }
   };
   
   // template <typename Id, typename Size>
@@ -270,10 +274,10 @@ namespace dsm {
     TrafficLight() = delete;
     /// @brief Construct a new TrafficLight object
     /// @param id The node's id
-    explicit TrafficLight(Id id);
+    explicit TrafficLight(Id id) : Node<Id, Size>{id}, m_counter{0}, m_phase{0} {};
     /// @brief Construct a new TrafficLight object
     /// @param node A Node object
-    TrafficLight(const Node<Id, Size>& node);
+    TrafficLight(const NodeConcept<Id, Size>& node);
 
     /// @brief Set the node's delay
     /// @details This function is used to set the node's delay.
@@ -322,13 +326,7 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              std::unsigned_integral<Delay>)
-  TrafficLight<Id, Size, Delay>::TrafficLight(Id id)
-      : Node<Id, Size>{id}, m_counter{0}, m_phase{0} {}
-
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             std::unsigned_integral<Delay>)
-  TrafficLight<Id, Size, Delay>::TrafficLight(const Node<Id, Size>& node)
+  TrafficLight<Id, Size, Delay>::TrafficLight(const NodeConcept<Id, Size>& node)
       : Node<Id, Size>{node.id()}, m_counter{0}, m_phase{0} {
     if (node.coords().has_value()) {
       this->setCoords(node.coords().value());
@@ -435,6 +433,61 @@ namespace dsm {
       return hasPriority;
     }
     return !hasPriority;
+  }
+  /// @brief The Roundabout class represents a roundabout node in the network.
+  /// @tparam Id The type of the node's id
+  /// @tparam Size The type of the node's capacity
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  class Roundabout : public NodeConcept<Id, Size> {
+    protected:
+      dsm::queue<Id> m_agents;
+
+    public:
+      Roundabout() = default;
+      /// @brief Construct a new Roundabout object
+      /// @param id The node's id
+      explicit Roundabout(Id id) : NodeConcept<Id, Size>{id} {};
+      /// @brief Construct a new Roundabout object
+      /// @param id The node's id
+      /// @param coords A std::pair containing the node's coordinates
+      Roundabout(Id id, std::pair<double, double> coords)
+          : NodeConcept<Id, Size>{id, coords} {};
+
+      virtual ~Roundabout() = default;
+
+      /// @brief Put an agent in the node
+      /// @param agentId The agent's id
+      /// @throws std::runtime_error if the node is full
+      void enqueue(Id agentId);
+      /// @brief Removes the first agent from the node
+      /// @return Id The agent's id
+      Id dequeue();
+
+      /// @brief Returns true if the node is full
+      /// @return bool True if the node is full
+      bool isFull() const { return m_agents.size() == this->m_capacity; }
+      /// @brief Returns true if the node is a roundabout
+      /// @return bool True if the node is a roundabout
+      bool isRoundabout() const noexcept override { return true; }
+  };
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Roundabout<Id, Size>::enqueue(Id agentId) {
+    if (m_agents.size() == this->m_capacity) {
+      throw std::runtime_error(buildLog("Node is full"));
+    }
+    m_agents.push(agentId);
+  }
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  Id Roundabout<Id, Size>::dequeue() {
+    if (m_agents.empty()) {
+      throw std::runtime_error(buildLog("Node is empty"));
+    }
+    Id agentId{m_agents.front()};
+    m_agents.pop();
+    return agentId;
   }
 };  // namespace dsm
 
