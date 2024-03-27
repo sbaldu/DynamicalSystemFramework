@@ -296,7 +296,7 @@ namespace dsm {
     for (const auto& street : m_streets) {
       const auto& node1{m_nodes[street.second->nodePair().first]};
       const auto& node2{m_nodes[street.second->nodePair().second]};
-      street.second->setAngle(node1->coordinates(), node2->coordinates());
+      street.second->setAngle(node1->coords(), node2->coords());
     }
   }
 
