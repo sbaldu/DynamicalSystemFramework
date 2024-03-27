@@ -16,6 +16,7 @@ using Agent = dsm::Agent<uint16_t, uint16_t, uint16_t>;
 using Itinerary = dsm::Itinerary<uint16_t>;
 using Node = dsm::Node<uint16_t, uint16_t>;
 using TrafficLight = dsm::TrafficLight<uint16_t, uint16_t, uint16_t>;
+using Roundabout = dsm::Roundabout<uint16_t, uint16_t>;
 
 TEST_CASE("Dynamics") {
   SUBCASE("Constructor") {
@@ -45,6 +46,13 @@ TEST_CASE("Dynamics") {
         Dynamics dynamics(graph);
         THEN("The node is a traffic light") {
           CHECK(dynamics.graph().nodeSet().at(0)->isTrafficLight());
+        }
+      }
+      WHEN("We transform a node into a roundabout and create the dynamics") {
+        graph.makeRoundabout(0);
+        Dynamics dynamics(graph);
+        THEN("The node is a roundabout") {
+          CHECK(dynamics.graph().nodeSet().at(0)->isRoundabout());
         }
       }
       WHEN("We transorm a street into a spire and create the dynamcis") {
@@ -370,6 +378,49 @@ TEST_CASE("Dynamics") {
             }
           }
           CHECK_EQ(dynamics.agents().at(0)->distance(), 60.);
+        }
+      }
+    }
+  }
+  SUBCASE("Roundabout") {
+    GIVEN("A dynamics object with four streets, one agent for each street, two itineraries and a roundabout") {
+      Roundabout roundabout{1};
+      roundabout.setCapacity(2);
+      Street s1{0, 1, 10., 10., std::make_pair(0, 1)};
+      Street s2{1, 1, 10., 10., std::make_pair(2, 1)};
+      Street s3{2, 1, 10., 10., std::make_pair(1, 0)};
+      Street s4{3, 1, 10., 10., std::make_pair(1, 2)};
+      Graph graph2;
+      graph2.addNode(std::make_unique<Roundabout>(roundabout));
+      graph2.addStreets(s1, s2, s3, s4);
+      graph2.buildAdj();
+      Dynamics dynamics{graph2};
+      dynamics.setSeed(69);
+      Itinerary itinerary{0, 2};
+      Itinerary itinerary2{1, 0};
+      dynamics.addItinerary(itinerary);
+      dynamics.addItinerary(itinerary2);
+      dynamics.updatePaths();
+      dynamics.addAgent(Agent(0, 0, 0));
+      dynamics.addAgent(Agent(1, 1, 2));
+      WHEN("We evolve the dynamics adding an agent on the path of the agent with priority") {
+        dynamics.evolve(false);
+        dynamics.addAgent(Agent(2, 0, 1));
+        dynamics.evolve(false);
+        dynamics.evolve(false);
+        THEN("The agents are trapped into the roundabout") {
+          auto& rb = dynamic_cast<Roundabout&>(*dynamics.graph().nodeSet().at(1));
+          CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 1);
+          CHECK_EQ(dynamics.agents().at(1)->streetId().value(), 7);
+          CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 5);
+          CHECK_EQ(rb.agents().size(), 1);
+        }
+        dynamics.evolve(false);
+        THEN("The agent with priority leaves the roundabout") {
+          auto& rb = dynamic_cast<Roundabout&>(*dynamics.graph().nodeSet().at(1));
+          CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 5);
+          CHECK_EQ(dynamics.agents().at(1)->streetId().value(), 3);
+          CHECK_EQ(rb.agents().size(), 0);
         }
       }
     }

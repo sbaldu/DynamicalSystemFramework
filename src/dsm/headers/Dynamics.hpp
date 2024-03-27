@@ -376,7 +376,8 @@ namespace dsm {
         }
       } else if (node->isRoundabout()) {
         auto& roundabout = dynamic_cast<Roundabout<Id, Size>&>(*node);
-        for (size_t i{0}; i < roundabout.agents().size(); ++i) {
+        const auto nAgents{roundabout.agents().size()};
+        for (size_t i{0}; i < nAgents; ++i) {
           const auto agentId{roundabout.agents().front()};
           const auto& nextStreet{m_graph.streetSet()[m_agentNextStreetId[agentId]]};
           if (nextStreet->density() < 1) {

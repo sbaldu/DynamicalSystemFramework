@@ -136,7 +136,7 @@ namespace dsm {
 
     /// @brief Add a node to the graph
     /// @param node A std::shared_ptr to the node to add
-    void addNode(std::unique_ptr<Node<Id, Size>> node);
+    void addNode(std::unique_ptr<NodeConcept<Id, Size>> node);
     /// @brief Add a node to the graph
     /// @param node A reference to the node to add
     void addNode(const Node<Id, Size>& node);
@@ -551,7 +551,7 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Graph<Id, Size>::addNode(std::unique_ptr<Node<Id, Size>> node) {
+  void Graph<Id, Size>::addNode(std::unique_ptr<NodeConcept<Id, Size>> node) {
     m_nodes.emplace(std::make_pair(node->id(), std::move(node)));
   }
 
