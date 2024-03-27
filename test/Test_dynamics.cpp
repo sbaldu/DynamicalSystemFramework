@@ -46,6 +46,13 @@ TEST_CASE("Dynamics") {
           CHECK(dynamics.graph().nodeSet().at(0)->isTrafficLight());
         }
       }
+      WHEN("We transorm a street into a spire and create the dynamcis") {
+        graph.makeSpireStreet(8);
+        Dynamics dynamics(graph);
+        THEN("The street is a spire") {
+          CHECK(dynamics.graph().streetSet().at(8)->isSpire());
+        }
+      }
     }
   }
   SUBCASE("addAgentsUniformly") {
@@ -445,7 +452,5 @@ TEST_CASE("Dynamics") {
     CHECK_EQ(dynamics.graph().streetSet().at(1)->queue().size(), 3);
     CHECK(dynamics.streetMeanSpeed(1).has_value());
     CHECK_EQ(dynamics.streetMeanSpeed(1).value(), meanSpeed);
-    dynamics.graph().streetSet().at(1)->setIsSpire(false);
-    CHECK_FALSE(dynamics.streetMeanSpeed(1).has_value());
   }
 }

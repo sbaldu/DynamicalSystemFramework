@@ -134,7 +134,7 @@ namespace dsm {
 
     /// @brief Get the graph
     /// @return const Graph<Id, Size>&, The graph
-    const Graph<Id, Size>& graph() const;
+    const Graph<Id, Size>& graph() const { return m_graph; };
     /// @brief Get the itineraries
     /// @return const std::unordered_map<Id, Itinerary<Id>>&, The itineraries
     const std::unordered_map<Id, std::unique_ptr<Itinerary<Id>>>& itineraries() const;
@@ -486,13 +486,6 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
-  const Graph<Id, Size>& Dynamics<Id, Size, Delay>::graph() const {
-    return m_graph;
-  }
-
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             is_numeric_v<Delay>)
   const std::unordered_map<Id, std::unique_ptr<Itinerary<Id>>>&
   Dynamics<Id, Size, Delay>::itineraries() const {
     return m_itineraries;
@@ -737,9 +730,6 @@ namespace dsm {
                                       m_graph.streetSet().cend(),
                                       0.,
                                       [](double sum, const auto& street) {
-                                        if (!street.second->isSpire()) {
-                                          return sum;
-                                        }
                                         return sum + street.second->density();
                                       }) /
                       m_graph.streetSet().size()};
@@ -748,9 +738,6 @@ namespace dsm {
                         m_graph.streetSet().cend(),
                         0.,
                         [mean](double sum, const auto& street) {
-                          if (!street.second->isSpire()) {
-                            return sum;
-                          }
                           return sum + std::pow(street.second->density() - mean, 2);
                         }) /
         (m_graph.streetSet().size() - 1)};
@@ -763,9 +750,6 @@ namespace dsm {
     std::vector<double> flows;
     flows.reserve(m_graph.streetSet().size());
     for (const auto& [streetId, street] : m_graph.streetSet()) {
-      if (!street->isSpire()) {
-        continue;
-      }
       auto speedOpt{this->streetMeanSpeed(streetId)};
       if (speedOpt.has_value()) {
         double flow{street->density() * speedOpt.value()};
@@ -784,9 +768,6 @@ namespace dsm {
     std::vector<double> flows;
     flows.reserve(m_graph.streetSet().size());
     for (const auto& [streetId, street] : m_graph.streetSet()) {
-      if (!street->isSpire()) {
-        continue;
-      }
       if (above && street->density() > threshold) {
         auto speedOpt{this->streetMeanSpeed(streetId)};
         if (speedOpt.has_value()) {
@@ -880,7 +861,7 @@ namespace dsm {
   std::optional<double> FirstOrderDynamics<Id, Size, Delay>::streetMeanSpeed(
       Id streetId) const {
     const auto& street{this->m_graph.streetSet().at(streetId)};
-    if (street->queue().empty() || !street->isSpire()) {
+    if (street->queue().empty()) {
       return std::nullopt;
     }
     if (this->m_agents.at(street->queue().front())->delay() > 0) {
@@ -923,9 +904,6 @@ namespace dsm {
     std::vector<double> speeds;
     speeds.reserve(this->m_graph.streetSet().size());
     for (const auto& [streetId, street] : this->m_graph.streetSet()) {
-      if (!street->isSpire()) {
-        continue;
-      }
       if (above) {
         if (street->density() > threshold) {
           auto speedOpt{this->streetMeanSpeed(streetId)};

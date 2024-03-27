@@ -201,6 +201,19 @@ TEST_CASE("Graph") {
       }
     }
   }
+  SUBCASE("make spire street") {
+    GIVEN("A graph object with two nodes and one street") {
+      Graph graph{};
+      graph.addStreet(Street{0, 1, 1., std::make_pair(0, 1)});
+      graph.buildAdj();
+      WHEN("We make the street a spire street") {
+        graph.makeSpireStreet(1);
+        THEN("The street is a spire street") {
+          CHECK(graph.streetSet().at(1)->isSpire());
+        }
+      }
+    }
+  }
 }
 
 TEST_CASE("Dijkstra") {
