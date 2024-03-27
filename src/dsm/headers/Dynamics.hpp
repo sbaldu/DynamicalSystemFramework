@@ -81,6 +81,7 @@ namespace dsm {
     std::uniform_real_distribution<double> m_uniformDist{0., 1.};
     std::vector<unsigned int> m_travelTimes;
     std::unordered_map<Id, Id> m_agentNextStreetId;
+    bool m_forcePriorities;
 
     /// @brief Get the next street id
     /// @param agentId The id of the agent
@@ -88,6 +89,7 @@ namespace dsm {
     /// @return Id The id of the next street
     virtual Id m_nextStreetId(Id agentId, Id NodeId);
     /// @brief Evolve the streets
+    /// @param reinsert_agents If true, the agents are reinserted in the simulation after they reach their destination
     /// @details If possible, removes the first agent of each street queue, putting it in the destination node.
     virtual void m_evolveStreets(bool reinsert_agents);
     /// @brief Evolve the nodes
@@ -125,6 +127,10 @@ namespace dsm {
     /// @details This is a pure-virtual function, it must be implemented in the derived classes
     /// @param agentId The id of the agent
     virtual void setAgentSpeed(Size agentId) = 0;
+    /// @brief Set the force priorities flag
+    /// @param forcePriorities The flag
+    /// @details If true, if an agent cannot move to the next street, the whole node is skipped
+    void setForcePriorities(bool forcePriorities) { m_forcePriorities = forcePriorities; }
 
     /// @brief Update the paths of the itineraries based on the actual travel times
     virtual void updatePaths();
@@ -137,7 +143,7 @@ namespace dsm {
     /// If the agent is in the destination node, it is removed from the simulation (and then reinserted if reinsert_agents is true)
     /// - Cycle over agents and update their times
     /// @param reinsert_agents If true, the agents are reinserted in the simulation after they reach their destination
-    virtual void evolve(bool reinsert_agents = false);
+    virtual void evolve(bool reinsert_agents = false, bool force_priorities = false);
 
     /// @brief Get the graph
     /// @return const Graph<Id, Size>&, The graph
@@ -264,7 +270,8 @@ namespace dsm {
       : m_time{0},
         m_graph{std::move(graph)},
         m_errorProbability{0.},
-        m_minSpeedRateo{0.} {}
+        m_minSpeedRateo{0.},
+        m_forcePriorities{false} {}
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
@@ -339,10 +346,6 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::m_evolveNodes() {
-    /* In this function we have to manage the priority of the agents, given the street angles.
-    By doing the angle difference, if the destination street is the same we can basically compare these differences (mod(pi)!, i.e. delta % std::numbers::pi):
-    the smaller goes first.
-    Anyway, this is not trivial as it seems so I will leave it as a comment.*/
     for (const auto& [nodeId, node] : m_graph.nodeSet()) {
       for (const auto [angle, agentId] : node->agents()) {
         const auto& nextStreet{m_graph.streetSet()[m_agentNextStreetId[agentId]]};
@@ -355,6 +358,10 @@ namespace dsm {
                                                   m_agents[agentId]->speed()));
           nextStreet->enqueue(agentId);
           m_agentNextStreetId.erase(agentId);
+        } else if (m_forcePriorities) {
+          break;
+        } else {
+          continue;
         }
       }
       if (node->isTrafficLight()) {
@@ -493,11 +500,11 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
-  void Dynamics<Id, Size, Delay>::evolve(bool reinsert_agents) {
+  void Dynamics<Id, Size, Delay>::evolve(bool reinsert_agents, bool force_priorities) {
     // move the first agent of each street queue, if possible, putting it in the next node
     this->m_evolveStreets(reinsert_agents);
     // move all the agents from each node, if possible
-    this->m_evolveNodes();
+    this->m_evolveNodes(force_priorities);
     // cycle over agents and update their times
     this->m_evolveAgents();
     // increment time simulation
