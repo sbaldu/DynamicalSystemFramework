@@ -876,7 +876,8 @@ namespace dsm {
         ++n;
       }
     }
-    for (const auto& [angle, agentId] : this->m_graph.nodeSet().at(street->nodePair().second)->agents()) {
+    for (const auto& [angle, agentId] :
+         this->m_graph.nodeSet().at(street->nodePair().second)->agents()) {
       const auto& agent{this->m_agents.at(agentId)};
       if (agent->streetId().has_value() && agent->streetId().value() == streetId) {
         meanSpeed += agent->speed();
