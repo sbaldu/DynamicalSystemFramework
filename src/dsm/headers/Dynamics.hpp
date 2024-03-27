@@ -309,9 +309,11 @@ namespace dsm {
       if (destinationNode->isFull()) {
         continue;
       }
-      if (destinationNode->isTrafficLight() &&
-          !destinationNode->isGreen(streetId)) {
-        continue;
+      if (destinationNode->isTrafficLight()) {
+        auto& tl = dynamic_cast<TrafficLight<Id, Size, Delay>&>(*destinationNode);
+        if (!tl.isGreen(streetId)) {
+          continue;
+        }
       }
       if (destinationNode->id() ==
           m_itineraries[m_agents[agentId]->itineraryId()]->destination()) {
@@ -362,7 +364,8 @@ namespace dsm {
         }
       }
       if (node->isTrafficLight()) {
-        node->increaseCounter();
+        auto& tl = dynamic_cast<TrafficLight<Id, Size, Delay>&>(*node);
+        tl.increaseCounter();
       }
     }
   }

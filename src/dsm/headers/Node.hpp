@@ -20,11 +20,57 @@
 #include "../utility/Logger.hpp"
 
 namespace dsm {
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  class NodeConcept {
+    protected:
+      Id m_id;
+      std::optional<std::pair<double, double>> m_coords;
+      Size m_capacity;
+    public:
+      NodeConcept() = default;
+      /// @brief Construct a new Node object with capacity 1
+      /// @param id The node's id
+      explicit NodeConcept(Id id) : m_id{id}, m_capacity{1} {}
+      /// @brief Construct a new Node object with capacity 1
+      /// @param id The node's id
+      /// @param coords A std::pair containing the node's coordinates (lat, lon)
+      NodeConcept(Id id, std::pair<double, double> coords)
+        : m_id{id}, m_coords{std::move(coords)}, m_capacity{1} {}
+      virtual ~NodeConcept() = default;
+
+      /// @brief Set the node's id
+      /// @param id The node's id
+      void setId(Id id) { m_id = id; }
+      /// @brief Set the node's coordinates
+      /// @param coords A std::pair containing the node's coordinates (lat, lon)
+      void setCoords(std::pair<double, double> coords) { m_coords = std::move(coords); }
+      /// @brief Set the node's capacity
+      /// @param capacity The node's capacity
+      virtual void setCapacity(Size capacity) { m_capacity = capacity; }
+      /// @brief Get the node's id
+      /// @return Id The node's id
+      Id id() const { return m_id; }
+      /// @brief Get the node's coordinates
+      /// @return std::optional<std::pair<double, double>> A std::pair containing the node's coordinates
+      const std::optional<std::pair<double, double>>& coords() const { return m_coords; }
+      /// @brief Get the node's capacity
+      /// @return Size The node's capacity
+      Size capacity() const { return m_capacity; }
+
+      virtual bool isFull() const = 0;
+
+      // Traffic light functions
+      virtual bool isTrafficLight() const noexcept { return false; }
+      // virtual bool isGreen() const { return true;};
+      // virtual bool isGreen(Id) const { return true; };
+      // virtual void increaseCounter() = 0;
+  };
   /// @brief The Node class represents a node in the network.
   /// @tparam Id The type of the node's id. It must be an unsigned integral type.
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  class Node {
+  class Node : public NodeConcept<Id, Size> {
   protected:
     std::multimap<int16_t, Id> m_agents;
     /* I don't actually know if it is better yo use a std::map or a priority_queue...
@@ -33,29 +79,25 @@ namespace dsm {
     Need to discuss this.*/
     std::set<Id>
         m_streetPriorities;  // A set containing the street ids that have priority - like main roads
-    std::optional<std::pair<double, double>> m_coords;
-    Id m_id;
-    Size m_capacity;
     Size m_agentCounter;
 
   public:
     Node() = default;
     /// @brief Construct a new Node object
     /// @param id The node's id
-    explicit Node(Id id);
+    explicit Node(Id id) : NodeConcept<Id, Size>{id} {};
     /// @brief Construct a new Node object
     /// @param id The node's id
     /// @param coords A std::pair containing the node's coordinates
-    Node(Id id, std::pair<double, double> coords);
+    Node(Id id, std::pair<double, double> coords) : NodeConcept<Id, Size>{id, coords} {};
 
     virtual ~Node() = default;
 
-    /// @brief Set the node's coordinates
-    /// @param coords A std::pair containing the node's coordinates
-    void setCoords(std::pair<double, double> coords);
     /// @brief Set the node's capacity
     /// @param capacity The node's capacity
-    void setCapacity(Size capacity);
+    /// @throws std::runtime_error if the capacity is smaller than the current queue size
+    void setCapacity(Size capacity) override;
+
     /// @brief Put an agent in the node
     /// @param agent A std::pair containing the agent's angle difference and id
     /// @details The agent's angle difference is used to order the agents in the node.
@@ -80,74 +122,38 @@ namespace dsm {
     /// @param streetId The street's id
     void addStreetPriority(Id streetId);
 
-    virtual bool isGreen() const;
-    virtual bool isGreen(Id) const;
-    virtual void increaseCounter() {};
+    /// @brief Returns true if the node is full
+    /// @return bool True if the node is full
+    bool isFull() const { return m_agents.size() == this->m_capacity; }
 
-    virtual bool isTrafficLight() const { return false; }
-
-    /// @brief Get the node's id
-    /// @return Id The node's id
-    /// @return Id The node's id
-    Id id() const;
-    /// @brief Get the node's coordinates
-    /// @return std::pair<double,, double> A std::pair containing the node's coordinates
-    const std::optional<std::pair<double, double>>& coords() const;
     /// @brief Get the node's street priorities
     /// @details This function returns a std::set containing the node's street priorities.
     ///        If a street has priority, it means that the agents that are on that street
     ///        have priority over the agents that are on the other streets.
     /// @return std::set<Id> A std::set containing the node's street priorities
     virtual const std::set<Id>& streetPriorities() const;
-    /// @brief Get the node's capacity
-    /// @return Size The node's capacity
-    Size capacity() const;
     /// @brief Get the node's agent ids
     /// @return std::set<Id> A std::set containing the node's agent ids
     std::multimap<int16_t, Id> agents() const;
-    /// @brief Returns true if the node is full
-    /// @return bool True if the node is full
-    bool isFull() const;
     /// @brief Returns the number of agents that have passed through the node
     /// @return Size The number of agents that have passed through the node
     /// @details This function returns the number of agents that have passed through the node
     ///          since the last time this function was called. It also resets the counter.
     Size agentCounter();
   };
-
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  Node<Id, Size>::Node(Id id) : m_id{id}, m_capacity{1}, m_agentCounter{0} {}
-
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  Node<Id, Size>::Node(Id id, std::pair<double, double> coords)
-      : m_coords{std::move(coords)}, m_id{id}, m_capacity{1}, m_agentCounter{0} {}
   
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  bool Node<Id, Size>::isGreen() const {
-    throw std::runtime_error(
-        buildLog("isGreen() is not implemented for this type of node."));
-  }
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  bool Node<Id, Size>::isGreen(Id) const {
-    throw std::runtime_error(
-        buildLog("isGreen() is not implemented for this type of node."));
-  }
-
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  Id Node<Id, Size>::id() const {
-    return m_id;
-  }
-
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Node<Id, Size>::setCoords(std::pair<double, double> coords) {
-    m_coords = std::move(coords);
-  }
+  // template <typename Id, typename Size>
+  //   requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  // bool Node<Id, Size>::isGreen() const {
+  //   throw std::runtime_error(
+  //       buildLog("isGreen() is not implemented for this type of node."));
+  // }
+  // template <typename Id, typename Size>
+  //   requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  // bool Node<Id, Size>::isGreen(Id) const {
+  //   throw std::runtime_error(
+  //       buildLog("isGreen() is not implemented for this type of node."));
+  // }
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
@@ -168,13 +174,13 @@ namespace dsm {
       throw std::runtime_error(
           buildLog("Node capacity is smaller than the current queue size"));
     }
-    m_capacity = capacity;
+    NodeConcept<Id, Size>::setCapacity(capacity);
   }
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Node<Id, Size>::addAgent(double angle, Id agentId) {
-    if (m_agents.size() == m_capacity) {
+    if (m_agents.size() == this->m_capacity) {
       throw std::runtime_error(buildLog("Node is full"));
     }
     for (auto const [angle, id] : m_agents) {
@@ -190,7 +196,7 @@ namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Node<Id, Size>::addAgent(Id agentId) {
-    if (m_agents.size() == m_capacity) {
+    if (m_agents.size() == this->m_capacity) {
       throw std::runtime_error(buildLog("Node is full"));
     }
     for (auto const [angle, id] : m_agents) {
@@ -220,32 +226,14 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  const std::optional<std::pair<double, double>>& Node<Id, Size>::coords() const {
-    return m_coords;
-  }
-
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   const std::set<Id>& Node<Id, Size>::streetPriorities() const {
     return m_streetPriorities;
   }
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  Size Node<Id, Size>::capacity() const {
-    return m_capacity;
-  }
-
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   std::multimap<int16_t, Id> Node<Id, Size>::agents() const {
     return m_agents;
-  }
-
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  bool Node<Id, Size>::isFull() const {
-    return m_agents.size() == m_capacity;
   }
 
   template <typename Id, typename Size>
@@ -314,7 +302,7 @@ namespace dsm {
     ///          when the simulation is running. It automatically resets the counter
     ///          when it reaches the double of the delay value.
     /// @throw std::runtime_error if the delay is not set
-    void increaseCounter() override;
+    void increaseCounter();
 
     /// @brief  Set the phase of the node after the current red-green cycle has passed
     /// @param phase The new node phase
@@ -326,9 +314,9 @@ namespace dsm {
     Delay counter() const { return m_counter; }
     /// @brief Returns true if the traffic light is green
     /// @return bool True if the traffic light is green
-    bool isGreen() const override;
-    bool isGreen(Id streetId) const override;
-    bool isTrafficLight() const override { return true; }
+    bool isGreen() const;
+    bool isGreen(Id streetId) const;
+    bool isTrafficLight() const noexcept override { return true; }
   };
 
   template <typename Id, typename Size, typename Delay>
