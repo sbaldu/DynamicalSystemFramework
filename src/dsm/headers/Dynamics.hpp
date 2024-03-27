@@ -86,17 +86,16 @@ namespace dsm {
     /// @brief Get the next street id
     /// @param agentId The id of the agent
     /// @param NodeId The id of the node
-    /// @return Id The id of the next street
+    /// @return Id The id of the randomly selected next street
     virtual Id m_nextStreetId(Id agentId, Id NodeId);
     /// @brief Evolve the streets
     /// @param reinsert_agents If true, the agents are reinserted in the simulation after they reach their destination
     /// @details If possible, removes the first agent of each street queue, putting it in the destination node.
+    /// If the agent is going into the destination node, it is removed from the simulation (and then reinserted if reinsert_agents is true)
     virtual void m_evolveStreets(bool reinsert_agents);
     /// @brief Evolve the nodes
-    /// @details If possible, removes all agents from each node, putting them in the next street.
+    /// @details If possible, removes all agents from each node, putting them on the next street.
     /// If the error probability is not zero, the agents can move to a random street.
-    /// If the agent is in the destination node, it is removed from the simulation (and then reinserted if reinsert_agents is true)
-    /// @param reinsert_agents If true, the agents are reinserted in the simulation after they reach their destination
     virtual void m_evolveNodes();
     /// @brief Evolve the agents.
     /// @details Puts all new agents on a street, if possible, decrements all delays
