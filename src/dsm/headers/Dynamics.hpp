@@ -885,14 +885,15 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              std::unsigned_integral<Delay>)
   void FirstOrderDynamics<Id, Size, Delay>::setAgentSpeed(Size agentId) {
+    const auto& agent{this->m_agents[agentId]};
     const auto& street{
-        this->m_graph.streetSet()[this->m_agents[agentId]->streetId().value()]};
+        this->m_graph.streetSet()[agent->streetId().value()]};
     double speed{street->maxSpeed() * (1. - this->m_minSpeedRateo * street->density())};
     if (this->m_speedFluctuationSTD > 0.) {
-      std::normal_distribution<double> speedDist{speed, this->m_speedFluctuationSTD * speed};
+      std::normal_distribution<double> speedDist{speed, speed * this->m_speedFluctuationSTD};
       speed = speedDist(this->m_generator);
     }
-    this->m_agents[agentId]->setSpeed(speed);
+    speed < 0. ? agent->setSpeed(street->maxSpeed() * (1. - this->m_minSpeedRateo)) : agent->setSpeed(speed);
   }
 
   template <typename Id, typename Size, typename Delay>
