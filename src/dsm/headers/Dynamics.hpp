@@ -333,7 +333,7 @@ namespace dsm {
         continue;
       }
       const auto& nextStreet{m_graph.streetSet()[m_nextStreetId(agentId, destinationNode->id())]};
-      if (!(nextStreet->density() < 1) && destinationNode->isIntersection()) {
+      if (!(nextStreet->density() < 1)) {
         continue;
       }
       street->dequeue();
