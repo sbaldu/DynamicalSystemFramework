@@ -16,6 +16,7 @@
 #include <stdexcept>
 #include <cmath>
 #include <numbers>
+#include <set>
 
 #include "Agent.hpp"
 #include "Node.hpp"
@@ -31,7 +32,8 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   class Street {
   private:
-    dsm::queue<Size> m_queue;
+    dsm::queue<Size> m_exitQueue;
+    std::set<Id> m_waitingAgents;
     std::pair<Id, Id> m_nodePair;
     double m_len;
     double m_maxSpeed;
@@ -87,7 +89,7 @@ namespace dsm {
     void setLength(double len);
     /// @brief Set the street's queue
     /// @param queue The street's queue
-    void setQueue(dsm::queue<Size> queue) { m_queue = std::move(queue); }
+    void setQueue(dsm::queue<Size> queue) { m_exitQueue = std::move(queue); }
     /// @brief Set the street's node pair
     /// @param node1 The source node of the street
     /// @param node2 The destination node of the street
@@ -128,25 +130,30 @@ namespace dsm {
     /// @brief Get the street's length
     /// @return double, The street's length
     double length() const { return m_len; }
+    /// @brief Get the street's waiting agents
+    /// @return std::set<Id>, The street's waiting agents
+    const std::set<Id>& waitingAgents() const { return m_waitingAgents; }
     /// @brief Get the street's queue
     /// @return dsm::queue<Size>, The street's queue
-    const dsm::queue<Size>& queue() const { return m_queue; }
+    const dsm::queue<Size>& queue() const { return m_exitQueue; }
     /// @brief Get the street's node pair
     /// @return std::pair<Id, Id>, The street's node pair
     const std::pair<Id, Id>& nodePair() const { return m_nodePair; }
     /// @brief Get the street's density
     /// @return double, The street's density
-    double density() const { return static_cast<double>(m_queue.size()) / m_capacity; }
+    double density() const { return static_cast<double>(m_exitQueue.size() + m_waitingAgents.size()) / m_capacity; }
     /// @brief Get the street's speed limit
     /// @return double, The street's speed limit
     double maxSpeed() const { return m_maxSpeed; }
     /// @brief Get the street's angle
     /// @return double The street's angle
     double angle() const { return m_angle; }
+
+    virtual void addAgent(Id agentId);
     /// @brief Add an agent to the street's queue
     /// @param agentId The id of the agent to add to the street's queue
     /// @throw std::runtime_error If the street's queue is full
-    virtual void enqueue(Id agentId);
+    void enqueue(Id agentId);
     /// @brief Remove an agent from the street's queue
     virtual std::optional<Id> dequeue();
     /// @brief Check if the street is a spire
@@ -238,25 +245,39 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Street<Id, Size>::enqueue(Id agentId) {
-    if (m_queue.size() == m_capacity) {
-      throw std::runtime_error(buildLog("The street's queue is full."));
+  void Street<Id, Size>::addAgent(Id agentId) {
+    if (m_waitingAgents.contains(agentId)) {
+      throw std::runtime_error(buildLog("The agent is already on the street."));
     }
-    for (auto const& id : m_queue) {
+    for (auto const& id : m_exitQueue) {
       if (id == agentId) {
         throw std::runtime_error(buildLog("The agent is already on the street."));
       }
     }
-    m_queue.push(agentId);
+    m_waitingAgents.insert(agentId);
+  }
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Street<Id, Size>::enqueue(Id agentId) {
+    if (!m_waitingAgents.contains(agentId)) {
+      throw std::runtime_error(buildLog("The agent is not on the street."));
+    }
+    for (auto const& id : m_exitQueue) {
+      if (id == agentId) {
+        throw std::runtime_error(buildLog("The agent is already on the street."));
+      }
+    }
+    m_waitingAgents.erase(agentId);
+    m_exitQueue.push(agentId);
   }
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   std::optional<Id> Street<Id, Size>::dequeue() {
-    if (m_queue.empty()) {
+    if (m_exitQueue.empty()) {
       return std::nullopt;
     }
-    Id id = m_queue.front();
-    m_queue.pop();
+    Id id = m_exitQueue.front();
+    m_exitQueue.pop();
     return id;
   }
 
@@ -294,7 +315,7 @@ namespace dsm {
     /// @brief Add an agent to the street's queue
     /// @param agentId The id of the agent to add to the street's queue
     /// @throw std::runtime_error If the street's queue is full
-    void enqueue(Id agentId) override;
+    void addAgent(Id agentId) override;
 
     /// @brief Get the input flow of the street
     /// @return Size The input flow of the street
@@ -342,8 +363,8 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void SpireStreet<Id, Size>::enqueue(Id agentId) {
-    Street<Id, Size>::enqueue(agentId);
+  void SpireStreet<Id, Size>::addAgent(Id agentId) {
+    Street<Id, Size>::addAgent(agentId);
     ++m_agentCounterIn;
   }
 

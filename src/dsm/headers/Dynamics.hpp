@@ -305,9 +305,6 @@ namespace dsm {
         continue;
       }
       const auto agentId{street->queue().front()};
-      if (m_agents[agentId]->delay() > 0) {
-        continue;
-      }
       m_agents[agentId]->setSpeed(0.);
       const auto& destinationNode{this->m_graph.nodeSet()[street->nodePair().second]};
       if (destinationNode->isFull()) {
@@ -368,7 +365,7 @@ namespace dsm {
             this->setAgentSpeed(agentId);
             m_agents[agentId]->incrementDelay(std::ceil(nextStreet->length() /
                                                     m_agents[agentId]->speed()));
-            nextStreet->enqueue(agentId);
+            nextStreet->addAgent(agentId);
             m_agentNextStreetId.erase(agentId);
           } else if (m_forcePriorities) {
             break;
@@ -390,7 +387,7 @@ namespace dsm {
             this->setAgentSpeed(agentId);
             m_agents[agentId]->incrementDelay(std::ceil(nextStreet->length() /
                                                     m_agents[agentId]->speed()));
-            nextStreet->enqueue(agentId);
+            nextStreet->addAgent(agentId);
             m_agentNextStreetId.erase(agentId);
           } else {
             break;
@@ -419,6 +416,10 @@ namespace dsm {
           }
         }
         agent->decrementDelay();
+        if (agent->delay() == 0) {
+          const auto& street{m_graph.streetSet()[agent->streetId().value()]};
+          street->enqueue(agentId);
+        }
       } else if (!agent->streetId().has_value()) {
         assert(agent->srcNodeId().has_value());
         const auto& srcNode{this->m_graph.nodeSet()[agent->srcNodeId().value()]};
@@ -438,6 +439,8 @@ namespace dsm {
           roundabout.enqueue(agentId);
         }
         m_agentNextStreetId.emplace(agentId, nextStreet->id());
+      } else if (agent->delay() == 0) {
+        agent->setSpeed(0.);
       }
       agent->incrementTime();
     }
@@ -650,7 +653,7 @@ namespace dsm {
       this->setAgentSpeed(agentId);
       this->m_agents[agentId]->incrementDelay(
           std::ceil(street->length() / this->m_agents[agentId]->speed()));
-      street->enqueue(agentId);
+      street->addAgent(agentId);
       ++agentId;
     }
   }
@@ -914,11 +917,15 @@ namespace dsm {
     }
     double meanSpeed{0.};
     Size n{0};
-    if (this->m_agents.at(street->queue().front())->delay() > 0) {
+    if(street->queue().size() == 0) {
       n = static_cast<Size>(street->queue().size());
       double alpha{this->m_minSpeedRateo / street->capacity()};
       meanSpeed = street->maxSpeed() * n * (1. - 0.5 * alpha * (n - 1.));
     } else {
+      for (const auto& agentId : street->waitingAgents()) {
+        meanSpeed += this->m_agents.at(agentId)->speed();
+        ++n;
+      }
       for (const auto& agentId : street->queue()) {
         meanSpeed += this->m_agents.at(agentId)->speed();
         ++n;

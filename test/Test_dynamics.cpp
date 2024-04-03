@@ -480,7 +480,7 @@ TEST_CASE("Dynamics") {
     for (const auto& [agentId, agent] : dynamics.agents()) {
       meanSpeed += agent->speed();
     }
-    meanSpeed /= dynamics.graph().streetSet().at(1)->queue().size();
+    meanSpeed /= (dynamics.graph().streetSet().at(1)->queue().size() + dynamics.graph().streetSet().at(1)->waitingAgents().size());
     CHECK(dynamics.streetMeanSpeed(1).has_value());
     CHECK_EQ(dynamics.streetMeanSpeed(1).value(), meanSpeed);
     CHECK_EQ(dynamics.streetMeanSpeed().mean, dynamics.meanSpeed().mean);
