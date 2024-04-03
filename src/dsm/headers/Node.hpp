@@ -5,7 +5,9 @@
 ///             The Node class represents a node in the network. It is templated by the type
 ///             of the node's id, which must be an unsigned integral type.
 ///             The derived classes are:
-///             - TrafficLight: represents a traffic light node
+///             - Intersection: represents an intersection node
+///               - TrafficLight: represents a traffic light intersection node
+///             - Roundabout: represents a roundabout node
 
 #ifndef Node_hpp
 #define Node_hpp
@@ -147,19 +149,6 @@ namespace dsm {
 
     virtual bool isIntersection() const noexcept override final { return true; }
   };
-  
-  // template <typename Id, typename Size>
-  //   requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  // bool Node<Id, Size>::isGreen() const {
-  //   throw std::runtime_error(
-  //       buildLog("isGreen() is not implemented for this type of node."));
-  // }
-  // template <typename Id, typename Size>
-  //   requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  // bool Node<Id, Size>::isGreen(Id) const {
-  //   throw std::runtime_error(
-  //       buildLog("isGreen() is not implemented for this type of node."));
-  // }
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
@@ -225,19 +214,6 @@ namespace dsm {
     m_agentCounter = 0;
     return copy;
   }
-
-  // to be implemented
-  /* template <typename Id> */
-  /* class Intersection : public Node<Id, Size> { */
-  /* private: */
-  /*   std::function<void()> m_priority; */
-  /* }; */
-
-  /* template <typename Id> */
-  /* class Roundabout : public Node<Id, Size> { */
-  /* private: */
-  /*   std::function<void()> m_priority; */
-  /* }; */
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
