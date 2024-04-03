@@ -889,7 +889,7 @@ namespace dsm {
         this->m_graph.streetSet()[this->m_agents[agentId]->streetId().value()]};
     double speed{street->maxSpeed() * (1. - this->m_minSpeedRateo * street->density())};
     if (this->m_speedFluctuationSTD > 0.) {
-      std::normal_distribution<double> speedDist{speed, this->m_speedFluctuationSTD};
+      std::normal_distribution<double> speedDist{speed, this->m_speedFluctuationSTD * speed};
       speed = speedDist(this->m_generator);
     }
     this->m_agents[agentId]->setSpeed(speed);
