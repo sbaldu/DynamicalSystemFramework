@@ -126,7 +126,7 @@ namespace dsm {
 
     /// @brief Returns true if the node is full
     /// @return bool True if the node is full
-    bool isFull() const { return m_agents.size() == this->m_capacity; }
+    bool isFull() const override { return m_agents.size() == this->m_capacity; }
 
     /// @brief Get the node's street priorities
     /// @details This function returns a std::set containing the node's street priorities.
@@ -416,7 +416,7 @@ namespace dsm {
 
       /// @brief Returns true if the node is full
       /// @return bool True if the node is full
-      bool isFull() const { return m_agents.size() == this->m_capacity; }
+      bool isFull() const override { return m_agents.size() == this->m_capacity; }
       /// @brief Returns true if the node is a roundabout
       /// @return bool True if the node is a roundabout
       bool isRoundabout() const noexcept override { return true; }
