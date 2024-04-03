@@ -58,7 +58,9 @@ TEST_CASE("Dynamics") {
       WHEN("We transorm a street into a spire and create the dynamcis") {
         graph.makeSpireStreet(8);
         Dynamics dynamics(graph);
-        THEN("The street is a spire") { CHECK(dynamics.graph().streetSet().at(8)->isSpire()); }
+        THEN("The street is a spire") {
+          CHECK(dynamics.graph().streetSet().at(8)->isSpire());
+        }
       }
     }
   }

@@ -119,10 +119,12 @@ namespace dsm {
     void removeAgent(Id agentId);
     /// @brief Set the node streets with priority
     /// @param streetPriorities A std::set containing the node's street priorities
-    void setStreetPriorities(std::set<Id> streetPriorities);
+    void setStreetPriorities(std::set<Id> streetPriorities) {
+      m_streetPriorities = std::move(streetPriorities);
+    }
     /// @brief Add a street to the node street priorities
     /// @param streetId The street's id
-    void addStreetPriority(Id streetId);
+    void addStreetPriority(Id streetId) { m_streetPriorities.emplace(streetId); }
 
     /// @brief Returns true if the node is full
     /// @return bool True if the node is full
@@ -133,10 +135,10 @@ namespace dsm {
     ///        If a street has priority, it means that the agents that are on that street
     ///        have priority over the agents that are on the other streets.
     /// @return std::set<Id> A std::set containing the node's street priorities
-    virtual const std::set<Id>& streetPriorities() const;
+    virtual const std::set<Id>& streetPriorities() const { return m_streetPriorities; };
     /// @brief Get the node's agent ids
     /// @return std::set<Id> A std::set containing the node's agent ids
-    std::multimap<int16_t, Id> agents() const;
+    std::multimap<int16_t, Id> agents() const { return m_agents; };
     /// @brief Returns the number of agents that have passed through the node
     /// @return Size The number of agents that have passed through the node
     /// @details This function returns the number of agents that have passed through the node
@@ -158,18 +160,6 @@ namespace dsm {
   //   throw std::runtime_error(
   //       buildLog("isGreen() is not implemented for this type of node."));
   // }
-
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Node<Id, Size>::setStreetPriorities(std::set<Id> streetPriorities) {
-    m_streetPriorities = std::move(streetPriorities);
-  }
-
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Node<Id, Size>::addStreetPriority(Id streetId) {
-    m_streetPriorities.emplace(streetId);
-  }
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
@@ -226,18 +216,6 @@ namespace dsm {
       }
     }
     throw std::runtime_error(buildLog("Agent is not on the node"));
-  }
-
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  const std::set<Id>& Node<Id, Size>::streetPriorities() const {
-    return m_streetPriorities;
-  }
-
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  std::multimap<int16_t, Id> Node<Id, Size>::agents() const {
-    return m_agents;
   }
 
   template <typename Id, typename Size>
@@ -314,7 +292,7 @@ namespace dsm {
 
     /// @brief Get the node's delay
     /// @return std::optional<Delay> The node's delay
-    std::optional<Delay> delay() const;
+    std::optional<std::pair<Delay, Delay>> delay() const { return m_delay; }
     Delay counter() const { return m_counter; }
     /// @brief Returns true if the traffic light is green
     /// @return bool True if the traffic light is green
@@ -406,12 +384,6 @@ namespace dsm {
     }
   }
 
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             std::unsigned_integral<Delay>)
-  std::optional<Delay> TrafficLight<Id, Size, Delay>::delay() const {
-    return m_delay;
-  }
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              std::unsigned_integral<Delay>)

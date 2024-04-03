@@ -226,7 +226,6 @@ TEST_CASE("Graph") {
         }
       }
     }
-  
   }
 }
 
