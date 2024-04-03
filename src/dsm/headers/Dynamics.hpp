@@ -848,15 +848,20 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              std::unsigned_integral<Delay>)
   class FirstOrderDynamics : public Dynamics<Id, Size, Delay> {
+    double m_speedFluctuationSTD;
   public:
     FirstOrderDynamics() = delete;
     /// @brief Construct a new First Order Dynamics object
     /// @param graph, The graph representing the network
-    FirstOrderDynamics(Graph<Id, Size>& graph) : Dynamics<Id, Size, Delay>(graph){};
+    FirstOrderDynamics(Graph<Id, Size>& graph) : Dynamics<Id, Size, Delay>(graph), m_speedFluctuationSTD{0.}{};
     /// @brief Set the speed of an agent
     /// @param agentId The id of the agent
     /// @throw std::invalid_argument, If the agent is not found
     void setAgentSpeed(Size agentId) override;
+    /// @brief Set the standard deviation of the speed fluctuation
+    /// @param speedFluctuationSTD The standard deviation of the speed fluctuation
+    /// @throw std::invalid_argument, If the standard deviation is negative
+    void setSpeedFluctuationSTD(double speedFluctuationSTD);
     /// @brief Get the mean speed of a street
     /// @details The mean speed of a street is given by the formula:
     /// \f$ v_{\text{mean}} = v_{\text{max}} \left(1 - \frac{\alpha}{2} \left( n - 1\right)  \right) \f$
@@ -880,7 +885,22 @@ namespace dsm {
     const auto& street{
         this->m_graph.streetSet()[this->m_agents[agentId]->streetId().value()]};
     double speed{street->maxSpeed() * (1. - this->m_minSpeedRateo * street->density())};
+    if (this->m_speedFluctuationSTD > 0.) {
+      std::normal_distribution<double> speedDist{speed, this->m_speedFluctuationSTD};
+      speed = speedDist(this->m_generator);
+    }
     this->m_agents[agentId]->setSpeed(speed);
+  }
+
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             std::unsigned_integral<Delay>)
+  void FirstOrderDynamics<Id, Size, Delay>::setSpeedFluctuationSTD(double speedFluctuationSTD) {
+    if (speedFluctuationSTD < 0.) {
+      throw std::invalid_argument(
+          buildLog("The speed fluctuation standard deviation must be positive."));
+    }
+    m_speedFluctuationSTD = speedFluctuationSTD;
   }
 
   template <typename Id, typename Size, typename Delay>
