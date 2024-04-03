@@ -5,9 +5,9 @@
 ///             The Node class represents a node in the network. It is templated by the type
 ///             of the node's id, which must be an unsigned integral type.
 ///             The derived classes are:
-///             - Intersection: represents an intersection node
+///             - Intersection: represents an intersection node with a map of agents
 ///               - TrafficLight: represents a traffic light intersection node
-///             - Roundabout: represents a roundabout node
+///             - Roundabout: represents a roundabout node with a queue of agents
 
 #ifndef Node_hpp
 #define Node_hpp
@@ -77,10 +77,6 @@ namespace dsm {
   class Node : public NodeConcept<Id, Size> {
   protected:
     std::multimap<int16_t, Id> m_agents;
-    /* I don't actually know if it is better yo use a std::map or a priority_queue...
-    Using the second one means that the node is blocked if an agent with priority cannot move.
-    The first is just like an ordering...
-    Need to discuss this.*/
     std::set<Id>
         m_streetPriorities;  // A set containing the street ids that have priority - like main roads
     Size m_agentCounter;
