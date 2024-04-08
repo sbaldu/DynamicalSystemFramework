@@ -33,7 +33,7 @@ namespace dsm {
     Need to discuss this.*/
     std::set<Id>
         m_streetPriorities;  // A set containing the street ids that have priority - like main roads
-    std::pair<double, double> m_coords;
+    std::optional<std::pair<double, double>> m_coords;
     Id m_id;
     Size m_capacity;
     Size m_agentCounter;
@@ -62,7 +62,7 @@ namespace dsm {
     ///          The agent with the smallest angle difference is the first one to be
     ///          removed from the node.
     /// @throws std::runtime_error if the node is full
-    void addAgent(std::pair<double, Id> agent);
+    void addAgent(double angle, Id agentId);
     /// @brief Put an agent in the node
     /// @param agentId The agent's id
     /// @details The agent's angle difference is used to order the agents in the node.
@@ -94,7 +94,7 @@ namespace dsm {
     Id id() const { return m_id; };
     /// @brief Get the node's coordinates
     /// @return std::pair<double,, double> A std::pair containing the node's coordinates
-    const std::pair<double, double>& coords() const { return m_coords; }
+    const std::optional<std::pair<double, double>>& coords() const { return m_coords; }
     /// @brief Get the node's street priorities
     /// @details This function returns a std::set containing the node's street priorities.
     ///        If a street has priority, it means that the agents that are on that street
@@ -151,13 +151,29 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Node<Id, Size>::addAgent(double angle, Id agentId) {
+    if (m_agents.size() == m_capacity) {
+      throw std::runtime_error(buildLog("Node is full"));
+    }
+    for (auto const [angle, id] : m_agents) {
+      if (id == agentId) {
+        throw std::runtime_error(buildLog("Agent is already on the node."));
+      }
+    }
+    auto iAngle{static_cast<int16_t>(angle * 100)};
+    m_agents.emplace(iAngle, agentId);
+    ++m_agentCounter;
+  }
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Node<Id, Size>::addAgent(Id agentId) {
     if (m_agents.size() == m_capacity) {
       throw std::runtime_error(buildLog("Node is full"));
     }
-    for (auto const& agent : m_agents) {
-      if (agent.second == agentId) {
-        throw std::runtime_error(buildLog("Agent is already on the node"));
+    for (auto const [angle, id] : m_agents) {
+      if (id == agentId) {
+        throw std::runtime_error(buildLog("Agent is already on the node."));
       }
     }
     int lastKey{0};
@@ -274,7 +290,9 @@ namespace dsm {
              std::unsigned_integral<Delay>)
   TrafficLight<Id, Size, Delay>::TrafficLight(const Node<Id, Size>& node)
       : Node<Id, Size>{node.id()}, m_counter{0}, m_phase{0} {
-    this->setCoords(node.coords());
+    if (node.coords().has_value()) {
+      this->setCoords(node.coords().value());
+    }
     this->setCapacity(node.capacity());
   }
 

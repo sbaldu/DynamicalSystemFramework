@@ -14,6 +14,7 @@ using SparseMatrix = dsm::SparseMatrix<uint16_t, bool>;
 using Street = dsm::Street<uint16_t, uint16_t>;
 using Agent = dsm::Agent<uint16_t, uint16_t, uint16_t>;
 using Itinerary = dsm::Itinerary<uint16_t>;
+using Node = dsm::Node<uint16_t, uint16_t>;
 using TrafficLight = dsm::TrafficLight<uint16_t, uint16_t, uint16_t>;
 
 TEST_CASE("Dynamics") {
@@ -452,5 +453,90 @@ TEST_CASE("Dynamics") {
     CHECK_EQ(dynamics.graph().streetSet().at(1)->queue().size(), 3);
     CHECK(dynamics.streetMeanSpeed(1).has_value());
     CHECK_EQ(dynamics.streetMeanSpeed(1).value(), meanSpeed);
+  }
+  SUBCASE("Node priorities") {
+    GIVEN("A dynamics object with five nodes and eight streets") {
+      Node nodeO{0, std::make_pair(0, 0)};
+      Node nodeA{1, std::make_pair(-1, 1)};
+      Node nodeB{2, std::make_pair(1, 1)};
+      Node nodeC{3, std::make_pair(1, -1)};
+      Node nodeD{4, std::make_pair(-1, -1)};
+      Street sAO{0, 1, 10., 10., std::make_pair(1, 0)};
+      Street sBO{1, 1, 10., 10., std::make_pair(2, 0)};
+      Street sCO{2, 1, 10., 10., std::make_pair(3, 0)};
+      Street sDO{3, 1, 10., 10., std::make_pair(4, 0)};
+      Street sOA{4, 1, 10., 10., std::make_pair(0, 1)};
+      Street sOB{5, 1, 10., 10., std::make_pair(0, 2)};
+      Street sOC{6, 1, 10., 10., std::make_pair(0, 3)};
+      Street sOD{7, 1, 10., 10., std::make_pair(0, 4)};
+      Graph graph2;
+      graph2.addNode(nodeO);
+      graph2.addNode(nodeA);
+      graph2.addNode(nodeB);
+      graph2.addNode(nodeC);
+      graph2.addNode(nodeD);
+      graph2.addStreet(sAO);
+      graph2.addStreet(sBO);
+      graph2.addStreet(sCO);
+      graph2.addStreet(sDO);
+      graph2.addStreet(sOA);
+      graph2.addStreet(sOB);
+      graph2.addStreet(sOC);
+      graph2.addStreet(sOD);
+      graph2.buildAdj();
+      Dynamics dynamics{graph2};
+      dynamics.graph().nodeSet().at(0)->setCapacity(3);
+      dynamics.setSeed(69);
+      Itinerary itinerary{0, 2};
+      Itinerary itinerary2{1, 1};
+      dynamics.addItinerary(itinerary);
+      dynamics.addItinerary(itinerary2);
+      dynamics.updatePaths();
+      WHEN("We add agents and evolve the dynamics") {
+        // add an agent in C, D, A
+        dynamics.addAgent(Agent(0, 0, 4));
+        dynamics.addAgent(Agent(1, 0, 3));
+        dynamics.addAgent(Agent(2, 0, 1));
+        dynamics.evolve(false);
+        dynamics.evolve(false);
+        dynamics.evolve(false);
+        THEN("The agent in C passes first") {
+          CHECK_EQ(dynamics.agents().at(1)->streetId().value(), 2);
+          CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 20);
+          CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 5);
+        }
+        dynamics.evolve(false);
+        THEN("The agent in D passes second") {
+          CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 2);
+          CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 5);
+        }
+        dynamics.evolve(false);
+        THEN("The agent in A passes last") {
+          CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 2);
+        }
+      }
+      WHEN("We add agents of another itinerary and update the dynamics") {
+        dynamics.addAgent(Agent(0, 1, 2));
+        dynamics.addAgent(Agent(1, 1, 3));
+        dynamics.addAgent(Agent(2, 1, 4));
+        dynamics.evolve(false);
+        dynamics.evolve(false);
+        dynamics.evolve(false);
+        THEN("The agent in B passes first") {
+          CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 1);
+          CHECK_EQ(dynamics.agents().at(1)->streetId().value(), 15);
+          CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 20);
+        }
+        dynamics.evolve(false);
+        THEN("The agent in C passes second") {
+          CHECK_EQ(dynamics.agents().at(1)->streetId().value(), 1);
+          CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 20);
+        }
+        dynamics.evolve(false);
+        THEN("The agent in C passes last") {
+          CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 1);
+        }
+      }
+    }
   }
 }

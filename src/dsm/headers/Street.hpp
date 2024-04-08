@@ -222,19 +222,18 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Street<Id, Size>::setAngle(std::pair<double, double> srcNode,
                                   std::pair<double, double> dstNode) {
+    // N.B.: lat, lon <==> y, x
     double angle{
-        std::atan2(dstNode.second - srcNode.second, dstNode.first - srcNode.first)};
-    if (angle < 0.) {
-      angle += 2 * std::numbers::pi;
-    }
+        std::atan2(dstNode.first - srcNode.first, dstNode.second - srcNode.second)};
     this->setAngle(angle);
   }
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Street<Id, Size>::setAngle(double angle) {
-    if (angle < 0. || angle > 2 * std::numbers::pi) {
+    if (std::abs(angle) > 2 * std::numbers::pi) {
       throw std::invalid_argument(
-          buildLog("The angle of a street must be between 0 and 2 * pi."));
+          buildLog("The angle of a street must be between - 2 * pi and 2 * pi. Got: " +
+                   std::to_string(angle) + "."));
     }
     m_angle = angle;
   }

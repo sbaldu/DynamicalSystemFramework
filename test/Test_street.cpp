@@ -157,9 +157,9 @@ TEST_CASE("Street") {
     Street street{1, 4, 3.5, std::make_pair(0, 1)};
     CHECK_EQ(street.angle(), 0);
     street.setAngle(std::make_pair(0, 1), std::make_pair(1, 0));
-    CHECK_EQ(street.angle(), 7 * std::numbers::pi / 4);
+    CHECK_EQ(street.angle(), 3 * std::numbers::pi / 4);
     // exceptions
-    CHECK_THROWS(street.setAngle(-0.1));
+    CHECK_THROWS(street.setAngle(-7.));
     CHECK_THROWS(street.setAngle(7.));
   }
 }

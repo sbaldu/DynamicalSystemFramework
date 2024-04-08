@@ -1,6 +1,22 @@
-
 #ifndef dsm_hpp
 #define dsm_hpp
+
+#include <cstdint>
+
+static constexpr uint8_t DSM_VERSION_MAJOR = 1;
+static constexpr uint8_t DSM_VERSION_MINOR = 3;
+static constexpr uint8_t DSM_VERSION_PATCH = 0;
+
+#include <string>
+
+namespace dsm {
+  std::string version();
+}
+
+std::string dsm::version() {
+  return std::to_string(DSM_VERSION_MAJOR) + "." + std::to_string(DSM_VERSION_MINOR) +
+         "." + std::to_string(DSM_VERSION_PATCH);
+}
 
 #include "headers/Agent.hpp"
 #include "headers/Graph.hpp"
