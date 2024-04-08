@@ -281,8 +281,8 @@ namespace dsm {
              is_numeric_v<Delay>)
   Id Dynamics<Id, Size, Delay>::m_nextStreetId(Id agentId, Id nodeId) {
     auto possibleMoves{
-        this->m_itineraries[this->m_agents[agentId]->itineraryId()]->path().
-            getRow(nodeId, true)};
+        this->m_itineraries[this->m_agents[agentId]->itineraryId()]->path().getRow(nodeId,
+                                                                                   true)};
     if (this->m_uniformDist(this->m_generator) < this->m_errorProbability) {
       possibleMoves = m_graph.adjMatrix().getRow(nodeId, true);
     }
@@ -407,7 +407,7 @@ namespace dsm {
     for (const auto& [agentId, agent] : this->m_agents) {
       if (agent->delay() > 0) {
         if (agent->delay() > 1) {
-        agent->incrementDistance();
+          agent->incrementDistance();
         } else if (agent->streetId().has_value()) {
           double distance{
               std::fmod(this->m_graph.streetSet()[agent->streetId().value()]->length(),
@@ -425,7 +425,8 @@ namespace dsm {
         if (srcNode->isFull()) {
           continue;
         }
-        const auto& nextStreet{m_graph.streetSet()[this->m_nextStreetId(agentId, srcNode->id())]};
+        const auto& nextStreet{
+            m_graph.streetSet()[this->m_nextStreetId(agentId, srcNode->id())]};
         if (nextStreet->density() == 1) {
           continue;
         }
