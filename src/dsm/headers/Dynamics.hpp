@@ -238,7 +238,7 @@ namespace dsm {
     /// @param ...args The arguments of the function
     template <typename F, typename... Tn>
       requires std::is_invocable_v<F, Tn...>
-    void evolve(F f, Tn... args);    
+    void evolve(F f, Tn... args);
 
     /// @brief Get the mean speed of the agents
     /// @return Measurement<double> The mean speed of the agents and the standard deviation
@@ -281,8 +281,8 @@ namespace dsm {
              is_numeric_v<Delay>)
   Id Dynamics<Id, Size, Delay>::m_nextStreetId(Id agentId, Id nodeId) {
     auto possibleMoves{
-        this->m_itineraries[this->m_agents[agentId]->itineraryId()]->path().
-            getRow(nodeId, true)};
+        this->m_itineraries[this->m_agents[agentId]->itineraryId()]->path().getRow(nodeId,
+                                                                                   true)};
     if (this->m_uniformDist(this->m_generator) < this->m_errorProbability) {
       possibleMoves = m_graph.adjMatrix().getRow(nodeId, true);
     }
@@ -305,6 +305,9 @@ namespace dsm {
         continue;
       }
       const auto agentId{street->queue().front()};
+      if (m_agents[agentId]->delay() > 0) {
+        continue;
+      }
       m_agents[agentId]->setSpeed(0.);
       const auto& destinationNode{this->m_graph.nodeSet()[street->nodePair().second]};
       if (destinationNode->isFull()) {
@@ -321,7 +324,9 @@ namespace dsm {
         street->dequeue();
         m_travelTimes.push_back(m_agents[agentId]->time());
         if (reinsert_agents) {
-          Agent<Id, Size, Delay> newAgent{m_agents[agentId]->id(), m_agents[agentId]->itineraryId(), m_agents[agentId]->srcNodeId().value()};
+          Agent<Id, Size, Delay> newAgent{m_agents[agentId]->id(),
+                                          m_agents[agentId]->itineraryId(),
+                                          m_agents[agentId]->srcNodeId().value()};
           if (m_agents[agentId]->srcNodeId().has_value()) {
             newAgent.setSourceNodeId(this->m_agents[agentId]->srcNodeId().value());
           }
@@ -332,14 +337,16 @@ namespace dsm {
         }
         continue;
       }
-      const auto& nextStreet{m_graph.streetSet()[m_nextStreetId(agentId, destinationNode->id())]};
+      const auto& nextStreet{
+          m_graph.streetSet()[m_nextStreetId(agentId, destinationNode->id())]};
       if (!(nextStreet->density() < 1)) {
         continue;
       }
       street->dequeue();
       assert(destinationNode->id() == nextStreet->nodePair().first);
-      const auto delta = std::fmod(street->angle() - nextStreet->angle(), std::numbers::pi);
-      if (destinationNode->isIntersection() ) {
+      const auto delta =
+          std::fmod(street->angle() - nextStreet->angle(), std::numbers::pi);
+      if (destinationNode->isIntersection()) {
         auto& intersection = dynamic_cast<Node<Id, Size>&>(*destinationNode);
         intersection.addAgent(delta, agentId);
         m_agentNextStreetId.emplace(agentId, nextStreet->id());
@@ -363,8 +370,8 @@ namespace dsm {
             intersection.removeAgent(agentId);
             m_agents[agentId]->setStreetId(nextStreet->id());
             this->setAgentSpeed(agentId);
-            m_agents[agentId]->incrementDelay(std::ceil(nextStreet->length() /
-                                                    m_agents[agentId]->speed()));
+            m_agents[agentId]->incrementDelay(
+                std::ceil(nextStreet->length() / m_agents[agentId]->speed()));
             nextStreet->addAgent(agentId);
             m_agentNextStreetId.erase(agentId);
           } else if (m_forcePriorities) {
@@ -380,13 +387,14 @@ namespace dsm {
         const auto nAgents{roundabout.agents().size()};
         for (size_t i{0}; i < nAgents; ++i) {
           const auto agentId{roundabout.agents().front()};
-          const auto& nextStreet{this->m_graph.streetSet()[m_nextStreetId(agentId, node->id())]};
+          const auto& nextStreet{
+              this->m_graph.streetSet()[m_nextStreetId(agentId, node->id())]};
           if (nextStreet->density() < 1) {
             roundabout.dequeue();
             m_agents[agentId]->setStreetId(nextStreet->id());
             this->setAgentSpeed(agentId);
-            m_agents[agentId]->incrementDelay(std::ceil(nextStreet->length() /
-                                                    m_agents[agentId]->speed()));
+            m_agents[agentId]->incrementDelay(
+                std::ceil(nextStreet->length() / m_agents[agentId]->speed()));
             nextStreet->addAgent(agentId);
           } else {
             break;
@@ -404,10 +412,9 @@ namespace dsm {
       if (agent->delay() > 0) {
         const auto& street{m_graph.streetSet()[agent->streetId().value()]};
         if (agent->delay() > 1) {
-        agent->incrementDistance();
+          agent->incrementDistance();
         } else {
-          double distance{
-              std::fmod(street->length(), agent->speed())};
+          double distance{std::fmod(street->length(), agent->speed())};
           if (distance < std::numeric_limits<double>::epsilon()) {
             agent->incrementDistance();
           } else {
@@ -424,7 +431,8 @@ namespace dsm {
         if (srcNode->isFull()) {
           continue;
         }
-        const auto& nextStreet{m_graph.streetSet()[this->m_nextStreetId(agentId, srcNode->id())]};
+        const auto& nextStreet{
+            m_graph.streetSet()[this->m_nextStreetId(agentId, srcNode->id())]};
         if (nextStreet->density() == 1) {
           continue;
         }
@@ -546,8 +554,8 @@ namespace dsm {
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::addAgent(const Agent<Id, Size, Delay>& agent) {
     if (this->m_agents.contains(agent.id())) {
-      throw std::invalid_argument(buildLog("Agent " + std::to_string(agent.id()) +
-                           " already exists."));
+      throw std::invalid_argument(
+          buildLog("Agent " + std::to_string(agent.id()) + " already exists."));
     }
     this->m_agents.emplace(agent.id(), std::make_unique<Agent<Id, Size, Delay>>(agent));
   }
@@ -556,8 +564,8 @@ namespace dsm {
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::addAgent(std::unique_ptr<Agent<Id, Size, Delay>> agent) {
     if (this->m_agents.contains(agent->id())) {
-      throw std::invalid_argument(buildLog("Agent " + std::to_string(agent->id()) +
-                           " already exists."));
+      throw std::invalid_argument(
+          buildLog("Agent " + std::to_string(agent->id()) + " already exists."));
     }
     this->m_agents.emplace(agent->id(), std::move(agent));
   }
@@ -662,8 +670,8 @@ namespace dsm {
   void Dynamics<Id, Size, Delay>::removeAgent(Size agentId) {
     auto agentIt{m_agents.find(agentId)};
     if (agentIt == m_agents.end()) {
-      throw std::invalid_argument(buildLog("Agent " + std::to_string(agentId) +
-                           " not found."));
+      throw std::invalid_argument(
+          buildLog("Agent " + std::to_string(agentId) + " not found."));
     }
     m_agents.erase(agentId);
   }
@@ -850,11 +858,13 @@ namespace dsm {
              std::unsigned_integral<Delay>)
   class FirstOrderDynamics : public Dynamics<Id, Size, Delay> {
     double m_speedFluctuationSTD;
+
   public:
     FirstOrderDynamics() = delete;
     /// @brief Construct a new First Order Dynamics object
     /// @param graph, The graph representing the network
-    FirstOrderDynamics(Graph<Id, Size>& graph) : Dynamics<Id, Size, Delay>(graph), m_speedFluctuationSTD{0.}{};
+    FirstOrderDynamics(Graph<Id, Size>& graph)
+        : Dynamics<Id, Size, Delay>(graph), m_speedFluctuationSTD{0.} {};
     /// @brief Set the speed of an agent
     /// @param agentId The id of the agent
     /// @throw std::invalid_argument, If the agent is not found
@@ -884,20 +894,22 @@ namespace dsm {
              std::unsigned_integral<Delay>)
   void FirstOrderDynamics<Id, Size, Delay>::setAgentSpeed(Size agentId) {
     const auto& agent{this->m_agents[agentId]};
-    const auto& street{
-        this->m_graph.streetSet()[agent->streetId().value()]};
+    const auto& street{this->m_graph.streetSet()[agent->streetId().value()]};
     double speed{street->maxSpeed() * (1. - this->m_minSpeedRateo * street->density())};
     if (this->m_speedFluctuationSTD > 0.) {
-      std::normal_distribution<double> speedDist{speed, speed * this->m_speedFluctuationSTD};
+      std::normal_distribution<double> speedDist{speed,
+                                                 speed * this->m_speedFluctuationSTD};
       speed = speedDist(this->m_generator);
     }
-    speed < 0. ? agent->setSpeed(street->maxSpeed() * (1. - this->m_minSpeedRateo)) : agent->setSpeed(speed);
+    speed < 0. ? agent->setSpeed(street->maxSpeed() * (1. - this->m_minSpeedRateo))
+               : agent->setSpeed(speed);
   }
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              std::unsigned_integral<Delay>)
-  void FirstOrderDynamics<Id, Size, Delay>::setSpeedFluctuationSTD(double speedFluctuationSTD) {
+  void FirstOrderDynamics<Id, Size, Delay>::setSpeedFluctuationSTD(
+      double speedFluctuationSTD) {
     if (speedFluctuationSTD < 0.) {
       throw std::invalid_argument(
           buildLog("The speed fluctuation standard deviation must be positive."));
@@ -916,7 +928,7 @@ namespace dsm {
     }
     double meanSpeed{0.};
     Size n{0};
-    if(street->queue().size() == 0) {
+    if (street->queue().size() == 0) {
       n = static_cast<Size>(street->queue().size());
       double alpha{this->m_minSpeedRateo / street->capacity()};
       meanSpeed = street->maxSpeed() * n * (1. - 0.5 * alpha * (n - 1.));

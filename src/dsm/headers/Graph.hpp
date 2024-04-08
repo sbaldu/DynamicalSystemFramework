@@ -192,7 +192,9 @@ namespace dsm {
     }
     /// @brief Get the graph's node map
     /// @return A std::unordered_map containing the graph's nodes
-    std::unordered_map<Id, std::unique_ptr<NodeConcept<Id, Size>>>& nodeSet() { return m_nodes; }
+    std::unordered_map<Id, std::unique_ptr<NodeConcept<Id, Size>>>& nodeSet() {
+      return m_nodes;
+    }
     /// @brief Get the graph's street map
     /// @return A std::unordered_map containing the graph's streets
     const std::unordered_map<Id, std::unique_ptr<Street<Id, Size>>>& streetSet() const {
@@ -263,7 +265,7 @@ namespace dsm {
     buildAdj();
   }
 
-   template <typename Id, typename Size>
+  template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Graph<Id, Size>::m_reassignIds() {
     // not sure about this, might need a bit more work
@@ -591,7 +593,7 @@ namespace dsm {
     if (!m_nodes.contains(nodeId)) {
       throw std::invalid_argument(buildLog("Node does not exist."));
     }
-	auto& pNode = m_nodes[nodeId];
+    auto& pNode = m_nodes[nodeId];
     pNode = std::make_unique<TrafficLight<Id, Size, Delay>>(*pNode);
   }
   template <typename Id, typename Size>
@@ -718,8 +720,9 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  std::optional<DijkstraResult<Id>> Graph<Id, Size>::shortestPath(Id source, Id destination) const {
-	const Id sourceId{source};
+  std::optional<DijkstraResult<Id>> Graph<Id, Size>::shortestPath(Id source,
+                                                                  Id destination) const {
+    const Id sourceId{source};
 
     std::unordered_set<Id> unvisitedNodes;
     bool source_found{false};
@@ -794,9 +797,9 @@ namespace dsm {
         return std::nullopt;
       }
       path.push_back(previous);
-	  if (previous == sourceId) {
-		break;
-	  }
+      if (previous == sourceId) {
+        break;
+      }
     }
 
     std::reverse(path.begin(), path.end());

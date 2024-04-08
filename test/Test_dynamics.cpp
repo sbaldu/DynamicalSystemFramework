@@ -385,7 +385,9 @@ TEST_CASE("Dynamics") {
     }
   }
   SUBCASE("Roundabout") {
-    GIVEN("A dynamics object with four streets, one agent for each street, two itineraries and a roundabout") {
+    GIVEN(
+        "A dynamics object with four streets, one agent for each street, two itineraries "
+        "and a roundabout") {
       Roundabout roundabout{1};
       roundabout.setCapacity(2);
       Street s1{0, 1, 10., 10., std::make_pair(0, 1)};
@@ -405,7 +407,9 @@ TEST_CASE("Dynamics") {
       dynamics.updatePaths();
       dynamics.addAgent(Agent(0, 0, 0));
       dynamics.addAgent(Agent(1, 1, 2));
-      WHEN("We evolve the dynamics adding an agent on the path of the agent with priority") {
+      WHEN(
+          "We evolve the dynamics adding an agent on the path of the agent with "
+          "priority") {
         dynamics.evolve(false);
         dynamics.addAgent(Agent(2, 0, 1));
         dynamics.evolve(false);
@@ -480,7 +484,8 @@ TEST_CASE("Dynamics") {
     for (const auto& [agentId, agent] : dynamics.agents()) {
       meanSpeed += agent->speed();
     }
-    meanSpeed /= (dynamics.graph().streetSet().at(1)->queue().size() + dynamics.graph().streetSet().at(1)->waitingAgents().size());
+    meanSpeed /= (dynamics.graph().streetSet().at(1)->queue().size() +
+                  dynamics.graph().streetSet().at(1)->waitingAgents().size());
     CHECK(dynamics.streetMeanSpeed(1).has_value());
     CHECK_EQ(dynamics.streetMeanSpeed(1).value(), meanSpeed);
     CHECK_EQ(dynamics.streetMeanSpeed().mean, dynamics.meanSpeed().mean);
@@ -562,7 +567,9 @@ TEST_CASE("Dynamics") {
           CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 5);
         }
         dynamics.evolve(false);
-        THEN("The agent in A passes last") { CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 2); }
+        THEN("The agent in A passes last") {
+          CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 2);
+        }
       }
       WHEN("We add agents of another itinerary and update the dynamics") {
         dynamics.addAgent(Agent(0, 1, 2));
@@ -582,7 +589,9 @@ TEST_CASE("Dynamics") {
           CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 20);
         }
         dynamics.evolve(false);
-        THEN("The agent in C passes last") { CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 1); }
+        THEN("The agent in C passes last") {
+          CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 1);
+        }
       }
     }
   }

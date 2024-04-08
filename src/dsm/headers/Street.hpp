@@ -41,6 +41,7 @@ namespace dsm {
     Id m_id;
     Size m_capacity;
     Size m_transportCapacity;
+
   public:
     Street() = delete;
     /// @brief Construct a new Street object starting from an existing street
@@ -141,7 +142,10 @@ namespace dsm {
     const std::pair<Id, Id>& nodePair() const { return m_nodePair; }
     /// @brief Get the street's density
     /// @return double, The street's density
-    double density() const { return static_cast<double>(m_exitQueue.size() + m_waitingAgents.size()) / m_capacity; }
+    double density() const {
+      return static_cast<double>(m_exitQueue.size() + m_waitingAgents.size()) /
+             m_capacity;
+    }
     /// @brief Get the street's speed limit
     /// @return double, The street's speed limit
     double maxSpeed() const { return m_maxSpeed; }
@@ -238,7 +242,8 @@ namespace dsm {
   void Street<Id, Size>::setAngle(double angle) {
     if (std::abs(angle) > 2 * std::numbers::pi) {
       throw std::invalid_argument(
-          buildLog("The angle of a street must be between - 2 * pi and 2 * pi. Got: " +  std::to_string(angle) + "."));
+          buildLog("The angle of a street must be between - 2 * pi and 2 * pi. Got: " +
+                   std::to_string(angle) + "."));
     }
     m_angle = angle;
   }
@@ -290,6 +295,7 @@ namespace dsm {
   private:
     Size m_agentCounterIn;
     Size m_agentCounterOut;
+
   public:
     SpireStreet() = delete;
     /// @brief Construct a new SpireStreet object starting from an existing street
