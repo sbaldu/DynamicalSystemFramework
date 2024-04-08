@@ -562,7 +562,9 @@ TEST_CASE("Dynamics") {
           CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 5);
         }
         dynamics.evolve(false);
-        THEN("The agent in A passes last") { CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 2); }
+        THEN("The agent in A passes last") {
+          CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 2);
+        }
       }
       WHEN("We add agents of another itinerary and update the dynamics") {
         dynamics.addAgent(Agent(0, 1, 2));
@@ -582,7 +584,9 @@ TEST_CASE("Dynamics") {
           CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 20);
         }
         dynamics.evolve(false);
-        THEN("The agent in C passes last") { CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 1); }
+        THEN("The agent in C passes last") {
+          CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 1);
+        }
       }
     }
   }

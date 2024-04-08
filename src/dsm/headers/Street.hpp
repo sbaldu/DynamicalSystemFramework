@@ -238,7 +238,8 @@ namespace dsm {
   void Street<Id, Size>::setAngle(double angle) {
     if (std::abs(angle) > 2 * std::numbers::pi) {
       throw std::invalid_argument(
-          buildLog("The angle of a street must be between - 2 * pi and 2 * pi. Got: " +  std::to_string(angle) + "."));
+          buildLog("The angle of a street must be between - 2 * pi and 2 * pi. Got: " +
+                   std::to_string(angle) + "."));
     }
     m_angle = angle;
   }
