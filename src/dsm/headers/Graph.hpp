@@ -43,7 +43,7 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   class Graph {
   private:
-    std::unordered_map<Id, std::unique_ptr<Node<Id, Size>>> m_nodes;
+    std::unordered_map<Id, std::unique_ptr<NodeConcept<Id, Size>>> m_nodes;
     std::unordered_map<Id, std::unique_ptr<Street<Id, Size>>> m_streets;
     std::unordered_map<Id, Id> m_nodeMapping;
     SparseMatrix<Id, bool> m_adjacency;
@@ -136,7 +136,7 @@ namespace dsm {
 
     /// @brief Add a node to the graph
     /// @param node A std::shared_ptr to the node to add
-    void addNode(std::unique_ptr<Node<Id, Size>> node);
+    void addNode(std::unique_ptr<NodeConcept<Id, Size>> node);
     /// @brief Add a node to the graph
     /// @param node A reference to the node to add
     void addNode(const Node<Id, Size>& node);
@@ -157,6 +157,10 @@ namespace dsm {
     template <typename Delay>
       requires(std::unsigned_integral<Delay>)
     void makeTrafficLight(Id nodeId);
+    /// @brief Convert an existing node into a roundabout
+    /// @param nodeId The id of the node to convert to a roundabout
+    /// @throws std::invalid_argument if the node does not exist
+    void makeRoundabout(Id nodeId);
     /// @brief Convert an existing street into a spire street
     /// @param streetId The id of the street to convert to a spire street
     /// @throws std::invalid_argument if the street does not exist
@@ -183,12 +187,14 @@ namespace dsm {
     const SparseMatrix<Id, bool>& adjMatrix() const { return m_adjacency; }
     /// @brief Get the graph's node map
     /// @return A std::unordered_map containing the graph's nodes
-    const std::unordered_map<Id, std::unique_ptr<Node<Id, Size>>>& nodeSet() const {
+    const std::unordered_map<Id, std::unique_ptr<NodeConcept<Id, Size>>>& nodeSet() const {
       return m_nodes;
     }
     /// @brief Get the graph's node map
     /// @return A std::unordered_map containing the graph's nodes
-    std::unordered_map<Id, std::unique_ptr<Node<Id, Size>>>& nodeSet() { return m_nodes; }
+    std::unordered_map<Id, std::unique_ptr<NodeConcept<Id, Size>>>& nodeSet() {
+      return m_nodes;
+    }
     /// @brief Get the graph's street map
     /// @return A std::unordered_map containing the graph's streets
     const std::unordered_map<Id, std::unique_ptr<Street<Id, Size>>>& streetSet() const {
@@ -280,13 +286,14 @@ namespace dsm {
     }
     for (const auto& [nodeId, node] : m_nodes) {
       // This is probably not the best way to do this
-      if (node->isTrafficLight()) {
-        const auto& oldStreetPriorities{node->streetPriorities()};
+      if (node->isIntersection()) {
+        auto& intersection = dynamic_cast<Node<Id, Size>&>(*node);
+        const auto& oldStreetPriorities{intersection.streetPriorities()};
         std::set<Id> newStreetPriorities;
         for (const auto streetId : oldStreetPriorities) {
           newStreetPriorities.emplace(newStreetIds[streetId]);
         }
-        node->setStreetPriorities(newStreetPriorities);
+        intersection.setStreetPriorities(newStreetPriorities);
       }
     }
   }
@@ -552,7 +559,7 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Graph<Id, Size>::addNode(std::unique_ptr<Node<Id, Size>> node) {
+  void Graph<Id, Size>::addNode(std::unique_ptr<NodeConcept<Id, Size>> node) {
     m_nodes.emplace(std::make_pair(node->id(), std::move(node)));
   }
 
@@ -588,6 +595,15 @@ namespace dsm {
     }
     auto& pNode = m_nodes[nodeId];
     pNode = std::make_unique<TrafficLight<Id, Size, Delay>>(*pNode);
+  }
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Graph<Id, Size>::makeRoundabout(Id nodeId) {
+    if (!m_nodes.contains(nodeId)) {
+      throw std::invalid_argument(buildLog("Node does not exist."));
+    }
+    auto& pNode = m_nodes[nodeId];
+    pNode = std::make_unique<Roundabout<Id, Size>>(*pNode);
   }
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)

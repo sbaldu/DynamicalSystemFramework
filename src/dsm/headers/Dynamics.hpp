@@ -313,8 +313,11 @@ namespace dsm {
       if (destinationNode->isFull()) {
         continue;
       }
-      if (destinationNode->isTrafficLight() && !destinationNode->isGreen(streetId)) {
-        continue;
+      if (destinationNode->isTrafficLight()) {
+        auto& tl = dynamic_cast<TrafficLight<Id, Size, Delay>&>(*destinationNode);
+        if (!tl.isGreen(streetId)) {
+          continue;
+        }
       }
       if (destinationNode->id() ==
           m_itineraries[m_agents[agentId]->itineraryId()]->destination()) {
@@ -343,7 +346,13 @@ namespace dsm {
       assert(destinationNode->id() == nextStreet->nodePair().first);
       const auto delta =
           std::fmod(street->angle() - nextStreet->angle(), std::numbers::pi);
-      destinationNode->addAgent(delta, agentId);
+      if (destinationNode->isIntersection()) {
+        auto& intersection = dynamic_cast<Node<Id, Size>&>(*destinationNode);
+        intersection.addAgent(delta, agentId);
+      } else if (destinationNode->isRoundabout()) {
+        auto& roundabout = dynamic_cast<Roundabout<Id, Size>&>(*destinationNode);
+        roundabout.enqueue(agentId);
+      }
       m_agentNextStreetId.emplace(agentId, nextStreet->id());
     }
   }
@@ -353,23 +362,44 @@ namespace dsm {
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::m_evolveNodes() {
     for (const auto& [nodeId, node] : m_graph.nodeSet()) {
-      for (const auto [angle, agentId] : node->agents()) {
-        const auto& nextStreet{m_graph.streetSet()[m_agentNextStreetId[agentId]]};
-
-        if (nextStreet->density() < 1) {
-          node->removeAgent(agentId);
-          m_agents[agentId]->setStreetId(nextStreet->id());
-          this->setAgentSpeed(agentId);
-          m_agents[agentId]->incrementDelay(
-              std::ceil(nextStreet->length() / m_agents[agentId]->speed()));
-          nextStreet->enqueue(agentId);
-          m_agentNextStreetId.erase(agentId);
-        } else if (m_forcePriorities) {
-          break;
+      if (node->isIntersection()) {
+        auto& intersection = dynamic_cast<Node<Id, Size>&>(*node);
+        for (const auto [angle, agentId] : intersection.agents()) {
+          const auto& nextStreet{m_graph.streetSet()[m_agentNextStreetId[agentId]]};
+          if (nextStreet->density() < 1) {
+            intersection.removeAgent(agentId);
+            m_agents[agentId]->setStreetId(nextStreet->id());
+            this->setAgentSpeed(agentId);
+            m_agents[agentId]->incrementDelay(
+                std::ceil(nextStreet->length() / m_agents[agentId]->speed()));
+            nextStreet->enqueue(agentId);
+            m_agentNextStreetId.erase(agentId);
+          } else if (m_forcePriorities) {
+            break;
+          }
         }
-      }
-      if (node->isTrafficLight()) {
-        node->increaseCounter();
+        if (node->isTrafficLight()) {
+          auto& tl = dynamic_cast<TrafficLight<Id, Size, Delay>&>(*node);
+          tl.increaseCounter();
+        }
+      } else if (node->isRoundabout()) {
+        auto& roundabout = dynamic_cast<Roundabout<Id, Size>&>(*node);
+        const auto nAgents{roundabout.agents().size()};
+        for (size_t i{0}; i < nAgents; ++i) {
+          const auto agentId{roundabout.agents().front()};
+          const auto& nextStreet{m_graph.streetSet()[m_agentNextStreetId[agentId]]};
+          if (nextStreet->density() < 1) {
+            roundabout.dequeue();
+            m_agents[agentId]->setStreetId(nextStreet->id());
+            this->setAgentSpeed(agentId);
+            m_agents[agentId]->incrementDelay(
+                std::ceil(nextStreet->length() / m_agents[agentId]->speed()));
+            nextStreet->enqueue(agentId);
+            m_agentNextStreetId.erase(agentId);
+          } else {
+            break;
+          }
+        }
       }
     }
   }
@@ -405,7 +435,13 @@ namespace dsm {
           continue;
         }
         assert(srcNode->id() == nextStreet->nodePair().first);
-        srcNode->addAgent(agentId);
+        if (srcNode->isIntersection()) {
+          auto& intersection = dynamic_cast<Node<Id, Size>&>(*srcNode);
+          intersection.addAgent(0., agentId);
+        } else if (srcNode->isRoundabout()) {
+          auto& roundabout = dynamic_cast<Roundabout<Id, Size>&>(*srcNode);
+          roundabout.enqueue(agentId);
+        }
         m_agentNextStreetId.emplace(agentId, nextStreet->id());
       }
       agent->incrementTime();
@@ -873,13 +909,24 @@ namespace dsm {
         ++n;
       }
     }
-
-    for (const auto& [angle, agentId] :
-         this->m_graph.nodeSet().at(street->nodePair().second)->agents()) {
-      const auto& agent{this->m_agents.at(agentId)};
-      if (agent->streetId().has_value() && agent->streetId().value() == streetId) {
-        meanSpeed += agent->speed();
-        ++n;
+    const auto& node = this->m_graph.nodeSet().at(street->nodePair().second);
+    if (node->isIntersection()) {
+      auto& intersection = dynamic_cast<Node<Id, Size>&>(*node);
+      for (const auto& [angle, agentId] : intersection.agents()) {
+        const auto& agent{this->m_agents.at(agentId)};
+        if (agent->streetId().has_value() && agent->streetId().value() == streetId) {
+          meanSpeed += agent->speed();
+          ++n;
+        }
+      }
+    } else if (node->isRoundabout()) {
+      auto& roundabout = dynamic_cast<Roundabout<Id, Size>&>(*node);
+      for (const auto& agentId : roundabout.agents()) {
+        const auto& agent{this->m_agents.at(agentId)};
+        if (agent->streetId().has_value() && agent->streetId().value() == streetId) {
+          meanSpeed += agent->speed();
+          ++n;
+        }
       }
     }
     return meanSpeed / n;

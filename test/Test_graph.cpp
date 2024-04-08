@@ -201,6 +201,19 @@ TEST_CASE("Graph") {
       }
     }
   }
+  SUBCASE("make roundabout") {
+    GIVEN("A graph object with two nodes and one street") {
+      Graph graph{};
+      graph.addStreet(Street{1, 1, 1., std::make_pair(0, 1)});
+      graph.buildAdj();
+      WHEN("We make node 0 a roundabout") {
+        graph.makeRoundabout(0);
+        THEN("The node 0 is a roundabout") {
+          CHECK(graph.nodeSet().at(0)->isRoundabout());
+        }
+      }
+    }
+  }
   SUBCASE("make spire street") {
     GIVEN("A graph object with two nodes and one street") {
       Graph graph{};

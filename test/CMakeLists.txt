@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.16.0)
 
-project(dsm_tests VERSION 1.3.0 LANGUAGES CXX)
+project(dsm_tests VERSION 1.3.2 LANGUAGES CXX)
 
 # Set the C++ standard
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 

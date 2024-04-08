@@ -28,15 +28,6 @@ TEST_CASE("Node") {
     CHECK(node.coords().value().first == 2.5);
     CHECK(node.coords().value().second == 3.5);
   }
-  SUBCASE("isGreen exception") {
-    /*This tests the isGreen function.
-    GIVEN: A Node
-    WHEN: The isGreen function is called
-    THEN: An exception is thrown
-    */
-    Node node{1};
-    CHECK_THROWS(node.isGreen());
-  }
 }
 
 TEST_CASE("TrafficLight") {
