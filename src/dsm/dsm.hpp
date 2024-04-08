@@ -16,7 +16,8 @@ namespace dsm {
 
 std::string dsm::version() {
   return std::to_string(DSM_VERSION_MAJOR) + "." + std::to_string(DSM_VERSION_MINOR) +
-         "." + std::to_string(DSM_VERSION_PATCH), "." + std::to_string(DSM_VERSION_BUILD);
+             "." + std::to_string(DSM_VERSION_PATCH),
+         "." + std::to_string(DSM_VERSION_BUILD);
 }
 
 #include "headers/Agent.hpp"

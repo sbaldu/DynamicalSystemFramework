@@ -29,46 +29,47 @@ namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   class NodeConcept {
-    protected:
-      Id m_id;
-      std::optional<std::pair<double, double>> m_coords;
-      Size m_capacity;
-    public:
-      NodeConcept() = default;
-      /// @brief Construct a new Node object with capacity 1
-      /// @param id The node's id
-      explicit NodeConcept(Id id) : m_id{id}, m_capacity{1} {}
-      /// @brief Construct a new Node object with capacity 1
-      /// @param id The node's id
-      /// @param coords A std::pair containing the node's coordinates (lat, lon)
-      NodeConcept(Id id, std::pair<double, double> coords)
+  protected:
+    Id m_id;
+    std::optional<std::pair<double, double>> m_coords;
+    Size m_capacity;
+
+  public:
+    NodeConcept() = default;
+    /// @brief Construct a new Node object with capacity 1
+    /// @param id The node's id
+    explicit NodeConcept(Id id) : m_id{id}, m_capacity{1} {}
+    /// @brief Construct a new Node object with capacity 1
+    /// @param id The node's id
+    /// @param coords A std::pair containing the node's coordinates (lat, lon)
+    NodeConcept(Id id, std::pair<double, double> coords)
         : m_id{id}, m_coords{std::move(coords)}, m_capacity{1} {}
-      virtual ~NodeConcept() = default;
+    virtual ~NodeConcept() = default;
 
-      /// @brief Set the node's id
-      /// @param id The node's id
-      void setId(Id id) { m_id = id; }
-      /// @brief Set the node's coordinates
-      /// @param coords A std::pair containing the node's coordinates (lat, lon)
-      void setCoords(std::pair<double, double> coords) { m_coords = std::move(coords); }
-      /// @brief Set the node's capacity
-      /// @param capacity The node's capacity
-      virtual void setCapacity(Size capacity) { m_capacity = capacity; }
-      /// @brief Get the node's id
-      /// @return Id The node's id
-      Id id() const { return m_id; }
-      /// @brief Get the node's coordinates
-      /// @return std::optional<std::pair<double, double>> A std::pair containing the node's coordinates
-      const std::optional<std::pair<double, double>>& coords() const { return m_coords; }
-      /// @brief Get the node's capacity
-      /// @return Size The node's capacity
-      Size capacity() const { return m_capacity; }
+    /// @brief Set the node's id
+    /// @param id The node's id
+    void setId(Id id) { m_id = id; }
+    /// @brief Set the node's coordinates
+    /// @param coords A std::pair containing the node's coordinates (lat, lon)
+    void setCoords(std::pair<double, double> coords) { m_coords = std::move(coords); }
+    /// @brief Set the node's capacity
+    /// @param capacity The node's capacity
+    virtual void setCapacity(Size capacity) { m_capacity = capacity; }
+    /// @brief Get the node's id
+    /// @return Id The node's id
+    Id id() const { return m_id; }
+    /// @brief Get the node's coordinates
+    /// @return std::optional<std::pair<double, double>> A std::pair containing the node's coordinates
+    const std::optional<std::pair<double, double>>& coords() const { return m_coords; }
+    /// @brief Get the node's capacity
+    /// @return Size The node's capacity
+    Size capacity() const { return m_capacity; }
 
-      virtual bool isFull() const = 0;
+    virtual bool isFull() const = 0;
 
-      virtual bool isIntersection() const noexcept { return false; }
-      virtual bool isTrafficLight() const noexcept { return false; }
-      virtual bool isRoundabout() const noexcept { return false; }
+    virtual bool isIntersection() const noexcept { return false; }
+    virtual bool isTrafficLight() const noexcept { return false; }
+    virtual bool isRoundabout() const noexcept { return false; }
   };
   /// @brief The Node class represents a node in the network.
   /// @tparam Id The type of the node's id. It must be an unsigned integral type.
@@ -290,7 +291,7 @@ namespace dsm {
   void TrafficLight<Id, Size, Delay>::setDelay(Delay delay) {
     if (m_delay.has_value()) {
       if (m_counter >= delay + m_delay.value().second) {
-          m_counter = delay + m_delay.value().second - 1;
+        m_counter = delay + m_delay.value().second - 1;
       } else if (delay < m_delay.value().first) {
         if (m_counter >= delay && m_counter <= m_delay.value().first) {
           m_counter = delay - (m_delay.value().first - m_counter);
@@ -303,11 +304,11 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              std::unsigned_integral<Delay>)
   void TrafficLight<Id, Size, Delay>::setDelay(std::pair<Delay, Delay> delay) {
-    if(m_delay.has_value()) {
-      if(m_counter >= delay.first + delay.second) {
+    if (m_delay.has_value()) {
+      if (m_counter >= delay.first + delay.second) {
         m_counter = delay.first + delay.second - 1;
-      } else if(delay.first < m_delay.value().first) {
-        if(m_counter >= delay.first && m_counter <= m_delay.value().first) {
+      } else if (delay.first < m_delay.value().first) {
+        if (m_counter >= delay.first && m_counter <= m_delay.value().first) {
           m_counter = delay.first - (m_delay.value().first - m_counter);
         }
       }
@@ -384,52 +385,52 @@ namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   class Roundabout : public NodeConcept<Id, Size> {
-    protected:
-      dsm::queue<Id> m_agents;
+  protected:
+    dsm::queue<Id> m_agents;
 
-    public:
-      Roundabout() = default;
-      /// @brief Construct a new Roundabout object
-      /// @param id The node's id
-      explicit Roundabout(Id id) : NodeConcept<Id, Size>{id} {};
-      /// @brief Construct a new Roundabout object
-      /// @param id The node's id
-      /// @param coords A std::pair containing the node's coordinates
-      Roundabout(Id id, std::pair<double, double> coords)
-          : NodeConcept<Id, Size>{id, coords} {};
-      /// @brief Construct a new Roundabout object
-      /// @param node A Node object
-      Roundabout(const NodeConcept<Id, Size>& node);
+  public:
+    Roundabout() = default;
+    /// @brief Construct a new Roundabout object
+    /// @param id The node's id
+    explicit Roundabout(Id id) : NodeConcept<Id, Size>{id} {};
+    /// @brief Construct a new Roundabout object
+    /// @param id The node's id
+    /// @param coords A std::pair containing the node's coordinates
+    Roundabout(Id id, std::pair<double, double> coords)
+        : NodeConcept<Id, Size>{id, coords} {};
+    /// @brief Construct a new Roundabout object
+    /// @param node A Node object
+    Roundabout(const NodeConcept<Id, Size>& node);
 
-      virtual ~Roundabout() = default;
+    virtual ~Roundabout() = default;
 
-      /// @brief Put an agent in the node
-      /// @param agentId The agent's id
-      /// @throws std::runtime_error if the node is full
-      void enqueue(Id agentId);
-      /// @brief Removes the first agent from the node
-      /// @return Id The agent's id
-      Id dequeue();
-      /// @brief Get the node's queue
-      /// @return dsm::queue<Id> The node's queue
-      const dsm::queue<Id>& agents() const { return m_agents; }
+    /// @brief Put an agent in the node
+    /// @param agentId The agent's id
+    /// @throws std::runtime_error if the node is full
+    void enqueue(Id agentId);
+    /// @brief Removes the first agent from the node
+    /// @return Id The agent's id
+    Id dequeue();
+    /// @brief Get the node's queue
+    /// @return dsm::queue<Id> The node's queue
+    const dsm::queue<Id>& agents() const { return m_agents; }
 
-      /// @brief Returns true if the node is full
-      /// @return bool True if the node is full
-      bool isFull() const override { return m_agents.size() == this->m_capacity; }
-      /// @brief Returns true if the node is a roundabout
-      /// @return bool True if the node is a roundabout
-      bool isRoundabout() const noexcept override { return true; }
+    /// @brief Returns true if the node is full
+    /// @return bool True if the node is full
+    bool isFull() const override { return m_agents.size() == this->m_capacity; }
+    /// @brief Returns true if the node is a roundabout
+    /// @return bool True if the node is a roundabout
+    bool isRoundabout() const noexcept override { return true; }
   };
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   Roundabout<Id, Size>::Roundabout(const NodeConcept<Id, Size>& node)
-          : NodeConcept<Id, Size>{node.id()} {
-        if (node.coords().has_value()) {
-          this->setCoords(node.coords().value());
-        }
-        this->setCapacity(node.capacity());
-      }
+      : NodeConcept<Id, Size>{node.id()} {
+    if (node.coords().has_value()) {
+      this->setCoords(node.coords().value());
+    }
+    this->setCapacity(node.capacity());
+  }
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Roundabout<Id, Size>::enqueue(Id agentId) {

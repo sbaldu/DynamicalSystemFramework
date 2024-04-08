@@ -385,7 +385,9 @@ TEST_CASE("Dynamics") {
     }
   }
   SUBCASE("Roundabout") {
-    GIVEN("A dynamics object with four streets, one agent for each street, two itineraries and a roundabout") {
+    GIVEN(
+        "A dynamics object with four streets, one agent for each street, two itineraries "
+        "and a roundabout") {
       Roundabout roundabout{1};
       roundabout.setCapacity(2);
       Street s1{0, 1, 10., 10., std::make_pair(0, 1)};
@@ -405,7 +407,9 @@ TEST_CASE("Dynamics") {
       dynamics.updatePaths();
       dynamics.addAgent(Agent(0, 0, 0));
       dynamics.addAgent(Agent(1, 1, 2));
-      WHEN("We evolve the dynamics adding an agent on the path of the agent with priority") {
+      WHEN(
+          "We evolve the dynamics adding an agent on the path of the agent with "
+          "priority") {
         dynamics.evolve(false);
         dynamics.addAgent(Agent(2, 0, 1));
         dynamics.evolve(false);

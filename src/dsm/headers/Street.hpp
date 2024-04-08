@@ -39,6 +39,7 @@ namespace dsm {
     Id m_id;
     Size m_capacity;
     Size m_transportCapacity;
+
   public:
     Street() = delete;
     /// @brief Construct a new Street object starting from an existing street
@@ -270,6 +271,7 @@ namespace dsm {
   private:
     Size m_agentCounterIn;
     Size m_agentCounterOut;
+
   public:
     SpireStreet() = delete;
     /// @brief Construct a new SpireStreet object starting from an existing street
