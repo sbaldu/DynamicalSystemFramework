@@ -39,6 +39,7 @@ namespace dsm {
     Id m_id;
     Size m_capacity;
     Size m_transportCapacity;
+
   public:
     Street() = delete;
     /// @brief Construct a new Street object starting from an existing street
@@ -231,7 +232,8 @@ namespace dsm {
   void Street<Id, Size>::setAngle(double angle) {
     if (std::abs(angle) > 2 * std::numbers::pi) {
       throw std::invalid_argument(
-          buildLog("The angle of a street must be between - 2 * pi and 2 * pi. Got: " +  std::to_string(angle) + "."));
+          buildLog("The angle of a street must be between - 2 * pi and 2 * pi. Got: " +
+                   std::to_string(angle) + "."));
     }
     m_angle = angle;
   }
@@ -269,6 +271,7 @@ namespace dsm {
   private:
     Size m_agentCounterIn;
     Size m_agentCounterOut;
+
   public:
     SpireStreet() = delete;
     /// @brief Construct a new SpireStreet object starting from an existing street
