@@ -5,8 +5,8 @@
 
 static constexpr uint8_t DSM_VERSION_MAJOR = 1;
 static constexpr uint8_t DSM_VERSION_MINOR = 3;
-static constexpr uint8_t DSM_VERSION_PATCH = 2;
-static constexpr uint8_t DSM_VERSION_BUILD = 2;
+static constexpr uint8_t DSM_VERSION_PATCH = 3;
+static constexpr uint8_t DSM_VERSION_BUILD = 8;
 
 #include <string>
 
@@ -16,8 +16,8 @@ namespace dsm {
 
 std::string dsm::version() {
   return std::to_string(DSM_VERSION_MAJOR) + "." + std::to_string(DSM_VERSION_MINOR) +
-             "." + std::to_string(DSM_VERSION_PATCH),
-         "." + std::to_string(DSM_VERSION_BUILD);
+         "." + std::to_string(DSM_VERSION_PATCH) + "." +
+         std::to_string(DSM_VERSION_BUILD);
 }
 
 #include "headers/Agent.hpp"
