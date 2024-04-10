@@ -106,10 +106,16 @@ TEST_CASE("Street") {
 
     Street street{1, 4, 3.5, std::make_pair(0, 1)};
     // fill the queue
+    street.addAgent(a1.id());
     street.enqueue(a1.id());
+    CHECK_THROWS(street.enqueue(a1.id()));
+    CHECK_THROWS(street.enqueue(a2.id()));
+    street.addAgent(a2.id());
     street.enqueue(a2.id());
     CHECK_EQ(street.density(), 0.5);
+    street.addAgent(a3.id());
     street.enqueue(a3.id());
+    street.addAgent(a4.id());
     street.enqueue(a4.id());
     CHECK_EQ(street.queue().front(), 1);
     CHECK_EQ(street.queue().back(), 4);
@@ -129,9 +135,13 @@ TEST_CASE("Street") {
 
     Street street{1, 4, 3.5, std::make_pair(0, 1)};
     // fill the queue
+    street.addAgent(a1.id());
     street.enqueue(a1.id());
+    street.addAgent(a2.id());
     street.enqueue(a2.id());
+    street.addAgent(a3.id());
     street.enqueue(a3.id());
+    street.addAgent(a4.id());
     street.enqueue(a4.id());
     CHECK_EQ(street.queue().front(),
              1);  // check that agent 1 is at the front of the queue
@@ -169,15 +179,19 @@ TEST_CASE("SpireStreet") {
     GIVEN("A spire street") {
       SpireStreet street{1, 4, 3.5, std::make_pair(0, 1)};
       WHEN("An agent is enqueued") {
+        street.addAgent(1);
+        THEN("The input flow is one") { CHECK_EQ(street.inputFlow(), 1); }
         street.enqueue(1);
         THEN("The density is updated") { CHECK_EQ(street.density(), 0.25); }
-        THEN("Input flow is one") { CHECK_EQ(street.inputFlow(), 1); }
         THEN("Output flow is zero") { CHECK_EQ(street.outputFlow(), 0); }
         THEN("Mean flow is one") { CHECK_EQ(street.meanFlow(), 1); }
       }
       WHEN("Three agents are enqueued") {
+        street.addAgent(1);
         street.enqueue(1);
+        street.addAgent(2);
         street.enqueue(2);
+        street.addAgent(3);
         street.enqueue(3);
         THEN("The density is updated") { CHECK_EQ(street.density(), 0.75); }
         THEN("Input flow is three") { CHECK_EQ(street.inputFlow(), 3); }
@@ -185,6 +199,7 @@ TEST_CASE("SpireStreet") {
         THEN("Mean flow is three") { CHECK_EQ(street.meanFlow(), 3); }
       }
       WHEN("An agent is dequeued") {
+        street.addAgent(1);
         street.enqueue(1);
         street.dequeue();
         THEN("The density is updated") { CHECK_EQ(street.density(), 0); }
@@ -193,8 +208,11 @@ TEST_CASE("SpireStreet") {
         THEN("Mean flow is zero") { CHECK_EQ(street.meanFlow(), 0); }
       }
       WHEN("Three agents are dequeued") {
+        street.addAgent(1);
         street.enqueue(1);
+        street.addAgent(2);
         street.enqueue(2);
+        street.addAgent(3);
         street.enqueue(3);
         street.dequeue();
         street.dequeue();
@@ -205,18 +223,24 @@ TEST_CASE("SpireStreet") {
         THEN("Mean flow is zero") { CHECK_EQ(street.meanFlow(), 0); }
       }
       WHEN("Input is greater than output") {
+        street.addAgent(1);
         street.enqueue(1);
+        street.addAgent(2);
         street.enqueue(2);
         street.dequeue();
         street.dequeue();
+        street.addAgent(3);
         street.enqueue(3);
         THEN("The density is updated") { CHECK_EQ(street.density(), 0.25); }
         THEN("Mean flow is one") { CHECK_EQ(street.meanFlow(), 1); }
       }
       WHEN("Output is greater than input") {
+        street.addAgent(1);
         street.enqueue(1);
+        street.addAgent(2);
         street.enqueue(2);
         street.meanFlow();
+        street.addAgent(3);
         street.enqueue(3);
         street.dequeue();
         street.dequeue();
