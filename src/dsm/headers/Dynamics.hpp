@@ -240,7 +240,7 @@ namespace dsm {
       requires std::is_invocable_v<F, Tn...>
     void evolve(F f, Tn... args);
 
-    /// @brief Get the mean speed of the agents
+    /// @brief Get the mean speed of the agents in \f$m/s\f$
     /// @return Measurement<double> The mean speed of the agents and the standard deviation
     Measurement<double> meanSpeed() const;
     // TODO: implement the following functions
@@ -249,18 +249,18 @@ namespace dsm {
     virtual std::optional<double> streetMeanSpeed(Id) const = 0;
     virtual Measurement<double> streetMeanSpeed() const = 0;
     virtual Measurement<double> streetMeanSpeed(double, bool) const = 0;
-    /// @brief Get the mean density of the streets
+    /// @brief Get the mean density of the streets in \f$m^{-1}\f$
     /// @return Measurement<double> The mean density of the streets and the standard deviation
     Measurement<double> streetMeanDensity() const;
-    /// @brief Get the mean flow of the streets
+    /// @brief Get the mean flow of the streets in \f$s^{-1}\f$
     /// @return Measurement<double> The mean flow of the streets and the standard deviation
     Measurement<double> streetMeanFlow() const;
-    /// @brief Get the mean flow of the streets
+    /// @brief Get the mean flow of the streets in \f$s^{-1}\f$
     /// @param threshold The density threshold to consider
     /// @param above If true, the function returns the mean flow of the streets with a density above the threshold, otherwise below
     /// @return Measurement<double> The mean flow of the streets and the standard deviation
     Measurement<double> streetMeanFlow(double threshold, bool above) const;
-    /// @brief Get the mean travel time of the agents
+    /// @brief Get the mean travel time of the agents in \f$s\f$
     /// @param clearData If true, the travel times are cleared after the computation
     /// @return Measurement<double> The mean travel time of the agents and the standard
     Measurement<double> meanTravelTime(bool clearData = false);
@@ -873,16 +873,16 @@ namespace dsm {
     /// @param speedFluctuationSTD The standard deviation of the speed fluctuation
     /// @throw std::invalid_argument, If the standard deviation is negative
     void setSpeedFluctuationSTD(double speedFluctuationSTD);
-    /// @brief Get the mean speed of a street
+    /// @brief Get the mean speed of a street in \f$m/s\f$
     /// @details The mean speed of a street is given by the formula:
     /// \f$ v_{\text{mean}} = v_{\text{max}} \left(1 - \frac{\alpha}{2} \left( n - 1\right)  \right) \f$
     /// where \f$ v_{\text{max}} \f$ is the maximum speed of the street, \f$ \alpha \f$ is the minimum speed rateo divided by the capacity
     /// and \f$ n \f$ is the number of agents in the street
     std::optional<double> streetMeanSpeed(Id streetId) const override;
-    /// @brief Get the mean speed of the streets
+    /// @brief Get the mean speed of the streets in \f$m/s\f$
     /// @return Measurement The mean speed of the agents and the standard deviation
     Measurement<double> streetMeanSpeed() const override;
-    /// @brief Get the mean speed of the streets
+    /// @brief Get the mean speed of the streets with density above or below a threshold in \f$m/s\f$
     /// @param threshold The density threshold to consider
     /// @param above If true, the function returns the mean speed of the streets with a density above the threshold, otherwise below
     /// @return Measurement The mean speed of the agents and the standard deviation
