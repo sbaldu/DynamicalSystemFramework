@@ -140,10 +140,13 @@ namespace dsm {
     /// @brief Get the street's node pair
     /// @return std::pair<Id, Id>, The street's node pair
     const std::pair<Id, Id>& nodePair() const { return m_nodePair; }
+    /// @brief  Get the number of agents on the street
+    /// @return Size, The number of agents on the street
+    Size nAgents() const { return m_exitQueue.size() + m_waitingAgents.size(); }
     /// @brief Get the street's density
     /// @return double, The street's density
     double density() const {
-      return static_cast<double>(m_exitQueue.size() + m_waitingAgents.size()) /
+      return static_cast<double>(nAgents()) /
              m_capacity;
     }
     /// @brief Get the street's speed limit
