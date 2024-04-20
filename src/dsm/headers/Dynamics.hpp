@@ -260,6 +260,10 @@ namespace dsm {
     /// @param above If true, the function returns the mean flow of the streets with a density above the threshold, otherwise below
     /// @return Measurement<double> The mean flow of the streets and the standard deviation
     Measurement<double> streetMeanFlow(double threshold, bool above) const;
+    /// @brief Get the mean spire input flow of the streets in \f$s^{-1}\f$
+    /// @return Measurement<double> The mean spire input flow of the streets and the standard deviation
+    /// @details The spire input flow is computed as the sum of counts over the product of the number of spires and the time delta
+    Measurement<double> meanSpireInputFlow();
     /// @brief Get the mean spire output flow of the streets in \f$s^{-1}\f$
     /// @return Measurement<double> The mean spire output flow of the streets and the standard deviation
     /// @details The spire output flow is computed as the sum of counts over the product of the number of spires and the time delta
@@ -832,6 +836,25 @@ namespace dsm {
         } else {
           flows.push_back(street->density());  // 0 * NaN = 0
         }
+      }
+    }
+    return Measurement(flows);
+  }
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>)
+  Measurement<double> Dynamics<Id, Size, Delay>::meanSpireInputFlow() {
+    auto deltaTime{m_time - m_previousSpireTime};
+    if (deltaTime == 0) {
+      return Measurement(0., 0.);
+    }
+    m_previousSpireTime = m_time;
+    std::vector<double> flows;
+    flows.reserve(m_graph.streetSet().size());
+    for (const auto& [streetId, street] : m_graph.streetSet()) {
+      if (street->isSpire()) {
+        auto &spire = dynamic_cast<SpireStreet<Id, Size> &>(*street);
+        flows.push_back(static_cast<double>(spire.inputCounts()) / deltaTime);
       }
     }
     return Measurement(flows);
