@@ -183,7 +183,9 @@ TEST_CASE("SpireStreet") {
         street.addAgent(1);
         THEN("The input flow is one") { CHECK_EQ(street.inputFlow(), 1); }
         street.enqueue(1);
-        THEN("The density is updated") { CHECK_EQ(doctest::Approx(street.density()), 0.285714); }
+        THEN("The density is updated") {
+          CHECK_EQ(doctest::Approx(street.density()), 0.285714);
+        }
         THEN("Output flow is zero") { CHECK_EQ(street.outputFlow(), 0); }
         THEN("Mean flow is one") { CHECK_EQ(street.meanFlow(), 1); }
       }
@@ -194,7 +196,9 @@ TEST_CASE("SpireStreet") {
         street.enqueue(2);
         street.addAgent(3);
         street.enqueue(3);
-        THEN("The density is updated") { CHECK_EQ(doctest::Approx(street.density()), 0.857143); }
+        THEN("The density is updated") {
+          CHECK_EQ(doctest::Approx(street.density()), 0.857143);
+        }
         THEN("Input flow is three") { CHECK_EQ(street.inputFlow(), 3); }
         THEN("Output flow is zero") { CHECK_EQ(street.outputFlow(), 0); }
         THEN("Mean flow is three") { CHECK_EQ(street.meanFlow(), 3); }
@@ -232,7 +236,9 @@ TEST_CASE("SpireStreet") {
         street.dequeue();
         street.addAgent(3);
         street.enqueue(3);
-        THEN("The density is updated") { CHECK_EQ(doctest::Approx(street.density()), 0.285714); }
+        THEN("The density is updated") {
+          CHECK_EQ(doctest::Approx(street.density()), 0.285714);
+        }
         THEN("Mean flow is one") { CHECK_EQ(street.meanFlow(), 1); }
       }
       WHEN("Output is greater than input") {
@@ -245,7 +251,9 @@ TEST_CASE("SpireStreet") {
         street.enqueue(3);
         street.dequeue();
         street.dequeue();
-        THEN("The density is updated") { CHECK_EQ(doctest::Approx(street.density()), 0.285714); }
+        THEN("The density is updated") {
+          CHECK_EQ(doctest::Approx(street.density()), 0.285714);
+        }
         THEN("Mean flow is minus one") { CHECK_EQ(street.meanFlow(), -1); }
       }
     }
