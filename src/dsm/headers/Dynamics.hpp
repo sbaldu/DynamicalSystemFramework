@@ -850,7 +850,7 @@ namespace dsm {
     for (const auto& [streetId, street] : m_graph.streetSet()) {
       if (street->isSpire()) {
         auto &spire = dynamic_cast<SpireStreet<Id, Size> &>(*street);
-        flows.push_back(static_cast<double>(spire.outputFlow()) / deltaTime);
+        flows.push_back(static_cast<double>(spire.outputCounts()) / deltaTime);
       }
     }
     return Measurement(flows);

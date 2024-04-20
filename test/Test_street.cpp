@@ -181,12 +181,12 @@ TEST_CASE("SpireStreet") {
       SpireStreet street{1, 4, 3.5, std::make_pair(0, 1)};
       WHEN("An agent is enqueued") {
         street.addAgent(1);
-        THEN("The input flow is one") { CHECK_EQ(street.inputFlow(), 1); }
+        THEN("The input flow is one") { CHECK_EQ(street.inputCounts(), 1); }
         street.enqueue(1);
         THEN("The density is updated") {
           CHECK_EQ(doctest::Approx(street.density()), 0.285714);
         }
-        THEN("Output flow is zero") { CHECK_EQ(street.outputFlow(), 0); }
+        THEN("Output flow is zero") { CHECK_EQ(street.outputCounts(), 0); }
         THEN("Mean flow is one") { CHECK_EQ(street.meanFlow(), 1); }
       }
       WHEN("Three agents are enqueued") {
@@ -199,8 +199,8 @@ TEST_CASE("SpireStreet") {
         THEN("The density is updated") {
           CHECK_EQ(doctest::Approx(street.density()), 0.857143);
         }
-        THEN("Input flow is three") { CHECK_EQ(street.inputFlow(), 3); }
-        THEN("Output flow is zero") { CHECK_EQ(street.outputFlow(), 0); }
+        THEN("Input flow is three") { CHECK_EQ(street.inputCounts(), 3); }
+        THEN("Output flow is zero") { CHECK_EQ(street.outputCounts(), 0); }
         THEN("Mean flow is three") { CHECK_EQ(street.meanFlow(), 3); }
       }
       WHEN("An agent is dequeued") {
@@ -208,8 +208,8 @@ TEST_CASE("SpireStreet") {
         street.enqueue(1);
         street.dequeue();
         THEN("The density is updated") { CHECK_EQ(doctest::Approx(street.density()), 0); }
-        THEN("Input flow is one") { CHECK_EQ(street.inputFlow(), 1); }
-        THEN("Output flow is one") { CHECK_EQ(street.outputFlow(), 1); }
+        THEN("Input flow is one") { CHECK_EQ(street.inputCounts(), 1); }
+        THEN("Output flow is one") { CHECK_EQ(street.outputCounts(), 1); }
         THEN("Mean flow is zero") { CHECK_EQ(street.meanFlow(), 0); }
       }
       WHEN("Three agents are dequeued") {
@@ -223,8 +223,8 @@ TEST_CASE("SpireStreet") {
         street.dequeue();
         street.dequeue();
         THEN("The density is updated") { CHECK_EQ(doctest::Approx(street.density()), 0); }
-        THEN("Input flow is three") { CHECK_EQ(street.inputFlow(), 3); }
-        THEN("Output flow is three") { CHECK_EQ(street.outputFlow(), 3); }
+        THEN("Input flow is three") { CHECK_EQ(street.inputCounts(), 3); }
+        THEN("Output flow is three") { CHECK_EQ(street.outputCounts(), 3); }
         THEN("Mean flow is zero") { CHECK_EQ(street.meanFlow(), 0); }
       }
       WHEN("Input is greater than output") {

@@ -326,14 +326,14 @@ namespace dsm {
     /// @throw std::runtime_error If the street's queue is full
     void addAgent(Id agentId) override;
 
-    /// @brief Get the input flow of the street
-    /// @return Size The input flow of the street
-    /// @details Once the input flow is retrieved, it is reset to 0 together with the output flow.
-    Size inputFlow();
-    /// @brief Get the output flow of the street
-    /// @return Size The output flow of the street
-    /// @details Once the output flow is retrieved, it is reset to 0 together with the input flow.
-    Size outputFlow();
+    /// @brief Get the input counts of the street
+    /// @return Size The input counts of the street
+    /// @details Once the input counts are retrieved, the counter is reset to 0 together with the output counter.
+    Size inputCounts();
+    /// @brief Get the output counts of the street
+    /// @return Size The output counts of the street
+    /// @details Once the output counts are retrieved, the counter is reset to 0 together with the input counter.
+    Size outputCounts();
     /// @brief Get the mean flow of the street
     /// @return int The flow of the street, i.e. the difference between input and output flows
     /// @details Once the flow is retrieved, bothh the input and output flows are reset to 0.
@@ -379,7 +379,7 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  Size SpireStreet<Id, Size>::inputFlow() {
+  Size SpireStreet<Id, Size>::inputCounts() {
     Size flow = m_agentCounterIn;
     m_agentCounterIn = 0;
     m_agentCounterOut = 0;
@@ -387,7 +387,7 @@ namespace dsm {
   }
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  Size SpireStreet<Id, Size>::outputFlow() {
+  Size SpireStreet<Id, Size>::outputCounts() {
     Size flow = m_agentCounterOut;
     m_agentCounterIn = 0;
     m_agentCounterOut = 0;
