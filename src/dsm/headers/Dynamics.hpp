@@ -240,7 +240,7 @@ namespace dsm {
       requires std::is_invocable_v<F, Tn...>
     void evolve(F f, Tn... args);
 
-    /// @brief Get the mean speed of the agents
+    /// @brief Get the mean speed of the agents in \f$m/s\f$
     /// @return Measurement<double> The mean speed of the agents and the standard deviation
     Measurement<double> meanSpeed() const;
     // TODO: implement the following functions
@@ -249,18 +249,18 @@ namespace dsm {
     virtual std::optional<double> streetMeanSpeed(Id) const = 0;
     virtual Measurement<double> streetMeanSpeed() const = 0;
     virtual Measurement<double> streetMeanSpeed(double, bool) const = 0;
-    /// @brief Get the mean density of the streets
+    /// @brief Get the mean density of the streets in \f$m^{-1}\f$
     /// @return Measurement<double> The mean density of the streets and the standard deviation
     Measurement<double> streetMeanDensity() const;
-    /// @brief Get the mean flow of the streets
+    /// @brief Get the mean flow of the streets in \f$s^{-1}\f$
     /// @return Measurement<double> The mean flow of the streets and the standard deviation
     Measurement<double> streetMeanFlow() const;
-    /// @brief Get the mean flow of the streets
+    /// @brief Get the mean flow of the streets in \f$s^{-1}\f$
     /// @param threshold The density threshold to consider
     /// @param above If true, the function returns the mean flow of the streets with a density above the threshold, otherwise below
     /// @return Measurement<double> The mean flow of the streets and the standard deviation
     Measurement<double> streetMeanFlow(double threshold, bool above) const;
-    /// @brief Get the mean travel time of the agents
+    /// @brief Get the mean travel time of the agents in \f$s\f$
     /// @param clearData If true, the travel times are cleared after the computation
     /// @return Measurement<double> The mean travel time of the agents and the standard
     Measurement<double> meanTravelTime(bool clearData = false);
@@ -339,7 +339,7 @@ namespace dsm {
       }
       const auto& nextStreet{
           m_graph.streetSet()[m_nextStreetId(agentId, destinationNode->id())]};
-      if (!(nextStreet->density() < 1)) {
+      if (nextStreet->isFull()) {
         continue;
       }
       street->dequeue();
@@ -366,7 +366,7 @@ namespace dsm {
         auto& intersection = dynamic_cast<Node<Id, Size>&>(*node);
         for (const auto [angle, agentId] : intersection.agents()) {
           const auto& nextStreet{m_graph.streetSet()[m_agentNextStreetId[agentId]]};
-          if (nextStreet->density() < 1) {
+          if (!(nextStreet->isFull())) {
             intersection.removeAgent(agentId);
             m_agents[agentId]->setStreetId(nextStreet->id());
             this->setAgentSpeed(agentId);
@@ -389,7 +389,7 @@ namespace dsm {
           const auto agentId{roundabout.agents().front()};
           const auto& nextStreet{
               this->m_graph.streetSet()[m_nextStreetId(agentId, node->id())]};
-          if (nextStreet->density() < 1) {
+          if (!(nextStreet->isFull())) {
             roundabout.dequeue();
             m_agents[agentId]->setStreetId(nextStreet->id());
             this->setAgentSpeed(agentId);
@@ -433,7 +433,7 @@ namespace dsm {
         }
         const auto& nextStreet{
             m_graph.streetSet()[this->m_nextStreetId(agentId, srcNode->id())]};
-        if (nextStreet->density() == 1) {
+        if (nextStreet->isFull()) {
           continue;
         }
         assert(srcNode->id() == nextStreet->nodePair().first);
@@ -650,7 +650,7 @@ namespace dsm {
         Size step = streetDist(this->m_generator);
         std::advance(streetIt, step);
         streetId = streetIt->first;
-      } while (this->m_graph.streetSet()[streetId]->density() == 1);
+      } while (this->m_graph.streetSet()[streetId]->isFull());
       const auto& street{this->m_graph.streetSet()[streetId]};
       Agent<Id, Size, Delay> agent{
           agentId, itineraryId.value(), street->nodePair().first};
@@ -811,7 +811,7 @@ namespace dsm {
     std::vector<double> flows;
     flows.reserve(m_graph.streetSet().size());
     for (const auto& [streetId, street] : m_graph.streetSet()) {
-      if (above && street->density() > threshold) {
+      if (above and (street->nAgents() > (threshold * street->capacity()))) {
         auto speedOpt{this->streetMeanSpeed(streetId)};
         if (speedOpt.has_value()) {
           double flow{street->density() * speedOpt.value()};
@@ -819,7 +819,7 @@ namespace dsm {
         } else {
           flows.push_back(street->density());  // 0 * NaN = 0
         }
-      } else if (!above && street->density() < threshold) {
+      } else if (!above and (street->nAgents() < (threshold * street->capacity()))) {
         auto speedOpt{this->streetMeanSpeed(streetId)};
         if (speedOpt.has_value()) {
           double flow{street->density() * speedOpt.value()};
@@ -873,16 +873,16 @@ namespace dsm {
     /// @param speedFluctuationSTD The standard deviation of the speed fluctuation
     /// @throw std::invalid_argument, If the standard deviation is negative
     void setSpeedFluctuationSTD(double speedFluctuationSTD);
-    /// @brief Get the mean speed of a street
+    /// @brief Get the mean speed of a street in \f$m/s\f$
     /// @details The mean speed of a street is given by the formula:
     /// \f$ v_{\text{mean}} = v_{\text{max}} \left(1 - \frac{\alpha}{2} \left( n - 1\right)  \right) \f$
     /// where \f$ v_{\text{max}} \f$ is the maximum speed of the street, \f$ \alpha \f$ is the minimum speed rateo divided by the capacity
     /// and \f$ n \f$ is the number of agents in the street
     std::optional<double> streetMeanSpeed(Id streetId) const override;
-    /// @brief Get the mean speed of the streets
+    /// @brief Get the mean speed of the streets in \f$m/s\f$
     /// @return Measurement The mean speed of the agents and the standard deviation
     Measurement<double> streetMeanSpeed() const override;
-    /// @brief Get the mean speed of the streets
+    /// @brief Get the mean speed of the streets with density above or below a threshold in \f$m/s\f$
     /// @param threshold The density threshold to consider
     /// @param above If true, the function returns the mean speed of the streets with a density above the threshold, otherwise below
     /// @return Measurement The mean speed of the agents and the standard deviation
@@ -895,7 +895,8 @@ namespace dsm {
   void FirstOrderDynamics<Id, Size, Delay>::setAgentSpeed(Size agentId) {
     const auto& agent{this->m_agents[agentId]};
     const auto& street{this->m_graph.streetSet()[agent->streetId().value()]};
-    double speed{street->maxSpeed() * (1. - this->m_minSpeedRateo * street->density())};
+    double speed{street->maxSpeed() *
+                 (1. - this->m_minSpeedRateo * street->nAgents() / street->capacity())};
     if (this->m_speedFluctuationSTD > 0.) {
       std::normal_distribution<double> speedDist{speed,
                                                  speed * this->m_speedFluctuationSTD};
@@ -994,14 +995,14 @@ namespace dsm {
     speeds.reserve(this->m_graph.streetSet().size());
     for (const auto& [streetId, street] : this->m_graph.streetSet()) {
       if (above) {
-        if (street->density() > threshold) {
+        if (street->nAgents() > (threshold * street->capacity())) {
           auto speedOpt{this->streetMeanSpeed(streetId)};
           if (speedOpt.has_value()) {
             speeds.push_back(speedOpt.value());
           }
         }
       } else {
-        if (street->density() < threshold) {
+        if (street->nAgents() < (threshold * street->capacity())) {
           auto speedOpt{this->streetMeanSpeed(streetId)};
           if (speedOpt.has_value()) {
             speeds.push_back(speedOpt.value());
