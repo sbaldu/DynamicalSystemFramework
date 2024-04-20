@@ -73,7 +73,7 @@ namespace dsm {
   protected:
     std::unordered_map<Id, std::unique_ptr<Itinerary<Id>>> m_itineraries;
     std::map<Id, std::unique_ptr<Agent<Id, Size, Delay>>> m_agents;
-    TimePoint m_time;
+    TimePoint m_time, m_previousSpireTime;
     Graph<Id, Size> m_graph;
     double m_errorProbability;
     double m_minSpeedRateo;
@@ -260,6 +260,10 @@ namespace dsm {
     /// @param above If true, the function returns the mean flow of the streets with a density above the threshold, otherwise below
     /// @return Measurement<double> The mean flow of the streets and the standard deviation
     Measurement<double> streetMeanFlow(double threshold, bool above) const;
+    /// @brief Get the mean spire output flow of the streets in \f$s^{-1}\f$
+    /// @return Measurement<double> The mean spire output flow of the streets and the standard deviation
+    /// @details The spire output flow is computed as the sum of counts over the product of the number of spires and the time delta
+    Measurement<double> meanSpireOutputFlow();
     /// @brief Get the mean travel time of the agents in \f$s\f$
     /// @param clearData If true, the travel times are cleared after the computation
     /// @return Measurement<double> The mean travel time of the agents and the standard
@@ -271,6 +275,7 @@ namespace dsm {
              is_numeric_v<Delay>)
   Dynamics<Id, Size, Delay>::Dynamics(Graph<Id, Size>& graph)
       : m_time{0},
+        m_previousSpireTime{0},
         m_graph{std::move(graph)},
         m_errorProbability{0.},
         m_minSpeedRateo{0.},
@@ -827,6 +832,25 @@ namespace dsm {
         } else {
           flows.push_back(street->density());  // 0 * NaN = 0
         }
+      }
+    }
+    return Measurement(flows);
+  }
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>)
+  Measurement<double> Dynamics<Id, Size, Delay>::meanSpireOutputFlow() {
+    auto deltaTime{m_time - m_previousSpireTime};
+    if (deltaTime == 0) {
+      return Measurement(0., 0.);
+    }
+    m_previousSpireTime = m_time;
+    std::vector<double> flows;
+    flows.reserve(m_graph.streetSet().size());
+    for (const auto& [streetId, street] : m_graph.streetSet()) {
+      if (street->isSpire()) {
+        auto &spire = dynamic_cast<SpireStreet<Id, Size> &>(*street);
+        flows.push_back(static_cast<double>(spire.outputFlow()) / deltaTime);
       }
     }
     return Measurement(flows);
