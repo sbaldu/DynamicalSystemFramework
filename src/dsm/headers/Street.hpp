@@ -143,12 +143,12 @@ namespace dsm {
     /// @brief  Get the number of agents on the street
     /// @return Size, The number of agents on the street
     Size nAgents() const { return m_exitQueue.size() + m_waitingAgents.size(); }
-    /// @brief Get the street's density
+    /// @brief Get the street's density in \f$m^{-1}\f$
     /// @return double, The street's density
-    double density() const {
-      return static_cast<double>(nAgents()) /
-             m_capacity;
-    }
+    double density() const { return nAgents() / m_len; }
+    /// @brief Check if the street is full
+    /// @return bool, True if the street is full, false otherwise
+    bool isFull() const { return nAgents() == m_capacity; }
     /// @brief Get the street's speed limit
     /// @return double, The street's speed limit
     double maxSpeed() const { return m_maxSpeed; }

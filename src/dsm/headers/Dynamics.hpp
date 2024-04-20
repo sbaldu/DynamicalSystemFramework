@@ -339,7 +339,7 @@ namespace dsm {
       }
       const auto& nextStreet{
           m_graph.streetSet()[m_nextStreetId(agentId, destinationNode->id())]};
-      if (!(nextStreet->density() < 1)) {
+      if (nextStreet->isFull()) {
         continue;
       }
       street->dequeue();
@@ -366,7 +366,7 @@ namespace dsm {
         auto& intersection = dynamic_cast<Node<Id, Size>&>(*node);
         for (const auto [angle, agentId] : intersection.agents()) {
           const auto& nextStreet{m_graph.streetSet()[m_agentNextStreetId[agentId]]};
-          if (nextStreet->density() < 1) {
+          if (!(nextStreet->isFull())) {
             intersection.removeAgent(agentId);
             m_agents[agentId]->setStreetId(nextStreet->id());
             this->setAgentSpeed(agentId);
@@ -389,7 +389,7 @@ namespace dsm {
           const auto agentId{roundabout.agents().front()};
           const auto& nextStreet{
               this->m_graph.streetSet()[m_nextStreetId(agentId, node->id())]};
-          if (nextStreet->density() < 1) {
+          if (!(nextStreet->isFull())) {
             roundabout.dequeue();
             m_agents[agentId]->setStreetId(nextStreet->id());
             this->setAgentSpeed(agentId);
@@ -433,7 +433,7 @@ namespace dsm {
         }
         const auto& nextStreet{
             m_graph.streetSet()[this->m_nextStreetId(agentId, srcNode->id())]};
-        if (nextStreet->density() == 1) {
+        if (nextStreet->isFull()) {
           continue;
         }
         assert(srcNode->id() == nextStreet->nodePair().first);
@@ -650,7 +650,7 @@ namespace dsm {
         Size step = streetDist(this->m_generator);
         std::advance(streetIt, step);
         streetId = streetIt->first;
-      } while (this->m_graph.streetSet()[streetId]->density() == 1);
+      } while (this->m_graph.streetSet()[streetId]->isFull());
       const auto& street{this->m_graph.streetSet()[streetId]};
       Agent<Id, Size, Delay> agent{
           agentId, itineraryId.value(), street->nodePair().first};
@@ -811,7 +811,7 @@ namespace dsm {
     std::vector<double> flows;
     flows.reserve(m_graph.streetSet().size());
     for (const auto& [streetId, street] : m_graph.streetSet()) {
-      if (above && street->density() > threshold) {
+      if (above and (street->nAgents() > (threshold * street->capacity()))) {
         auto speedOpt{this->streetMeanSpeed(streetId)};
         if (speedOpt.has_value()) {
           double flow{street->density() * speedOpt.value()};
@@ -819,7 +819,7 @@ namespace dsm {
         } else {
           flows.push_back(street->density());  // 0 * NaN = 0
         }
-      } else if (!above && street->density() < threshold) {
+      } else if (!above and (street->nAgents() < (threshold * street->capacity()))) {
         auto speedOpt{this->streetMeanSpeed(streetId)};
         if (speedOpt.has_value()) {
           double flow{street->density() * speedOpt.value()};
@@ -895,7 +895,7 @@ namespace dsm {
   void FirstOrderDynamics<Id, Size, Delay>::setAgentSpeed(Size agentId) {
     const auto& agent{this->m_agents[agentId]};
     const auto& street{this->m_graph.streetSet()[agent->streetId().value()]};
-    double speed{street->maxSpeed() * (1. - this->m_minSpeedRateo * street->density())};
+    double speed{street->maxSpeed() * (1. - this->m_minSpeedRateo * street->nAgents() / street->capacity())};
     if (this->m_speedFluctuationSTD > 0.) {
       std::normal_distribution<double> speedDist{speed,
                                                  speed * this->m_speedFluctuationSTD};
@@ -994,14 +994,14 @@ namespace dsm {
     speeds.reserve(this->m_graph.streetSet().size());
     for (const auto& [streetId, street] : this->m_graph.streetSet()) {
       if (above) {
-        if (street->density() > threshold) {
+        if (street->nAgents() > (threshold * street->capacity())) {
           auto speedOpt{this->streetMeanSpeed(streetId)};
           if (speedOpt.has_value()) {
             speeds.push_back(speedOpt.value());
           }
         }
       } else {
-        if (street->density() < threshold) {
+        if (street->nAgents() < (threshold * street->capacity())) {
           auto speedOpt{this->streetMeanSpeed(streetId)};
           if (speedOpt.has_value()) {
             speeds.push_back(speedOpt.value());
