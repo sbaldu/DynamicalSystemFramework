@@ -33,13 +33,13 @@ TEST_CASE("Dynamics") {
         }
         THEN("The mean speed, density, flow and travel time are 0") {
           CHECK_EQ(dynamics.meanSpeed().mean, 0.);
-          CHECK_EQ(dynamics.meanSpeed().error, 0.);
+          CHECK_EQ(dynamics.meanSpeed().std, 0.);
           CHECK_EQ(dynamics.streetMeanDensity().mean, 0.);
-          CHECK_EQ(dynamics.streetMeanDensity().error, 0.);
+          CHECK_EQ(dynamics.streetMeanDensity().std, 0.);
           CHECK_EQ(dynamics.streetMeanFlow().mean, 0.);
-          CHECK_EQ(dynamics.streetMeanFlow().error, 0.);
+          CHECK_EQ(dynamics.streetMeanFlow().std, 0.);
           CHECK_EQ(dynamics.meanTravelTime().mean, 0.);
-          CHECK_EQ(dynamics.meanTravelTime().error, 0.);
+          CHECK_EQ(dynamics.meanTravelTime().std, 0.);
         }
       }
       WHEN("We transform a node into a traffic light and create the dynamics") {
@@ -490,12 +490,12 @@ TEST_CASE("Dynamics") {
     CHECK(dynamics.streetMeanSpeed(1).has_value());
     CHECK_EQ(dynamics.streetMeanSpeed(1).value(), meanSpeed);
     CHECK_EQ(dynamics.streetMeanSpeed().mean, dynamics.meanSpeed().mean);
-    CHECK_EQ(dynamics.streetMeanSpeed().error, 0.);
+    CHECK_EQ(dynamics.streetMeanSpeed().std, 0.);
     // street 1 density should be 0.4 so...
     CHECK_EQ(dynamics.streetMeanSpeed(0.2, true).mean, meanSpeed);
-    CHECK_EQ(dynamics.streetMeanSpeed(0.2, true).error, 0.);
+    CHECK_EQ(dynamics.streetMeanSpeed(0.2, true).std, 0.);
     CHECK_EQ(dynamics.streetMeanSpeed(0.2, false).mean, 0.);
-    CHECK_EQ(dynamics.streetMeanSpeed(0.2, false).error, 0.);
+    CHECK_EQ(dynamics.streetMeanSpeed(0.2, false).std, 0.);
     dynamics.addAgents(0, 10, 0);
     dynamics.evolve(false);
     meanSpeed = 0.;
@@ -617,14 +617,14 @@ TEST_CASE("Dynamics") {
         auto meanSpireFlow = dynamics.meanSpireInputFlow();
         THEN("The mean flow of the spire street is the same as the agent flow") {
           CHECK_EQ(meanSpireFlow.mean, 0.5);
-          CHECK_EQ(meanSpireFlow.error, 0);
+          CHECK_EQ(meanSpireFlow.std, 0);
         }
         dynamics.evolve(false);
         dynamics.evolve(false);
         meanSpireFlow = dynamics.meanSpireOutputFlow();
         THEN("The mean flow of the spire street is the same as the agent flow") {
           CHECK_EQ(meanSpireFlow.mean, 0.5);
-          CHECK_EQ(meanSpireFlow.error, 0);
+          CHECK_EQ(meanSpireFlow.std, 0);
         }
       }
     }

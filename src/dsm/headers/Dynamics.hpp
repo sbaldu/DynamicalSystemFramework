@@ -34,21 +34,21 @@ namespace dsm {
   /// @brief The Measurement struct represents the mean of a quantity and its standard deviation
   /// @tparam T The type of the mean and the standard deviation
   /// @param mean The mean
-  /// @param error The standard deviation of the sample
+  /// @param std The standard deviation of the sample
   template <typename T>
   struct Measurement {
     T mean;
-    T error;
+    T std;
 
-    Measurement(T mean, T error) : mean{mean}, error{error} {}
+    Measurement(T mean, T std) : mean{mean}, std{std} {}
     Measurement(const std::vector<T>& data) {
       if (data.size() == 0) {
         mean = 0.;
-        error = 0.;
+        std = 0.;
       } else {
         mean = std::accumulate(data.cbegin(), data.cend(), 0.) / data.size();
         if (data.size() < 2) {
-          error = 0.;
+          std = 0.;
         } else {
           const double cvariance{std::accumulate(data.cbegin(),
                                                  data.cend(),
@@ -57,7 +57,7 @@ namespace dsm {
                                                    return sum + std::pow(value - mean, 2);
                                                  }) /
                                  (data.size() - 1)};
-          error = std::sqrt(cvariance);
+          std = std::sqrt(cvariance);
         }
       }
     }
