@@ -853,7 +853,7 @@ namespace dsm {
     flows.reserve(m_graph.streetSet().size());
     for (const auto& [streetId, street] : m_graph.streetSet()) {
       if (street->isSpire()) {
-        auto &spire = dynamic_cast<SpireStreet<Id, Size> &>(*street);
+        auto& spire = dynamic_cast<SpireStreet<Id, Size>&>(*street);
         flows.push_back(static_cast<double>(spire.inputCounts()) / deltaTime);
       }
     }
@@ -872,7 +872,7 @@ namespace dsm {
     flows.reserve(m_graph.streetSet().size());
     for (const auto& [streetId, street] : m_graph.streetSet()) {
       if (street->isSpire()) {
-        auto &spire = dynamic_cast<SpireStreet<Id, Size> &>(*street);
+        auto& spire = dynamic_cast<SpireStreet<Id, Size>&>(*street);
         flows.push_back(static_cast<double>(spire.outputCounts()) / deltaTime);
       }
     }
