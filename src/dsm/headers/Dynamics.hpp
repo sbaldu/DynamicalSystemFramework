@@ -82,6 +82,7 @@ namespace dsm {
     std::vector<unsigned int> m_travelTimes;
     std::unordered_map<Id, Id> m_agentNextStreetId;
     bool m_forcePriorities;
+    std::array<unsigned long long, 3> m_turnCounts;
 
     /// @brief Get the next street id
     /// @param agentId The id of the agent
@@ -103,7 +104,6 @@ namespace dsm {
     virtual void m_evolveAgents();
 
   public:
-    std::array<unsigned long long, 3> turnCounts{0, 0, 0};
     Dynamics() = delete;
     /// @brief Construct a new Dynamics object
     /// @param graph The graph representing the network
@@ -273,6 +273,10 @@ namespace dsm {
     /// @param clearData If true, the travel times are cleared after the computation
     /// @return Measurement<double> The mean travel time of the agents and the standard
     Measurement<double> meanTravelTime(bool clearData = false);
+    /// @brief Get the turn counts of the agents
+    /// @return const std::array<unsigned long long, 3>& The turn counts
+    /// @details The array contains the counts of left (0), straight (1) and right (2) turns
+    const std::array<unsigned long long, 3>& turnCounts() const { return m_turnCounts; }
   };
 
   template <typename Id, typename Size, typename Delay>
@@ -284,7 +288,8 @@ namespace dsm {
         m_graph{std::move(graph)},
         m_errorProbability{0.},
         m_minSpeedRateo{0.},
-        m_forcePriorities{false} {}
+        m_forcePriorities{false},
+        m_turnCounts{0, 0, 0} {}
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
@@ -357,20 +362,20 @@ namespace dsm {
       }
       street->dequeue();
       assert(destinationNode->id() == nextStreet->nodePair().first);
-      auto delta =
-          std::fmod(nextStreet->angle() - street->angle(), std::numbers::pi);
-      if (((nextStreet->angle() == 0.) and (street->angle() > std::numbers::pi)) or ((street->angle() == 0.) and (nextStreet->angle() > std::numbers::pi))) {
-        delta *= -1;
-      }
-      if (delta < -std::numeric_limits<double>::epsilon()) {
-        ++turnCounts[0];
-      } else if (delta > std::numeric_limits<double>::epsilon()) {
-        ++turnCounts[2];
-      } else {
-        ++turnCounts[1];
-      }
       if (destinationNode->isIntersection()) {
         auto& intersection = dynamic_cast<Node<Id, Size>&>(*destinationNode);
+        auto delta =
+          std::fmod(nextStreet->angle() - street->angle(), std::numbers::pi);
+        if (((nextStreet->angle() == 0.) and (street->angle() > std::numbers::pi)) or ((street->angle() == 0.) and (nextStreet->angle() > std::numbers::pi))) {
+          delta *= -1;
+        }
+        if (delta < -std::numeric_limits<double>::epsilon()) {
+          ++m_turnCounts[0];
+        } else if (delta > std::numeric_limits<double>::epsilon()) {
+          ++m_turnCounts[2];
+        } else {
+          ++m_turnCounts[1];
+        }
         intersection.addAgent(delta, agentId);
         m_agentNextStreetId.emplace(agentId, nextStreet->id());
       } else if (destinationNode->isRoundabout()) {
