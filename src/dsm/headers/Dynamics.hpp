@@ -359,7 +359,7 @@ namespace dsm {
       assert(destinationNode->id() == nextStreet->nodePair().first);
       auto delta =
           std::fmod(nextStreet->angle() - street->angle(), std::numbers::pi);
-      if (((nextStreet->angle() == 0. or street->angle() == 0.) and (street->angle() > std::numbers::pi))) {
+      if (((nextStreet->angle() == 0.) and (street->angle() > std::numbers::pi)) or ((street->angle() == 0.) and (nextStreet->angle() > std::numbers::pi))) {
         delta *= -1;
       }
       if (delta < -std::numeric_limits<double>::epsilon()) {
