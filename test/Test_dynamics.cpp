@@ -557,19 +557,19 @@ TEST_CASE("Dynamics") {
         dynamics.evolve(false);
         dynamics.evolve(false);
         dynamics.evolve(false);
-        THEN("The agent in C passes first") {
-          CHECK_EQ(dynamics.agents().at(1)->streetId().value(), 2);
-          CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 20);
-          CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 5);
+        THEN("The agent in A passes first") {
+          CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 20); // second
+          CHECK_EQ(dynamics.agents().at(1)->streetId().value(), 15); // third
+          CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 2); // first
         }
         dynamics.evolve(false);
         THEN("The agent in D passes second") {
-          CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 2);
-          CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 5);
+          CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 2); // first
+          CHECK_EQ(dynamics.agents().at(1)->streetId().value(), 15); // second
         }
         dynamics.evolve(false);
-        THEN("The agent in A passes last") {
-          CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 2);
+        THEN("The agent in C passes last") {
+          CHECK_EQ(dynamics.agents().at(1)->streetId().value(), 2);
         }
       }
       WHEN("We add agents of another itinerary and update the dynamics") {
@@ -579,19 +579,19 @@ TEST_CASE("Dynamics") {
         dynamics.evolve(false);
         dynamics.evolve(false);
         dynamics.evolve(false);
-        THEN("The agent in B passes first") {
-          CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 1);
+        THEN("The agent in D passes first") {
+          CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 10);
           CHECK_EQ(dynamics.agents().at(1)->streetId().value(), 15);
-          CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 20);
+          CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 1);
         }
         dynamics.evolve(false);
         THEN("The agent in C passes second") {
+          CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 10);
           CHECK_EQ(dynamics.agents().at(1)->streetId().value(), 1);
-          CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 20);
         }
         dynamics.evolve(false);
         THEN("The agent in C passes last") {
-          CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 1);
+          CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 1);
         }
       }
     }

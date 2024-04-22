@@ -364,10 +364,11 @@ namespace dsm {
       assert(destinationNode->id() == nextStreet->nodePair().first);
       if (destinationNode->isIntersection()) {
         auto& intersection = dynamic_cast<Node<Id, Size>&>(*destinationNode);
-        auto delta =
-          std::fmod(nextStreet->angle() - street->angle(), std::numbers::pi);
-        if (((nextStreet->angle() == 0.) and (street->angle() > std::numbers::pi)) or ((street->angle() == 0.) and (nextStreet->angle() > std::numbers::pi))) {
-          delta *= -1;
+        auto delta = nextStreet->angle() - street->angle();
+        if (delta > std::numbers::pi) {
+          delta -= 2*std::numbers::pi;
+        } else if (delta < -std::numbers::pi) {
+          delta += 2*std::numbers::pi;
         }
         if (delta < -std::numeric_limits<double>::epsilon()) {
           ++m_turnCounts[0];
@@ -416,7 +417,7 @@ namespace dsm {
         for (size_t i{0}; i < nAgents; ++i) {
           const auto agentId{roundabout.agents().front()};
           const auto& nextStreet{
-              this->m_graph.streetSet()[m_nextStreetId(agentId, node->id(), m_agents[agentId]->streetId().value())]};
+              this->m_graph.streetSet()[m_nextStreetId(agentId, node->id(), m_agents[agentId]->streetId())]};
           if (!(nextStreet->isFull())) {
             roundabout.dequeue();
             m_agents[agentId]->setStreetId(nextStreet->id());
