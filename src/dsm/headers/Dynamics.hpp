@@ -87,7 +87,7 @@ namespace dsm {
     /// @param agentId The id of the agent
     /// @param NodeId The id of the node
     /// @return Id The id of the randomly selected next street
-    virtual Id m_nextStreetId(Id agentId, Id NodeId);
+    virtual Id m_nextStreetId(Id agentId, Id NodeId, std::optional<Id> streetId = std::nullopt);
     /// @brief Evolve the streets
     /// @param reinsert_agents If true, the agents are reinserted in the simulation after they reach their destination
     /// @details If possible, removes the first agent of each street queue, putting it in the destination node.
@@ -103,6 +103,7 @@ namespace dsm {
     virtual void m_evolveAgents();
 
   public:
+    std::array<unsigned long long, 3> turnCounts{0, 0, 0};
     Dynamics() = delete;
     /// @brief Construct a new Dynamics object
     /// @param graph The graph representing the network
@@ -288,7 +289,7 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
-  Id Dynamics<Id, Size, Delay>::m_nextStreetId(Id agentId, Id nodeId) {
+  Id Dynamics<Id, Size, Delay>::m_nextStreetId(Id agentId, Id nodeId, std::optional<Id> streetId) {
     auto possibleMoves{
         this->m_itineraries[this->m_agents[agentId]->itineraryId()]->path().getRow(nodeId,
                                                                                    true)};
@@ -298,10 +299,13 @@ namespace dsm {
     assert(possibleMoves.size() > 0);
     std::uniform_int_distribution<Size> moveDist{
         0, static_cast<Size>(possibleMoves.size() - 1)};
-    const auto p{moveDist(this->m_generator)};
+    uint8_t p{0};
     auto iterator = possibleMoves.begin();
-    std::advance(iterator, p);
-    assert(m_graph.streetSet().contains(iterator->first));
+    do {
+      p = moveDist(this->m_generator);
+      iterator = possibleMoves.begin();
+      std::advance(iterator, p);
+    } while (streetId.has_value() and (m_graph.streetSet()[iterator->first]->nodePair().second == m_graph.streetSet()[streetId.value()]->nodePair().first) and (possibleMoves.size() > 1));
     return iterator->first;
   }
 
@@ -347,14 +351,24 @@ namespace dsm {
         continue;
       }
       const auto& nextStreet{
-          m_graph.streetSet()[m_nextStreetId(agentId, destinationNode->id())]};
+          m_graph.streetSet()[this->m_nextStreetId(agentId, destinationNode->id(), streetId)]};
       if (nextStreet->isFull()) {
         continue;
       }
       street->dequeue();
       assert(destinationNode->id() == nextStreet->nodePair().first);
-      const auto delta =
-          std::fmod(street->angle() - nextStreet->angle(), std::numbers::pi);
+      auto delta =
+          std::fmod(nextStreet->angle() - street->angle(), std::numbers::pi);
+      if (((nextStreet->angle() == 0. or street->angle() == 0.) and (street->angle() > std::numbers::pi))) {
+        delta *= -1;
+      }
+      if (delta < -std::numeric_limits<double>::epsilon()) {
+        ++turnCounts[0];
+      } else if (delta > std::numeric_limits<double>::epsilon()) {
+        ++turnCounts[2];
+      } else {
+        ++turnCounts[1];
+      }
       if (destinationNode->isIntersection()) {
         auto& intersection = dynamic_cast<Node<Id, Size>&>(*destinationNode);
         intersection.addAgent(delta, agentId);
@@ -397,7 +411,7 @@ namespace dsm {
         for (size_t i{0}; i < nAgents; ++i) {
           const auto agentId{roundabout.agents().front()};
           const auto& nextStreet{
-              this->m_graph.streetSet()[m_nextStreetId(agentId, node->id())]};
+              this->m_graph.streetSet()[m_nextStreetId(agentId, node->id(), m_agents[agentId]->streetId().value())]};
           if (!(nextStreet->isFull())) {
             roundabout.dequeue();
             m_agents[agentId]->setStreetId(nextStreet->id());
