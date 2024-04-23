@@ -629,4 +629,37 @@ TEST_CASE("Dynamics") {
       }
     }
   }
+  SUBCASE("meanSpireFlow") {
+    GIVEN("A network with a spireStreet and a normal street") {
+      SpireStreet ss{0, 1, 10., 5., std::make_pair(0, 1)};
+      Street s{1, 1, 10., 10., std::make_pair(1, 2)};
+      Graph graph2;
+      graph2.addStreet(ss);
+      graph2.addStreet(s);
+      graph2.buildAdj();
+      graph2.makeSpireStreet(1);
+      Dynamics dynamics{graph2};
+      dynamics.setSeed(69);
+      Itinerary itinerary{0, 2};
+      dynamics.addItinerary(itinerary);
+      dynamics.updatePaths();
+      dynamics.addAgent(Agent(0, 0, 0));
+      WHEN("We evolve the dynamics") {
+        dynamics.evolve(false);
+        dynamics.evolve(false);
+        auto meanSpireFlow = dynamics.meanSpireInputFlow();
+        THEN("The mean flow of the spire street is the same as the agent flow") {
+          CHECK_EQ(meanSpireFlow.mean, 0.5);
+          CHECK_EQ(meanSpireFlow.std, 0);
+        }
+        dynamics.evolve(false);
+        dynamics.evolve(false);
+        meanSpireFlow = dynamics.meanSpireOutputFlow();
+        THEN("The mean flow of the spire street is the same as the agent flow") {
+          CHECK_EQ(meanSpireFlow.mean, 0.5);
+          CHECK_EQ(meanSpireFlow.std, 0);
+        }
+      }
+    }
+  }
 }
