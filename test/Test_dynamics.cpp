@@ -12,6 +12,7 @@ using Dynamics = dsm::FirstOrderDynamics<uint16_t, uint16_t, uint16_t>;
 using Graph = dsm::Graph<uint16_t, uint16_t>;
 using SparseMatrix = dsm::SparseMatrix<uint16_t, bool>;
 using Street = dsm::Street<uint16_t, uint16_t>;
+using SpireStreet = dsm::SpireStreet<uint16_t, uint16_t>;
 using Agent = dsm::Agent<uint16_t, uint16_t, uint16_t>;
 using Itinerary = dsm::Itinerary<uint16_t>;
 using Node = dsm::Node<uint16_t, uint16_t>;
@@ -32,13 +33,13 @@ TEST_CASE("Dynamics") {
         }
         THEN("The mean speed, density, flow and travel time are 0") {
           CHECK_EQ(dynamics.meanSpeed().mean, 0.);
-          CHECK_EQ(dynamics.meanSpeed().error, 0.);
+          CHECK_EQ(dynamics.meanSpeed().std, 0.);
           CHECK_EQ(dynamics.streetMeanDensity().mean, 0.);
-          CHECK_EQ(dynamics.streetMeanDensity().error, 0.);
+          CHECK_EQ(dynamics.streetMeanDensity().std, 0.);
           CHECK_EQ(dynamics.streetMeanFlow().mean, 0.);
-          CHECK_EQ(dynamics.streetMeanFlow().error, 0.);
+          CHECK_EQ(dynamics.streetMeanFlow().std, 0.);
           CHECK_EQ(dynamics.meanTravelTime().mean, 0.);
-          CHECK_EQ(dynamics.meanTravelTime().error, 0.);
+          CHECK_EQ(dynamics.meanTravelTime().std, 0.);
         }
       }
       WHEN("We transform a node into a traffic light and create the dynamics") {
@@ -489,12 +490,12 @@ TEST_CASE("Dynamics") {
     CHECK(dynamics.streetMeanSpeed(1).has_value());
     CHECK_EQ(dynamics.streetMeanSpeed(1).value(), meanSpeed);
     CHECK_EQ(dynamics.streetMeanSpeed().mean, dynamics.meanSpeed().mean);
-    CHECK_EQ(dynamics.streetMeanSpeed().error, 0.);
+    CHECK_EQ(dynamics.streetMeanSpeed().std, 0.);
     // street 1 density should be 0.4 so...
     CHECK_EQ(dynamics.streetMeanSpeed(0.2, true).mean, meanSpeed);
-    CHECK_EQ(dynamics.streetMeanSpeed(0.2, true).error, 0.);
+    CHECK_EQ(dynamics.streetMeanSpeed(0.2, true).std, 0.);
     CHECK_EQ(dynamics.streetMeanSpeed(0.2, false).mean, 0.);
-    CHECK_EQ(dynamics.streetMeanSpeed(0.2, false).error, 0.);
+    CHECK_EQ(dynamics.streetMeanSpeed(0.2, false).std, 0.);
     dynamics.addAgents(0, 10, 0);
     dynamics.evolve(false);
     meanSpeed = 0.;
@@ -591,6 +592,39 @@ TEST_CASE("Dynamics") {
         dynamics.evolve(false);
         THEN("The agent in C passes last") {
           CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 1);
+        }
+      }
+    }
+  }
+  SUBCASE("meanSpireFlow") {
+    GIVEN("A network with a spireStreet and a normal street") {
+      SpireStreet ss{0, 1, 10., 5., std::make_pair(0, 1)};
+      Street s{1, 1, 10., 10., std::make_pair(1, 2)};
+      Graph graph2;
+      graph2.addStreet(ss);
+      graph2.addStreet(s);
+      graph2.buildAdj();
+      graph2.makeSpireStreet(1);
+      Dynamics dynamics{graph2};
+      dynamics.setSeed(69);
+      Itinerary itinerary{0, 2};
+      dynamics.addItinerary(itinerary);
+      dynamics.updatePaths();
+      dynamics.addAgent(Agent(0, 0, 0));
+      WHEN("We evolve the dynamics") {
+        dynamics.evolve(false);
+        dynamics.evolve(false);
+        auto meanSpireFlow = dynamics.meanSpireInputFlow();
+        THEN("The mean flow of the spire street is the same as the agent flow") {
+          CHECK_EQ(meanSpireFlow.mean, 0.5);
+          CHECK_EQ(meanSpireFlow.std, 0);
+        }
+        dynamics.evolve(false);
+        dynamics.evolve(false);
+        meanSpireFlow = dynamics.meanSpireOutputFlow();
+        THEN("The mean flow of the spire street is the same as the agent flow") {
+          CHECK_EQ(meanSpireFlow.mean, 0.5);
+          CHECK_EQ(meanSpireFlow.std, 0);
         }
       }
     }
