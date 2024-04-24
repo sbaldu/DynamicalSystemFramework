@@ -558,14 +558,14 @@ TEST_CASE("Dynamics") {
         dynamics.evolve(false);
         dynamics.evolve(false);
         THEN("The agent in A passes first") {
-          CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 20); // second
-          CHECK_EQ(dynamics.agents().at(1)->streetId().value(), 15); // third
-          CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 2); // first
+          CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 20);  // second
+          CHECK_EQ(dynamics.agents().at(1)->streetId().value(), 15);  // third
+          CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 2);   // first
         }
         dynamics.evolve(false);
         THEN("The agent in D passes second") {
-          CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 2); // first
-          CHECK_EQ(dynamics.agents().at(1)->streetId().value(), 15); // second
+          CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 2);   // first
+          CHECK_EQ(dynamics.agents().at(1)->streetId().value(), 15);  // second
         }
         dynamics.evolve(false);
         THEN("The agent in C passes last") {
