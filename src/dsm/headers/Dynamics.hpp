@@ -87,6 +87,7 @@ namespace dsm {
     /// @brief Get the next street id
     /// @param agentId The id of the agent
     /// @param NodeId The id of the node
+    /// @param streetId The id of the incoming street
     /// @return Id The id of the randomly selected next street
     virtual Id m_nextStreetId(Id agentId,
                               Id NodeId,
@@ -314,11 +315,12 @@ namespace dsm {
         0, static_cast<Size>(possibleMoves.size() - 1)};
     uint8_t p{0};
     auto iterator = possibleMoves.begin();
+    // while loop to avoid U turns in non-roundabout junctions
     do {
       p = moveDist(this->m_generator);
       iterator = possibleMoves.begin();
       std::advance(iterator, p);
-    } while (streetId.has_value() and
+    } while (!m_graph.streetSet()[streetId]->isRoundaBout() and streetId.has_value() and
              (m_graph.streetSet()[iterator->first]->nodePair().second ==
               m_graph.streetSet()[streetId.value()]->nodePair().first) and
              (possibleMoves.size() > 1));

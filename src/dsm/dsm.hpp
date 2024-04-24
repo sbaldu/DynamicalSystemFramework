@@ -6,7 +6,7 @@
 static constexpr uint8_t DSM_VERSION_MAJOR = 1;
 static constexpr uint8_t DSM_VERSION_MINOR = 3;
 static constexpr uint8_t DSM_VERSION_PATCH = 6;
-static constexpr uint8_t DSM_VERSION_BUILD = 1;
+static constexpr uint8_t DSM_VERSION_BUILD = 2;
 
 #include <string>
 
