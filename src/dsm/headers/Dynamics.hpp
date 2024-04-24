@@ -320,7 +320,7 @@ namespace dsm {
       p = moveDist(this->m_generator);
       iterator = possibleMoves.begin();
       std::advance(iterator, p);
-    } while (!m_graph.streetSet()[streetId]->isRoundaBout() and streetId.has_value() and
+    } while (!m_graph.nodeSet().at(nodeId)->isRoundabout() and streetId.has_value() and
              (m_graph.streetSet()[iterator->first]->nodePair().second ==
               m_graph.streetSet()[streetId.value()]->nodePair().first) and
              (possibleMoves.size() > 1));
