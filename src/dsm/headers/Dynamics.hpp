@@ -88,7 +88,9 @@ namespace dsm {
     /// @param agentId The id of the agent
     /// @param NodeId The id of the node
     /// @return Id The id of the randomly selected next street
-    virtual Id m_nextStreetId(Id agentId, Id NodeId, std::optional<Id> streetId = std::nullopt);
+    virtual Id m_nextStreetId(Id agentId,
+                              Id NodeId,
+                              std::optional<Id> streetId = std::nullopt);
     /// @brief Evolve the streets
     /// @param reinsert_agents If true, the agents are reinserted in the simulation after they reach their destination
     /// @details If possible, removes the first agent of each street queue, putting it in the destination node.
@@ -277,6 +279,10 @@ namespace dsm {
     /// @return const std::array<unsigned long long, 3>& The turn counts
     /// @details The array contains the counts of left (0), straight (1) and right (2) turns
     const std::array<unsigned long long, 3>& turnCounts() const { return m_turnCounts; }
+    /// @brief Get the turn probabilities of the agents
+    /// @return std::array<double, 3> The turn probabilities
+    /// @details The array contains the probabilities of left (0), straight (1) and right (2) turns
+    std::array<double, 3> turnProbabilities() const;
   };
 
   template <typename Id, typename Size, typename Delay>
@@ -294,7 +300,9 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
-  Id Dynamics<Id, Size, Delay>::m_nextStreetId(Id agentId, Id nodeId, std::optional<Id> streetId) {
+  Id Dynamics<Id, Size, Delay>::m_nextStreetId(Id agentId,
+                                               Id nodeId,
+                                               std::optional<Id> streetId) {
     auto possibleMoves{
         this->m_itineraries[this->m_agents[agentId]->itineraryId()]->path().getRow(nodeId,
                                                                                    true)};
@@ -310,7 +318,10 @@ namespace dsm {
       p = moveDist(this->m_generator);
       iterator = possibleMoves.begin();
       std::advance(iterator, p);
-    } while (streetId.has_value() and (m_graph.streetSet()[iterator->first]->nodePair().second == m_graph.streetSet()[streetId.value()]->nodePair().first) and (possibleMoves.size() > 1));
+    } while (streetId.has_value() and
+             (m_graph.streetSet()[iterator->first]->nodePair().second ==
+              m_graph.streetSet()[streetId.value()]->nodePair().first) and
+             (possibleMoves.size() > 1));
     return iterator->first;
   }
 
@@ -355,8 +366,8 @@ namespace dsm {
         }
         continue;
       }
-      const auto& nextStreet{
-          m_graph.streetSet()[this->m_nextStreetId(agentId, destinationNode->id(), streetId)]};
+      const auto& nextStreet{m_graph.streetSet()[this->m_nextStreetId(
+          agentId, destinationNode->id(), streetId)]};
       if (nextStreet->isFull()) {
         continue;
       }
@@ -366,9 +377,9 @@ namespace dsm {
         auto& intersection = dynamic_cast<Node<Id, Size>&>(*destinationNode);
         auto delta = nextStreet->angle() - street->angle();
         if (delta > std::numbers::pi) {
-          delta -= 2*std::numbers::pi;
+          delta -= 2 * std::numbers::pi;
         } else if (delta < -std::numbers::pi) {
-          delta += 2*std::numbers::pi;
+          delta += 2 * std::numbers::pi;
         }
         if (delta < -std::numeric_limits<double>::epsilon()) {
           ++m_turnCounts[0];
@@ -416,8 +427,8 @@ namespace dsm {
         const auto nAgents{roundabout.agents().size()};
         for (size_t i{0}; i < nAgents; ++i) {
           const auto agentId{roundabout.agents().front()};
-          const auto& nextStreet{
-              this->m_graph.streetSet()[m_nextStreetId(agentId, node->id(), m_agents[agentId]->streetId())]};
+          const auto& nextStreet{this->m_graph.streetSet()[m_nextStreetId(
+              agentId, node->id(), m_agents[agentId]->streetId())]};
           if (!(nextStreet->isFull())) {
             roundabout.dequeue();
             m_agents[agentId]->setStreetId(nextStreet->id());
@@ -918,6 +929,21 @@ namespace dsm {
       m_travelTimes.clear();
     }
     return Measurement(mean, std::sqrt(variance));
+  }
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>)
+  std::array<double, 3> Dynamics<Id, Size, Delay>::turnProbabilities() const {
+    std::array<double, 3> probabilities{0., 0., 0.};
+    const double sum{std::accumulate(m_turnCounts.cbegin(), m_turnCounts.cend(), 0.)};
+    if (sum == 0.) {
+      return probabilities;
+    }
+    std::transform(m_turnCounts.cbegin(),
+                   m_turnCounts.cend(),
+                   probabilities.begin(),
+                   [sum](const auto& count) { return count / sum; });
+    return probabilities;
   }
 
   template <typename Id, typename Size, typename Delay>
