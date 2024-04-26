@@ -557,19 +557,19 @@ TEST_CASE("Dynamics") {
         dynamics.evolve(false);
         dynamics.evolve(false);
         dynamics.evolve(false);
-        THEN("The agent in C passes first") {
-          CHECK_EQ(dynamics.agents().at(1)->streetId().value(), 2);
-          CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 20);
-          CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 5);
+        THEN("The agent in A passes first") {
+          CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 20);  // second
+          CHECK_EQ(dynamics.agents().at(1)->streetId().value(), 15);  // third
+          CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 2);   // first
         }
         dynamics.evolve(false);
         THEN("The agent in D passes second") {
-          CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 2);
-          CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 5);
+          CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 2);   // first
+          CHECK_EQ(dynamics.agents().at(1)->streetId().value(), 15);  // second
         }
         dynamics.evolve(false);
-        THEN("The agent in A passes last") {
-          CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 2);
+        THEN("The agent in C passes last") {
+          CHECK_EQ(dynamics.agents().at(1)->streetId().value(), 2);
         }
       }
       WHEN("We add agents of another itinerary and update the dynamics") {
@@ -579,19 +579,52 @@ TEST_CASE("Dynamics") {
         dynamics.evolve(false);
         dynamics.evolve(false);
         dynamics.evolve(false);
-        THEN("The agent in B passes first") {
-          CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 1);
+        THEN("The agent in D passes first") {
+          CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 10);
           CHECK_EQ(dynamics.agents().at(1)->streetId().value(), 15);
-          CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 20);
+          CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 1);
         }
         dynamics.evolve(false);
         THEN("The agent in C passes second") {
+          CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 10);
           CHECK_EQ(dynamics.agents().at(1)->streetId().value(), 1);
-          CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 20);
         }
         dynamics.evolve(false);
         THEN("The agent in C passes last") {
-          CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 1);
+          CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 1);
+        }
+      }
+    }
+  }
+  SUBCASE("meanSpireFlow") {
+    GIVEN("A network with a spireStreet and a normal street") {
+      SpireStreet ss{0, 1, 10., 5., std::make_pair(0, 1)};
+      Street s{1, 1, 10., 10., std::make_pair(1, 2)};
+      Graph graph2;
+      graph2.addStreet(ss);
+      graph2.addStreet(s);
+      graph2.buildAdj();
+      graph2.makeSpireStreet(1);
+      Dynamics dynamics{graph2};
+      dynamics.setSeed(69);
+      Itinerary itinerary{0, 2};
+      dynamics.addItinerary(itinerary);
+      dynamics.updatePaths();
+      dynamics.addAgent(Agent(0, 0, 0));
+      WHEN("We evolve the dynamics") {
+        dynamics.evolve(false);
+        dynamics.evolve(false);
+        auto meanSpireFlow = dynamics.meanSpireInputFlow();
+        THEN("The mean flow of the spire street is the same as the agent flow") {
+          CHECK_EQ(meanSpireFlow.mean, 0.5);
+          CHECK_EQ(meanSpireFlow.std, 0);
+        }
+        dynamics.evolve(false);
+        dynamics.evolve(false);
+        meanSpireFlow = dynamics.meanSpireOutputFlow();
+        THEN("The mean flow of the spire street is the same as the agent flow") {
+          CHECK_EQ(meanSpireFlow.mean, 0.5);
+          CHECK_EQ(meanSpireFlow.std, 0);
         }
       }
     }

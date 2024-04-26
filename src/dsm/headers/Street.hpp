@@ -236,8 +236,12 @@ namespace dsm {
   void Street<Id, Size>::setAngle(std::pair<double, double> srcNode,
                                   std::pair<double, double> dstNode) {
     // N.B.: lat, lon <==> y, x
-    double angle{
-        std::atan2(dstNode.first - srcNode.first, dstNode.second - srcNode.second)};
+    double delta_y{dstNode.first - srcNode.first};
+    double delta_x{dstNode.second - srcNode.second};
+    double angle{std::atan2(delta_y, delta_x)};
+    if (angle < 0.) {
+      angle += 2 * std::numbers::pi;
+    }
     this->setAngle(angle);
   }
   template <typename Id, typename Size>
