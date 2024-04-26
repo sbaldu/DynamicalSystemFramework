@@ -252,7 +252,7 @@ namespace dsm {
     // TODO: implement the following functions
     // We can implement the base version of these functions by cycling over agents... I won't do it for now.
     // Grufoony - 19/02/2024
-    virtual std::optional<double> streetMeanSpeed(Id) const = 0;
+    virtual double streetMeanSpeed(Id) const = 0;
     virtual Measurement<double> streetMeanSpeed() const = 0;
     virtual Measurement<double> streetMeanSpeed(double, bool) const = 0;
     /// @brief Get the mean density of the streets in \f$m^{-1}\f$
@@ -859,13 +859,7 @@ namespace dsm {
     std::vector<double> flows;
     flows.reserve(m_graph.streetSet().size());
     for (const auto& [streetId, street] : m_graph.streetSet()) {
-      auto speedOpt{this->streetMeanSpeed(streetId)};
-      if (speedOpt.has_value()) {
-        double flow{street->density() * speedOpt.value()};
-        flows.push_back(flow);
-      } else {
-        flows.push_back(street->density());  // 0 * NaN = 0
-      }
+      flows.push_back(street->density() * this->streetMeanSpeed(streetId));
     }
     return Measurement(flows);
   }
@@ -878,21 +872,9 @@ namespace dsm {
     flows.reserve(m_graph.streetSet().size());
     for (const auto& [streetId, street] : m_graph.streetSet()) {
       if (above and (street->nAgents() > (threshold * street->capacity()))) {
-        auto speedOpt{this->streetMeanSpeed(streetId)};
-        if (speedOpt.has_value()) {
-          double flow{street->density() * speedOpt.value()};
-          flows.push_back(flow);
-        } else {
-          flows.push_back(street->density());  // 0 * NaN = 0
-        }
+        flows.push_back(street->density() * this->streetMeanSpeed(streetId));
       } else if (!above and (street->nAgents() < (threshold * street->capacity()))) {
-        auto speedOpt{this->streetMeanSpeed(streetId)};
-        if (speedOpt.has_value()) {
-          double flow{street->density() * speedOpt.value()};
-          flows.push_back(flow);
-        } else {
-          flows.push_back(street->density());  // 0 * NaN = 0
-        }
+        flows.push_back(street->density() * this->streetMeanSpeed(streetId));
       }
     }
     return Measurement(flows);
@@ -993,11 +975,12 @@ namespace dsm {
     /// @throw std::invalid_argument, If the standard deviation is negative
     void setSpeedFluctuationSTD(double speedFluctuationSTD);
     /// @brief Get the mean speed of a street in \f$m/s\f$
+    /// @return double The mean speed of the street or street->maxSpeed() if the street is empty
     /// @details The mean speed of a street is given by the formula:
     /// \f$ v_{\text{mean}} = v_{\text{max}} \left(1 - \frac{\alpha}{2} \left( n - 1\right)  \right) \f$
     /// where \f$ v_{\text{max}} \f$ is the maximum speed of the street, \f$ \alpha \f$ is the minimum speed rateo divided by the capacity
     /// and \f$ n \f$ is the number of agents in the street
-    std::optional<double> streetMeanSpeed(Id streetId) const override;
+    double streetMeanSpeed(Id streetId) const override;
     /// @brief Get the mean speed of the streets in \f$m/s\f$
     /// @return Measurement The mean speed of the agents and the standard deviation
     Measurement<double> streetMeanSpeed() const override;
@@ -1040,11 +1023,10 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              std::unsigned_integral<Delay>)
-  std::optional<double> FirstOrderDynamics<Id, Size, Delay>::streetMeanSpeed(
-      Id streetId) const {
+  double FirstOrderDynamics<Id, Size, Delay>::streetMeanSpeed(Id streetId) const {
     const auto& street{this->m_graph.streetSet().at(streetId)};
-    if (street->queue().empty()) {
-      return std::nullopt;
+    if (street->nAgents() == 0) {
+      return street->maxSpeed();
     }
     double meanSpeed{0.};
     Size n{0};
@@ -1095,10 +1077,7 @@ namespace dsm {
     std::vector<double> speeds;
     speeds.reserve(this->m_graph.streetSet().size());
     for (const auto& [streetId, street] : this->m_graph.streetSet()) {
-      auto speedOpt{this->streetMeanSpeed(streetId)};
-      if (speedOpt.has_value()) {
-        speeds.push_back(speedOpt.value());
-      }
+      speeds.push_back(this->streetMeanSpeed(streetId));
     }
     return Measurement(speeds);
   }
@@ -1115,17 +1094,11 @@ namespace dsm {
     for (const auto& [streetId, street] : this->m_graph.streetSet()) {
       if (above) {
         if (street->nAgents() > (threshold * street->capacity())) {
-          auto speedOpt{this->streetMeanSpeed(streetId)};
-          if (speedOpt.has_value()) {
-            speeds.push_back(speedOpt.value());
-          }
+          speeds.push_back(this->streetMeanSpeed(streetId));
         }
       } else {
         if (street->nAgents() < (threshold * street->capacity())) {
-          auto speedOpt{this->streetMeanSpeed(streetId)};
-          if (speedOpt.has_value()) {
-            speeds.push_back(speedOpt.value());
-          }
+          speeds.push_back(this->streetMeanSpeed(streetId));
         }
       }
     }
