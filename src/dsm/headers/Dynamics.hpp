@@ -82,7 +82,7 @@ namespace dsm {
     std::vector<unsigned int> m_travelTimes;
     std::unordered_map<Id, Id> m_agentNextStreetId;
     bool m_forcePriorities;
-    std::array<unsigned long long, 3> m_turnCounts;
+    std::array<unsigned long long, 4> m_turnCounts;
 
     /// @brief Get the next street id
     /// @param agentId The id of the agent
@@ -278,12 +278,12 @@ namespace dsm {
     Measurement<double> meanTravelTime(bool clearData = false);
     /// @brief Get the turn counts of the agents
     /// @return const std::array<unsigned long long, 3>& The turn counts
-    /// @details The array contains the counts of left (0), straight (1) and right (2) turns
-    const std::array<unsigned long long, 3>& turnCounts() const { return m_turnCounts; }
+    /// @details The array contains the counts of left (0), straight (1), right (2) and U (3) turns
+    const std::array<unsigned long long, 4>& turnCounts() const { return m_turnCounts; }
     /// @brief Get the turn probabilities of the agents
     /// @return std::array<double, 3> The turn probabilities
-    /// @details The array contains the probabilities of left (0), straight (1) and right (2) turns
-    std::array<double, 3> turnProbabilities() const;
+    /// @details The array contains the probabilities of left (0), straight (1), right (2) and U (3) turns
+    std::array<double, 4> turnProbabilities() const;
   };
 
   template <typename Id, typename Size, typename Delay>
@@ -384,11 +384,13 @@ namespace dsm {
           delta += 2 * std::numbers::pi;
         }
         if (delta < -std::numeric_limits<double>::epsilon()) {
-          ++m_turnCounts[0];
+          ++m_turnCounts[0];  // right
         } else if (delta > std::numeric_limits<double>::epsilon()) {
-          ++m_turnCounts[2];
+          ++m_turnCounts[2];  // left
+        } else if (std::abs(delta) == std::numbers::pi) {
+          ++m_turnCounts[3];  // U
         } else {
-          ++m_turnCounts[1];
+          ++m_turnCounts[1];  // straight
         }
         intersection.addAgent(delta, agentId);
         m_agentNextStreetId.emplace(agentId, nextStreet->id());
@@ -935,8 +937,8 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
-  std::array<double, 3> Dynamics<Id, Size, Delay>::turnProbabilities() const {
-    std::array<double, 3> probabilities{0., 0., 0.};
+  std::array<double, 4> Dynamics<Id, Size, Delay>::turnProbabilities() const {
+    std::array<double, 4> probabilities{0., 0., 0., 0.};
     const double sum{std::accumulate(m_turnCounts.cbegin(), m_turnCounts.cend(), 0.)};
     if (sum == 0.) {
       return probabilities;
