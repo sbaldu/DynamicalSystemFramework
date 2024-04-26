@@ -248,7 +248,7 @@ namespace dsm {
 
     /// @brief Get the mean speed of the agents in \f$m/s\f$
     /// @return Measurement<double> The mean speed of the agents and the standard deviation
-    Measurement<double> meanSpeed() const;
+    Measurement<double> agentMeanSpeed() const;
     // TODO: implement the following functions
     // We can implement the base version of these functions by cycling over agents... I won't do it for now.
     // Grufoony - 19/02/2024
@@ -803,7 +803,7 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
-  Measurement<double> Dynamics<Id, Size, Delay>::meanSpeed() const {
+  Measurement<double> Dynamics<Id, Size, Delay>::agentMeanSpeed() const {
     if (m_agents.size() == 0) {
       return Measurement(0., 0.);
     }

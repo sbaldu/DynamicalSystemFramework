@@ -32,8 +32,8 @@ TEST_CASE("Dynamics") {
           CHECK_EQ(dynamics.graph().streetSet().size(), 4);
         }
         THEN("The mean speed, density, flow and travel time are 0") {
-          CHECK_EQ(dynamics.meanSpeed().mean, 0.);
-          CHECK_EQ(dynamics.meanSpeed().std, 0.);
+          CHECK_EQ(dynamics.agentMeanSpeed().mean, 0.);
+          CHECK_EQ(dynamics.agentMeanSpeed().std, 0.);
           CHECK_EQ(dynamics.streetMeanDensity().mean, 0.);
           CHECK_EQ(dynamics.streetMeanDensity().std, 0.);
           CHECK_EQ(dynamics.streetMeanFlow().mean, 0.);
@@ -489,7 +489,7 @@ TEST_CASE("Dynamics") {
                   dynamics.graph().streetSet().at(1)->waitingAgents().size());
     CHECK_EQ(dynamics.streetMeanSpeed(1), meanSpeed);
     // I don't think the mean speed of agents should be equal to the street's one...
-    // CHECK_EQ(dynamics.streetMeanSpeed().mean, dynamics.meanSpeed().mean);
+    // CHECK_EQ(dynamics.streetMeanSpeed().mean, dynamics.agentMeanSpeed().mean);
     // CHECK_EQ(dynamics.streetMeanSpeed().std, 0.);
     // street 1 density should be 0.4 so...
     CHECK_EQ(dynamics.streetMeanSpeed(0.2, true).mean, meanSpeed);
