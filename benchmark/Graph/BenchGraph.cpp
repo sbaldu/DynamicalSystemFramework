@@ -52,16 +52,16 @@ int main() {
   b2.benchmark([&sm]() -> void { Graph g(sm); });
   b2.print<sb::milliseconds>();
 
-  Bench b3(10);
-  Graph g2(sm);
-  std::cout << "Benchmarking building the adjacency matrix\n";
-  b3.benchmark([&g2]() -> void { g2.buildAdj(); });
-  b3.print<sb::microseconds>();
+  // Bench b3(1);
+  // Graph g2(sm);
+  // std::cout << "Benchmarking building the adjacency matrix\n";
+  // b3.benchmark([&g2]() -> void { g2.buildAdj(); });
+  // b3.print<sb::microseconds>();
 
-  Bench b4(3);
-  Graph g3;
-  g3.importMatrix("./Graph/data/matrix.dat");
-  std::cout << "Benchmarking the algorithm for the shortest path\n";
-  b4.benchmark([&g3]() -> void { g3.shortestPath(0, 1); });
-  b4.print<sb::microseconds>();
+  // Bench b4(3);
+  // Graph g3;
+  // g3.importMatrix("./Graph/data/matrix.dat");
+  // std::cout << "Benchmarking the algorithm for the shortest path\n";
+  // b4.benchmark([&g3]() -> void { g3.shortestPath(0, 1); });
+  // b4.print<sb::microseconds>();
 }

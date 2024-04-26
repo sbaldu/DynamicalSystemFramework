@@ -325,17 +325,16 @@ namespace dsm {
   template <typename Index, typename T>
     requires(std::unsigned_integral<Index>)
   void SparseMatrix<Index, T>::insert(Index i, Index j, T value) {
-    if (i >= _rows || j >= _cols) {
-      throw std::out_of_range(buildLog("Index out of range"));
-    }
-    _matrix.emplace(std::make_pair(i * _cols + j, value));
+    const auto index = i * _cols + j;
+    this->insert(index, value);
   }
 
   template <typename Index, typename T>
     requires(std::unsigned_integral<Index>)
   void SparseMatrix<Index, T>::insert(Index i, T value) {
-    if (i >= _rows * _cols) {
-      throw std::out_of_range(buildLog("Index out of range"));
+    if (i > _rows * _cols - 1) {
+      throw std::out_of_range(buildLog("Index " + std::to_string(i) + " out of range " +
+                                       std::to_string(_rows * _cols - 1)));
     }
     _matrix.emplace(std::make_pair(i, value));
   }
@@ -343,17 +342,17 @@ namespace dsm {
   template <typename Index, typename T>
     requires(std::unsigned_integral<Index>)
   void SparseMatrix<Index, T>::insert_or_assign(Index i, Index j, T value) {
-    if (i >= _rows || j >= _cols) {
-      throw std::out_of_range(buildLog("Index out of range"));
-    }
-    _matrix.insert_or_assign(i * _cols + j, value);
+    const auto index = i * _cols + j;
+    this->insert_or_assign(index, value);
   }
 
   template <typename Index, typename T>
     requires(std::unsigned_integral<Index>)
   void SparseMatrix<Index, T>::insert_or_assign(Index index, T value) {
     if (index > _rows * _cols - 1) {
-      throw std::out_of_range(buildLog("Index out of range"));
+      throw std::out_of_range(buildLog("Index " + std::to_string(index) +
+                                       " out of range " +
+                                       std::to_string(_rows * _cols - 1)));
     }
     _matrix.insert_or_assign(index, value);
   }
