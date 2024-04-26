@@ -92,6 +92,8 @@ namespace dsm {
     virtual Id m_nextStreetId(Id agentId,
                               Id NodeId,
                               std::optional<Id> streetId = std::nullopt);
+    /// @brief Increase the turn counts
+    virtual void m_increaseTurnCounts(double delta);
     /// @brief Evolve the streets
     /// @param reinsert_agents If true, the agents are reinserted in the simulation after they reach their destination
     /// @details If possible, removes the first agent of each street queue, putting it in the destination node.
@@ -330,6 +332,23 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
+  void Dynamics<Id, Size, Delay>::m_increaseTurnCounts(double delta) {
+    if (std::abs(delta) < std::numbers::pi) {
+      if (delta < 0.) {
+        ++m_turnCounts[0];  // right
+      } else if (delta > 0.) {
+        ++m_turnCounts[2];  // left
+      } else {
+        ++m_turnCounts[1];  // straight
+      }
+    } else {
+      ++m_turnCounts[3];  // U
+    }
+  }
+
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::m_evolveStreets(bool reinsert_agents) {
     for (const auto& [streetId, street] : m_graph.streetSet()) {
       if (street->queue().empty()) {
@@ -383,15 +402,7 @@ namespace dsm {
         } else if (delta < -std::numbers::pi) {
           delta += 2 * std::numbers::pi;
         }
-        if (delta < -std::numeric_limits<double>::epsilon()) {
-          ++m_turnCounts[0];  // right
-        } else if (delta > std::numeric_limits<double>::epsilon()) {
-          ++m_turnCounts[2];  // left
-        } else if (std::abs(delta) == std::numbers::pi) {
-          ++m_turnCounts[3];  // U
-        } else {
-          ++m_turnCounts[1];  // straight
-        }
+        m_increaseTurnCounts(delta);
         intersection.addAgent(delta, agentId);
         m_agentNextStreetId.emplace(agentId, nextStreet->id());
       } else if (destinationNode->isRoundabout()) {
@@ -434,6 +445,17 @@ namespace dsm {
           const auto& nextStreet{this->m_graph.streetSet()[m_nextStreetId(
               agentId, node->id(), m_agents[agentId]->streetId())]};
           if (!(nextStreet->isFull())) {
+            if (m_agents[agentId]->streetId().has_value()) {
+              auto delta =
+                  nextStreet->angle() -
+                  m_graph.streetSet()[m_agents[agentId]->streetId().value()]->angle();
+              if (delta > std::numbers::pi) {
+                delta -= 2 * std::numbers::pi;
+              } else if (delta < -std::numbers::pi) {
+                delta += 2 * std::numbers::pi;
+              }
+              m_increaseTurnCounts(delta);
+            }
             roundabout.dequeue();
             m_agents[agentId]->setStreetId(nextStreet->id());
             this->setAgentSpeed(agentId);
