@@ -218,7 +218,8 @@ namespace dsm {
     /// @param destination The destination node
     /// @return A DijkstraResult object containing the path and the distance
     template <typename Func = std::function<double(const Graph<Id, Size>*, Id, Id)>>
-      requires(std::is_same_v<std::invoke_result_t<Func, const Graph<Id, Size>*, Id, Id>, double>)
+      requires(std::is_same_v<std::invoke_result_t<Func, const Graph<Id, Size>*, Id, Id>,
+                              double>)
     std::optional<DijkstraResult<Id>> shortestPath(const Node<Id, Size>& source,
                                                    const Node<Id, Size>& destination,
                                                    Func f = streetLength<Id, Size>) const;
@@ -227,7 +228,8 @@ namespace dsm {
     /// @param destination The destination node id
     /// @return A DijkstraResult object containing the path and the distance
     template <typename Func = std::function<double(const Graph<Id, Size>*, Id, Id)>>
-      requires(std::is_same_v<std::invoke_result_t<Func, const Graph<Id, Size>*, Id, Id>, double>)
+      requires(std::is_same_v<std::invoke_result_t<Func, const Graph<Id, Size>*, Id, Id>,
+                              double>)
     std::optional<DijkstraResult<Id>> shortestPath(Id source,
                                                    Id destination,
                                                    Func f = streetLength<Id, Size>) const;
@@ -722,7 +724,8 @@ namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   template <typename Func>
-	requires(std::is_same_v<std::invoke_result_t<Func, const Graph<Id, Size>*, Id, Id>, double>)
+    requires(
+        std::is_same_v<std::invoke_result_t<Func, const Graph<Id, Size>*, Id, Id>, double>)
   std::optional<DijkstraResult<Id>> Graph<Id, Size>::shortestPath(
       const Node<Id, Size>& source, const Node<Id, Size>& destination, Func f) const {
     return this->shortestPath(source.id(), destination.id());
@@ -731,7 +734,8 @@ namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   template <typename Func>
-	requires(std::is_same_v<std::invoke_result_t<Func, const Graph<Id, Size>*, Id, Id>, double>)
+    requires(
+        std::is_same_v<std::invoke_result_t<Func, const Graph<Id, Size>*, Id, Id>, double>)
   std::optional<DijkstraResult<Id>> Graph<Id, Size>::shortestPath(
       Id source, Id destination, Func getStreetWeight) const {
     const Id sourceId{source};
