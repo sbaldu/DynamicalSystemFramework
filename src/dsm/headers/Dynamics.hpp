@@ -631,7 +631,12 @@ namespace dsm {
       const auto& streetPriorities = tl.streetPriorities();
       unsigned int greenSum{0.};
       unsigned int redSum{0.};
-      for (const auto& [streetId, street] : m_graph.adjMatrix().getRow(nodeId, true)) {
+      // for (const auto& [streetId, _] : m_graph.adjMatrix().getRow(nodeId, true)) {
+      //   const auto& street = m_graph.streetSet()[streetId];
+      //   streetPriorities.contains(streetId) ? greenSum += street->nAgents() : redSum += street->nAgents();
+      // }
+      for (const auto& [streetId, _] : m_graph.adjMatrix().getCol(nodeId, true)) {
+        const auto& street = m_graph.streetSet()[streetId];
         streetPriorities.contains(streetId) ? greenSum += street->nAgents() : redSum += street->nAgents();
       }
       if (greenSum == redSum or !tl.delay().has_value()) {
@@ -639,15 +644,20 @@ namespace dsm {
       }
       auto [greenTime, redTime] = tl.delay().value();
       if (greenSum > redSum) {
-        unsigned int delta = greenSum * percentage;
-        greenTime += delta;
-        redTime -= delta;
+        Delay delta = greenTime * percentage;
+        if (redTime > delta and static_cast<int>((redTime - delta) * percentage) > 0) {
+          greenTime += delta;
+          redTime -= delta;
+        }
       } else {
-        unsigned int delta = redSum * percentage;
-        greenTime -= delta;
-        redTime += delta;
+        Delay delta = redTime * percentage;
+        if (greenTime > delta and static_cast<int>((greenTime - delta) * percentage) > 0) {
+          greenTime -= delta;
+          redTime += delta;
+        }
       }
-      tl.setDelay(greenTime, redTime);
+      tl.setDelay(std::make_pair(greenTime, redTime));
+      // std::cout << "Node " << nodeId << " green: " << static_cast<int>(greenTime) << " red: " << static_cast<int>(redTime) << '\n';
     }
   }
 
