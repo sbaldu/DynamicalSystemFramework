@@ -331,13 +331,13 @@ namespace dsm {
     void addAgent(Id agentId) override;
 
     /// @brief Get the input counts of the street
+    /// @param resetValue If true, the counter is reset to 0 together with the output counter.
     /// @return Size The input counts of the street
-    /// @details Once the input counts are retrieved, the counter is reset to 0 together with the output counter.
-    Size inputCounts();
+    Size inputCounts(bool resetValue = false);
     /// @brief Get the output counts of the street
+    /// @param resetValue If true, the counter is reset to 0 together with the input counter.
     /// @return Size The output counts of the street
-    /// @details Once the output counts are retrieved, the counter is reset to 0 together with the input counter.
-    Size outputCounts();
+    Size outputCounts(bool resetValue = false);
     /// @brief Get the mean flow of the street
     /// @return int The flow of the street, i.e. the difference between input and output flows
     /// @details Once the flow is retrieved, bothh the input and output flows are reset to 0.
@@ -383,7 +383,8 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  Size SpireStreet<Id, Size>::inputCounts() {
+  Size SpireStreet<Id, Size>::inputCounts(bool resetValue) {
+    if (!resetValue) return m_agentCounterIn;
     Size flow = m_agentCounterIn;
     m_agentCounterIn = 0;
     m_agentCounterOut = 0;
@@ -391,7 +392,8 @@ namespace dsm {
   }
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  Size SpireStreet<Id, Size>::outputCounts() {
+  Size SpireStreet<Id, Size>::outputCounts(bool resetValue) {
+    if (!resetValue) return m_agentCounterOut;
     Size flow = m_agentCounterOut;
     m_agentCounterIn = 0;
     m_agentCounterOut = 0;
