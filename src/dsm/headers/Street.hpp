@@ -384,7 +384,8 @@ namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   Size SpireStreet<Id, Size>::inputCounts(bool resetValue) {
-    if (!resetValue) return m_agentCounterIn;
+    if (!resetValue)
+      return m_agentCounterIn;
     Size flow = m_agentCounterIn;
     m_agentCounterIn = 0;
     m_agentCounterOut = 0;
@@ -393,7 +394,8 @@ namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   Size SpireStreet<Id, Size>::outputCounts(bool resetValue) {
-    if (!resetValue) return m_agentCounterOut;
+    if (!resetValue)
+      return m_agentCounterOut;
     Size flow = m_agentCounterOut;
     m_agentCounterIn = 0;
     m_agentCounterOut = 0;

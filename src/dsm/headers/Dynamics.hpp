@@ -629,15 +629,12 @@ namespace dsm {
       }
       auto& tl = dynamic_cast<TrafficLight<Id, Size, Delay>&>(*node);
       const auto& streetPriorities = tl.streetPriorities();
-      unsigned int greenSum{0.};
-      unsigned int redSum{0.};
-      // for (const auto& [streetId, _] : m_graph.adjMatrix().getRow(nodeId, true)) {
-      //   const auto& street = m_graph.streetSet()[streetId];
-      //   streetPriorities.contains(streetId) ? greenSum += street->nAgents() : redSum += street->nAgents();
-      // }
+      Size greenSum{0};
+      Size redSum{0};
       for (const auto& [streetId, _] : m_graph.adjMatrix().getCol(nodeId, true)) {
         const auto& street = m_graph.streetSet()[streetId];
-        streetPriorities.contains(streetId) ? greenSum += street->nAgents() : redSum += street->nAgents();
+        streetPriorities.contains(streetId) ? greenSum += street->nAgents()
+                                            : redSum += street->nAgents();
       }
       if (greenSum == redSum or !tl.delay().has_value()) {
         continue;
@@ -651,13 +648,13 @@ namespace dsm {
         }
       } else {
         Delay delta = redTime * percentage;
-        if (greenTime > delta and static_cast<int>((greenTime - delta) * percentage) > 0) {
+        if (greenTime > delta and
+            static_cast<int>((greenTime - delta) * percentage) > 0) {
           greenTime -= delta;
           redTime += delta;
         }
       }
       tl.setDelay(std::make_pair(greenTime, redTime));
-      // std::cout << "Node " << nodeId << " green: " << static_cast<int>(greenTime) << " red: " << static_cast<int>(redTime) << '\n';
     }
   }
 
