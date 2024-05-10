@@ -10,8 +10,20 @@ namespace dsm {
 
   template <typename Id, typename Size>
   double streetLength(const Graph<Id, Size>* graph, Id node1, Id node2) {
-    return (*(graph->street(node1, node2)))->length();
+	const auto street{graph->street(node1, node2)};
+    return (*street)->length();
   }
+
+  template <typename Id, typename Size>
+  double streetTime(const Graph<Id, Size>* graph, Id node1, Id node2) {
+	const auto street{graph->street(node1, node2)};
+	const auto length{(*street)->length()};
+	const auto speed{(*street)->maxSpeed() *
+                 (1. - (*street)->nAgents() / (*street)->capacity())};
+
+	return length / speed;
+  }
+
 
 };  // namespace dsm
 
