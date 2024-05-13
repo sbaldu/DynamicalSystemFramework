@@ -83,6 +83,7 @@ namespace dsm {
     std::unordered_map<Id, Id> m_agentNextStreetId;
     bool m_forcePriorities;
     std::array<unsigned long long, 4> m_turnCounts;
+    std::unordered_map<Id, unsigned long long> m_streetTails;
 
     /// @brief Get the next street id
     /// @param agentId The id of the agent
@@ -302,7 +303,11 @@ namespace dsm {
         m_errorProbability{0.},
         m_minSpeedRateo{0.},
         m_forcePriorities{false},
-        m_turnCounts{0, 0, 0} {}
+        m_turnCounts{0, 0, 0} {
+    for (const auto& [streetId, street] : m_graph.streetSet()) {
+      m_streetTails.emplace(streetId, 0);
+    }
+  }
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
@@ -355,6 +360,9 @@ namespace dsm {
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::m_evolveStreets(bool reinsert_agents) {
     for (const auto& [streetId, street] : m_graph.streetSet()) {
+      if (m_time % 30 == 0) {
+        m_streetTails[streetId] += street->nAgents();
+      }
       if (street->queue().empty()) {
         continue;
       }
@@ -632,9 +640,8 @@ namespace dsm {
       Size greenSum{0};
       Size redSum{0};
       for (const auto& [streetId, _] : m_graph.adjMatrix().getCol(nodeId, true)) {
-        const auto& street = m_graph.streetSet()[streetId];
-        streetPriorities.contains(streetId) ? greenSum += street->nAgents()
-                                            : redSum += street->nAgents();
+        streetPriorities.contains(streetId) ? greenSum += m_streetTails[streetId]
+                                            : redSum += m_streetTails[streetId];
       }
       if (greenSum == redSum or !tl.delay().has_value()) {
         continue;
@@ -655,6 +662,9 @@ namespace dsm {
         }
       }
       tl.setDelay(std::make_pair(greenTime, redTime));
+    }
+    for (auto& [id, element] : m_streetTails) {
+      element = 0;
     }
   }
 
