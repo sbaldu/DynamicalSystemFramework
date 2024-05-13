@@ -150,8 +150,12 @@ namespace dsm {
     /// - Cycle over agents and update their times
     /// @param reinsert_agents If true, the agents are reinserted in the simulation after they reach their destination
     virtual void evolve(bool reinsert_agents = false);
-
-    void optimizeTrafficLights(double percentage);
+    /// @brief Optimize the traffic lights by changing the green and red times
+    /// @param percentage double, The percentage of the TOTAL cycle time to add or subtract to the green time
+    /// @param threshold double, The percentage of the mean capacity of the streets used as threshold for the delta between the two tails.
+    /// @details The function cycles over the traffic lights and, if the difference between the two tails is greater than
+    ///   the threshold multiplied by the mean capacity of the streets, it changes the green and red times of the traffic light, keeping the total cycle time constant.
+    void optimizeTrafficLights(double percentage, double threshold = 0.);
 
     /// @brief Get the graph
     /// @return const Graph<Id, Size>&, The graph
@@ -630,7 +634,8 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
-  void Dynamics<Id, Size, Delay>::optimizeTrafficLights(double percentage) {
+  void Dynamics<Id, Size, Delay>::optimizeTrafficLights(double percentage,
+                                                        double threshold) {
     for (const auto& [nodeId, node] : m_graph.nodeSet()) {
       if (!node->isTrafficLight()) {
         continue;
@@ -639,29 +644,38 @@ namespace dsm {
       const auto& streetPriorities = tl.streetPriorities();
       Size greenSum{0};
       Size redSum{0};
+      Size meanCapacity{0};
+      Size i{0};
       for (const auto& [streetId, _] : m_graph.adjMatrix().getCol(nodeId, true)) {
         streetPriorities.contains(streetId) ? greenSum += m_streetTails[streetId]
                                             : redSum += m_streetTails[streetId];
+        meanCapacity += m_graph.streetSet()[streetId]->capacity();
+        ++i;
       }
-      if (greenSum == redSum or !tl.delay().has_value()) {
+      if (std::abs(static_cast<int>(greenSum - redSum)) <
+              threshold * (static_cast<double>(meanCapacity) / i) or
+          !tl.delay().has_value()) {
         continue;
       }
       auto [greenTime, redTime] = tl.delay().value();
+      const auto cycleTime = greenTime + redTime;
       if (greenSum > redSum) {
-        Delay delta = greenTime * percentage;
-        if (redTime > delta and static_cast<int>((redTime - delta) * percentage) > 0) {
+        Delay delta = cycleTime * percentage;
+        if (redTime > delta and
+            static_cast<Delay>(static_cast<int>(redTime - delta) * percentage) > 0) {
           greenTime += delta;
           redTime -= delta;
+          tl.setDelay(std::make_pair(greenTime, redTime));
         }
       } else {
-        Delay delta = redTime * percentage;
+        Delay delta = cycleTime * percentage;
         if (greenTime > delta and
-            static_cast<int>((greenTime - delta) * percentage) > 0) {
+            static_cast<Delay>(static_cast<int>(greenTime - delta) * percentage) > 0) {
           greenTime -= delta;
           redTime += delta;
+          tl.setDelay(std::make_pair(greenTime, redTime));
         }
       }
-      tl.setDelay(std::make_pair(greenTime, redTime));
     }
     for (auto& [id, element] : m_streetTails) {
       element = 0;
