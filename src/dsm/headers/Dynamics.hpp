@@ -83,6 +83,7 @@ namespace dsm {
     std::unordered_map<Id, Id> m_agentNextStreetId;
     bool m_forcePriorities;
     std::array<unsigned long long, 4> m_turnCounts;
+    std::unordered_map<Id, unsigned long long> m_streetTails;
 
     /// @brief Get the next street id
     /// @param agentId The id of the agent
@@ -149,6 +150,12 @@ namespace dsm {
     /// - Cycle over agents and update their times
     /// @param reinsert_agents If true, the agents are reinserted in the simulation after they reach their destination
     virtual void evolve(bool reinsert_agents = false);
+    /// @brief Optimize the traffic lights by changing the green and red times
+    /// @param percentage double, The percentage of the TOTAL cycle time to add or subtract to the green time
+    /// @param threshold double, The percentage of the mean capacity of the streets used as threshold for the delta between the two tails.
+    /// @details The function cycles over the traffic lights and, if the difference between the two tails is greater than
+    ///   the threshold multiplied by the mean capacity of the streets, it changes the green and red times of the traffic light, keeping the total cycle time constant.
+    void optimizeTrafficLights(double percentage, double threshold = 0.);
 
     /// @brief Get the graph
     /// @return const Graph<Id, Size>&, The graph
@@ -267,13 +274,15 @@ namespace dsm {
     /// @return Measurement<double> The mean flow of the streets and the standard deviation
     Measurement<double> streetMeanFlow(double threshold, bool above) const;
     /// @brief Get the mean spire input flow of the streets in \f$s^{-1}\f$
+    /// @param resetValue If true, the spire input/output flows are cleared after the computation
     /// @return Measurement<double> The mean spire input flow of the streets and the standard deviation
     /// @details The spire input flow is computed as the sum of counts over the product of the number of spires and the time delta
-    Measurement<double> meanSpireInputFlow();
+    Measurement<double> meanSpireInputFlow(bool resetValue = true);
     /// @brief Get the mean spire output flow of the streets in \f$s^{-1}\f$
+    /// @param resetValue If true, the spire output/input flows are cleared after the computation
     /// @return Measurement<double> The mean spire output flow of the streets and the standard deviation
     /// @details The spire output flow is computed as the sum of counts over the product of the number of spires and the time delta
-    Measurement<double> meanSpireOutputFlow();
+    Measurement<double> meanSpireOutputFlow(bool resetValue = true);
     /// @brief Get the mean travel time of the agents in \f$s\f$
     /// @param clearData If true, the travel times are cleared after the computation
     /// @return Measurement<double> The mean travel time of the agents and the standard
@@ -298,7 +307,11 @@ namespace dsm {
         m_errorProbability{0.},
         m_minSpeedRateo{0.},
         m_forcePriorities{false},
-        m_turnCounts{0, 0, 0} {}
+        m_turnCounts{0, 0, 0} {
+    for (const auto& [streetId, street] : m_graph.streetSet()) {
+      m_streetTails.emplace(streetId, 0);
+    }
+  }
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
@@ -353,6 +366,9 @@ namespace dsm {
     for (const auto& [streetId, street] : m_graph.streetSet()) {
       if (street->queue().empty()) {
         continue;
+      }
+      if (m_time % 30 == 0) {
+        m_streetTails[streetId] += street->queue().size();
       }
       const auto agentId{street->queue().front()};
       if (m_agents[agentId]->delay() > 0) {
@@ -618,6 +634,57 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
+  void Dynamics<Id, Size, Delay>::optimizeTrafficLights(double percentage,
+                                                        double threshold) {
+    for (const auto& [nodeId, node] : m_graph.nodeSet()) {
+      if (!node->isTrafficLight()) {
+        continue;
+      }
+      auto& tl = dynamic_cast<TrafficLight<Id, Size, Delay>&>(*node);
+      const auto& streetPriorities = tl.streetPriorities();
+      Size greenSum{0};
+      Size redSum{0};
+      Size meanCapacity{0};
+      Size i{0};
+      for (const auto& [streetId, _] : m_graph.adjMatrix().getCol(nodeId, true)) {
+        streetPriorities.contains(streetId) ? greenSum += m_streetTails[streetId]
+                                            : redSum += m_streetTails[streetId];
+        meanCapacity += m_graph.streetSet()[streetId]->capacity();
+        ++i;
+      }
+      if (std::abs(static_cast<int>(greenSum - redSum)) <
+              threshold * (static_cast<double>(meanCapacity) / i) or
+          !tl.delay().has_value()) {
+        continue;
+      }
+      auto [greenTime, redTime] = tl.delay().value();
+      const auto cycleTime = greenTime + redTime;
+      if (greenSum > redSum) {
+        Delay delta = cycleTime * percentage;
+        if (redTime > delta and
+            static_cast<Delay>(static_cast<int>(redTime - delta) * percentage) > 0) {
+          greenTime += delta;
+          redTime -= delta;
+          tl.setDelay(std::make_pair(greenTime, redTime));
+        }
+      } else {
+        Delay delta = cycleTime * percentage;
+        if (greenTime > delta and
+            static_cast<Delay>(static_cast<int>(greenTime - delta) * percentage) > 0) {
+          greenTime -= delta;
+          redTime += delta;
+          tl.setDelay(std::make_pair(greenTime, redTime));
+        }
+      }
+    }
+    for (auto& [id, element] : m_streetTails) {
+      element = 0;
+    }
+  }
+
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::addAgent(const Agent<Id, Size, Delay>& agent) {
     if (this->m_agents.contains(agent.id())) {
       throw std::invalid_argument(
@@ -871,9 +938,9 @@ namespace dsm {
     std::vector<double> flows;
     flows.reserve(m_graph.streetSet().size());
     for (const auto& [streetId, street] : m_graph.streetSet()) {
-      if (above and (street->nAgents() > (threshold * street->capacity()))) {
+      if (above and (street->normDensity() > threshold)) {
         flows.push_back(street->density() * this->streetMeanSpeed(streetId));
-      } else if (!above and (street->nAgents() < (threshold * street->capacity()))) {
+      } else if (!above and (street->normDensity() < threshold)) {
         flows.push_back(street->density() * this->streetMeanSpeed(streetId));
       }
     }
@@ -882,7 +949,7 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
-  Measurement<double> Dynamics<Id, Size, Delay>::meanSpireInputFlow() {
+  Measurement<double> Dynamics<Id, Size, Delay>::meanSpireInputFlow(bool resetValue) {
     auto deltaTime{m_time - m_previousSpireTime};
     if (deltaTime == 0) {
       return Measurement(0., 0.);
@@ -893,7 +960,7 @@ namespace dsm {
     for (const auto& [streetId, street] : m_graph.streetSet()) {
       if (street->isSpire()) {
         auto& spire = dynamic_cast<SpireStreet<Id, Size>&>(*street);
-        flows.push_back(static_cast<double>(spire.inputCounts()) / deltaTime);
+        flows.push_back(static_cast<double>(spire.inputCounts(resetValue)) / deltaTime);
       }
     }
     return Measurement(flows);
@@ -901,7 +968,7 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
-  Measurement<double> Dynamics<Id, Size, Delay>::meanSpireOutputFlow() {
+  Measurement<double> Dynamics<Id, Size, Delay>::meanSpireOutputFlow(bool resetValue) {
     auto deltaTime{m_time - m_previousSpireTime};
     if (deltaTime == 0) {
       return Measurement(0., 0.);
@@ -912,7 +979,7 @@ namespace dsm {
     for (const auto& [streetId, street] : m_graph.streetSet()) {
       if (street->isSpire()) {
         auto& spire = dynamic_cast<SpireStreet<Id, Size>&>(*street);
-        flows.push_back(static_cast<double>(spire.outputCounts()) / deltaTime);
+        flows.push_back(static_cast<double>(spire.outputCounts(resetValue)) / deltaTime);
       }
     }
     return Measurement(flows);
@@ -998,7 +1065,7 @@ namespace dsm {
     const auto& agent{this->m_agents[agentId]};
     const auto& street{this->m_graph.streetSet()[agent->streetId().value()]};
     double speed{street->maxSpeed() *
-                 (1. - this->m_minSpeedRateo * street->nAgents() / street->capacity())};
+                 (1. - this->m_minSpeedRateo * street->normDensity())};
     if (this->m_speedFluctuationSTD > 0.) {
       std::normal_distribution<double> speedDist{speed,
                                                  speed * this->m_speedFluctuationSTD};
@@ -1093,11 +1160,11 @@ namespace dsm {
     speeds.reserve(this->m_graph.streetSet().size());
     for (const auto& [streetId, street] : this->m_graph.streetSet()) {
       if (above) {
-        if (street->nAgents() > (threshold * street->capacity())) {
+        if (street->normDensity() > threshold) {
           speeds.push_back(this->streetMeanSpeed(streetId));
         }
       } else {
-        if (street->nAgents() < (threshold * street->capacity())) {
+        if (street->normDensity() < threshold) {
           speeds.push_back(this->streetMeanSpeed(streetId));
         }
       }
