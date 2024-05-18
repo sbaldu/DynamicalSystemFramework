@@ -146,6 +146,9 @@ namespace dsm {
     /// @brief Get the street's density in \f$m^{-1}\f$
     /// @return double, The street's density
     double density() const { return nAgents() / m_len; }
+    /// @brief Get the street's normalized density
+    /// @return double, The street's normalized density
+    double normDensity() const { return nAgents() / static_cast<double>(m_capacity); }
     /// @brief Check if the street is full
     /// @return bool, True if the street is full, false otherwise
     bool isFull() const { return nAgents() == m_capacity; }
