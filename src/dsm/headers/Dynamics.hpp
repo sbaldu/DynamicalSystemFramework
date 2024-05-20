@@ -83,6 +83,7 @@ namespace dsm {
     std::unordered_map<Id, Id> m_agentNextStreetId;
     bool m_forcePriorities;
     std::unordered_map<Id, std::array<unsigned long long, 4>> m_turnCounts;
+    std::unordered_map<Id, std::array<long, 4>> m_turnMapping;
     std::unordered_map<Id, unsigned long long> m_streetTails;
 
     /// @brief Get the next street id
@@ -297,6 +298,8 @@ namespace dsm {
     /// @return std::array<double, 3> The turn probabilities
     /// @details The array contains the probabilities of left (0), straight (1), right (2) and U (3) turns
     std::unordered_map<Id, std::array<double, 4>> turnProbabilities(bool reset = true);
+
+    std::unordered_map<Id, std::array<long, 4>> turnMapping() const { return m_turnMapping; }
   };
 
   template <typename Id, typename Size, typename Delay>
@@ -312,6 +315,31 @@ namespace dsm {
     for (const auto& [streetId, street] : m_graph.streetSet()) {
       m_turnCounts.emplace(streetId, std::array<unsigned long long, 4>{0, 0, 0, 0});
       m_streetTails.emplace(streetId, 0);
+      // fill turn mapping as [streetId, [left street Id, straight street Id, right street Id, U self street Id]]
+      m_turnMapping.emplace(streetId, std::array<long, 4>{-1, -1, -1, -1});
+    }
+    for (const auto& [streetId, street] : m_graph.streetSet()) {
+      const auto& srcNodeId = street->nodePair().second;
+      for (const auto& [ss, _] : m_graph.adjMatrix().getRow(srcNodeId, true)) {
+        // const auto& nextStreet = m_graph.streetSet()[ss];
+        // if (nextStreet == nullptr) {
+        //   std::cout << "Street " << ss << " not found\n";
+        //   continue;
+        // }
+        const auto& delta = street->angle() -
+                            m_graph.streetSet()[ss]->angle();
+        if (std::abs(delta) < std::numbers::pi) {
+          if (delta < 0.) {
+            m_turnMapping[streetId][0] = ss;;  // right
+          } else if (delta > 0.) {
+            m_turnMapping[streetId][2] = ss;  // left
+          } else {
+            m_turnMapping[streetId][1] = ss;  // straight
+          }
+        } else {
+          m_turnMapping[streetId][3] = ss;  // U
+        }
+      }
     }
   }
 
