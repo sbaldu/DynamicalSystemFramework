@@ -82,7 +82,7 @@ namespace dsm {
     std::vector<unsigned int> m_travelTimes;
     std::unordered_map<Id, Id> m_agentNextStreetId;
     bool m_forcePriorities;
-    std::array<unsigned long long, 4> m_turnCounts;
+    std::unordered_map<Id, std::array<unsigned long long, 4>> m_turnCounts;
     std::unordered_map<Id, unsigned long long> m_streetTails;
 
     /// @brief Get the next street id
@@ -94,7 +94,7 @@ namespace dsm {
                               Id NodeId,
                               std::optional<Id> streetId = std::nullopt);
     /// @brief Increase the turn counts
-    virtual void m_increaseTurnCounts(double delta);
+    virtual void m_increaseTurnCounts(Id streetId, double delta);
     /// @brief Evolve the streets
     /// @param reinsert_agents If true, the agents are reinserted in the simulation after they reach their destination
     /// @details If possible, removes the first agent of each street queue, putting it in the destination node.
@@ -290,11 +290,13 @@ namespace dsm {
     /// @brief Get the turn counts of the agents
     /// @return const std::array<unsigned long long, 3>& The turn counts
     /// @details The array contains the counts of left (0), straight (1), right (2) and U (3) turns
-    const std::array<unsigned long long, 4>& turnCounts() const { return m_turnCounts; }
+    const std::unordered_map<Id, std::array<unsigned long long, 4>>& turnCounts() const {
+      return m_turnCounts;
+    }
     /// @brief Get the turn probabilities of the agents
     /// @return std::array<double, 3> The turn probabilities
     /// @details The array contains the probabilities of left (0), straight (1), right (2) and U (3) turns
-    std::array<double, 4> turnProbabilities() const;
+    std::unordered_map<Id, std::array<double, 4>> turnProbabilities(bool reset = true);
   };
 
   template <typename Id, typename Size, typename Delay>
@@ -306,9 +308,9 @@ namespace dsm {
         m_graph{std::move(graph)},
         m_errorProbability{0.},
         m_minSpeedRateo{0.},
-        m_forcePriorities{false},
-        m_turnCounts{0, 0, 0} {
+        m_forcePriorities{false} {
     for (const auto& [streetId, street] : m_graph.streetSet()) {
+      m_turnCounts.emplace(streetId, std::array<unsigned long long, 4>{0, 0, 0, 0});
       m_streetTails.emplace(streetId, 0);
     }
   }
@@ -345,17 +347,17 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
-  void Dynamics<Id, Size, Delay>::m_increaseTurnCounts(double delta) {
+  void Dynamics<Id, Size, Delay>::m_increaseTurnCounts(Id streetId, double delta) {
     if (std::abs(delta) < std::numbers::pi) {
       if (delta < 0.) {
-        ++m_turnCounts[0];  // right
+        ++m_turnCounts[streetId][0];  // right
       } else if (delta > 0.) {
-        ++m_turnCounts[2];  // left
+        ++m_turnCounts[streetId][2];  // left
       } else {
-        ++m_turnCounts[1];  // straight
+        ++m_turnCounts[streetId][1];  // straight
       }
     } else {
-      ++m_turnCounts[3];  // U
+      ++m_turnCounts[streetId][3];  // U
     }
   }
 
@@ -418,7 +420,7 @@ namespace dsm {
         } else if (delta < -std::numbers::pi) {
           delta += 2 * std::numbers::pi;
         }
-        m_increaseTurnCounts(delta);
+        m_increaseTurnCounts(streetId, delta);
         intersection.addAgent(delta, agentId);
         m_agentNextStreetId.emplace(agentId, nextStreet->id());
       } else if (destinationNode->isRoundabout()) {
@@ -462,15 +464,14 @@ namespace dsm {
               agentId, node->id(), m_agents[agentId]->streetId())]};
           if (!(nextStreet->isFull())) {
             if (m_agents[agentId]->streetId().has_value()) {
-              auto delta =
-                  nextStreet->angle() -
-                  m_graph.streetSet()[m_agents[agentId]->streetId().value()]->angle();
+              const auto streetId = m_agents[agentId]->streetId().value();
+              auto delta = nextStreet->angle() - m_graph.streetSet()[streetId]->angle();
               if (delta > std::numbers::pi) {
                 delta -= 2 * std::numbers::pi;
               } else if (delta < -std::numbers::pi) {
                 delta += 2 * std::numbers::pi;
               }
-              m_increaseTurnCounts(delta);
+              m_increaseTurnCounts(streetId, delta);
             }
             roundabout.dequeue();
             m_agents[agentId]->setStreetId(nextStreet->id());
@@ -1008,17 +1009,27 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
-  std::array<double, 4> Dynamics<Id, Size, Delay>::turnProbabilities() const {
-    std::array<double, 4> probabilities{0., 0., 0., 0.};
-    const double sum{std::accumulate(m_turnCounts.cbegin(), m_turnCounts.cend(), 0.)};
-    if (sum == 0.) {
-      return probabilities;
+  std::unordered_map<Id, std::array<double, 4>>
+  Dynamics<Id, Size, Delay>::turnProbabilities(bool reset) {
+    std::unordered_map<Id, std::array<double, 4>> res;
+    for (auto& [streetId, counts] : m_turnCounts) {
+      std::array<double, 4> probabilities{0., 0., 0., 0.};
+      const auto sum{std::accumulate(counts.cbegin(), counts.cend(), 0.)};
+      if (sum == 0) {
+        res.emplace(streetId, probabilities);
+        continue;
+      }
+      for (auto i{0}; i < counts.size(); ++i) {
+        probabilities[i] = counts[i] / sum;
+      }
+      res.emplace(streetId, probabilities);
     }
-    std::transform(m_turnCounts.cbegin(),
-                   m_turnCounts.cend(),
-                   probabilities.begin(),
-                   [sum](const auto& count) { return count / sum; });
-    return probabilities;
+    if (reset) {
+      for (auto& [streetId, counts] : m_turnCounts) {
+        std::fill(counts.begin(), counts.end(), 0);
+      }
+    }
+    return res;
   }
 
   template <typename Id, typename Size, typename Delay>
