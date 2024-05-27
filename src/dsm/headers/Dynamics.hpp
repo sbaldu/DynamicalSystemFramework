@@ -637,35 +637,35 @@ namespace dsm {
     for (const auto& [itineraryId, itinerary] : m_itineraries) {
       SparseMatrix<Id, bool> path{dimension, dimension};
       // cycle over the nodes
-      for (Size i{0}; i < dimension; ++i) {
-        if (i == itinerary->destination()) {
+      for (const auto& [nodeId, node] : m_graph.nodeSet()) {
+        if (nodeId == itinerary->destination()) {
           continue;
         }
-        auto result{m_graph.shortestPath(i, itinerary->destination())};
+        auto result{m_graph.shortestPath(nodeId, itinerary->destination())};
         if (!result.has_value()) {
           continue;
         }
         // save the minimum distance between i and the destination
         const auto minDistance{result.value().distance()};
-        for (const auto& node : m_graph.adjMatrix().getRow(i)) {
+        for (const auto [nextNodeId, _] : m_graph.adjMatrix().getRow(nodeId)) {
           // init distance from a neighbor node to the destination to zero
           double distance{0.};
 
           // can't dereference because risk undefined behavior
-          auto streetResult = m_graph.street(i, node.first);
+          auto streetResult = m_graph.street(nodeId, nextNodeId);
           if (streetResult == nullptr) {
             continue;
           }
           auto streetLength{(*streetResult)->length()};
           // TimePoint expectedTravelTime{
           //     streetLength};  // / street->maxSpeed()};  // TODO: change into input velocity
-          result = m_graph.shortestPath(node.first, itinerary->destination());
+          result = m_graph.shortestPath(nextNodeId, itinerary->destination());
           if (result.has_value()) {
             // if the shortest path exists, save the distance
             distance = result.value().distance();
-          } else if (node.first != itinerary->destination()) {
+          } else if (nextNodeId != itinerary->destination()) {
             // if the node is the destination, the distance is zero, otherwise the iteration is skipped
-            continue;
+            // continue;
           }
 
           // if (!(distance > minDistance + expectedTravelTime)) {
@@ -673,10 +673,14 @@ namespace dsm {
             // std::cout << "minDistance: " << minDistance << " distance: " << distance
             //           << " streetLength: " << streetLength << '\n';
             // std::cout << "Inserting " << i << ';' << node.first << '\n';
-            path.insert(i, node.first, true);
+            path.insert(nodeId, nextNodeId, true);
           }
         }
         itinerary->setPath(path);
+        for (auto i{0}; i < dimension; ++i) {
+          std::cout << path.getRow(i).size() << ' ';
+        }
+        std::cout << '\n';
       }
     }
   }
