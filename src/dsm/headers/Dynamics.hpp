@@ -77,6 +77,7 @@ namespace dsm {
     Graph<Id, Size> m_graph;
     double m_errorProbability;
     double m_minSpeedRateo;
+    double m_maxFlowPercentage;
     mutable std::mt19937_64 m_generator{std::random_device{}()};
     std::uniform_real_distribution<double> m_uniformDist{0., 1.};
     std::vector<unsigned int> m_travelTimes;
@@ -130,6 +131,11 @@ namespace dsm {
     /// @param errorProbability The error probability
     /// @throw std::invalid_argument If the error probability is not between 0 and 1
     void setErrorProbability(double errorProbability);
+    /// @brief Set the maximum flow percentage
+    /// @param maxFlowPercentage The maximum flow percentage
+    /// @details The maximum flow percentage is the percentage of the maximum flow that a street can transmit. Default is 1 (100%).
+    /// @throw std::invalid_argument If the maximum flow percentage is not between 0 and 1
+    void setMaxFlowPercentage(double maxFlowPercentage);
     /// @brief Set the speed of an agent
     /// @details This is a pure-virtual function, it must be implemented in the derived classes
     /// @param agentId The id of the agent
@@ -299,7 +305,9 @@ namespace dsm {
     /// @details The array contains the probabilities of left (0), straight (1), right (2) and U (3) turns
     std::unordered_map<Id, std::array<double, 4>> turnProbabilities(bool reset = true);
 
-    std::unordered_map<Id, std::array<long, 4>> turnMapping() const { return m_turnMapping; }
+    std::unordered_map<Id, std::array<long, 4>> turnMapping() const {
+      return m_turnMapping;
+    }
   };
 
   template <typename Id, typename Size, typename Delay>
@@ -311,6 +319,7 @@ namespace dsm {
         m_graph{std::move(graph)},
         m_errorProbability{0.},
         m_minSpeedRateo{0.},
+        m_maxFlowPercentage{1.},
         m_forcePriorities{false} {
     for (const auto& [streetId, street] : m_graph.streetSet()) {
       m_turnCounts.emplace(streetId, std::array<unsigned long long, 4>{0, 0, 0, 0});
@@ -326,11 +335,11 @@ namespace dsm {
         //   std::cout << "Street " << ss << " not found\n";
         //   continue;
         // }
-        const auto& delta = street->angle() -
-                            m_graph.streetSet()[ss]->angle();
+        const auto& delta = street->angle() - m_graph.streetSet()[ss]->angle();
         if (std::abs(delta) < std::numbers::pi) {
           if (delta < 0.) {
-            m_turnMapping[streetId][0] = ss;;  // right
+            m_turnMapping[streetId][0] = ss;
+            ;  // right
           } else if (delta > 0.) {
             m_turnMapping[streetId][2] = ss;  // left
           } else {
@@ -350,7 +359,8 @@ namespace dsm {
                                                Id nodeId,
                                                std::optional<Id> streetId) {
     auto possibleMoves = m_graph.adjMatrix().getRow(nodeId, true);
-    if (this->m_itineraries.size() > 0 and this->m_uniformDist(this->m_generator) > this->m_errorProbability) {
+    if (this->m_itineraries.size() > 0 and
+        this->m_uniformDist(this->m_generator) > this->m_errorProbability) {
       const auto& it = this->m_itineraries[this->m_agents[agentId]->itineraryId()];
       if (it->destination() != nodeId) {
         possibleMoves = it->path().getRow(nodeId, true);
@@ -395,6 +405,10 @@ namespace dsm {
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::m_evolveStreets(bool reinsert_agents) {
     for (const auto& [streetId, street] : m_graph.streetSet()) {
+      // generate a random number between 0 and 1
+      if (m_uniformDist(m_generator) > m_maxFlowPercentage) {
+        continue;
+      }
       if (street->queue().empty()) {
         continue;
       }
@@ -557,7 +571,7 @@ namespace dsm {
             m_agentNextStreetId.emplace(agentId, nextStreet->id());
           } catch (...) {
             continue;
-          }      
+          }
         } else if (srcNode->isRoundabout()) {
           auto& roundabout = dynamic_cast<Roundabout<Id, Size>&>(*srcNode);
           try {
@@ -602,6 +616,17 @@ namespace dsm {
           buildLog("The error probability must be between 0 and 1"));
     }
     m_errorProbability = errorProbability;
+  }
+
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>)
+  void Dynamics<Id, Size, Delay>::setMaxFlowPercentage(double maxFlowPercentage) {
+    if (maxFlowPercentage < 0. || maxFlowPercentage > 1.) {
+      throw std::invalid_argument(
+          buildLog("The maximum flow percentage must be between 0 and 1"));
+    }
+    m_maxFlowPercentage = maxFlowPercentage;
   }
 
   template <typename Id, typename Size, typename Delay>
@@ -1054,7 +1079,7 @@ namespace dsm {
       std::array<double, 4> probabilities{0., 0., 0., 0.};
       const auto sum{std::accumulate(counts.cbegin(), counts.cend(), 0.)};
       if (sum != 0) {
-          for (auto i{0}; i < counts.size(); ++i) {
+        for (auto i{0}; i < counts.size(); ++i) {
           probabilities[i] = counts[i] / sum;
         }
       }
