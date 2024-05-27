@@ -435,7 +435,12 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Roundabout<Id, Size>::enqueue(Id agentId) {
     if (m_agents.size() == this->m_capacity) {
-      throw std::runtime_error(buildLog("Node is full"));
+      throw std::runtime_error(buildLog("Roundabout is full"));
+    }
+    for (const auto id : m_agents) {
+      if (id == agentId) {
+        throw std::runtime_error(buildLog("Agent is already on the roundabout."));
+      }
     }
     m_agents.push(agentId);
   }
@@ -443,7 +448,7 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   Id Roundabout<Id, Size>::dequeue() {
     if (m_agents.empty()) {
-      throw std::runtime_error(buildLog("Node is empty"));
+      throw std::runtime_error(buildLog("Roundabout is empty"));
     }
     Id agentId{m_agents.front()};
     m_agents.pop();

@@ -349,11 +349,12 @@ namespace dsm {
   Id Dynamics<Id, Size, Delay>::m_nextStreetId(Id agentId,
                                                Id nodeId,
                                                std::optional<Id> streetId) {
-    auto possibleMoves{
-        this->m_itineraries[this->m_agents[agentId]->itineraryId()]->path().getRow(nodeId,
-                                                                                   true)};
-    if (this->m_uniformDist(this->m_generator) < this->m_errorProbability) {
-      possibleMoves = m_graph.adjMatrix().getRow(nodeId, true);
+    auto possibleMoves = m_graph.adjMatrix().getRow(nodeId, true);
+    if (this->m_itineraries.size() > 0 and this->m_uniformDist(this->m_generator) > this->m_errorProbability) {
+      const auto& it = this->m_itineraries[this->m_agents[agentId]->itineraryId()];
+      if (it->destination() != nodeId) {
+        possibleMoves = it->path().getRow(nodeId, true);
+      }
     }
     assert(possibleMoves.size() > 0);
     std::uniform_int_distribution<Size> moveDist{
@@ -420,7 +421,8 @@ namespace dsm {
         street->dequeue();
         m_travelTimes.push_back(m_agents[agentId]->time());
         if (reinsert_agents) {
-          Agent<Id, Size, Delay> newAgent{m_agents[agentId]->id(),
+          // take last agent id in map
+          Agent<Id, Size, Delay> newAgent{m_agents.rbegin()->first + 1,
                                           m_agents[agentId]->itineraryId(),
                                           m_agents[agentId]->srcNodeId().value()};
           if (m_agents[agentId]->srcNodeId().has_value()) {
@@ -550,11 +552,19 @@ namespace dsm {
         assert(srcNode->id() == nextStreet->nodePair().first);
         if (srcNode->isIntersection()) {
           auto& intersection = dynamic_cast<Node<Id, Size>&>(*srcNode);
-          intersection.addAgent(0., agentId);
-          m_agentNextStreetId.emplace(agentId, nextStreet->id());
+          try {
+            intersection.addAgent(0., agentId);
+            m_agentNextStreetId.emplace(agentId, nextStreet->id());
+          } catch (...) {
+            continue;
+          }      
         } else if (srcNode->isRoundabout()) {
           auto& roundabout = dynamic_cast<Roundabout<Id, Size>&>(*srcNode);
-          roundabout.enqueue(agentId);
+          try {
+            roundabout.enqueue(agentId);
+          } catch (...) {
+            continue;
+          }
         }
       } else if (agent->delay() == 0) {
         agent->setSpeed(0.);
@@ -1043,12 +1053,10 @@ namespace dsm {
     for (auto& [streetId, counts] : m_turnCounts) {
       std::array<double, 4> probabilities{0., 0., 0., 0.};
       const auto sum{std::accumulate(counts.cbegin(), counts.cend(), 0.)};
-      if (sum == 0) {
-        res.emplace(streetId, probabilities);
-        continue;
-      }
-      for (auto i{0}; i < counts.size(); ++i) {
-        probabilities[i] = counts[i] / sum;
+      if (sum != 0) {
+          for (auto i{0}; i < counts.size(); ++i) {
+          probabilities[i] = counts[i] / sum;
+        }
       }
       res.emplace(streetId, probabilities);
     }
