@@ -366,7 +366,7 @@ namespace dsm {
         possibleMoves = it->path().getRow(nodeId, true);
       }
     }
-    assert(possibleMoves.size() > 0);
+    // assert(possibleMoves.size() > 0);
     std::uniform_int_distribution<Size> moveDist{
         0, static_cast<Size>(possibleMoves.size() - 1)};
     uint8_t p{0};
@@ -635,49 +635,27 @@ namespace dsm {
   void Dynamics<Id, Size, Delay>::updatePaths() {
     const Size dimension = m_graph.adjMatrix().getRowDim();
     for (const auto& [itineraryId, itinerary] : m_itineraries) {
+      std::cout << "Itinerary " << itineraryId << '\n';
       SparseMatrix<Id, bool> path{dimension, dimension};
+      const auto dst = itinerary->destination();
       // cycle over the nodes
       for (Size i{0}; i < dimension; ++i) {
-        if (i == itinerary->destination()) {
-          continue;
-        }
-        auto result{m_graph.shortestPath(i, itinerary->destination())};
-        if (!result.has_value()) {
-          continue;
-        }
-        // save the minimum distance between i and the destination
-        const auto minDistance{result.value().distance()};
-        for (const auto& node : m_graph.adjMatrix().getRow(i)) {
-          // init distance from a neighbor node to the destination to zero
-          double distance{0.};
-
-          // can't dereference because risk undefined behavior
-          auto streetResult = m_graph.street(i, node.first);
-          if (streetResult == nullptr) {
-            continue;
-          }
-          auto streetLength{(*streetResult)->length()};
-          // TimePoint expectedTravelTime{
-          //     streetLength};  // / street->maxSpeed()};  // TODO: change into input velocity
-          result = m_graph.shortestPath(node.first, itinerary->destination());
-          if (result.has_value()) {
-            // if the shortest path exists, save the distance
-            distance = result.value().distance();
-          } else if (node.first != itinerary->destination()) {
-            // if the node is the destination, the distance is zero, otherwise the iteration is skipped
-            continue;
-          }
-
-          // if (!(distance > minDistance + expectedTravelTime)) {
-          if (minDistance == distance + streetLength) {
-            // std::cout << "minDistance: " << minDistance << " distance: " << distance
-            //           << " streetLength: " << streetLength << '\n';
-            // std::cout << "Inserting " << i << ';' << node.first << '\n';
-            path.insert(i, node.first, true);
+        for (int i = 0; i < 120; ++i) {
+          auto asd = this->m_graph.shortestPath(i, dst);
+          if (asd.size() > 0) {
+            for (auto &it : asd)
+              path.insert(i, it, 1.);
           }
         }
-        itinerary->setPath(path);
       }
+      itinerary->setPath(path);
+      for (auto i = 0; i < 120; ++i) {
+        for (const auto& el : path.getRow(i)) {
+          if (el.second > 0) {
+            std::cout << el.second << ' ';
+          }
+        }
+      }  
     }
   }
 

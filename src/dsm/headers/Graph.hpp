@@ -56,6 +56,8 @@ namespace dsm {
     /// @details The street angles are set using the node's coordinates.
     void m_setStreetAngles();
 
+    int _minDistance(int const src, int const dst) const;
+
   public:
     Graph();
     /// @brief Construct a new Graph object
@@ -222,7 +224,7 @@ namespace dsm {
     /// @param source The source node id
     /// @param destination The destination node id
     /// @return A DijkstraResult object containing the path and the distance
-    std::optional<DijkstraResult<Id>> shortestPath(Id source, Id destination) const;
+    std::vector<int> shortestPath(Id source, Id destination) const;
   };
 
   template <typename Id, typename Size>
@@ -718,93 +720,85 @@ namespace dsm {
     return this->shortestPath(source.id(), destination.id());
   }
 
+  inline int minDistance(std::vector<int> const &dist,
+                       std::vector<bool> const &sptSet, int const _n) {
+    // Initialize min value
+    int min = std::numeric_limits<int>::max(), min_index = -1;
+
+    for (int v = 0; v < _n; ++v) {
+      if (!sptSet[v] && dist[v] <= min) {
+        min = dist[v], min_index = v;
+      }
+    }
+    return min_index;
+  }
+
+  // using Dijkstra to calculate distance
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  std::optional<DijkstraResult<Id>> Graph<Id, Size>::shortestPath(Id source,
-                                                                  Id destination) const {
-    const Id sourceId{source};
+  int Graph<Id, Size>::_minDistance(int const src, int const dst) const {
+    std::vector<int> dist; // The output array. dist.at(i) will hold the shortest
+    // distance from src to i
+    dist.reserve(120);
 
-    std::unordered_set<Id> unvisitedNodes;
-    bool source_found{false};
-    bool dest_found{false};
-    std::for_each(m_nodes.begin(),
-                  m_nodes.end(),
-                  [&unvisitedNodes, &source_found, &dest_found, source, destination](
-                      const auto& node) -> void {
-                    if (!source_found && node.first == source) {
-                      source_found = true;
-                    }
-                    if (!dest_found && node.first == destination) {
-                      dest_found = true;
-                    }
-                    unvisitedNodes.emplace(node.first);
-                  });
-    if (!source_found || !dest_found) {
-      return std::nullopt;
-    }
+    std::vector<bool>
+        sptSet; // sptSet.at(i) will be true if vertex i is included in shortest
+    // path tree or shortest distance from src to i is finalized
+    sptSet.reserve(120);
 
-    const size_t n_nodes{m_nodes.size()};
-    auto adj{m_adjacency};
+    // Initialize all distances as INFINITE and stpSet as false
+    for (int i = 0; i < 120; ++i)
+      dist.push_back(std::numeric_limits<int>::max()), sptSet.push_back(false);
 
-    std::unordered_set<Id> visitedNodes;
-    std::vector<std::pair<Id, double>> dist(n_nodes);
-    std::for_each(dist.begin(), dist.end(), [count = 0](auto& element) mutable -> void {
-      element.first = count;
-      element.second = std::numeric_limits<double>::max();
-      ++count;
-    });
-    dist[source] = std::make_pair(source, 0.);
+    // Distance of source vertex from itself is always 0
+    dist[src] = 0;
 
-    std::vector<std::pair<Id, double>> prev(n_nodes);
-    std::for_each(prev.begin(), prev.end(), [](auto& pair) -> void {
-      pair.first = std::numeric_limits<Id>::max();
-      pair.second = std::numeric_limits<double>::max();
-    });
-    prev[source].second = 0.;
+    // Find shortest path for all vertices
+    for (int count = 0; count < 120 - 1; ++count) {
+      // Pick the minimum distance vertex from the set of vertices not
+      // yet processed. u is always equal to src in the first iteration.
+      int u = minDistance(dist, sptSet, 120);
 
-    while (unvisitedNodes.size() != 0) {
-      source = *std::min_element(unvisitedNodes.begin(),
-                                 unvisitedNodes.end(),
-                                 [&dist](const auto& a, const auto& b) -> bool {
-                                   return dist[a].second < dist[b].second;
-                                 });
+      // Mark the picked vertex as processed
+      sptSet[u] = true;
 
-      unvisitedNodes.erase(source);
-      visitedNodes.emplace(source);
+      // Update dist value of the adjacent vertices of the picked vertex.
+      for (int v = 0; v < 120; ++v) {
 
-      const auto& neighbors{adj.getRow(source)};
-      for (const auto& neighbour : neighbors) {
-        // if the node has already been visited, skip it
-        if (visitedNodes.find(neighbour.first) != visitedNodes.end()) {
-          continue;
+        // Update dist.at(v) only if is not in sptSet, there is an edge from
+        // u to v, and total weight of path from src to v through u is
+        // smaller than current value of dist.at(v)
+
+        // auto length = _adjMatrix.at(u).at(v);
+        int time = 0;
+        if (m_adjacency.contains(u, v)) {
+          int time = m_streets.at(u*120+v)->length();
+          // weight /= this->_getStreetMeanVelocity(_findStreet(u, v));
+          // time = static_cast<int>(weight);
         }
-        double streetLength = (*(this->street(source, neighbour.first)))->length();
-        // if current path is shorter than the previous one, update the distance
-        if (streetLength + dist[source].second < dist[neighbour.first].second) {
-          dist[neighbour.first].second = streetLength + dist[source].second;
-          prev[neighbour.first] = std::make_pair(source, dist[neighbour.first].second);
-        }
-      }
-
-      adj.emptyColumn(source);
-    }
-
-    std::vector<Id> path{destination};
-    Id previous{destination};
-    while (true) {
-      previous = prev[previous].first;
-      if (previous == std::numeric_limits<Id>::max()) {
-        return std::nullopt;
-      }
-      path.push_back(previous);
-      if (previous == sourceId) {
-        break;
+        if (!sptSet[v] && time && dist[u] != std::numeric_limits<int>::max() &&
+            dist[u] + time < dist[v])
+          dist[v] = dist[u] + time;
       }
     }
-
-    std::reverse(path.begin(), path.end());
-    return DijkstraResult<Id>(path, prev[destination].second);
+    return dist[dst];
   }
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  std::vector<int> Graph<Id, Size>::shortestPath(Id src,
+                                                                  Id dst) const {
+        auto const min = _minDistance(src, dst);
+      std::vector<int> _nextStep;
+      for (auto const &el : m_adjacency.getRow(src)) {
+        auto weight = m_streets.at(src * 120 + el.first)->length();
+        // weight /= this->_getStreetMeanVelocity(_findStreet(src, el.first));
+        auto time = static_cast<int>(weight);
+        if (_minDistance(el.first, dst) == (min - time))
+          _nextStep.push_back(el.first);
+      }
+      return _nextStep;
+    }
 };  // namespace dsm
 
 #endif
