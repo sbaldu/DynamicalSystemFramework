@@ -651,25 +651,21 @@ namespace dsm {
           // init distance from a neighbor node to the destination to zero
           double distance{0.};
 
-          // can't dereference because risk undefined behavior
-          auto streetResult = m_graph.street(nodeId, nextNodeId);
-          if (streetResult == nullptr) {
-            continue;
-          }
-          auto streetLength{(*streetResult)->length()};
           // TimePoint expectedTravelTime{
           //     streetLength};  // / street->maxSpeed()};  // TODO: change into input velocity
           result = m_graph.shortestPath(nextNodeId, itinerary->destination());
+
           if (result.has_value()) {
             // if the shortest path exists, save the distance
             distance = result.value().distance();
-          } else if (nextNodeId != itinerary->destination()) {
-            // if the node is the destination, the distance is zero, otherwise the iteration is skipped
-            // continue;
+          } else {
+            assert(nextNodeId == itinerary->destination());
           }
 
           // if (!(distance > minDistance + expectedTravelTime)) {
-          if (minDistance == distance + streetLength) {
+          if (minDistance ==
+              distance +
+                  m_graph.streetSet().at(nodeId * dimension + nextNodeId)->length()) {
             // std::cout << "minDistance: " << minDistance << " distance: " << distance
             //           << " streetLength: " << streetLength << '\n';
             // std::cout << "Inserting " << i << ';' << node.first << '\n';
@@ -677,10 +673,10 @@ namespace dsm {
           }
         }
         itinerary->setPath(path);
-        for (auto i{0}; i < dimension; ++i) {
-          std::cout << path.getRow(i).size() << ' ';
-        }
-        std::cout << '\n';
+        // for (auto i{0}; i < dimension; ++i) {
+        //   std::cout << path.getRow(i).size() << ' ';
+        // }
+        // std::cout << '\n';
       }
     }
   }
