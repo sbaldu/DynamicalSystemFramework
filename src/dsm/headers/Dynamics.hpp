@@ -413,7 +413,7 @@ namespace dsm {
         continue;
       }
       if (m_time % 30 == 0) {
-        m_streetTails[streetId] += street->queue().size();
+        m_streetTails[streetId] += street->nAgents();
       }
       const auto agentId{street->queue().front()};
       if (m_agents[agentId]->delay() > 0) {
