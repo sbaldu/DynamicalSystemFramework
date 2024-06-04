@@ -436,7 +436,7 @@ namespace dsm {
         m_travelTimes.push_back(m_agents[agentId]->time());
         if (reinsert_agents) {
           // take last agent id in map
-          Agent<Id, Size, Delay> newAgent{m_agents.rbegin()->first + 1,
+          Agent<Id, Size, Delay> newAgent{static_cast<Id>(m_agents.rbegin()->first + 1),
                                           m_agents[agentId]->itineraryId(),
                                           m_agents[agentId]->srcNodeId().value()};
           if (m_agents[agentId]->srcNodeId().has_value()) {
@@ -658,8 +658,9 @@ namespace dsm {
           if (result.has_value()) {
             // if the shortest path exists, save the distance
             distance = result.value().distance();
-          } else {
-            assert(nextNodeId == itinerary->destination());
+          } else if (nextNodeId != itinerary->destination())  {
+            std::cerr << "WARNING: No path found between " << nodeId << " and "
+                      << itinerary->destination() << '\n';
           }
 
           // if (!(distance > minDistance + expectedTravelTime)) {
