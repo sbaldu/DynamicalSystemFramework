@@ -658,7 +658,7 @@ namespace dsm {
           if (result.has_value()) {
             // if the shortest path exists, save the distance
             distance = result.value().distance();
-          } else if (nextNodeId != itinerary->destination())  {
+          } else if (nextNodeId != itinerary->destination()) {
             std::cerr << "WARNING: No path found between " << nodeId << " and "
                       << itinerary->destination() << '\n';
           }
