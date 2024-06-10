@@ -85,7 +85,6 @@ namespace dsm {
     bool m_forcePriorities;
     std::unordered_map<Id, std::array<unsigned long long, 4>> m_turnCounts;
     std::unordered_map<Id, std::array<long, 4>> m_turnMapping;
-    std::unordered_map<Id, unsigned long long> m_streetTails;
 
     /// @brief Get the next street id
     /// @param agentId The id of the agent
@@ -323,7 +322,6 @@ namespace dsm {
         m_forcePriorities{false} {
     for (const auto& [streetId, street] : m_graph.streetSet()) {
       m_turnCounts.emplace(streetId, std::array<unsigned long long, 4>{0, 0, 0, 0});
-      m_streetTails.emplace(streetId, 0);
       // fill turn mapping as [streetId, [left street Id, straight street Id, right street Id, U self street Id]]
       m_turnMapping.emplace(streetId, std::array<long, 4>{-1, -1, -1, -1});
     }
@@ -405,15 +403,8 @@ namespace dsm {
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::m_evolveStreets(bool reinsert_agents) {
     for (const auto& [streetId, street] : m_graph.streetSet()) {
-      // generate a random number between 0 and 1
-      if (m_uniformDist(m_generator) > m_maxFlowPercentage) {
+      if (m_uniformDist(m_generator) > m_maxFlowPercentage || street->queue().empty()) {
         continue;
-      }
-      if (street->queue().empty()) {
-        continue;
-      }
-      if (m_time % 30 == 0) {
-        m_streetTails[streetId] += street->nAgents();
       }
       const auto agentId{street->queue().front()};
       if (m_agents[agentId]->delay() > 0) {
@@ -706,44 +697,38 @@ namespace dsm {
         continue;
       }
       auto& tl = dynamic_cast<TrafficLight<Id, Size, Delay>&>(*node);
-      const auto& streetPriorities = tl.streetPriorities();
-      Size greenSum{0};
-      Size redSum{0};
-      Size meanCapacity{0};
-      Size i{0};
-      for (const auto& [streetId, _] : m_graph.adjMatrix().getCol(nodeId, true)) {
-        streetPriorities.contains(streetId) ? greenSum += m_streetTails[streetId]
-                                            : redSum += m_streetTails[streetId];
-        meanCapacity += m_graph.streetSet()[streetId]->capacity();
-        ++i;
-      }
-      if (std::abs(static_cast<int>(greenSum - redSum)) <
-              threshold * (static_cast<double>(meanCapacity) / i) or
-          !tl.delay().has_value()) {
+      if (!tl.delay().has_value()) {
         continue;
       }
       auto [greenTime, redTime] = tl.delay().value();
       const auto cycleTime = greenTime + redTime;
-      if (greenSum > redSum) {
-        Delay delta = cycleTime * percentage;
-        if (redTime > delta and
+      const Delay delta = cycleTime * percentage;
+      const auto& streetPriorities = tl.streetPriorities();
+      Size greenSum{0};
+      Size redSum{0};
+      for (const auto& [streetId, _] : m_graph.adjMatrix().getCol(nodeId, true)) {
+        streetPriorities.contains(streetId)
+            ? greenSum += m_graph.streetSet()[streetId]->nAgents()
+            : redSum += m_graph.streetSet()[streetId]->nAgents();
+      }
+      const Size smallest = std::min(greenSum, redSum);
+      if (std::abs(static_cast<int>(greenSum - redSum)) < threshold * smallest) {
+        tl.setDelay(std::floor(cycleTime / 2));
+      }
+      if ((greenSum > redSum) && !(greenTime > redTime)) {
+        if (redTime > delta &&
             static_cast<Delay>(static_cast<int>(redTime - delta) * percentage) > 0) {
           greenTime += delta;
           redTime -= delta;
           tl.setDelay(std::make_pair(greenTime, redTime));
         }
-      } else {
-        Delay delta = cycleTime * percentage;
-        if (greenTime > delta and
-            static_cast<Delay>(static_cast<int>(greenTime - delta) * percentage) > 0) {
-          greenTime -= delta;
-          redTime += delta;
-          tl.setDelay(std::make_pair(greenTime, redTime));
-        }
+      } else if (!(redTime > greenTime) && (greenTime > delta) &&
+                 static_cast<Delay>(static_cast<int>(greenTime - delta) * percentage) >
+                     0) {
+        greenTime -= delta;
+        redTime += delta;
+        tl.setDelay(std::make_pair(greenTime, redTime));
       }
-    }
-    for (auto& [id, element] : m_streetTails) {
-      element = 0;
     }
   }
 
