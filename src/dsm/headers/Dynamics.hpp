@@ -715,7 +715,8 @@ namespace dsm {
           redQueue += m_graph.streetSet()[streetId]->queue().size();
         }
       }
-      const Delay delta = std::floor(std::abs(static_cast<int>(greenQueue - redQueue)) / percentage);
+      const Delay delta =
+          std::floor(std::abs(static_cast<int>(greenQueue - redQueue)) / percentage);
       if (delta == 0) {
         continue;
       }
@@ -730,7 +731,8 @@ namespace dsm {
           redTime -= delta;
           tl.setDelay(std::make_pair(greenTime, redTime));
         }
-      } else if (!(redTime > greenTime) && (greenTime > delta) && (redQueue > greenQueue)) {
+      } else if (!(redTime > greenTime) && (greenTime > delta) &&
+                 (redQueue > greenQueue)) {
         greenTime -= delta;
         redTime += delta;
         tl.setDelay(std::make_pair(greenTime, redTime));
