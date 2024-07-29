@@ -702,29 +702,37 @@ namespace dsm {
       }
       auto [greenTime, redTime] = tl.delay().value();
       const auto cycleTime = greenTime + redTime;
-      const Delay delta = cycleTime * percentage;
+      // const Delay delta = cycleTime * percentage;
       const auto& streetPriorities = tl.streetPriorities();
-      Size greenSum{0};
-      Size redSum{0};
+      Size greenSum{0}, greenQueue{0};
+      Size redSum{0}, redQueue{0};
       for (const auto& [streetId, _] : m_graph.adjMatrix().getCol(nodeId, true)) {
-        streetPriorities.contains(streetId)
-            ? greenSum += m_graph.streetSet()[streetId]->nAgents()
-            : redSum += m_graph.streetSet()[streetId]->nAgents();
+        if (streetPriorities.contains(streetId)) {
+          greenSum += m_graph.streetSet()[streetId]->nAgents();
+          greenQueue += m_graph.streetSet()[streetId]->queue().size();
+        } else {
+          redSum += m_graph.streetSet()[streetId]->nAgents();
+          redQueue += m_graph.streetSet()[streetId]->queue().size();
+        }
+      }
+      const Delay delta =
+          std::floor(std::abs(static_cast<int>(greenQueue - redQueue)) / percentage);
+      if (delta == 0) {
+        continue;
       }
       const Size smallest = std::min(greenSum, redSum);
       if (std::abs(static_cast<int>(greenSum - redSum)) < threshold * smallest) {
         tl.setDelay(std::floor(cycleTime / 2));
+        continue;
       }
-      if ((greenSum > redSum) && !(greenTime > redTime)) {
-        if (redTime > delta &&
-            static_cast<Delay>(static_cast<int>(redTime - delta) * percentage) > 0) {
+      if ((greenSum > redSum) && !(greenTime > redTime) && (greenQueue > redQueue)) {
+        if (redTime > delta) {
           greenTime += delta;
           redTime -= delta;
           tl.setDelay(std::make_pair(greenTime, redTime));
         }
       } else if (!(redTime > greenTime) && (greenTime > delta) &&
-                 static_cast<Delay>(static_cast<int>(greenTime - delta) * percentage) >
-                     0) {
+                 (redQueue > greenQueue)) {
         greenTime -= delta;
         redTime += delta;
         tl.setDelay(std::make_pair(greenTime, redTime));
