@@ -722,6 +722,7 @@ namespace dsm {
       const Size smallest = std::min(greenSum, redSum);
       if (std::abs(static_cast<int>(greenSum - redSum)) < threshold * smallest) {
         tl.setDelay(std::floor(cycleTime / 2));
+        continue;
       }
       if ((greenSum > redSum) && !(greenTime > redTime) && (greenQueue > redQueue)) {
         if (redTime > delta) {
