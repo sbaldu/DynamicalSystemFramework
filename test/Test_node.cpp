@@ -5,6 +5,7 @@
 #include "doctest.h"
 
 using Node = dsm::Node<uint16_t, uint16_t>;
+using TrafficLight = dsm::TrafficLight<uint16_t, uint16_t, uint16_t>;
 
 TEST_CASE("Node") {
   SUBCASE("Constructor") {
@@ -24,44 +25,122 @@ TEST_CASE("Node") {
     */
     Node node{1, std::make_pair(2.5, 3.5)};
     CHECK(node.id() == 1);
-    CHECK(node.coords().first == 2.5);
-    CHECK(node.coords().second == 3.5);
+    CHECK(node.coords().value().first == 2.5);
+    CHECK(node.coords().value().second == 3.5);
   }
+}
+
+TEST_CASE("TrafficLight") {
   SUBCASE("Constructor") {
-    /*This tests the constructor that takes an Id, coordinates, and a queue.
-        GIVEN: An Id, coordinates, and a queue
-        WHEN: A Node is constructed
-        THEN: The Id, coordinates, and queue are set correctly
-        */
-    std::queue<uint16_t> queue;
-    queue.push(2);
-    queue.push(3);
-    Node node{1, std::make_pair(2.5, 3.5), queue};
-    CHECK(node.id() == 1);
-    CHECK(node.coords().first == 2.5);
-    CHECK(node.coords().second == 3.5);
-    CHECK(node.queue().front() == 2);
-    CHECK(node.queue().back() == 3);
+    /// This tests the constructor that takes an Id.
+    /// GIVEN: An Id
+    /// WHEN: A TrafficLight is constructed
+    /// THEN: The Id is set correctly
+    TrafficLight trafficLight{1};
+    CHECK(trafficLight.id() == 1);
   }
-  SUBCASE("queue management") {
-    /*This tests the queue management functions.
-    GIVEN: A Node
-    WHEN: The queue is set, an id is enqueued, and an id is dequeued
-    THEN: The queue is set correctly, the id is enqueued correctly, and the id is dequeued correctly
-    */
-    Node node{1};
-    std::queue<uint16_t> queue;
-    CHECK_THROWS(node.dequeue());
-    queue.push(2);
-    queue.push(3);
-    CHECK_THROWS(node.setQueue(queue));
-    node.enqueue(2);
-    CHECK_THROWS(node.enqueue(3));
-    CHECK(node.isFull());
-    node.setCapacity(2);
-    CHECK_FALSE(node.isFull());
-    node.enqueue(3);
-    CHECK_EQ(node.dequeue(), 2);
-    CHECK_EQ(node.dequeue(), 3);
+  SUBCASE("Light cycle") {
+    /// This tests the light cycle.
+    /// GIVEN: A TrafficLight
+    /// WHEN: The light cycle is set
+    /// THEN: The light cycle is set correctly
+    TrafficLight trafficLight{0};
+    trafficLight.setDelay(1);
+    CHECK(trafficLight.isGreen());
+    trafficLight.increaseCounter();
+    CHECK_FALSE(trafficLight.isGreen());
+    trafficLight.increaseCounter();
+    CHECK(trafficLight.isGreen());
+  }
+  SUBCASE("Ligh cycle 2") {
+    /// This tests the light cycle.
+    /// GIVEN: A TrafficLight
+    /// WHEN: The light cycle is set
+    /// THEN: The light cycle is set correctly
+    TrafficLight trafficLight{0};
+    trafficLight.setDelay(2);
+    CHECK(trafficLight.isGreen());
+    trafficLight.increaseCounter();
+    CHECK(trafficLight.isGreen());
+    trafficLight.increaseCounter();
+    CHECK_FALSE(trafficLight.isGreen());
+    trafficLight.increaseCounter();
+    CHECK_FALSE(trafficLight.isGreen());
+    trafficLight.increaseCounter();
+    CHECK(trafficLight.isGreen());
+  }
+  SUBCASE("Phase") {
+    /// This tests the phase.
+    /// GIVEN: A TrafficLight
+    /// WHEN: The phase is set to update after a green-red cycle
+    /// THEN: It's checked that the current gree-red cycle is not affected
+    /// and ultimately it's checked that on the next green-red cycle the phase is updated correctly
+    TrafficLight trafficLight{0};
+    trafficLight.setDelay(std::make_pair(5, 7));
+    trafficLight.setPhaseAfterCycle(6);
+
+    for (size_t i = 0; i < 12; ++i) {
+      trafficLight.increaseCounter();
+    }
+    CHECK_FALSE(trafficLight.isGreen());
+    trafficLight.increaseCounter();
+    CHECK_FALSE(trafficLight.isGreen());
+
+    trafficLight.setPhase(0);
+    CHECK(trafficLight.isGreen());
+
+    for (size_t i = 0; i < 12; ++i) {
+      trafficLight.increaseCounter();
+    }
+    CHECK(trafficLight.isGreen());
+  }
+  SUBCASE("Asymmetric traffic light") {
+    /// This tests the asymmetric traffic light.
+    /// GIVEN: A TrafficLight
+    /// WHEN: The asymmetric traffic light is set
+    /// THEN: The asymmetric traffic light is set correctly
+    TrafficLight trafficLight{0};
+    trafficLight.setDelay(std::make_pair(5, 3));
+    for (size_t i = 0; i < 8; ++i) {
+      if (i < 5) {
+        CHECK(trafficLight.isGreen());
+      } else {
+        CHECK_FALSE(trafficLight.isGreen());
+      }
+      trafficLight.increaseCounter();
+    }
+    CHECK(trafficLight.isGreen());
+  }
+  SUBCASE("Dynamic traffic light") {
+    GIVEN("A traffic ligth object with set delay") {
+      TrafficLight tl{0};
+      tl.setDelay(std::make_pair(5, 3));
+      WHEN("The delay is set with a green value smaller than the previous one") {
+        tl.increaseCounter();
+        tl.increaseCounter();
+        tl.increaseCounter();
+        tl.setDelay(std::make_pair(2, 3));
+        THEN("It is green for two cycles") {
+          CHECK(tl.isGreen());
+          tl.increaseCounter();
+          CHECK(tl.isGreen());
+          tl.increaseCounter();
+          CHECK_FALSE(tl.isGreen());
+        }
+      }
+      WHEN("The delay is set with a red value smaller than the previous one") {
+        tl.increaseCounter();
+        tl.increaseCounter();
+        tl.increaseCounter();
+        tl.increaseCounter();
+        tl.increaseCounter();
+        tl.setDelay(std::make_pair(1, 3));
+        THEN("It is red for one cycles") {
+          CHECK_FALSE(tl.isGreen());
+          tl.increaseCounter();
+          CHECK(tl.isGreen());
+        }
+      }
+    }
   }
 }

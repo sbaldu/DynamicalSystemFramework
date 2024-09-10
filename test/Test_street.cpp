@@ -1,6 +1,6 @@
-
 #include <cstdint>
 #include <optional>
+#include <numbers>
 
 #include "Agent.hpp"
 #include "Node.hpp"
@@ -11,6 +11,7 @@
 using Agent = dsm::Agent<uint16_t, uint16_t, double>;
 using Node = dsm::Node<uint16_t, uint16_t>;
 using Street = dsm::Street<uint16_t, uint16_t>;
+using SpireStreet = dsm::SpireStreet<uint16_t, uint16_t>;
 
 TEST_CASE("Street") {
   SUBCASE("Constructor_1") {
@@ -22,9 +23,12 @@ TEST_CASE("Street") {
 
     Street street{1, std::make_pair(0, 1)};
     CHECK_EQ(street.id(), 1);
+    CHECK_EQ(street.capacity(), 1);
+    CHECK_EQ(street.transportCapacity(), 65535);
+    CHECK_EQ(street.length(), 1.);
     CHECK_EQ(street.nodePair().first, 0);
     CHECK_EQ(street.nodePair().second, 1);
-    CHECK_EQ(street.maxSpeed(), 30.);
+    CHECK_EQ(street.maxSpeed(), 13.8888888889);
   }
 
   SUBCASE("Constructor_2") {
@@ -37,11 +41,12 @@ TEST_CASE("Street") {
     Street street{1, 2, 3.5, std::make_pair(4, 5)};
     CHECK_EQ(street.id(), 1);
     CHECK_EQ(street.capacity(), 2);
+    CHECK_EQ(street.transportCapacity(), 65535);
     CHECK_EQ(street.length(), 3.5);
     CHECK_EQ(street.nodePair().first, 4);
     CHECK_EQ(street.nodePair().second, 5);
-    CHECK_EQ(street.density(), 0);
-    CHECK_EQ(street.maxSpeed(), 30.);
+    CHECK_EQ(doctest::Approx(street.density()), 0);
+    CHECK_EQ(street.maxSpeed(), 13.8888888889);
   }
   SUBCASE("Constructor_3") {
     /*This tests the constructor that takes an Id, capacity, length, nodePair, and maxSpeed.
@@ -53,10 +58,11 @@ TEST_CASE("Street") {
     Street street{1, 2, 3.5, 40., std::make_pair(4, 5)};
     CHECK_EQ(street.id(), 1);
     CHECK_EQ(street.capacity(), 2);
+    CHECK_EQ(street.transportCapacity(), 65535);
     CHECK_EQ(street.length(), 3.5);
     CHECK_EQ(street.nodePair().first, 4);
     CHECK_EQ(street.nodePair().second, 5);
-    CHECK_EQ(street.density(), 0);
+    CHECK_EQ(doctest::Approx(street.density()), 0);
     CHECK_EQ(street.maxSpeed(), 40.);
   }
 
@@ -100,16 +106,23 @@ TEST_CASE("Street") {
 
     Street street{1, 4, 3.5, std::make_pair(0, 1)};
     // fill the queue
-    street.enqueue(a1);
-    street.enqueue(a2);
-    CHECK_EQ(street.density(), 0.5);
-    street.enqueue(a3);
-    street.enqueue(a4);
+    street.addAgent(a1.id());
+    street.enqueue(a1.id());
+    CHECK_THROWS(street.enqueue(a1.id()));
+    CHECK_THROWS(street.enqueue(a2.id()));
+    street.addAgent(a2.id());
+    street.enqueue(a2.id());
+    CHECK_EQ(doctest::Approx(street.density()), 0.571429);
+    street.addAgent(a3.id());
+    street.enqueue(a3.id());
+    street.addAgent(a4.id());
+    street.enqueue(a4.id());
     CHECK_EQ(street.queue().front(), 1);
     CHECK_EQ(street.queue().back(), 4);
     CHECK_EQ(street.queue().size(), street.capacity());
-    CHECK_EQ(street.size(), street.capacity());
-    CHECK_EQ(street.density(), 1);
+    CHECK_EQ(street.queue().size(), street.capacity());
+    CHECK_EQ(doctest::Approx(street.density()), 1.14286);
+    CHECK(street.isFull());
   }
 
   SUBCASE("Dequeue") {
@@ -123,24 +136,126 @@ TEST_CASE("Street") {
 
     Street street{1, 4, 3.5, std::make_pair(0, 1)};
     // fill the queue
-    street.enqueue(a1);
-    street.enqueue(a2);
-    street.enqueue(a3);
-    street.enqueue(a4);
-    CHECK_EQ(street.queue().front(), 1);  // check that agent 1 is at the front of the queue
-
+    street.addAgent(a1.id());
+    street.enqueue(a1.id());
+    street.addAgent(a2.id());
+    street.enqueue(a2.id());
+    street.addAgent(a3.id());
+    street.enqueue(a3.id());
+    street.addAgent(a4.id());
+    street.enqueue(a4.id());
+    CHECK_EQ(street.queue().front(),
+             1);  // check that agent 1 is at the front of the queue
     // dequeue
     street.dequeue();
     CHECK_EQ(street.queue().front(), 2);  // check that agent 2 is now at front
     // check that the length of the queue has decreased
     CHECK_EQ(street.queue().size(), 3);
-    CHECK_EQ(street.size(), 3);
+    CHECK_EQ(street.queue().size(), 3);
     // check that the next agent dequeued is agent 2
     CHECK_EQ(street.dequeue().value(), 2);
-    CHECK_EQ(street.size(), 2);
+    CHECK_EQ(street.queue().size(), 2);
     street.dequeue();
     street.dequeue();  // the queue is now empty
     // check that the result of dequeue is std::nullopt
     CHECK_FALSE(street.dequeue().has_value());
+  }
+  SUBCASE("Angle") {
+    /// This tests the angle method
+    /// GIVEN: A street
+    /// WHEN: The angle method is called
+    /// THEN: The angle is returned and is correct
+    Street street{1, 4, 3.5, std::make_pair(0, 1)};
+    CHECK_EQ(street.angle(), 0);
+    street.setAngle(std::make_pair(0, 1), std::make_pair(1, 0));
+    CHECK_EQ(street.angle(), 3 * std::numbers::pi / 4);
+    // exceptions
+    CHECK_THROWS(street.setAngle(-7.));
+    CHECK_THROWS(street.setAngle(7.));
+  }
+}
+
+TEST_CASE("SpireStreet") {
+  SUBCASE("Input flow") {
+    GIVEN("A spire street") {
+      SpireStreet street{1, 4, 3.5, std::make_pair(0, 1)};
+      WHEN("An agent is enqueued") {
+        street.addAgent(1);
+        THEN("The input flow is one") { CHECK_EQ(street.inputCounts(), 1); }
+        street.enqueue(1);
+        THEN("The density is updated") {
+          CHECK_EQ(doctest::Approx(street.density()), 0.285714);
+        }
+        THEN("Output flow is zero") { CHECK_EQ(street.outputCounts(), 0); }
+        THEN("Mean flow is one") { CHECK_EQ(street.meanFlow(), 1); }
+      }
+      WHEN("Three agents are enqueued") {
+        street.addAgent(1);
+        street.enqueue(1);
+        street.addAgent(2);
+        street.enqueue(2);
+        street.addAgent(3);
+        street.enqueue(3);
+        THEN("The density is updated") {
+          CHECK_EQ(doctest::Approx(street.density()), 0.857143);
+        }
+        THEN("Input flow is three") { CHECK_EQ(street.inputCounts(), 3); }
+        THEN("Output flow is zero") { CHECK_EQ(street.outputCounts(), 0); }
+        THEN("Mean flow is three") { CHECK_EQ(street.meanFlow(), 3); }
+      }
+      WHEN("An agent is dequeued") {
+        street.addAgent(1);
+        street.enqueue(1);
+        street.dequeue();
+        THEN("The density is updated") { CHECK_EQ(doctest::Approx(street.density()), 0); }
+        THEN("Input flow is one") { CHECK_EQ(street.inputCounts(), 1); }
+        THEN("Output flow is one") { CHECK_EQ(street.outputCounts(), 1); }
+        THEN("Mean flow is zero") { CHECK_EQ(street.meanFlow(), 0); }
+      }
+      WHEN("Three agents are dequeued") {
+        street.addAgent(1);
+        street.enqueue(1);
+        street.addAgent(2);
+        street.enqueue(2);
+        street.addAgent(3);
+        street.enqueue(3);
+        street.dequeue();
+        street.dequeue();
+        street.dequeue();
+        THEN("The density is updated") { CHECK_EQ(doctest::Approx(street.density()), 0); }
+        THEN("Input flow is three") { CHECK_EQ(street.inputCounts(), 3); }
+        THEN("Output flow is three") { CHECK_EQ(street.outputCounts(), 3); }
+        THEN("Mean flow is zero") { CHECK_EQ(street.meanFlow(), 0); }
+      }
+      WHEN("Input is greater than output") {
+        street.addAgent(1);
+        street.enqueue(1);
+        street.addAgent(2);
+        street.enqueue(2);
+        street.dequeue();
+        street.dequeue();
+        street.addAgent(3);
+        street.enqueue(3);
+        THEN("The density is updated") {
+          CHECK_EQ(doctest::Approx(street.density()), 0.285714);
+        }
+        THEN("Mean flow is one") { CHECK_EQ(street.meanFlow(), 1); }
+      }
+      WHEN("Output is greater than input") {
+        street.addAgent(1);
+        street.enqueue(1);
+        street.addAgent(2);
+        street.enqueue(2);
+        street.meanFlow();
+        street.addAgent(3);
+        street.enqueue(3);
+        street.dequeue();
+        street.dequeue();
+        THEN("The density is updated") {
+          CHECK_EQ(doctest::Approx(street.density()), 0.285714);
+        }
+        THEN("Mean flow is minus one") { CHECK_EQ(street.meanFlow(), -1); }
+      }
+    }
   }
 }

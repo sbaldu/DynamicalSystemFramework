@@ -7,12 +7,8 @@
 
 namespace dsm {
   template <typename Id, typename Size>
-    requires std::unsigned_integral<Id> && std::unsigned_integral<Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   class Node;
-
-  // Alias for shared pointers
-  template <typename T>
-  using shared = std::shared_ptr<T>;
 
   // define is_node type trait
   template <typename T>
@@ -28,7 +24,7 @@ namespace dsm {
   struct is_node<const Node<Id, Size>&> : std::true_type {};
 
   template <typename Id, typename Size>
-  struct is_node<shared<Node<Id, Size>>> : std::true_type {};
+  struct is_node<std::unique_ptr<Node<Id, Size>>> : std::true_type {};
 
   template <typename T>
   inline constexpr bool is_node_v = is_node<T>::value;

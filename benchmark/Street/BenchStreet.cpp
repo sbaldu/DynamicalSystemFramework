@@ -18,11 +18,11 @@ int main() {
   Agent agent(0, 0, 0);
   Bench b(1000);
 
-  std::cout << "Benchmarking enqueue\n";
-  b.benchmark([&street](Agent ag) -> void { street.enqueue(ag); }, agent);
-  b.print();
+  // std::cout << "Benchmarking addAgent\n";
+  // b.benchmark([&street](Agent ag) -> void { street.addAgent(ag.id()); }, agent);
+  // b.print();
 
-  std::cout << "Benchmarking dequeue\n";
-  b.benchmark([&street]() -> void { street.dequeue(); });
-  b.print();
+  // std::cout << "Benchmarking dequeue\n";
+  // b.benchmark([&street]() -> void { street.dequeue(); });
+  // b.print();
 }

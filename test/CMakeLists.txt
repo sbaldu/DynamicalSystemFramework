@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.16.0)
 
-project(dsm_tests)
+project(dsm_tests VERSION 1.3.10 LANGUAGES CXX)
 
 # Set the C++ standard
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -17,7 +17,7 @@ include(FetchContent)
 # Get doctest
 FetchContent_Declare(doctest
   GIT_REPOSITORY https://github.com/doctest/doctest.git
-  GIT_TAG 7b9885133108ae301ddd16e2651320f54cafeba7
+  GIT_TAG v2.4.11
 )
 FetchContent_GetProperties(doctest)
 if(NOT doctest_POPULATED)

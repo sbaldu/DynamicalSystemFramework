@@ -37,7 +37,7 @@ TEST_CASE("Graph") {
     graph.buildAdj();
     CHECK(graph.streetSet().size() == 1);
     CHECK_EQ(graph.nodeSet().size(), 2);
-    CHECK(graph.adjMatrix()->size() == 1);
+    CHECK(graph.adjMatrix().size() == 1);
   }
 
   SUBCASE("Constructor_2") {
@@ -50,11 +50,11 @@ TEST_CASE("Graph") {
     Graph graph{sm};
     CHECK(graph.nodeSet().size() == 4);
     CHECK(graph.streetSet().size() == 5);
-    CHECK(graph.adjMatrix()->size() == 5);
-    CHECK(graph.adjMatrix()->contains(1, 2));
-    CHECK(graph.adjMatrix()->contains(2, 3));
-    CHECK(graph.adjMatrix()->contains(3, 2));
-    CHECK_FALSE(graph.adjMatrix()->contains(2, 1));
+    CHECK(graph.adjMatrix().size() == 5);
+    CHECK(graph.adjMatrix().contains(1, 2));
+    CHECK(graph.adjMatrix().contains(2, 3));
+    CHECK(graph.adjMatrix().contains(3, 2));
+    CHECK_FALSE(graph.adjMatrix().contains(2, 1));
   }
 
   SUBCASE("Construction with addStreet") {
@@ -73,11 +73,11 @@ TEST_CASE("Graph") {
 
     CHECK_EQ(graph.streetSet().size(), 5);
     CHECK_EQ(graph.nodeSet().size(), 4);
-    CHECK_EQ(graph.adjMatrix()->size(), 5);
-    CHECK(graph.adjMatrix()->contains(0, 1));
-    CHECK(graph.adjMatrix()->contains(1, 2));
-    CHECK(graph.adjMatrix()->contains(0, 2));
-    CHECK_FALSE(graph.adjMatrix()->contains(1, 3));
+    CHECK_EQ(graph.adjMatrix().size(), 5);
+    CHECK(graph.adjMatrix().contains(0, 1));
+    CHECK(graph.adjMatrix().contains(1, 2));
+    CHECK(graph.adjMatrix().contains(0, 2));
+    CHECK_FALSE(graph.adjMatrix().contains(1, 3));
   }
 
   SUBCASE("Construction with addStreets") {
@@ -92,11 +92,11 @@ TEST_CASE("Graph") {
 
     CHECK_EQ(graph.streetSet().size(), 5);
     CHECK_EQ(graph.nodeSet().size(), 4);
-    CHECK_EQ(graph.adjMatrix()->size(), 5);
-    CHECK(graph.adjMatrix()->contains(0, 1));
-    CHECK(graph.adjMatrix()->contains(1, 2));
-    CHECK(graph.adjMatrix()->contains(0, 2));
-    CHECK_FALSE(graph.adjMatrix()->contains(1, 3));
+    CHECK_EQ(graph.adjMatrix().size(), 5);
+    CHECK(graph.adjMatrix().contains(0, 1));
+    CHECK(graph.adjMatrix().contains(1, 2));
+    CHECK(graph.adjMatrix().contains(0, 2));
+    CHECK_FALSE(graph.adjMatrix().contains(1, 3));
   }
 
   SUBCASE("importMatrix - dsm") {
@@ -106,26 +106,48 @@ TEST_CASE("Graph") {
     // THEN: the graph's adjacency matrix is the same as the one in the file
     Graph graph{};
     graph.importMatrix("./data/matrix.dsm");
-    CHECK_EQ(graph.adjMatrix()->max_size(), 9);
-    CHECK_EQ(graph.adjMatrix()->getRowDim(), 3);
-    CHECK_EQ(graph.adjMatrix()->getColDim(), 3);
-    CHECK(graph.adjMatrix()->operator()(8));
-    CHECK(graph.adjMatrix()->operator()(6));
-    CHECK(graph.adjMatrix()->operator()(3));
-    CHECK(graph.adjMatrix()->operator()(1));
+    CHECK_EQ(graph.adjMatrix().max_size(), 9);
+    CHECK_EQ(graph.adjMatrix().getRowDim(), 3);
+    CHECK_EQ(graph.adjMatrix().getColDim(), 3);
+    CHECK(graph.adjMatrix().operator()(8));
+    CHECK(graph.adjMatrix().operator()(6));
+    CHECK(graph.adjMatrix().operator()(3));
+    CHECK(graph.adjMatrix().operator()(1));
     CHECK(graph.nodeSet().size() == 3);
     CHECK(graph.streetSet().size() == 4);
+    graph.exportMatrix("./data/temp.dsm", false);
+    Graph graph2{};
+    graph2.importMatrix("./data/temp.dsm");
+    CHECK_EQ(graph2.adjMatrix().max_size(), 9);
+    CHECK_EQ(graph2.adjMatrix().getRowDim(), 3);
+    CHECK_EQ(graph2.adjMatrix().getColDim(), 3);
+    CHECK(graph2.adjMatrix().operator()(8));
+    CHECK(graph2.adjMatrix().operator()(6));
+    CHECK(graph2.adjMatrix().operator()(3));
+    CHECK(graph2.adjMatrix().operator()(1));
+    CHECK(graph2.nodeSet().size() == 3);
+    CHECK(graph2.streetSet().size() == 4);
+  }
+  SUBCASE("importCoordinates") {
+    Graph graph{};
+    CHECK_THROWS(graph.importCoordinates("./data/coords.txt"));
+    graph.importMatrix("./data/matrix.dsm");
+    graph.importCoordinates("./data/coords.dsm");
+    const auto& nodes = graph.nodeSet();
+    CHECK_EQ(nodes.at(0)->coords(), std::make_pair(0., 0.));
+    CHECK_EQ(nodes.at(1)->coords(), std::make_pair(1., 0.));
+    CHECK_EQ(nodes.at(2)->coords(), std::make_pair(2., 0.));
   }
   SUBCASE("importMatrix - raw matrix") {
     Graph graph{};
     graph.importMatrix("./data/rawMatrix.txt", false);
-    CHECK_EQ(graph.adjMatrix()->max_size(), 9);
-    CHECK_EQ(graph.adjMatrix()->getRowDim(), 3);
-    CHECK_EQ(graph.adjMatrix()->getColDim(), 3);
-    CHECK(graph.adjMatrix()->operator()(0, 1));
-    CHECK(graph.adjMatrix()->operator()(1, 0));
-    CHECK(graph.adjMatrix()->operator()(1, 2));
-    CHECK(graph.adjMatrix()->operator()(2, 1));
+    CHECK_EQ(graph.adjMatrix().max_size(), 9);
+    CHECK_EQ(graph.adjMatrix().getRowDim(), 3);
+    CHECK_EQ(graph.adjMatrix().getColDim(), 3);
+    CHECK(graph.adjMatrix().operator()(0, 1));
+    CHECK(graph.adjMatrix().operator()(1, 0));
+    CHECK(graph.adjMatrix().operator()(1, 2));
+    CHECK(graph.adjMatrix().operator()(2, 1));
     CHECK(graph.nodeSet().size() == 3);
     CHECK(graph.streetSet().size() == 4);
     CHECK_EQ(graph.streetSet()[1]->length(), 500);
@@ -149,7 +171,61 @@ TEST_CASE("Graph") {
     graph.importOSMEdges("./data/edges.csv");
     CHECK_EQ(graph.streetSet().size(), 60);
     graph.buildAdj();
-    CHECK_EQ(graph.adjMatrix()->size(), 60);
+    CHECK_EQ(graph.adjMatrix().size(), 60);
+  }
+  SUBCASE("street") {
+    /// GIVEN: a graph
+    /// WHEN: we add a street
+    /// THEN: the street is added
+    Graph graph{};
+    Street street{1, 1, 1., std::make_pair(0, 1)};
+    graph.addStreet(street);
+    auto result = graph.street(0, 1);
+    CHECK(result);
+    const auto& street2 = *result;
+    CHECK_EQ(street2->id(), 1);
+    CHECK_EQ(street2->length(), 1.);
+    CHECK_EQ(street2->capacity(), 1);
+    CHECK_FALSE(graph.street(1, 0));
+  }
+  SUBCASE("make trafficlight") {
+    GIVEN("A graph object with two nodes and one street") {
+      Graph graph{};
+      graph.addStreet(Street{1, 1, 1., std::make_pair(0, 1)});
+      graph.buildAdj();
+      WHEN("We make node 0 a traffic light") {
+        graph.makeTrafficLight<uint8_t>(0);
+        THEN("The node 0 is a traffic light") {
+          CHECK(graph.nodeSet().at(0)->isTrafficLight());
+        }
+      }
+    }
+  }
+  SUBCASE("make roundabout") {
+    GIVEN("A graph object with two nodes and one street") {
+      Graph graph{};
+      graph.addStreet(Street{1, 1, 1., std::make_pair(0, 1)});
+      graph.buildAdj();
+      WHEN("We make node 0 a roundabout") {
+        graph.makeRoundabout(0);
+        THEN("The node 0 is a roundabout") {
+          CHECK(graph.nodeSet().at(0)->isRoundabout());
+        }
+      }
+    }
+  }
+  SUBCASE("make spire street") {
+    GIVEN("A graph object with two nodes and one street") {
+      Graph graph{};
+      graph.addStreet(Street{0, 1, 1., std::make_pair(0, 1)});
+      graph.buildAdj();
+      WHEN("We make the street a spire street") {
+        graph.makeSpireStreet(1);
+        THEN("The street is a spire street") {
+          CHECK(graph.streetSet().at(1)->isSpire());
+        }
+      }
+    }
   }
 }
 
@@ -271,7 +347,8 @@ TEST_CASE("Dijkstra") {
     Street s17(16, 5, 2., std::make_pair(6, 4));
     Street s18(17, 5, 6., std::make_pair(6, 5));
     Graph graph{};
-    graph.addStreets(s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14, s15, s16, s17, s18);
+    graph.addStreets(
+        s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14, s15, s16, s17, s18);
     graph.buildAdj();
     auto result = graph.shortestPath(0, 1);
     Path correctPath{0, 1};
@@ -336,7 +413,8 @@ TEST_CASE("Dijkstra") {
     Street s17(16, 5, 6., std::make_pair(4, 3));
     Street s18(17, 5, 9., std::make_pair(4, 5));
     Graph graph{};
-    graph.addStreets(s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14, s15, s16, s17, s18);
+    graph.addStreets(
+        s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14, s15, s16, s17, s18);
     graph.buildAdj();
     auto result = graph.shortestPath(0, 4);
     Path correctPath{0, 2, 5, 4};
@@ -387,29 +465,29 @@ TEST_CASE("Dijkstra") {
     Street street{1, 1, 1., std::make_pair(0, 1)};
     graph.addStreet(street);
     auto result = graph.street(0, 1);
-    CHECK(result.has_value());
-    auto street2 = result.value();
+    CHECK(result);
+    const auto& street2 = *result;
     CHECK_EQ(street2->id(), 1);
     CHECK_EQ(street2->length(), 1.);
     CHECK_EQ(street2->capacity(), 1);
-    CHECK(!graph.street(1, 0).has_value());
+    CHECK_FALSE(graph.street(1, 0));
   }
 
   SUBCASE("equal length") {
     Graph graph{};
     graph.importMatrix("./data/matrix.dat", false);
     // check correct import
-    CHECK_EQ(graph.adjMatrix()->max_size(), 14400);
-    CHECK_EQ(graph.adjMatrix()->getRowDim(), 120);
-    CHECK_EQ(graph.adjMatrix()->getColDim(), 120);
-    CHECK_EQ(graph.adjMatrix()->size(), 436);
+    CHECK_EQ(graph.adjMatrix().max_size(), 14400);
+    CHECK_EQ(graph.adjMatrix().getRowDim(), 120);
+    CHECK_EQ(graph.adjMatrix().getColDim(), 120);
+    CHECK_EQ(graph.adjMatrix().size(), 436);
     // check that the path exists
-    CHECK(graph.adjMatrix()->operator()(46, 58));
-    CHECK(graph.adjMatrix()->operator()(58, 70));
-    CHECK(graph.adjMatrix()->operator()(70, 82));
-    CHECK(graph.adjMatrix()->operator()(82, 94));
-    CHECK(graph.adjMatrix()->operator()(94, 106));
-    CHECK(graph.adjMatrix()->operator()(106, 118));
+    CHECK(graph.adjMatrix().operator()(46, 58));
+    CHECK(graph.adjMatrix().operator()(58, 70));
+    CHECK(graph.adjMatrix().operator()(70, 82));
+    CHECK(graph.adjMatrix().operator()(82, 94));
+    CHECK(graph.adjMatrix().operator()(94, 106));
+    CHECK(graph.adjMatrix().operator()(106, 118));
 
     auto result = graph.shortestPath(46, 118);
     CHECK(result.has_value());
