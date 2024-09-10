@@ -23,10 +23,10 @@ jobs:
         run: cmake -DTEST=ON -DCODE_COVERAGE=ON -B ${{github.workspace}}/build; sudo apt-get install lcov gcovr
 
       - name: Build
-        # Build your program with the given configuration
-        run: cmake --build ${{github.workspace}}/test/build
+        working-directory: ${{github.workspace}}/test
+        run: cmake -B ${{github.workspace}}/test/build
 
-      - name: run
+      - name: Run
         working-directory: ${{github.workspace}}/build
         run: ./dsm_tests.out
 
