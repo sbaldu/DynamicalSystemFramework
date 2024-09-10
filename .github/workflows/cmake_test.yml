@@ -20,7 +20,7 @@ jobs:
     - name: Install tools manually
       run: sudo apt-get install lcov gcovr
     
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Configure CMake
       working-directory: ${{github.workspace}}/test
