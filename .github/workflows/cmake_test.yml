@@ -14,11 +14,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Update apt repo
+      run: sudo apt-get update
+
+    - name: Install tools manually
+      run: sudo apt-get install lcov gcovr
+    
     - uses: actions/checkout@v3
 
     - name: Configure CMake
       working-directory: ${{github.workspace}}/test
-      run: cmake -B ${{github.workspace}}/test/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      run: cmake -DTEST=ON -DCODE_COVERAGE=ON -B ${{github.workspace}}/test/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
     - name: Build
       working-directory: ${{github.workspace}}/test
@@ -28,3 +34,15 @@ jobs:
     - name: Run tests
       working-directory: ${{github.workspace}}/test
       run: ./dsm_tests.out
+    
+    - name: create Report
+      working-directory: ${{github.workspace}}/test
+      run: lcov --capture --directory .. --output-file coverage.info
+
+    - uses: codecov/codecov-action@v3.1.4
+      with:
+        #token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
+        file: ${{github.workspace}}/build/coverage.info # optional
+        flags: unittests # optional
+        name: codecov-umbrella # optional
+        fail_ci_if_error: true # optional (default = false)
