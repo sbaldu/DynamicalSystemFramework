@@ -7,8 +7,7 @@
 ///             of the graph's id and the type of the graph's capacity.
 ///             The graph's id and capacity must be unsigned integral types.
 
-#ifndef Graph_hpp
-#define Graph_hpp
+#pragma once
 
 #include <algorithm>
 #include <concepts>
@@ -806,5 +805,3 @@ namespace dsm {
     return DijkstraResult<Id>(path, prev[destination].second);
   }
 };  // namespace dsm
-
-#endif

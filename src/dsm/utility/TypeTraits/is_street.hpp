@@ -1,5 +1,5 @@
-#ifndef is_street_hpp
-#define is_street_hpp
+
+#pragma once
 
 #include <concepts>
 #include <memory>
@@ -30,5 +30,3 @@ namespace dsm {
   inline constexpr bool is_street_v = is_street<T>::value;
 
 };  // namespace dsm
-
-#endif

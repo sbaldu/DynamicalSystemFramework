@@ -1,5 +1,5 @@
-#ifndef is_node_hpp
-#define is_node_hpp
+
+#pragma once
 
 #include <concepts>
 #include <memory>
@@ -30,5 +30,3 @@ namespace dsm {
   inline constexpr bool is_node_v = is_node<T>::value;
 
 };  // namespace dsm
-
-#endif

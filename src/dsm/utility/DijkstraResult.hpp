@@ -4,8 +4,7 @@
 /// @details The DijkstraResult class represents the result of a Dijkstra algorithm.
 /// 		 It is templated by the type of the graph's id.
 
-#ifndef DijkstraResult_hpp
-#define DijkstraResult_hpp
+#pragma once
 
 namespace dsm {
 
@@ -35,5 +34,3 @@ namespace dsm {
     double distance() const { return m_distance; }
   };
 };  // namespace dsm
-
-#endif

@@ -1,5 +1,5 @@
-#ifndef is_itinerary_hpp
-#define is_itinerary_hpp
+
+#pragma once
 
 #include <concepts>
 #include <memory>
@@ -24,5 +24,3 @@ namespace dsm {
   inline constexpr bool is_itinerary_v = is_itinerary<T>::value;
 
 };  // namespace dsm
-
-#endif

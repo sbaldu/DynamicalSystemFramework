@@ -6,8 +6,7 @@
 ///             by the type of the itinerary's id, which must be an unsigned integral type.
 ///             An itinerary is defined by its id, its destination and the path to reach it.
 
-#ifndef Itinerary_hpp
-#define Itinerary_hpp
+#pragma once
 
 #include "SparseMatrix.hpp"
 
@@ -86,5 +85,3 @@ namespace dsm {
     m_path = std::move(path);
   }
 };  // namespace dsm
-
-#endif

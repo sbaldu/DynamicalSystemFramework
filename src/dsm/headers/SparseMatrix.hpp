@@ -6,8 +6,7 @@
 ///             of the matrix's index and the type of the matrix's value.
 ///             The matrix's index must be an unsigned integral type.
 
-#ifndef SparseMatrix_hpp
-#define SparseMatrix_hpp
+#pragma once
 
 #include <concepts>
 #include <iostream>
@@ -727,5 +726,3 @@ namespace dsm {
     return *this;
   }
 };  // namespace dsm
-
-#endif

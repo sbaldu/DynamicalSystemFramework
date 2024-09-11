@@ -6,8 +6,7 @@
 ///             of the graph's id and the type of the graph's capacity.
 ///             The graph's id and capacity must be unsigned integral types.
 
-#ifndef dynamics_hpp
-#define dynamics_hpp
+#pragma once
 
 #include <algorithm>
 #include <concepts>
@@ -1255,5 +1254,3 @@ namespace dsm {
   void SecondOrderDynamics<Id, Size>::setSpeed() {}
 
 };  // namespace dsm
-
-#endif

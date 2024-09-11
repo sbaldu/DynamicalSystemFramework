@@ -1,5 +1,5 @@
-#ifndef is_agent_hpp
-#define is_agent_hpp
+
+#pragma once
 
 #include <concepts>
 #include <memory>
@@ -26,5 +26,3 @@ namespace dsm {
   inline constexpr bool is_agent_v = is_agent<T>::value;
 
 };  // namespace dsm
-
-#endif
