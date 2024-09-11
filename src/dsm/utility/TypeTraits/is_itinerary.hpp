@@ -24,4 +24,3 @@ namespace dsm {
   inline constexpr bool is_itinerary_v = is_itinerary<T>::value;
 
 };  // namespace dsm
-

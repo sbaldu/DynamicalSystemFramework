@@ -34,4 +34,3 @@ namespace dsm {
     double distance() const { return m_distance; }
   };
 };  // namespace dsm
-

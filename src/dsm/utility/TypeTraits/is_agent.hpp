@@ -26,4 +26,3 @@ namespace dsm {
   inline constexpr bool is_agent_v = is_agent<T>::value;
 
 };  // namespace dsm
-

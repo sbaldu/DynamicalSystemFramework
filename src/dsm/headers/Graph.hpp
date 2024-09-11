@@ -805,4 +805,3 @@ namespace dsm {
     return DijkstraResult<Id>(path, prev[destination].second);
   }
 };  // namespace dsm
-

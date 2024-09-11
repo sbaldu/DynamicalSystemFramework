@@ -30,4 +30,3 @@ namespace dsm {
   inline constexpr bool is_street_v = is_street<T>::value;
 
 };  // namespace dsm
-

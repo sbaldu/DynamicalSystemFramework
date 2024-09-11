@@ -30,4 +30,3 @@ namespace dsm {
   inline constexpr bool is_node_v = is_node<T>::value;
 
 };  // namespace dsm
-

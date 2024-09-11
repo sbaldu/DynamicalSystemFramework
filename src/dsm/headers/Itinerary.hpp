@@ -85,4 +85,3 @@ namespace dsm {
     m_path = std::move(path);
   }
 };  // namespace dsm
-

@@ -20,4 +20,3 @@ namespace dsm {
 
   static Logger buildLog;
 }  // namespace dsm
-

@@ -1254,4 +1254,3 @@ namespace dsm {
   void SecondOrderDynamics<Id, Size>::setSpeed() {}
 
 };  // namespace dsm
-
