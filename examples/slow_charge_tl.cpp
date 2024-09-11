@@ -27,13 +27,6 @@ uint nAgents{315};  // 315 for error probability 0.3, 450 for error probability 
 #define OPTIMIZE
 
 // Compatible with dsm 1.2.1
-constexpr double ERROR_PROBABILITY{0.3};           // seed for random number generator
-constexpr int SEED{69};                            // seed for random number generator
-const std::string IN_MATRIX{"./data/matrix.dat"};  // input matrix file
-const std::string IN_COORDS{"./data/coordinates.dsm"};  // input coords file
-const std::string OUT_FOLDER{"./sctl/output_sctl_0.3_" + std::to_string(SEED) +
-                             "_op/"};                     // output folder
-constexpr auto MAX_TIME{static_cast<unsigned int>(1e6)};  // maximum time of simulation
 
 using Unit = unsigned int;
 using Delay = uint8_t;
@@ -51,7 +44,21 @@ void printLoadingBar(int const i, int const n) {
   std::cout.flush();
 }
 
-int main() {
+int main(int argc, char** argv) {
+  if (argc != 2) {
+    std::cerr << "Usage: " << argv[0] << " <SEED>\n";
+    return 1;
+  }
+
+  const int SEED = std::stoi(argv[1]);  // seed for random number generator
+
+  const double ERROR_PROBABILITY{0.3};               // seed for random number generator
+  const std::string IN_MATRIX{"./data/matrix.dat"};  // input matrix file
+  const std::string IN_COORDS{"./data/coordinates.dsm"};  // input coords file
+  const std::string OUT_FOLDER{"./sctl/output_sctl_0.3_" + std::to_string(SEED) +
+                               "_op/"};                 // output folder
+  const auto MAX_TIME{static_cast<unsigned int>(1e6)};  // maximum time of simulation
+
   // Clear output folder or create it if it doesn't exist
   if (fs::exists(OUT_FOLDER)) {
     fs::remove_all(OUT_FOLDER);
