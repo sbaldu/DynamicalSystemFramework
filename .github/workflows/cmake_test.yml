@@ -47,6 +47,8 @@ jobs:
     #    chmod +x codecov
     #    ./codecov --verbose upload-process --fail-on-error -t ${{ secrets.CODECOV_TOKEN }} -n 'service'-${{ github.run_id }} -F service -f coverage-service.xml
     - uses: codecov/codecov-action@v4.5.0
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       with:
         token: ${{ secrets.CODECOV_TOKEN }} 
         file: ${{github.workspace}}/test/coverage.xml # optional
