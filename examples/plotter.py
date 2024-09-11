@@ -55,6 +55,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 import networkx as nx
 from tqdm import tqdm
+from .functions import *
 
 INPUT_FOLDER = "./03"
 INPUT_FOLDER_OPT = INPUT_FOLDER + "_new"
@@ -69,30 +70,29 @@ class RealTimePeakDetection:
 
     def __init__(self, array, lag, threshold, influence):
         self.y = list(array)
-        self.length = len(self.y)
-        self.lag = lag
-        self.threshold = threshold
-        self.influence = influence
+        self.params = {"lag": lag, "threshold": threshold, "influence": influence}
         self.signals = [0] * len(self.y)
         self.filtered_y = np.array(self.y).tolist()
         self.avg_filter = [0] * len(self.y)
         self.std_filter = [0] * len(self.y)
-        self.avg_filter[self.lag - 1] = np.mean(self.y[0 : self.lag]).tolist()
-        self.std_filter[self.lag - 1] = np.std(self.y[0 : self.lag]).tolist()
+        self.avg_filter[self.params["lag"] - 1] = np.mean(self.y[0 : self.params["lag"]]).tolist()
+        self.std_filter[self.params["lag"] - 1] = np.std(self.y[0 : self.params["lag"]]).tolist()
 
     def thresholding_algo(self, new_value):
+        """
+        Use thresholding algorithm
+        """
         self.y.append(new_value)
         l = len(self.y) - 1
-        self.length = len(self.y)
-        if l < self.lag:
+        if l < self.params["lag"]:
             return 0
-        if l == self.lag:
+        if l == self.params["lag"]:
             self.signals = [0] * len(self.y)
             self.filtered_y = np.array(self.y).tolist()
             self.avg_filter = [0] * len(self.y)
             self.std_filter = [0] * len(self.y)
-            self.avg_filter[self.lag] = np.mean(self.y[0 : self.lag]).tolist()
-            self.std_filter[self.lag] = np.std(self.y[0 : self.lag]).tolist()
+            self.avg_filter[self.params["lag"]] = np.mean(self.y[0 : self.params["lag"]]).tolist()
+            self.std_filter[self.params["lag"]] = np.std(self.y[0 : self.params["lag"]]).tolist()
             return 0
 
         self.signals += [0]
@@ -101,7 +101,7 @@ class RealTimePeakDetection:
         self.std_filter += [0]
 
         if abs(self.y[l] - self.avg_filter[l - 1]) > (
-            self.threshold * self.std_filter[l - 1]
+            self.params["threshold"] * self.std_filter[l - 1]
         ):
 
             if self.y[l] > self.avg_filter[l - 1]:
@@ -110,16 +110,16 @@ class RealTimePeakDetection:
                 self.signals[l] = -1
 
             self.filtered_y[l] = (
-                self.influence * self.y[l]
-                + (1 - self.influence) * self.filtered_y[l - 1]
+                self.params["influence"] * self.y[l]
+                + (1 - self.params["influence"]) * self.filtered_y[l - 1]
             )
-            self.avg_filter[l] = np.mean(self.filtered_y[(l - self.lag) : l])
-            self.std_filter[l] = np.std(self.filtered_y[(l - self.lag) : l])
+            self.avg_filter[l] = np.mean(self.filtered_y[(l - self.params["lag"]) : l])
+            self.std_filter[l] = np.std(self.filtered_y[(l - self.params["lag"]) : l])
         else:
             self.signals[l] = 0
             self.filtered_y[l] = self.y[l]
-            self.avg_filter[l] = np.mean(self.filtered_y[(l - self.lag) : l])
-            self.std_filter[l] = np.std(self.filtered_y[(l - self.lag) : l])
+            self.avg_filter[l] = np.mean(self.filtered_y[(l - self.params["lag"]) : l])
+            self.std_filter[l] = np.std(self.filtered_y[(l - self.params["lag"]) : l])
 
         return self.signals[l]
 
@@ -239,17 +239,7 @@ n = len(adj)
 # read the coordinates
 coord = np.loadtxt("coordinates.dat")
 # create a directed graph
-G = nx.DiGraph()
-G.add_nodes_from(range(n))
-for i in range(n):
-    for j in range(i + 1, n):
-        if adj[i, j] > 0:
-            G.add_edge(i, j, color="g", weight=adj[i, j])
-            G.add_edge(j, i, color="g", weight=adj[j, i])
-edges = G.edges()
-pos = {}
-for i in range(n):
-    pos[i] = coord[i, :]
+G, edges, pos = create_graph_from_adj(adj, coord)
 
 # compute mean density for each row
 mean_density = DF_DEN.mean(axis=1)

@@ -13,6 +13,7 @@ import numpy as np
 from tqdm import tqdm
 from PIL import Image, ImageFont
 import pandas as pd
+from .functions import *
 
 # Constants
 TIME_BEGIN = 20 * 3600  # None to take the last frames
@@ -71,18 +72,8 @@ adj = np.loadtxt("./data/matrix.dat", skiprows=1)
 n = len(adj)
 # read the coordinates
 coord = np.loadtxt("./data/coordinates.dat")
-# create a directed graph
-G = nx.DiGraph()
-G.add_nodes_from(range(n))
-for i in range(n):
-    for j in range(i + 1, n):
-        if adj[i, j] > 0:
-            G.add_edge(i, j, color="g", weight=adj[i, j])
-            G.add_edge(j, i, color="g", weight=adj[j, i])
-edges = G.edges()
-pos = {}
-for i in range(n):
-    pos[i] = coord[i, :]
+
+G, edges, pos = create_graph_from_adj(adj, coord)
 
 font = ImageFont.truetype(FONT_PATH, 35)
 
