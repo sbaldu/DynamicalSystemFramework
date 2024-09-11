@@ -26,8 +26,8 @@ using Street = dsm::Street<unit, unit>;
 using SpireStreet = dsm::SpireStreet<unit, unit>;
 
 void printLoadingBar(int const i, int const n) {
-  std::cout << "Loading: " << std::setprecision(2) << std::fixed
-            << (i * 100. / n) << "%" << '\r';
+  std::cout << "Loading: " << std::setprecision(2) << std::fixed << (i * 100. / n) << "%"
+            << '\r';
   std::cout.flush();
 }
 
@@ -53,19 +53,19 @@ int main() {
   Street s23{13, 222 / 8, 222., 13.9, std::make_pair(2, 3)};
   Street s34{19, 651 / 4, 651., 13.9, std::make_pair(3, 4)};
   // Viale Aldo Moro
-  tl1.setDelay(std::make_pair(62, 70)); // 40, 70
+  tl1.setDelay(std::make_pair(62, 70));  // 40, 70
   tl1.setCapacity(1);
   tl1.addStreetPriority(s01.id());
   // Via Donato Creti
-  tl2.setDelay(std::make_pair(72, 69)); // 50, 75
+  tl2.setDelay(std::make_pair(72, 69));  // 50, 75
   tl2.setCapacity(1);
   tl2.addStreetPriority(s12.id());
   // Via del Lavoro
-  tl3.setDelay(std::make_pair(88, 50)); // 40, 70
+  tl3.setDelay(std::make_pair(88, 50));  // 40, 70
   tl3.setCapacity(1);
   tl3.addStreetPriority(s23.id());
   // Viali
-  tl4.setDelay(std::make_pair(81, 50)); // 38, 106 = 144
+  tl4.setDelay(std::make_pair(81, 50));  // 38, 106 = 144
   tl4.setCapacity(1);
   tl4.addStreetPriority(s34.id());
 
@@ -90,8 +90,7 @@ int main() {
   dynamics.addItinerary(itinerary);
   dynamics.updatePaths();
 
-  auto &spire =
-      dynamic_cast<SpireStreet &>(*dynamics.graph().streetSet().at(19));
+  auto& spire = dynamic_cast<SpireStreet&>(*dynamics.graph().streetSet().at(19));
 
   // lauch progress bar
   std::thread t([MAX_TIME]() {

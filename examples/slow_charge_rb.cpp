@@ -25,12 +25,12 @@ uint nAgents{450};
 // #define PRINT_SPEEDS
 
 // Compatible with dsm 1.3.x
-constexpr int SEED{33}; // seed for random number generator
-const std::string IN_MATRIX{"./data/matrix.dat"}; // input matrix file
-const std::string IN_COORDS{"./data/coordinates.dsm"}; // input coords file
-const std::string OUT_FOLDER{"./scrb/output_sctl_0.05_" + std::to_string(SEED) + "/"}; // output folder
-constexpr auto MAX_TIME{
-    static_cast<unsigned int>(1e6)}; // maximum time of simulation
+constexpr int SEED{33};                            // seed for random number generator
+const std::string IN_MATRIX{"./data/matrix.dat"};  // input matrix file
+const std::string IN_COORDS{"./data/coordinates.dsm"};  // input coords file
+const std::string OUT_FOLDER{"./scrb/output_sctl_0.05_" + std::to_string(SEED) +
+                             "/"};                        // output folder
+constexpr auto MAX_TIME{static_cast<unsigned int>(1e6)};  // maximum time of simulation
 
 using Unit = unsigned int;
 using Delay = uint8_t;
@@ -43,8 +43,8 @@ using SpireStreet = dsm::SpireStreet<Unit, Unit>;
 using Roundabout = dsm::Roundabout<Unit, Unit>;
 
 void printLoadingBar(int const i, int const n) {
-  std::cout << "Loading: " << std::setprecision(2) << std::fixed
-            << (i * 100. / n) << "%" << '\r';
+  std::cout << "Loading: " << std::setprecision(2) << std::fixed << (i * 100. / n) << "%"
+            << '\r';
   std::cout.flush();
 }
 
@@ -70,28 +70,28 @@ int main() {
     graph.makeRoundabout(i);
   }
   std::cout << "Making every street a spire...\n";
-  for (const auto &[id, street] : graph.streetSet()) {
+  for (const auto& [id, street] : graph.streetSet()) {
     graph.makeSpireStreet(id);
   }
   // check isSpire for each street
-  for (const auto &[id, street] : graph.streetSet()) {
+  for (const auto& [id, street] : graph.streetSet()) {
     if (!street->isSpire()) {
       std::cerr << "Street " << id << " is not a spire.\n";
     }
   }
   std::cout << "Setting street parameters..." << '\n';
-  for (const auto &[streetId, street] : graph.streetSet()) {
+  for (const auto& [streetId, street] : graph.streetSet()) {
     street->setLength(2e3);
     street->setCapacity(225);
     street->setTransportCapacity(1);
     street->setMaxSpeed(13.9);
   }
-  const auto &adj = graph.adjMatrix();
-  const auto &degreeVector = adj.getDegreeVector();
+  const auto& adj = graph.adjMatrix();
+  const auto& degreeVector = adj.getDegreeVector();
 
   std::cout << "Setting roundabouts parameters..." << '\n';
-  for (const auto &[nodeId, node] : graph.nodeSet()) {
-    auto &rb = dynamic_cast<Roundabout &>(*node);
+  for (const auto& [nodeId, node] : graph.nodeSet()) {
+    auto& rb = dynamic_cast<Roundabout&>(*node);
     rb.setCapacity(degreeVector(nodeId));
   }
   std::cout << "Done." << std::endl;
@@ -100,7 +100,7 @@ int main() {
 
   Dynamics dynamics{graph};
   Unit n{0};
-  for (const auto &[nodeId, degree] : degreeVector) {
+  for (const auto& [nodeId, degree] : degreeVector) {
     if (degree < 4) {
       dynamics.addItinerary(Itinerary{n, nodeId});
       ++n;
@@ -121,11 +121,12 @@ int main() {
 
   std::ofstream out(OUT_FOLDER + "data.csv");
   out << "time;n_agents;mean_speed;mean_speed_err;mean_density;mean_density_"
-         "err;mean_flow;mean_flow_err;mean_traveltime;mean_traveltime_err;mean_flow_spires;mean_flow_spires_err\n";
+         "err;mean_flow;mean_flow_err;mean_traveltime;mean_traveltime_err;mean_flow_"
+         "spires;mean_flow_spires_err\n";
 #ifdef PRINT_DENSITIES
   std::ofstream streetDensity(OUT_FOLDER + "densities.csv");
   streetDensity << "time;";
-  for (const auto &[id, street] : dynamics.graph().streetSet()) {
+  for (const auto& [id, street] : dynamics.graph().streetSet()) {
     streetDensity << id << ';';
   }
   streetDensity << '\n';
@@ -133,7 +134,7 @@ int main() {
 #ifdef PRINT_FLOWS
   std::ofstream streetFlow(OUT_FOLDER + "flows.csv");
   streetFlow << "time;";
-  for (const auto &[id, street] : dynamics.graph().streetSet()) {
+  for (const auto& [id, street] : dynamics.graph().streetSet()) {
     streetFlow << id << ';';
   }
   streetFlow << '\n';
@@ -141,7 +142,7 @@ int main() {
 #ifdef PRINT_SPEEDS
   std::ofstream streetSpeed(OUT_FOLDER + "speeds.csv");
   streetSpeed << "time;";
-  for (const auto &[id, street] : dynamics.graph().streetSet()) {
+  for (const auto& [id, street] : dynamics.graph().streetSet()) {
     streetSpeed << id << ';';
   }
   streetSpeed << '\n';
@@ -151,7 +152,7 @@ int main() {
   std::ofstream inSpires(OUT_FOLDER + "in_spires.csv");
   outSpires << "time;";
   inSpires << "time;";
-  for (const auto &[id, street] : dynamics.graph().streetSet()) {
+  for (const auto& [id, street] : dynamics.graph().streetSet()) {
     outSpires << id << ';';
     inSpires << id << ';';
   }
@@ -194,8 +195,8 @@ int main() {
 #ifdef PRINT_OUT_SPIRES
       outSpires << dynamics.time() << ';';
       inSpires << dynamics.time() << ';';
-      for (const auto &[id, street] : dynamics.graph().streetSet()) {
-        auto &spire = dynamic_cast<SpireStreet &>(*street);
+      for (const auto& [id, street] : dynamics.graph().streetSet()) {
+        auto& spire = dynamic_cast<SpireStreet&>(*street);
         outSpires << spire.outputCounts(false) << ';';
         inSpires << spire.inputCounts(false) << ';';
       }
@@ -203,31 +204,30 @@ int main() {
       inSpires << std::endl;
 #endif
       printLoadingBar(dynamics.time(), MAX_TIME);
-      const auto &meanSpeed{dynamics.streetMeanSpeed()};
-      const auto &meanDensity{dynamics.streetMeanDensity()};
-      const auto &meanFlow{dynamics.streetMeanFlow()};
-      const auto &meanTravelTime{dynamics.meanTravelTime()};
-      const auto &meanSpireFlow{dynamics.meanSpireOutputFlow()};
+      const auto& meanSpeed{dynamics.streetMeanSpeed()};
+      const auto& meanDensity{dynamics.streetMeanDensity()};
+      const auto& meanFlow{dynamics.streetMeanFlow()};
+      const auto& meanTravelTime{dynamics.meanTravelTime()};
+      const auto& meanSpireFlow{dynamics.meanSpireOutputFlow()};
 
-      out << dynamics.time() << ';' << dynamics.agents().size() << ';'
-          << meanSpeed.mean << ';' << meanSpeed.std << ';' << meanDensity.mean
-          << ';' << meanDensity.std << ';' << meanFlow.mean << ';'
-          << meanFlow.std << ';' << meanTravelTime.mean << ';'
-          << meanTravelTime.std << ';' << meanSpireFlow.mean << ';'
+      out << dynamics.time() << ';' << dynamics.agents().size() << ';' << meanSpeed.mean
+          << ';' << meanSpeed.std << ';' << meanDensity.mean << ';' << meanDensity.std
+          << ';' << meanFlow.mean << ';' << meanFlow.std << ';' << meanTravelTime.mean
+          << ';' << meanTravelTime.std << ';' << meanSpireFlow.mean << ';'
           << meanSpireFlow.std << std::endl;
     }
     if (dynamics.time() % 10 == 0) {
 #ifdef PRINT_DENSITIES
       streetDensity << dynamics.time() << ';';
-      for (const auto &[id, street] : dynamics.graph().streetSet()) {
+      for (const auto& [id, street] : dynamics.graph().streetSet()) {
         streetDensity << street->density() << ';';
       }
       streetDensity << std::endl;
 #endif
 #ifdef PRINT_FLOWS
       streetFlow << dynamics.time() << ';';
-      for (const auto &[id, street] : dynamics.graph().streetSet()) {
-        const auto &meanSpeed = dynamics.streetMeanSpeed(id);
+      for (const auto& [id, street] : dynamics.graph().streetSet()) {
+        const auto& meanSpeed = dynamics.streetMeanSpeed(id);
         if (meanSpeed.has_value()) {
           streetFlow << meanSpeed.value() * street->density() << ';';
         } else {
@@ -238,8 +238,8 @@ int main() {
 #endif
 #ifdef PRINT_SPEEDS
       streetSpeed << dynamics.time() << ';';
-      for (const auto &[id, street] : dynamics.graph().streetSet()) {
-        const auto &meanSpeed = dynamics.streetMeanSpeed(id);
+      for (const auto& [id, street] : dynamics.graph().streetSet()) {
+        const auto& meanSpeed = dynamics.streetMeanSpeed(id);
         if (meanSpeed.has_value()) {
           streetSpeed << meanSpeed.value() << ';';
         } else {
