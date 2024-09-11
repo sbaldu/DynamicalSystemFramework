@@ -15,7 +15,7 @@ namespace fs = std::filesystem;
 #include <thread>
 #include <atomic>
 
-std::atomic_int progress{0};
+std::atomic<unsigned int> progress{0};
 uint nAgents{315}; // 315 for error probability 0.3, 450 for error probability 0.05
 
 // uncomment these lines to print densities, flows and speeds

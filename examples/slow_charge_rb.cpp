@@ -15,7 +15,7 @@ namespace fs = std::filesystem;
 #include <thread>
 #include <atomic>
 
-std::atomic_int progress{0};
+std::atomic<unsigned int> progress{0};
 uint nAgents{450};
 
 // uncomment these lines to print densities, flows and speeds

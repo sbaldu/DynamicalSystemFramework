@@ -14,9 +14,9 @@
 #include <thread>
 #include <atomic>
 
-std::atomic_int progress{0};
-
 using unit = uint32_t;
+
+std::atomic<unit> progress{0};
 
 using Graph = dsm::Graph<unit, unit>;
 using Itinerary = dsm::Itinerary<unit>;
@@ -110,7 +110,6 @@ int main() {
       if (progress != 0) {
         ++it;
       }
-      const int agentNumber = dynamics.agents().size();
       if (progress % 300 == 0) {
         ofs << progress << ";" << spire.outputCounts(true) << std::endl;
       }
