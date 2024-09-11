@@ -775,7 +775,7 @@ namespace dsm {
     if (!this->m_agents.empty()) {
       agentId = this->m_agents.rbegin()->first + 1;
     }
-    for (auto i{0}; i < nAgents; ++i, ++agentId) {
+    for (Size i{0}; i < nAgents; ++i, ++agentId) {
       this->addAgent(Agent<Id, Size, Delay>{agentId, itineraryId});
       if (srcNodeId.has_value()) {
         this->m_agents[agentId]->setSourceNodeId(srcNodeId.value());
