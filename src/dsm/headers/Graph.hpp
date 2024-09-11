@@ -66,7 +66,8 @@ namespace dsm {
 
     Graph(const Graph<Id, Size>& other) {
       std::for_each(other.m_nodes.begin(), other.m_nodes.end(), [this](const auto& pair) {
-        this->m_nodes.emplace(pair.first, std::make_unique<Intersection<Id, Size>>(*pair.second));
+        this->m_nodes.emplace(pair.first,
+                              std::make_unique<Intersection<Id, Size>>(*pair.second));
       });
       std::for_each(
           other.m_streets.begin(), other.m_streets.end(), [this](const auto& pair) {
@@ -79,8 +80,8 @@ namespace dsm {
 
     Graph& operator=(const Graph<Id, Size>& other) {
       std::for_each(other.m_nodes.begin(), other.m_nodes.end(), [this](const auto& pair) {
-        this->m_nodes.insert_or_assign(pair.first,
-                                       std::make_unique<Intersection<Id, Size>>(*pair.second));
+        this->m_nodes.insert_or_assign(
+            pair.first, std::make_unique<Intersection<Id, Size>>(*pair.second));
       });
       std::for_each(
           other.m_streets.begin(), other.m_streets.end(), [this](const auto& pair) {
@@ -191,9 +192,7 @@ namespace dsm {
     }
     /// @brief Get the graph's node map
     /// @return A std::unordered_map containing the graph's nodes
-    std::unordered_map<Id, std::unique_ptr<Node<Id, Size>>>& nodeSet() {
-      return m_nodes;
-    }
+    std::unordered_map<Id, std::unique_ptr<Node<Id, Size>>>& nodeSet() { return m_nodes; }
     /// @brief Get the graph's street map
     /// @return A std::unordered_map containing the graph's streets
     const std::unordered_map<Id, std::unique_ptr<Street<Id, Size>>>& streetSet() const {
@@ -216,7 +215,8 @@ namespace dsm {
     /// @param destination The destination node
     /// @return A DijkstraResult object containing the path and the distance
     std::optional<DijkstraResult<Id>> shortestPath(
-        const Intersection<Id, Size>& source, const Intersection<Id, Size>& destination) const;
+        const Intersection<Id, Size>& source,
+        const Intersection<Id, Size>& destination) const;
     /// @brief Get the shortest path between two nodes using dijkstra algorithm
     /// @param source The source node id
     /// @param destination The destination node id
@@ -565,7 +565,8 @@ namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Graph<Id, Size>::addNode(const Intersection<Id, Size>& node) {
-    m_nodes.emplace(std::make_pair(node.id(), std::make_unique<Intersection<Id, Size>>(node)));
+    m_nodes.emplace(
+        std::make_pair(node.id(), std::make_unique<Intersection<Id, Size>>(node)));
   }
 
   template <typename Id, typename Size>
@@ -713,7 +714,8 @@ namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   std::optional<DijkstraResult<Id>> Graph<Id, Size>::shortestPath(
-      const Intersection<Id, Size>& source, const Intersection<Id, Size>& destination) const {
+      const Intersection<Id, Size>& source,
+      const Intersection<Id, Size>& destination) const {
     return this->shortestPath(source.id(), destination.id());
   }
 

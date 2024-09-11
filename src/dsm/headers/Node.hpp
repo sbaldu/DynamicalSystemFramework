@@ -224,7 +224,8 @@ namespace dsm {
     TrafficLight() = delete;
     /// @brief Construct a new TrafficLight object
     /// @param id The node's id
-    explicit TrafficLight(Id id) : Intersection<Id, Size>{id}, m_counter{0}, m_phase{0} {};
+    explicit TrafficLight(Id id)
+        : Intersection<Id, Size>{id}, m_counter{0}, m_phase{0} {};
     /// @brief Construct a new TrafficLight object
     /// @param node A Intersection object
     TrafficLight(const Node<Id, Size>& node);
@@ -395,8 +396,7 @@ namespace dsm {
     /// @brief Construct a new Roundabout object
     /// @param id The node's id
     /// @param coords A std::pair containing the node's coordinates
-    Roundabout(Id id, std::pair<double, double> coords)
-        : Node<Id, Size>{id, coords} {};
+    Roundabout(Id id, std::pair<double, double> coords) : Node<Id, Size>{id, coords} {};
     /// @brief Construct a new Roundabout object
     /// @param node A Intersection object
     Roundabout(const Node<Id, Size>& node);
