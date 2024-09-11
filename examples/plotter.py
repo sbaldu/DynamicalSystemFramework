@@ -55,7 +55,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 import networkx as nx
 from tqdm import tqdm
-from .functions import *
+from functions import create_graph_from_adj
 
 INPUT_FOLDER = "./03"
 INPUT_FOLDER_OPT = INPUT_FOLDER + "_new"
@@ -70,13 +70,17 @@ class RealTimePeakDetection:
 
     def __init__(self, array, lag, threshold, influence):
         self.y = list(array)
-        self.params = {"lag": lag, "threshold": threshold, "influence": influence}
+        self._params = {"lag": lag, "threshold": threshold, "influence": influence}
         self.signals = [0] * len(self.y)
         self.filtered_y = np.array(self.y).tolist()
         self.avg_filter = [0] * len(self.y)
         self.std_filter = [0] * len(self.y)
-        self.avg_filter[self.params["lag"] - 1] = np.mean(self.y[0 : self.params["lag"]]).tolist()
-        self.std_filter[self.params["lag"] - 1] = np.std(self.y[0 : self.params["lag"]]).tolist()
+        self.avg_filter[self._params["lag"] - 1] = np.mean(
+            self.y[0 : self._params["lag"]]
+        ).tolist()
+        self.std_filter[self._params["lag"] - 1] = np.std(
+            self.y[0 : self._params["lag"]]
+        ).tolist()
 
     def thresholding_algo(self, new_value):
         """
@@ -84,15 +88,19 @@ class RealTimePeakDetection:
         """
         self.y.append(new_value)
         l = len(self.y) - 1
-        if l < self.params["lag"]:
+        if l < self._params["lag"]:
             return 0
-        if l == self.params["lag"]:
+        if l == self._params["lag"]:
             self.signals = [0] * len(self.y)
             self.filtered_y = np.array(self.y).tolist()
             self.avg_filter = [0] * len(self.y)
             self.std_filter = [0] * len(self.y)
-            self.avg_filter[self.params["lag"]] = np.mean(self.y[0 : self.params["lag"]]).tolist()
-            self.std_filter[self.params["lag"]] = np.std(self.y[0 : self.params["lag"]]).tolist()
+            self.avg_filter[self._params["lag"]] = np.mean(
+                self.y[0 : self._params["lag"]]
+            ).tolist()
+            self.std_filter[self._params["lag"]] = np.std(
+                self.y[0 : self._params["lag"]]
+            ).tolist()
             return 0
 
         self.signals += [0]
@@ -101,7 +109,7 @@ class RealTimePeakDetection:
         self.std_filter += [0]
 
         if abs(self.y[l] - self.avg_filter[l - 1]) > (
-            self.params["threshold"] * self.std_filter[l - 1]
+            self._params["threshold"] * self.std_filter[l - 1]
         ):
 
             if self.y[l] > self.avg_filter[l - 1]:
@@ -110,18 +118,24 @@ class RealTimePeakDetection:
                 self.signals[l] = -1
 
             self.filtered_y[l] = (
-                self.params["influence"] * self.y[l]
-                + (1 - self.params["influence"]) * self.filtered_y[l - 1]
+                self._params["influence"] * self.y[l]
+                + (1 - self._params["influence"]) * self.filtered_y[l - 1]
             )
-            self.avg_filter[l] = np.mean(self.filtered_y[(l - self.params["lag"]) : l])
-            self.std_filter[l] = np.std(self.filtered_y[(l - self.params["lag"]) : l])
+            self.avg_filter[l] = np.mean(self.filtered_y[(l - self._params["lag"]) : l])
+            self.std_filter[l] = np.std(self.filtered_y[(l - self._params["lag"]) : l])
         else:
             self.signals[l] = 0
             self.filtered_y[l] = self.y[l]
-            self.avg_filter[l] = np.mean(self.filtered_y[(l - self.params["lag"]) : l])
-            self.std_filter[l] = np.std(self.filtered_y[(l - self.params["lag"]) : l])
+            self.avg_filter[l] = np.mean(self.filtered_y[(l - self._params["lag"]) : l])
+            self.std_filter[l] = np.std(self.filtered_y[(l - self._params["lag"]) : l])
 
         return self.signals[l]
+
+    @property
+    def params(self):
+        """Return algorithm parameters"""
+        return self._params
+
 
 def adjust_dataframe(_df):
     """
@@ -608,7 +622,10 @@ plt.axvline(
     max_density[0],
     color="red",
     linestyle="--",
-    label=f"$\\left({{\\sigma_{{\\rho}}/\\rho}}\\right)_{{max}} \\ {{at}} \\ \\left({max_density[0]:.1f} \\pm {max_density[1]:.1f} \\right) \\ veh/km$",
+    label = (
+        f"$\\left({{\\sigma_{{\\rho}}/\\rho}}\\right)_{{max}} \\ {{at}} \\ "
+        f"\\left({max_density[0]:.1f} \\pm {max_density[1]:.1f} \\right) \\ veh/km$"
+    )
 )
 plt.axvspan(
     max_density[0] - max_density[1],
@@ -795,10 +812,17 @@ try:
         x=time[int(FIRST[0])],
         color="red",
         linestyle="--",
-        label=f"$t_p \\ \\left({time[int(FIRST[0])]:.1f} \\pm {time[int(FIRST[0] + FIRST[1])] - time[int(FIRST[0])]:.1f} \\right) \\ h$",
+        label = (
+            f"$t_p \\ \\left({time[int(FIRST[0])]:.1f} \\pm "
+            f"{time[int(FIRST[0] + FIRST[1])] - time[int(FIRST[0])]:.1f} \\right) \\ h$"
+        )
     )
-except Exception as e:
-    print(f"An error occurred: {e}")
+except IndexError as e:
+    print(f"An IndexError occurred: {e}")
+except ValueError as e:
+    print(f"A ValueError occurred: {e}")
+except TypeError as e:
+    print(f"A TypeError occurred: {e}")
 plt.axvline(
     x=TK1[0],
     color="black",

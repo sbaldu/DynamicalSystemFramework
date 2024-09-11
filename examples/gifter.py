@@ -13,7 +13,7 @@ import numpy as np
 from tqdm import tqdm
 from PIL import Image, ImageFont
 import pandas as pd
-from .functions import *
+from functions import create_graph_from_adj
 
 # Constants
 TIME_BEGIN = 20 * 3600  # None to take the last frames
