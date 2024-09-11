@@ -1,5 +1,5 @@
-#ifndef is_itinerary_hpp
-#define is_itinerary_hpp
+
+#pragma once
 
 #include <concepts>
 #include <memory>
@@ -25,4 +25,3 @@ namespace dsm {
 
 };  // namespace dsm
 
-#endif

@@ -8,8 +8,7 @@
 ///				      and represents the spatial or temporal (depending on the type of the template) distance
 ///				      between the agent and the one in front of it.
 
-#ifndef Agent_hpp
-#define Agent_hpp
+#pragma once
 
 #include "Itinerary.hpp"
 #include "SparseMatrix.hpp"
@@ -206,4 +205,3 @@ namespace dsm {
   }
 };  // namespace dsm
 
-#endif

@@ -1,5 +1,5 @@
-#ifndef is_numeric_hpp
-#define is_numeric_hpp
+
+#pragma once
 
 #include <concepts>
 #include <cstdint>
@@ -22,4 +22,3 @@ namespace dsm {
 
 };  // namespace dsm
 
-#endif

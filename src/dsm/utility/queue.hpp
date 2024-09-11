@@ -1,6 +1,5 @@
 
-#ifndef queue_hpp
-#define queue_hpp
+#pragma once
 
 #include <queue>
 
@@ -42,4 +41,3 @@ namespace dsm {
 
 };  // namespace dsm
 
-#endif

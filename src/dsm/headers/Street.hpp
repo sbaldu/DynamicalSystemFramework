@@ -6,8 +6,7 @@
 ///             type of the street's id and the type of the street's capacity.
 ///             The street's id and capacity must be unsigned integral types.
 
-#ifndef Street_hpp
-#define Street_hpp
+#pragma once
 
 #include <optional>
 #include <queue>
@@ -425,4 +424,3 @@ namespace dsm {
 
 };  // namespace dsm
 
-#endif

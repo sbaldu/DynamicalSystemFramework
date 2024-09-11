@@ -1,5 +1,5 @@
-#ifndef Logger_hpp
-#define Logger_hpp
+
+#pragma once
 
 #include <string>
 #include <source_location>
@@ -21,4 +21,3 @@ namespace dsm {
   static Logger buildLog;
 }  // namespace dsm
 
-#endif

@@ -1,5 +1,5 @@
-#ifndef is_street_hpp
-#define is_street_hpp
+
+#pragma once
 
 #include <concepts>
 #include <memory>
@@ -31,4 +31,3 @@ namespace dsm {
 
 };  // namespace dsm
 
-#endif

@@ -1,5 +1,5 @@
-#ifndef is_agent_hpp
-#define is_agent_hpp
+
+#pragma once
 
 #include <concepts>
 #include <memory>
@@ -27,4 +27,3 @@ namespace dsm {
 
 };  // namespace dsm
 
-#endif

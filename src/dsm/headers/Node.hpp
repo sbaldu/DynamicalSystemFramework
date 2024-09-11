@@ -9,8 +9,7 @@
 ///               - TrafficLight: represents a traffic light intersection node
 ///             - Roundabout: represents a roundabout node with a queue of agents
 
-#ifndef Node_hpp
-#define Node_hpp
+#pragma once
 
 #include <functional>
 #include <utility>
@@ -456,4 +455,3 @@ namespace dsm {
   }
 };  // namespace dsm
 
-#endif
