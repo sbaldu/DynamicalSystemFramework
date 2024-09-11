@@ -41,7 +41,7 @@ jobs:
 
     - uses: codecov/codecov-action@v4.5.0
       with:
-        #token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
+        token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
         file: ${{github.workspace}}/test/coverage.xml # optional
         flags: unittests # optional
         name: codecov-umbrella # optional
