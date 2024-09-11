@@ -61,7 +61,7 @@ INPUT_FOLDER_OPT = INPUT_FOLDER + "_new"
 PRESENTATION = True
 
 
-class real_time_peak_detection:
+class RealTimePeakDetection:
     """
     Source:
         https://stackoverflow.com/questions/22583391/peak-signal-detection-in-realtime-timeseries-data
@@ -82,11 +82,11 @@ class real_time_peak_detection:
 
     def thresholding_algo(self, new_value):
         self.y.append(new_value)
-        i = len(self.y) - 1
+        l = len(self.y) - 1
         self.length = len(self.y)
-        if i < self.lag:
+        if l < self.lag:
             return 0
-        if i == self.lag:
+        if l == self.lag:
             self.signals = [0] * len(self.y)
             self.filtered_y = np.array(self.y).tolist()
             self.avg_filter = [0] * len(self.y)
@@ -100,28 +100,28 @@ class real_time_peak_detection:
         self.avg_filter += [0]
         self.std_filter += [0]
 
-        if abs(self.y[i] - self.avg_filter[i - 1]) > (
-            self.threshold * self.std_filter[i - 1]
+        if abs(self.y[l] - self.avg_filter[l - 1]) > (
+            self.threshold * self.std_filter[l - 1]
         ):
 
-            if self.y[i] > self.avg_filter[i - 1]:
-                self.signals[i] = 1
+            if self.y[l] > self.avg_filter[l - 1]:
+                self.signals[l] = 1
             else:
-                self.signals[i] = -1
+                self.signals[l] = -1
 
-            self.filtered_y[i] = (
-                self.influence * self.y[i]
-                + (1 - self.influence) * self.filtered_y[i - 1]
+            self.filtered_y[l] = (
+                self.influence * self.y[l]
+                + (1 - self.influence) * self.filtered_y[l - 1]
             )
-            self.avg_filter[i] = np.mean(self.filtered_y[(i - self.lag) : i])
-            self.std_filter[i] = np.std(self.filtered_y[(i - self.lag) : i])
+            self.avg_filter[l] = np.mean(self.filtered_y[(l - self.lag) : l])
+            self.std_filter[l] = np.std(self.filtered_y[(l - self.lag) : l])
         else:
-            self.signals[i] = 0
-            self.filtered_y[i] = self.y[i]
-            self.avg_filter[i] = np.mean(self.filtered_y[(i - self.lag) : i])
-            self.std_filter[i] = np.std(self.filtered_y[(i - self.lag) : i])
+            self.signals[l] = 0
+            self.filtered_y[l] = self.y[l]
+            self.avg_filter[l] = np.mean(self.filtered_y[(l - self.lag) : l])
+            self.std_filter[l] = np.std(self.filtered_y[(l - self.lag) : l])
 
-        return self.signals[i]
+        return self.signals[l]
 
 def adjust_dataframe(_df):
     """
@@ -219,16 +219,16 @@ for folder in os.listdir(INPUT_FOLDER):
 
 # make an unique dataframe as mean of all the dataframes
 if len(df_array) > 0:
-    df = pd.concat(df_array)
-    df = df.groupby(df.index).mean()
+    DF = pd.concat(df_array)
+    DF = DF.groupby(DF.index).mean()
 else:
-    df = None
+    DF = None
 
 if len(df_den_array) > 0:
-    df_den = pd.concat(df_den_array)
-    df_den = df_den.groupby(df_den.index).mean()
+    DF_DEN = pd.concat(df_den_array)
+    DF_DEN = DF_DEN.groupby(DF_DEN.index).mean()
 else:
-    df_den = None
+    DF_DEN = None
 
 ############################################
 # Load densities
@@ -252,7 +252,7 @@ for i in range(n):
     pos[i] = coord[i, :]
 
 # compute mean density for each row
-mean_density = df_den.mean(axis=1)
+mean_density = DF_DEN.mean(axis=1)
 
 k1_array = []
 tk1_array = []
@@ -298,11 +298,11 @@ print(f"TK1 = {TK1[0]:.1f} h $\\pm$ {TK1[1]:.1f} h")
 print(f"K1 = {K1[0]:.1f} veh/km $\\pm$ {K1[1]:.1f} veh/km")
 
 gc_data = []
-for time in tqdm(df_den.index):
+for time in tqdm(DF_DEN.index):
     copy = G.copy()
-    for col in df_den.columns:
+    for col in DF_DEN.columns:
         index = int(col)
-        density = df_den.loc[time][col]
+        density = DF_DEN.loc[time][col]
         src = index // n
         dst = index % n
         # remove edge
@@ -357,7 +357,7 @@ plt.show()
 # Data scaling
 ############################################
 
-df = adjust_dataframe(df)
+DF = adjust_dataframe(DF)
 
 for temp_df in df_array:
     temp_df = adjust_dataframe(temp_df)
@@ -375,7 +375,7 @@ fig, ax = plt.subplots()
 sns.scatterplot(
     x="mean_density",
     y="mean_flow_spires",
-    data=df,
+    data=DF,
     hue="time",
     palette="viridis",
     ax=ax,
@@ -433,7 +433,7 @@ axins.axvline(
 sns.scatterplot(
     x="mean_density",
     y="mean_flow_spires",
-    data=df,
+    data=DF,
     hue="time",
     palette="viridis",
     ax=axins,
@@ -470,7 +470,7 @@ plt.show()
 # 2.1 Fundamental diagram plot - if exists opt
 ############################################
 
-df_opt = None
+DF_OPT = None
 
 if os.path.exists(INPUT_FOLDER_OPT):
     df_opt_array = []
@@ -482,9 +482,9 @@ if os.path.exists(INPUT_FOLDER_OPT):
             df_opt_array.append(adjust_dataframe(temp_df))
 
     if len(df_opt_array) > 0:
-        df_opt = pd.concat(df_opt_array)
-        df_opt = df_opt.groupby(df_opt.index).mean()
-        # df_opt = adjust_dataframe(df_opt)
+        DF_OPT = pd.concat(df_opt_array)
+        DF_OPT = DF_OPT.groupby(DF_OPT.index).mean()
+        # DF_OPT = adjust_dataframe(DF_OPT)
 
     df_opt_std = pd.concat(df_opt_array)
     df_opt_std = df_opt_std.groupby(df_opt_std.index).std()
@@ -501,8 +501,8 @@ if os.path.exists(INPUT_FOLDER_OPT):
     fig, ax = plt.subplots()
 
     ax.errorbar(
-        df["mean_density"],
-        df["mean_flow_spires"],
+        DF["mean_density"],
+        DF["mean_flow_spires"],
         yerr=df_std["mean_flow_spires"],
         fmt="o",
         label="Normal",
@@ -511,8 +511,8 @@ if os.path.exists(INPUT_FOLDER_OPT):
         elinewidth=1,
     )
     ax.errorbar(
-        df_opt["mean_density"],
-        df_opt["mean_flow_spires"],
+        DF_OPT["mean_density"],
+        DF_OPT["mean_flow_spires"],
         yerr=df_opt_std["mean_flow_spires"],
         fmt="s",
         label="Optimized",
@@ -542,8 +542,8 @@ if os.path.exists(INPUT_FOLDER_OPT):
         yticklabels=[],
     )
     axins.errorbar(
-        df["mean_density"],
-        df["mean_flow_spires"],
+        DF["mean_density"],
+        DF["mean_flow_spires"],
         yerr=df_std["mean_flow_spires"],
         fmt="o",
         label="Normal",
@@ -552,8 +552,8 @@ if os.path.exists(INPUT_FOLDER_OPT):
         elinewidth=1,
     )
     axins.errorbar(
-        df_opt["mean_density"],
-        df_opt["mean_flow_spires"],
+        DF_OPT["mean_density"],
+        DF_OPT["mean_flow_spires"],
         yerr=df_opt_std["mean_flow_spires"],
         fmt="s",
         label="Optimized",
@@ -604,7 +604,7 @@ max_value = (np.mean(max_value_arr), np.std(max_value_arr))
 max_time = (np.mean(time_arr), np.std(time_arr))
 
 
-sns.lineplot(x="mean_density", y="norm_density_fluctuations", data=df)
+sns.lineplot(x="mean_density", y="norm_density_fluctuations", data=DF)
 # print vertical line at density 42.54357798165134
 plt.axvline(
     K1[0],
@@ -649,12 +649,12 @@ plt.show()
 # 3.1 Fluctuations plot plot - if exists opt
 ############################################
 
-if df_opt is not None:
+if DF_OPT is not None:
     fig, ax = plt.subplots()
 
     ax.errorbar(
-        df["mean_density"],
-        df["norm_density_fluctuations"],
+        DF["mean_density"],
+        DF["norm_density_fluctuations"],
         yerr=df_std["norm_density_fluctuations"],
         fmt="o",
         label="Normal",
@@ -663,8 +663,8 @@ if df_opt is not None:
         elinewidth=1,
     )
     ax.errorbar(
-        df_opt["mean_density"],
-        df_opt["norm_density_fluctuations"],
+        DF_OPT["mean_density"],
+        DF_OPT["norm_density_fluctuations"],
         yerr=df_opt_std["norm_density_fluctuations"],
         fmt="s",
         label="Optimized",
@@ -695,8 +695,8 @@ if df_opt is not None:
         yticklabels=[],
     )
     axins.errorbar(
-        df["mean_density"],
-        df["norm_density_fluctuations"],
+        DF["mean_density"],
+        DF["norm_density_fluctuations"],
         yerr=df_std["norm_density_fluctuations"],
         fmt="o",
         label="Normal",
@@ -705,8 +705,8 @@ if df_opt is not None:
         elinewidth=1,
     )
     axins.errorbar(
-        df_opt["mean_density"],
-        df_opt["norm_density_fluctuations"],
+        DF_OPT["mean_density"],
+        DF_OPT["norm_density_fluctuations"],
         yerr=df_opt_std["norm_density_fluctuations"],
         fmt="s",
         label="Optimized",
@@ -761,9 +761,7 @@ for temp_df in df_array:
         LAG = len(my_data)
         THRESHOLD = 3
 
-    first = None
-
-    rp = real_time_peak_detection(
+    rp = RealTimePeakDetection(
         my_data[:LAG], lag=LAG, threshold=THRESHOLD, influence=INFLUENCE
     )
 
@@ -771,18 +769,15 @@ for temp_df in df_array:
     time = temp_df["time"].to_numpy()
     time = time[15:]
 
-    signals = []
-    for i in range(len(my_data)):
-        signals.append(rp.thresholding_algo(my_data[i]))
+    signals = [rp.thresholding_algo(element) for element in my_data]
 
     signals = np.abs(signals)
     # keep only the first peak
-    first = np.argmax(signals)
-    first_peak_arr.append(first)
+    first_peak_arr.append(np.argmax(signals))
 
-first = (np.mean(first_peak_arr), np.std(first_peak_arr))
-# print(f"First peak at {first[0]:.1f} h $\\pm$ {first[1]:.1f} h")
-time = df["time"]
+FIRST = (np.mean(first_peak_arr), np.std(first_peak_arr))
+# print(f"First peak at {FIRST[0]:.1f} h $\\pm$ {FIRST[1]:.1f} h")
+time = DF["time"]
 time = time[15:]
 
 ############################################
@@ -791,29 +786,29 @@ time = time[15:]
 
 plt.figure(figsize=(8, 5))
 left_ax = sns.lineplot(
-    x="time", y="mean_density", data=df, color="green", label="Mean density $\\rho$"
+    x="time", y="mean_density", data=DF, color="green", label="Mean density $\\rho$"
 )
 
 plt.title("Comparison of mean density and flow fluctuations over time")
-if max(df["time"]) < 25:
+if max(DF["time"]) < 25:
     plt.xticks(range(0, 25, 1))
 plt.xlabel(f"Time ({MU_TIME})")
 # plot a straight line
 try:
     plt.axvspan(
-        time[int(first[0] - first[1])],
-        time[int(first[0] + first[1])],
+        time[int(FIRST[0] - FIRST[1])],
+        time[int(FIRST[0] + FIRST[1])],
         color="lightcoral",
         alpha=0.35,
     )
     plt.axvline(
-        x=time[int(first[0])],
+        x=time[int(FIRST[0])],
         color="red",
         linestyle="--",
-        label=f"$t_p \\ \\left({time[int(first[0])]:.1f} \\pm {time[int(first[0] + first[1])] - time[int(first[0])]:.1f} \\right) \\ h$",
+        label=f"$t_p \\ \\left({time[int(FIRST[0])]:.1f} \\pm {time[int(FIRST[0] + FIRST[1])] - time[int(FIRST[0])]:.1f} \\right) \\ h$",
     )
-except:
-    pass
+except Exception as e:
+    print(f"An error occurred: {e}")
 plt.axvline(
     x=TK1[0],
     color="black",
@@ -827,7 +822,7 @@ right_ax = left_ax.twinx()
 sns.lineplot(
     x="time",
     y="norm_flow_spires_fluctuations",
-    data=df,
+    data=DF,
     color="blue",
     ax=right_ax,
     label="Flow fluctuations $\\sigma_\\phi$",

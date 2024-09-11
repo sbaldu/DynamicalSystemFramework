@@ -67,10 +67,10 @@ def create_image(__df, __time):
 
 # Load the graph
 # read the adjacency matrix discarding the first line
-adj = np.loadtxt("matrix.dat", skiprows=1)
+adj = np.loadtxt("./data/matrix.dat", skiprows=1)
 n = len(adj)
 # read the coordinates
-coord = np.loadtxt("coordinates.dat")
+coord = np.loadtxt("./data/coordinates.dat")
 # create a directed graph
 G = nx.DiGraph()
 G.add_nodes_from(range(n))
