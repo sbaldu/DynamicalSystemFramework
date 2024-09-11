@@ -447,7 +447,7 @@ namespace dsm {
       street->dequeue();
       assert(destinationNode->id() == nextStreet->nodePair().first);
       if (destinationNode->isIntersection()) {
-        auto& intersection = dynamic_cast<Node<Id, Size>&>(*destinationNode);
+        auto& intersection = dynamic_cast<Intersection<Id, Size>&>(*destinationNode);
         auto delta = nextStreet->angle() - street->angle();
         if (delta > std::numbers::pi) {
           delta -= 2 * std::numbers::pi;
@@ -470,7 +470,7 @@ namespace dsm {
   void Dynamics<Id, Size, Delay>::m_evolveNodes() {
     for (const auto& [nodeId, node] : m_graph.nodeSet()) {
       if (node->isIntersection()) {
-        auto& intersection = dynamic_cast<Node<Id, Size>&>(*node);
+        auto& intersection = dynamic_cast<Intersection<Id, Size>&>(*node);
         for (const auto [angle, agentId] : intersection.agents()) {
           const auto& nextStreet{m_graph.streetSet()[m_agentNextStreetId[agentId]]};
           if (!(nextStreet->isFull())) {
@@ -555,7 +555,7 @@ namespace dsm {
         }
         assert(srcNode->id() == nextStreet->nodePair().first);
         if (srcNode->isIntersection()) {
-          auto& intersection = dynamic_cast<Node<Id, Size>&>(*srcNode);
+          auto& intersection = dynamic_cast<Intersection<Id, Size>&>(*srcNode);
           try {
             intersection.addAgent(0., agentId);
             m_agentNextStreetId.emplace(agentId, nextStreet->id());
@@ -1178,7 +1178,7 @@ namespace dsm {
     }
     const auto& node = this->m_graph.nodeSet().at(street->nodePair().second);
     if (node->isIntersection()) {
-      auto& intersection = dynamic_cast<Node<Id, Size>&>(*node);
+      auto& intersection = dynamic_cast<Intersection<Id, Size>&>(*node);
       for (const auto& [angle, agentId] : intersection.agents()) {
         const auto& agent{this->m_agents.at(agentId)};
         if (agent->streetId().has_value() && agent->streetId().value() == streetId) {
