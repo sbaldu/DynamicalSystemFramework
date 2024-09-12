@@ -2,9 +2,15 @@
 Here are reported some example studies using the dsm framework.
 Many of these simulations were used as thesis work.
 
+To compile all simulations, use cmake inside the *examples* folder:
+```shell
+cmake -B build && make -C build
+```
+
 ## Simulation files
 C++ files (`cpp`) are simulation files and need to be compiled.
-Once set the parameters, simply run `make file_name` to compile and run the simulation using the Makefile.
+
+**NOTE**: you may have to modify some hard-coded parameters and recompile to set certain variables.
 
 ### Slow Charge
 Aim of these simulations is to load the road network in an adiabatic way, i.e. slowly increasing the mean density over streets.
@@ -13,18 +19,9 @@ To run the simulation you can use the Makefile:
 ```shell
 make slow_charge_tl
 ```
-
-## Utilities
-Some Python scripts used to plot or draw some network properties.
-
-### Gifter
-Script to generate a GIF from the data in the temp_img folder, produced by the main library.
-With this, one can see the evolution of the network over time.
-
-### Plotter
-This script generates various plots related to traffic flow analysis, including:
-
-1. Giant Component plot: Plots the number of components and the size of the first and second ones.
-2. Fundamental diagram plot: Plots the fundamental diagram of traffic flow vs. density.
-3. Fluctuations plot: Plots the fluctuations in traffic density.
-4. Signal plot: Plot the signal and the peak detected by the peak detection algorithm.
+### Stalingrado
+Aim of this program is to make a realistic simulation of *Via Stalingrado*, in Bologna, which is a street full of traffic lights that have high influence on the traffic.
+Also in this case, once compiled one can run it using the Makefile:
+```shell
+make stalingrado
+```
