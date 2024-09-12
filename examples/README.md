@@ -4,7 +4,7 @@ Many of these simulations were used as thesis work.
 
 To compile all simulations, use cmake inside the *examples* folder:
 ```shell
-cmake -B build && make -C build
+cmake -B build -DCMAKE_BUILD_TYPE=Release && make -C build
 ```
 
 ## Simulation files
