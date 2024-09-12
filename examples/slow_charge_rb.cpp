@@ -42,7 +42,8 @@ void printLoadingBar(int const i, int const n) {
 
 int main(int argc, char** argv) {
   if (argc != 4) {
-    std::cerr << "Usage: " << argv[0] << " <SEED> <ERROR_PROBABILITY> <OUT_FOLDER_BASE>\n";
+    std::cerr << "Usage: " << argv[0]
+              << " <SEED> <ERROR_PROBABILITY> <OUT_FOLDER_BASE>\n";
     return 1;
   }
 
@@ -59,9 +60,9 @@ int main(int argc, char** argv) {
 
   const std::string IN_MATRIX{"./data/matrix.dat"};       // input matrix file
   const std::string IN_COORDS{"./data/coordinates.dsm"};  // input coords file
-  const std::string OUT_FOLDER{BASE_OUT_FOLDER + "output_sctl_0.05_" + std::to_string(SEED) +
-                               "/"};                    // output folder
-  const auto MAX_TIME{static_cast<unsigned int>(1e6)};  // maximum time of simulation
+  const std::string OUT_FOLDER{BASE_OUT_FOLDER + "output_sctl_0.05_" +
+                               std::to_string(SEED) + "/"};  // output folder
+  const auto MAX_TIME{static_cast<unsigned int>(1e6)};       // maximum time of simulation
 
   // Clear output folder or create it if it doesn't exist
   if (!fs::exists(BASE_OUT_FOLDER)) {

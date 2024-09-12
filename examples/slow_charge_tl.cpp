@@ -43,7 +43,8 @@ void printLoadingBar(int const i, int const n) {
 
 int main(int argc, char** argv) {
   if (argc != 5) {
-    std::cerr << "Usage: " << argv[0] << " <SEED> <ERROR_PROBABILITY> <OUT_FOLDER_BASE> <OPTIMIZE>\n";
+    std::cerr << "Usage: " << argv[0]
+              << " <SEED> <ERROR_PROBABILITY> <OUT_FOLDER_BASE> <OPTIMIZE>\n";
     return 1;
   }
 
@@ -62,9 +63,10 @@ int main(int argc, char** argv) {
   }
   std::cout << "-------------------------------------------------\n";
 
-  const std::string IN_MATRIX{"./data/matrix.dat"};  // input matrix file
+  const std::string IN_MATRIX{"./data/matrix.dat"};       // input matrix file
   const std::string IN_COORDS{"./data/coordinates.dsm"};  // input coords file
-  std::string OUT_FOLDER{BASE_OUT_FOLDER + "output_sctl_0.3_" + std::to_string(SEED)}; // output folder
+  std::string OUT_FOLDER{BASE_OUT_FOLDER + "output_sctl_0.3_" +
+                         std::to_string(SEED)};  // output folder
   if (OPTIMIZE) {
     OUT_FOLDER += "_op/";
   }
