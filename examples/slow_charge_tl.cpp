@@ -24,9 +24,6 @@ uint nAgents{315};  // 315 for error probability 0.3, 450 for error probability 
 #define PRINT_OUT_SPIRES
 // #define PRINT_SPEEDS
 // #define PRINT_TP
-#define OPTIMIZE
-
-// Compatible with dsm 1.2.1
 
 using Unit = unsigned int;
 using Delay = uint8_t;
@@ -45,21 +42,38 @@ void printLoadingBar(int const i, int const n) {
 }
 
 int main(int argc, char** argv) {
-  if (argc != 2) {
-    std::cerr << "Usage: " << argv[0] << " <SEED>\n";
+  if (argc != 5) {
+    std::cerr << "Usage: " << argv[0] << " <SEED> <ERROR_PROBABILITY> <OUT_FOLDER_BASE> <OPTIMIZE>\n";
     return 1;
   }
 
   const int SEED = std::stoi(argv[1]);  // seed for random number generator
+  const double ERROR_PROBABILITY{std::stod(argv[2])};
+  const std::string BASE_OUT_FOLDER{argv[3]};
+  const bool OPTIMIZE{std::string(argv[4]) != std::string("0")};
 
-  const double ERROR_PROBABILITY{0.3};               // seed for random number generator
+  std::cout << "-------------------------------------------------\n";
+  std::cout << "Input parameters:\n";
+  std::cout << "Seed: " << SEED << '\n';
+  std::cout << "Error probability: " << ERROR_PROBABILITY << '\n';
+  std::cout << "Base output folder: " << BASE_OUT_FOLDER << '\n';
+  if (OPTIMIZE) {
+    std::cout << "Traffic light optimization enabled.\n";
+  }
+  std::cout << "-------------------------------------------------\n";
+
   const std::string IN_MATRIX{"./data/matrix.dat"};  // input matrix file
   const std::string IN_COORDS{"./data/coordinates.dsm"};  // input coords file
-  const std::string OUT_FOLDER{"./sctl/output_sctl_0.3_" + std::to_string(SEED) +
-                               "_op/"};                 // output folder
+  std::string OUT_FOLDER{BASE_OUT_FOLDER + "output_sctl_0.3_" + std::to_string(SEED)}; // output folder
+  if (OPTIMIZE) {
+    OUT_FOLDER += "_op/";
+  }
   const auto MAX_TIME{static_cast<unsigned int>(1e6)};  // maximum time of simulation
 
   // Clear output folder or create it if it doesn't exist
+  if (!fs::exists(BASE_OUT_FOLDER)) {
+    fs::create_directory(BASE_OUT_FOLDER);
+  }
   if (fs::exists(OUT_FOLDER)) {
     fs::remove_all(OUT_FOLDER);
   }
@@ -284,11 +298,9 @@ int main(int argc, char** argv) {
       }
     }
     dynamics.evolve(false);
-#ifdef OPTIMIZE
-    if (dynamics.time() % 420 == 0) {
+    if (OPTIMIZE && (dynamics.time() % 420 == 0)) {
       dynamics.optimizeTrafficLights(std::floor(420. / 60), 0.15);
     }
-#endif
     if (dynamics.time() % 2400 == 0 && nAgents > 0) {
       // auto meanDelta = std::accumulate(deltas.begin(), deltas.end(), 0) /
       // deltas.size();

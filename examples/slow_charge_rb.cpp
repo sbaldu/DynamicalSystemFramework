@@ -24,7 +24,6 @@ uint nAgents{450};
 #define PRINT_OUT_SPIRES
 // #define PRINT_SPEEDS
 
-// Compatible with dsm 1.3.x
 using Unit = unsigned int;
 using Delay = uint8_t;
 
@@ -42,20 +41,32 @@ void printLoadingBar(int const i, int const n) {
 }
 
 int main(int argc, char** argv) {
-  if (argc != 2) {
-    std::cerr << "Usage: " << argv[0] << " <SEED>\n";
+  if (argc != 4) {
+    std::cerr << "Usage: " << argv[0] << " <SEED> <ERROR_PROBABILITY> <OUT_FOLDER_BASE>\n";
     return 1;
   }
 
   const int SEED = std::stoi(argv[1]);  // seed for random number generator
+  const double ERROR_PROBABILITY{std::stod(argv[2])};
+  const std::string BASE_OUT_FOLDER{argv[3]};
+
+  std::cout << "-------------------------------------------------\n";
+  std::cout << "Input parameters:\n";
+  std::cout << "Seed: " << SEED << '\n';
+  std::cout << "Error probability: " << ERROR_PROBABILITY << '\n';
+  std::cout << "Base output folder: " << BASE_OUT_FOLDER << '\n';
+  std::cout << "-------------------------------------------------\n";
 
   const std::string IN_MATRIX{"./data/matrix.dat"};       // input matrix file
   const std::string IN_COORDS{"./data/coordinates.dsm"};  // input coords file
-  const std::string OUT_FOLDER{"./scrb/output_sctl_0.05_" + std::to_string(SEED) +
+  const std::string OUT_FOLDER{BASE_OUT_FOLDER + "output_sctl_0.05_" + std::to_string(SEED) +
                                "/"};                    // output folder
   const auto MAX_TIME{static_cast<unsigned int>(1e6)};  // maximum time of simulation
 
   // Clear output folder or create it if it doesn't exist
+  if (!fs::exists(BASE_OUT_FOLDER)) {
+    fs::create_directory(BASE_OUT_FOLDER);
+  }
   if (fs::exists(OUT_FOLDER)) {
     fs::remove_all(OUT_FOLDER);
   }
