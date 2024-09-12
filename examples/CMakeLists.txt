@@ -8,7 +8,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Set the C++ flags
-string(APPEND CMAKE_CXX_FLAGS "-Wall -Wextra -O3 -g")
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+  string(APPEND CMAKE_CXX_FLAGS "-Wall -Wextra -O0 -g")
+elseif (CMAKE_BUILD_TYPE STREQUAL "Release")
+  string(APPEND CMAKE_CXX_FLAGS "-O3")
+endif()
 
 # Set the folder for the executable
 set(EXECUTABLE_OUTPUT_PATH ../)
