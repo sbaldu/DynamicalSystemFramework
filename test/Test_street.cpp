@@ -29,6 +29,7 @@ TEST_CASE("Street") {
     CHECK_EQ(street.nodePair().first, 0);
     CHECK_EQ(street.nodePair().second, 1);
     CHECK_EQ(street.maxSpeed(), 13.8888888889);
+    CHECK_EQ(street.nLanes(), static_cast<uint8_t>(1));
   }
 
   SUBCASE("Constructor_2") {
@@ -47,6 +48,7 @@ TEST_CASE("Street") {
     CHECK_EQ(street.nodePair().second, 5);
     CHECK_EQ(doctest::Approx(street.density()), 0);
     CHECK_EQ(street.maxSpeed(), 13.8888888889);
+    CHECK_EQ(street.nLanes(), static_cast<uint8_t>(1));
   }
   SUBCASE("Constructor_3") {
     /*This tests the constructor that takes an Id, capacity, length, nodePair, and maxSpeed.
@@ -64,8 +66,16 @@ TEST_CASE("Street") {
     CHECK_EQ(street.nodePair().second, 5);
     CHECK_EQ(doctest::Approx(street.density()), 0);
     CHECK_EQ(street.maxSpeed(), 40.);
+    CHECK_EQ(street.nLanes(), static_cast<uint8_t>(1));
   }
+  SUBCASE("setNLanes") {
+    /*This tests the setNLanes method*/
 
+    Street street{1, std::make_pair(0, 1)};
+    CHECK_THROWS(street.setNLanes(0));
+    street.setNLanes(3);
+    CHECK_EQ(street.nLanes(), 3);
+  }
   SUBCASE("SetNodePair_1") {
     /*This tests the setNodePair method*/
 
