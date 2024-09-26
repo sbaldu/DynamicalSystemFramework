@@ -11,7 +11,7 @@ namespace dsm {
   class Node;
 
   template <typename Id, typename Size>
-	requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   class Intersection;
 
   template <typename Id, typename Size, typename Delay>
