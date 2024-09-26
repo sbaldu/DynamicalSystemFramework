@@ -743,7 +743,7 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::addAgent(const Agent<Id, Size, Delay>& agent) {
-    if (this->m_agents.size() + 1 == this->m_graph.maxCapacity()) {
+    if (this->m_agents.size() + 1 > this->m_graph.maxCapacity()) {
       throw std::overflow_error(
           buildLog("Graph its already holding the max possible number of agents (" +
                    std::to_string(this->m_graph.maxCapacity()) + ')'));
@@ -758,7 +758,7 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::addAgent(std::unique_ptr<Agent<Id, Size, Delay>> agent) {
-    if (this->m_agents.size() + 1 == this->m_graph.maxCapacity()) {
+    if (this->m_agents.size() + 1 > this->m_graph.maxCapacity()) {
       throw std::overflow_error(
           buildLog("Graph its already holding the max possible number of agents (" +
                    std::to_string(this->m_graph.maxCapacity()) + ')'));
@@ -775,7 +775,7 @@ namespace dsm {
   void Dynamics<Id, Size, Delay>::addAgents(Id itineraryId,
                                             Size nAgents,
                                             std::optional<Id> srcNodeId) {
-    if (this->m_agents.size() + nAgents == this->m_graph.maxCapacity()) {
+    if (this->m_agents.size() + nAgents > this->m_graph.maxCapacity()) {
       throw std::overflow_error(
           buildLog("Graph its already holding the max possible number of agents (" +
                    std::to_string(this->m_graph.maxCapacity()) + ')'));
@@ -818,7 +818,7 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::addAgents(std::span<Agent<Id, Size, Delay>> agents) {
-    if (this->m_agents.size() + agents.size() == this->m_graph.maxCapacity()) {
+    if (this->m_agents.size() + agents.size() > this->m_graph.maxCapacity()) {
       throw std::overflow_error(
           buildLog("Graph its already holding the max possible number of agents (" +
                    std::to_string(this->m_graph.maxCapacity()) + ')'));
@@ -833,9 +833,14 @@ namespace dsm {
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::addAgentsUniformly(Size nAgents,
                                                      std::optional<Id> itineraryId) {
+    if (this->m_agents.size() + nAgents > this->m_graph.maxCapacity()) {
+      throw std::overflow_error(
+          buildLog("Graph its already holding the max possible number of agents (" +
+                   std::to_string(this->m_graph.maxCapacity()) + ')'));
+    }
     if (this->m_itineraries.empty()) {
       // TODO: make this possible for random agents
-      throw std::runtime_error(
+      throw std::invalid_argument(
           buildLog("It is not possible to add random agents without itineraries."));
     }
     const bool randomItinerary{!itineraryId.has_value()};
