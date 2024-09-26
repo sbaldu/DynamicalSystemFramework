@@ -293,7 +293,7 @@ int main(int argc, char** argv) {
   std::thread t([]() {
     while (progress < MAX_TIME && !bExitFlag) {
       printLoadingBar(progress, MAX_TIME);
-      std::this_thread::sleep_for(std::chrono::milliseconds(100));
+      std::this_thread::sleep_for(std::chrono::milliseconds(1500));
     }
   });
   // dynamics.addAgentsUniformly(20000);
