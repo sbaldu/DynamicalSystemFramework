@@ -96,7 +96,7 @@ int main() {
   std::thread t([MAX_TIME]() {
     while (progress < MAX_TIME) {
       printLoadingBar(progress, MAX_TIME);
-      std::this_thread::sleep_for(std::chrono::milliseconds(100));
+      std::this_thread::sleep_for(std::chrono::milliseconds(1500));
     }
   });
   // Evolution

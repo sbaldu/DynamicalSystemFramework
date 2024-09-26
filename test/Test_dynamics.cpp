@@ -71,7 +71,9 @@ TEST_CASE("Dynamics") {
       graph.importMatrix("./data/matrix.dsm");
       Dynamics dynamics(graph);
       WHEN("We add agents without adding itineraries") {
-        THEN("An exception is thrown") { CHECK_THROWS(dynamics.addAgentsUniformly(1)); }
+        THEN("An exception is thrown") {
+          CHECK_THROWS_AS(dynamics.addAgentsUniformly(1), std::invalid_argument);
+        }
       }
       Itinerary itinerary{0, 2};
       WHEN("We add a random agent") {
@@ -132,7 +134,9 @@ TEST_CASE("Dynamics") {
       Itinerary itinerary{0, 2};
       dynamics.addItinerary(itinerary);
       WHEN("We add an agent with itinerary 1") {
-        THEN("An exception is thrown") { CHECK_THROWS(dynamics.addAgents(1)); }
+        THEN("An exception is thrown") {
+          CHECK_THROWS_AS(dynamics.addAgents(1), std::invalid_argument);
+        }
       }
       WHEN("We add and agent with itinerary 0") {
         dynamics.addAgents(0);
@@ -149,6 +153,29 @@ TEST_CASE("Dynamics") {
       WHEN("We add 69 agents with itinerary 0") {
         dynamics.addAgents(0, 69);
         THEN("The number of agents is 69") { CHECK_EQ(dynamics.agents().size(), 69); }
+      }
+    }
+  }
+  SUBCASE("Add too many agents") {
+    GIVEN("A simple graph with two nodes and only one street") {
+      Street s{0, 1, 2., std::make_pair(0, 1)};  // Capacity of 1 agent
+      Graph graph2;
+      graph2.addStreets(s);
+      graph2.buildAdj();
+      Dynamics dynamics{graph2};
+      Itinerary itinerary{0, 1};
+      dynamics.addItinerary(itinerary);
+      dynamics.updatePaths();
+      dynamics.addAgentsUniformly(1);
+      WHEN("We add more than one agent") {
+        THEN("It throws") {
+          CHECK_THROWS_AS(dynamics.addAgentsUniformly(1), std::overflow_error);
+          CHECK_THROWS_AS(dynamics.addAgents(0, 1), std::overflow_error);
+          auto dummyAgent = Agent(0, 0);
+          CHECK_THROWS_AS(dynamics.addAgent(dummyAgent), std::overflow_error);
+          CHECK_THROWS_AS(dynamics.addAgent(std::make_unique<Agent>(dummyAgent)),
+                          std::overflow_error);
+        }
       }
     }
   }
