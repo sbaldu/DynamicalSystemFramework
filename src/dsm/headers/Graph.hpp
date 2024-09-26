@@ -46,6 +46,7 @@ namespace dsm {
     std::unordered_map<Id, std::unique_ptr<Street<Id, Size>>> m_streets;
     std::unordered_map<Id, Id> m_nodeMapping;
     SparseMatrix<Id, bool> m_adjacency;
+    unsigned long long m_maxAgentCapacity;
 
     /// @brief Reassign the street ids using the max node id
     /// @details The street ids are reassigned using the max node id, i.e.
@@ -96,7 +97,7 @@ namespace dsm {
     Graph(Graph<Id, Size>&&) = default;
     Graph& operator=(Graph<Id, Size>&&) = default;
 
-    /// @brief Build the graph's adjacency matrix
+    /// @brief Build the graph's adjacency matrix and computes max capacity
     /// @details The adjacency matrix is built using the graph's streets and nodes. N.B.: The street ids
     /// are reassigned using the max node id, i.e. newStreetId = srcId * n + dstId, where n is the max node id.
     void buildAdj();
@@ -211,6 +212,10 @@ namespace dsm {
     /// std::nullopt
     const std::unique_ptr<Street<Id, Size>>* street(Id source, Id destination) const;
 
+    /// @brief Get the maximum agent capacity
+    /// @return unsigned long long The maximum agent capacity of the graph
+    const unsigned long long maxCapacity() const { return m_maxAgentCapacity; }
+
     /// @brief Get the shortest path between two nodes using dijkstra algorithm
     /// @param source The source node
     /// @param destination The destination node
@@ -226,11 +231,15 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  Graph<Id, Size>::Graph() : m_adjacency{SparseMatrix<Id, bool>()} {}
+  Graph<Id, Size>::Graph()
+      : m_adjacency{SparseMatrix<Id, bool>()},
+        m_maxAgentCapacity{std::numeric_limits<unsigned long long>::max()} {}
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  Graph<Id, Size>::Graph(const SparseMatrix<Id, bool>& adj) : m_adjacency{adj} {
+  Graph<Id, Size>::Graph(const SparseMatrix<Id, bool>& adj)
+      : m_adjacency{adj},
+        m_maxAgentCapacity{std::numeric_limits<unsigned long long>::max()} {
     assert(adj.getRowDim() == adj.getColDim());
     auto n{static_cast<Size>(adj.getRowDim())};
     for (const auto& [id, value] : adj) {
@@ -313,9 +322,11 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Graph<Id, Size>::buildAdj() {
     // find max values in streets node pairs
+    m_maxAgentCapacity = 0;
     const auto maxNode{static_cast<Id>(m_nodes.size())};
     m_adjacency.reshape(maxNode, maxNode);
     for (const auto& [streetId, street] : m_streets) {
+      m_maxAgentCapacity += street->capacity();
       m_adjacency.insert(street->nodePair().first, street->nodePair().second, true);
     }
     this->m_reassignIds();
