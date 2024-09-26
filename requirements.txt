@@ -1,1 +1,8 @@
-osmnx==1.8.0
+matplotlib
+networkx
+numpy
+osmnx
+pandas
+Pillow
+seaborn
+tqdm
