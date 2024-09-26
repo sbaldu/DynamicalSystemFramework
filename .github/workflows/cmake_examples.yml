@@ -1,4 +1,4 @@
-name: Compile examples
+name: Run examples on CMake
 
 on:
   push:
@@ -11,7 +11,7 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
     - uses: actions/checkout@v4
@@ -23,3 +23,15 @@ jobs:
     - name: Build
       working-directory: ${{github.workspace}}/examples
       run: cmake --build build
+    
+    - name: Stalingrado
+      working-directory: ${{github.workspace}}/examples
+      run: make stalingrado
+
+    - name: Slow Charge TL
+      working-directory: ${{github.workspace}}/examples
+      run: make slow_charge_tl
+
+    - name: Slow Charge RB
+      working-directory: ${{github.workspace}}/examples
+      run: make slow_charge_rb
