@@ -9,6 +9,7 @@
 #include <random>
 #include <set>
 #include <string>
+#include <format>
 #include <filesystem>
 namespace fs = std::filesystem;
 
@@ -16,6 +17,7 @@ namespace fs = std::filesystem;
 #include <atomic>
 
 std::atomic<unsigned int> progress{0};
+std::atomic<bool> bExitFlag{false};
 uint nAgents{315};  // 315 for error probability 0.3, 450 for error probability 0.05
 
 // uncomment these lines to print densities, flows and speeds
@@ -65,8 +67,7 @@ int main(int argc, char** argv) {
 
   const std::string IN_MATRIX{"./data/matrix.dat"};       // input matrix file
   const std::string IN_COORDS{"./data/coordinates.dsm"};  // input coords file
-  std::string OUT_FOLDER{BASE_OUT_FOLDER + "output_sctl_0.3_" +
-                         std::to_string(SEED)};  // output folder
+  std::string OUT_FOLDER{std::format("{}output_sctl_{}_{}/", BASE_OUT_FOLDER, ERROR_PROBABILITY, std::to_string(SEED))}; // output folder
   if (OPTIMIZE) {
     OUT_FOLDER += "_op/";
   }
@@ -86,6 +87,13 @@ int main(int argc, char** argv) {
   std::cout << "Importing matrix.dat...\n";
   graph.importMatrix(IN_MATRIX, false);
   graph.importCoordinates(IN_COORDS);
+  std::cout << "Setting street parameters..." << '\n';
+  for (const auto& [streetId, street] : graph.streetSet()) {
+    street->setLength(2e3);
+    street->setCapacity(225);
+    street->setTransportCapacity(1);
+    street->setMaxSpeed(13.9);
+  }
   graph.buildAdj();
   const auto dv = graph.adjMatrix().getDegreeVector();
 
@@ -152,13 +160,6 @@ int main(int argc, char** argv) {
     if (!street->isSpire()) {
       std::cerr << "Street " << id << " is not a spire.\n";
     }
-  }
-  std::cout << "Setting street parameters..." << '\n';
-  for (const auto& [streetId, street] : graph.streetSet()) {
-    street->setLength(2e3);
-    street->setCapacity(225);
-    street->setTransportCapacity(1);
-    street->setMaxSpeed(13.9);
   }
   const auto& adj = graph.adjMatrix();
   const auto& degreeVector = adj.getDegreeVector();
@@ -287,16 +288,22 @@ int main(int argc, char** argv) {
 
   // lauch progress bar
   std::thread t([]() {
-    while (progress < MAX_TIME) {
+    while (progress < MAX_TIME && !bExitFlag) {
       printLoadingBar(progress, MAX_TIME);
       std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
   });
   // dynamics.addAgentsUniformly(20000);
   while (dynamics.time() < MAX_TIME) {
-    if (dynamics.time() < MAX_TIME && nAgents > 0) {
-      if (dynamics.time() % 60 == 0) {
+    if (dynamics.time() < MAX_TIME && nAgents > 0 && dynamics.time() % 60 == 0) {
+      try {
         dynamics.addAgentsUniformly(nAgents);
+      }
+      catch (const std::overflow_error& e) {
+        std::cout << e.what() << std::endl;
+        std::cout << "Overflow reached. Exiting the simulation..." << std::endl;
+        bExitFlag = true;
+        break;
       }
     }
     dynamics.evolve(false);
