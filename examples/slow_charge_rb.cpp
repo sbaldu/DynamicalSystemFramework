@@ -62,8 +62,11 @@ int main(int argc, char** argv) {
 
   const std::string IN_MATRIX{"./data/matrix.dat"};       // input matrix file
   const std::string IN_COORDS{"./data/coordinates.dsm"};  // input coords file
-  const std::string OUT_FOLDER{std::format("{}output_scrb_{}_{}/", BASE_OUT_FOLDER, ERROR_PROBABILITY, std::to_string(SEED))}; // output folder
-  const auto MAX_TIME{static_cast<unsigned int>(1e6)};       // maximum time of simulation
+  const std::string OUT_FOLDER{std::format("{}output_scrb_{}_{}/",
+                                           BASE_OUT_FOLDER,
+                                           ERROR_PROBABILITY,
+                                           std::to_string(SEED))};  // output folder
+  const auto MAX_TIME{static_cast<unsigned int>(1e6)};  // maximum time of simulation
 
   // Clear output folder or create it if it doesn't exist
   if (!fs::exists(BASE_OUT_FOLDER)) {
@@ -195,8 +198,7 @@ int main(int argc, char** argv) {
     if (dynamics.time() < MAX_TIME && dynamics.time() % 60 == 0) {
       try {
         dynamics.addAgentsUniformly(nAgents);
-      }
-      catch (const std::overflow_error& e) {
+      } catch (const std::overflow_error& e) {
         std::cout << e.what() << std::endl;
         std::cout << "Overflow reached. Exiting the simulation..." << std::endl;
         bExitFlag = true;

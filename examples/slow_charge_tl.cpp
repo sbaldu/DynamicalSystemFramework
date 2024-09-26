@@ -67,7 +67,10 @@ int main(int argc, char** argv) {
 
   const std::string IN_MATRIX{"./data/matrix.dat"};       // input matrix file
   const std::string IN_COORDS{"./data/coordinates.dsm"};  // input coords file
-  std::string OUT_FOLDER{std::format("{}output_sctl_{}_{}/", BASE_OUT_FOLDER, ERROR_PROBABILITY, std::to_string(SEED))}; // output folder
+  std::string OUT_FOLDER{std::format("{}output_sctl_{}_{}/",
+                                     BASE_OUT_FOLDER,
+                                     ERROR_PROBABILITY,
+                                     std::to_string(SEED))};  // output folder
   if (OPTIMIZE) {
     OUT_FOLDER += "_op/";
   }
@@ -298,8 +301,7 @@ int main(int argc, char** argv) {
     if (dynamics.time() < MAX_TIME && nAgents > 0 && dynamics.time() % 60 == 0) {
       try {
         dynamics.addAgentsUniformly(nAgents);
-      }
-      catch (const std::overflow_error& e) {
+      } catch (const std::overflow_error& e) {
         std::cout << e.what() << std::endl;
         std::cout << "Overflow reached. Exiting the simulation..." << std::endl;
         bExitFlag = true;
