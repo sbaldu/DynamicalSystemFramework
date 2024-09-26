@@ -743,6 +743,11 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::addAgent(const Agent<Id, Size, Delay>& agent) {
+    if (this->m_agents.size() + 1 == this->m_graph.maxCapacity()) {
+      throw std::overflow_error(
+          buildLog("Graph its already holding the max possible number of agents (" +
+                   std::to_string(this->m_graph.maxCapacity()) + ')'));
+    }
     if (this->m_agents.contains(agent.id())) {
       throw std::invalid_argument(
           buildLog("Agent " + std::to_string(agent.id()) + " already exists."));
@@ -753,6 +758,11 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::addAgent(std::unique_ptr<Agent<Id, Size, Delay>> agent) {
+    if (this->m_agents.size() + 1 == this->m_graph.maxCapacity()) {
+      throw std::overflow_error(
+          buildLog("Graph its already holding the max possible number of agents (" +
+                   std::to_string(this->m_graph.maxCapacity()) + ')'));
+    }
     if (this->m_agents.contains(agent->id())) {
       throw std::invalid_argument(
           buildLog("Agent " + std::to_string(agent->id()) + " already exists."));
@@ -765,6 +775,11 @@ namespace dsm {
   void Dynamics<Id, Size, Delay>::addAgents(Id itineraryId,
                                             Size nAgents,
                                             std::optional<Id> srcNodeId) {
+    if (this->m_agents.size() + nAgents == this->m_graph.maxCapacity()) {
+      throw std::overflow_error(
+          buildLog("Graph its already holding the max possible number of agents (" +
+                   std::to_string(this->m_graph.maxCapacity()) + ')'));
+    }
     auto itineraryIt{m_itineraries.find(itineraryId)};
     if (itineraryIt == m_itineraries.end()) {
       throw std::invalid_argument(
@@ -803,6 +818,11 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::addAgents(std::span<Agent<Id, Size, Delay>> agents) {
+    if (this->m_agents.size() + agents.size() == this->m_graph.maxCapacity()) {
+      throw std::overflow_error(
+          buildLog("Graph its already holding the max possible number of agents (" +
+                   std::to_string(this->m_graph.maxCapacity()) + ')'));
+    }
     std::ranges::for_each(agents, [this](const auto& agent) -> void {
       this->m_agents.push_back(std::make_unique(agent));
     });
