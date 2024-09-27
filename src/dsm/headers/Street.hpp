@@ -41,6 +41,7 @@ namespace dsm {
     Id m_id;
     Size m_capacity;
     Size m_transportCapacity;
+    uint8_t m_nLanes;  // Max 255 lanes for a street, seems reasonable.
 
   public:
     Street() = delete;
@@ -116,6 +117,10 @@ namespace dsm {
     /// @param angle The street's angle
     /// @throw std::invalid_argument If the angle is negative or greater than 2 * pi
     void setAngle(double angle);
+    /// @brief Set the street's number of lanes
+    /// @param nLanes The street's number of lanes
+    /// @throw std::invalid_argument If the number of lanes is 0
+    void setNLanes(const uint8_t nLanes);
 
     /// @brief Get the street's id
     /// @return Id, The street's id
@@ -158,6 +163,9 @@ namespace dsm {
     /// @brief Get the street's angle
     /// @return double The street's angle
     double angle() const { return m_angle; }
+    /// @brief Get the street's number of lanes
+    /// @return uint8_t The street's number of lanes
+    uint8_t nLanes() const { return m_nLanes; }
 
     virtual void addAgent(Id agentId);
     /// @brief Add an agent to the street's queue
@@ -180,7 +188,8 @@ namespace dsm {
         m_angle{street.angle()},
         m_id{id},
         m_capacity{street.capacity()},
-        m_transportCapacity{street.transportCapacity()} {}
+        m_transportCapacity{street.transportCapacity()},
+        m_nLanes{1} {}
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
@@ -191,7 +200,8 @@ namespace dsm {
         m_angle{0.},
         m_id{index},
         m_capacity{1},
-        m_transportCapacity{std::numeric_limits<Size>::max()} {}
+        m_transportCapacity{std::numeric_limits<Size>::max()},
+        m_nLanes{1} {}
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
@@ -202,7 +212,8 @@ namespace dsm {
         m_angle{0.},
         m_id{id},
         m_capacity{capacity},
-        m_transportCapacity{std::numeric_limits<Size>::max()} {}
+        m_transportCapacity{std::numeric_limits<Size>::max()},
+        m_nLanes{1} {}
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
@@ -213,7 +224,8 @@ namespace dsm {
         m_angle{0.},
         m_id{id},
         m_capacity{capacity},
-        m_transportCapacity{std::numeric_limits<Size>::max()} {
+        m_transportCapacity{std::numeric_limits<Size>::max()},
+        m_nLanes{1} {
     this->setMaxSpeed(maxSpeed);
   }
 
@@ -256,6 +268,16 @@ namespace dsm {
           "The angle of a street ({}) must be between - 2 * pi and 2 * pi.", angle)));
     }
     m_angle = angle;
+  }
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Street<Id, Size>::setNLanes(const uint8_t nLanes) {
+    if (nLanes == static_cast<uint8_t>(0)) {
+      throw std::invalid_argument(buildLog("The number of lanes of the street " +
+                                           std::to_string(m_id) +
+                                           " must be greater than 0."));
+    }
+    m_nLanes = nLanes;
   }
 
   template <typename Id, typename Size>
