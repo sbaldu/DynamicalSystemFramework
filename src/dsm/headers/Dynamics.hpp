@@ -18,6 +18,7 @@
 #include <cmath>
 #include <cassert>
 #include <format>
+#include <thread>
 
 #include "Agent.hpp"
 #include "Itinerary.hpp"
@@ -109,6 +110,9 @@ namespace dsm {
     /// @details Puts all new agents on a street, if possible, decrements all delays
     /// and increments all travel times.
     virtual void m_evolveAgents();
+    /// @brief Update the path of a single itinerary
+    /// @param pItinerary An std::unique_prt to the itinerary
+    void m_updatePath(const std::unique_ptr<Itinerary<Id>>& pItinerary);
 
   public:
     Dynamics() = delete;
@@ -581,6 +585,53 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
+  void Dynamics<Id, Size, Delay>::m_updatePath(
+      const std::unique_ptr<Itinerary<Id>>& pItinerary) {
+    const Size dimension = m_graph.adjMatrix().getRowDim();
+    const auto destinationID = pItinerary->destination();
+    SparseMatrix<Id, bool> path{dimension, dimension};
+    // cycle over the nodes
+    for (const auto& [nodeId, node] : m_graph.nodeSet()) {
+      if (nodeId == destinationID) {
+        continue;
+      }
+      auto result{m_graph.shortestPath(nodeId, destinationID)};
+      if (!result.has_value()) {
+        continue;
+      }
+      // save the minimum distance between i and the destination
+      const auto minDistance{result.value().distance()};
+      for (const auto [nextNodeId, _] : m_graph.adjMatrix().getRow(nodeId)) {
+        // init distance from a neighbor node to the destination to zero
+        double distance{0.};
+
+        // TimePoint expectedTravelTime{
+        //     streetLength};  // / street->maxSpeed()};  // TODO: change into input speed
+        result = m_graph.shortestPath(nextNodeId, destinationID);
+
+        if (result.has_value()) {
+          // if the shortest path exists, save the distance
+          distance = result.value().distance();
+        } else if (nextNodeId != destinationID) {
+          std::cerr << std::format(
+                           "WARNING: No path found between from node {} to node {}",
+                           nodeId,
+                           destinationID)
+                    << std::endl;
+        }
+        if (minDistance ==
+            distance +
+                m_graph.streetSet().at(nodeId * dimension + nextNodeId)->length()) {
+          path.insert(nodeId, nextNodeId, true);
+        }
+      }
+      pItinerary->setPath(path);
+    }
+  }
+
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::setItineraries(std::span<Itinerary<Id>> itineraries) {
     std::ranges::for_each(itineraries, [this](const auto& itinerary) {
       this->m_itineraries.insert(std::make_unique<Itinerary<Id>>(itinerary));
@@ -625,55 +676,14 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::updatePaths() {
-    const Size dimension = m_graph.adjMatrix().getRowDim();
+    std::vector<std::thread> threads;
+    threads.reserve(m_itineraries.size());
     for (const auto& [itineraryId, itinerary] : m_itineraries) {
-      SparseMatrix<Id, bool> path{dimension, dimension};
-      // cycle over the nodes
-      for (const auto& [nodeId, node] : m_graph.nodeSet()) {
-        if (nodeId == itinerary->destination()) {
-          continue;
-        }
-        auto result{m_graph.shortestPath(nodeId, itinerary->destination())};
-        if (!result.has_value()) {
-          continue;
-        }
-        // save the minimum distance between i and the destination
-        const auto minDistance{result.value().distance()};
-        for (const auto [nextNodeId, _] : m_graph.adjMatrix().getRow(nodeId)) {
-          // init distance from a neighbor node to the destination to zero
-          double distance{0.};
-
-          // TimePoint expectedTravelTime{
-          //     streetLength};  // / street->maxSpeed()};  // TODO: change into input velocity
-          result = m_graph.shortestPath(nextNodeId, itinerary->destination());
-
-          if (result.has_value()) {
-            // if the shortest path exists, save the distance
-            distance = result.value().distance();
-          } else if (nextNodeId != itinerary->destination()) {
-            std::cerr << std::format(
-                             "WARNING: No path found between from node {} to node {}",
-                             nodeId,
-                             itinerary->destination())
-                      << std::endl;
-          }
-
-          // if (!(distance > minDistance + expectedTravelTime)) {
-          if (minDistance ==
-              distance +
-                  m_graph.streetSet().at(nodeId * dimension + nextNodeId)->length()) {
-            // std::cout << "minDistance: " << minDistance << " distance: " << distance
-            //           << " streetLength: " << streetLength << '\n';
-            // std::cout << "Inserting " << i << ';' << node.first << '\n';
-            path.insert(nodeId, nextNodeId, true);
-          }
-        }
-        itinerary->setPath(path);
-        // for (auto i{0}; i < dimension; ++i) {
-        //   std::cout << path.getRow(i).size() << ' ';
-        // }
-        // std::cout << '\n';
-      }
+      threads.emplace_back(
+          std::thread([this, &itinerary] { this->m_updatePath(itinerary); }));
+    }
+    for (auto& thread : threads) {
+      thread.join();
     }
   }
 
