@@ -16,6 +16,7 @@
 #include <unordered_map>
 #include <vector>
 #include <cmath>
+#include <format>
 
 #include "../utility/Logger.hpp"
 
@@ -332,8 +333,8 @@ namespace dsm {
     requires(std::unsigned_integral<Index>)
   void SparseMatrix<Index, T>::insert(Index i, T value) {
     if (i > _rows * _cols - 1) {
-      throw std::out_of_range(buildLog("Index " + std::to_string(i) + " out of range " +
-                                       std::to_string(_rows * _cols - 1)));
+      throw std::out_of_range(
+          buildLog(std::format("Index {} out of range 0-{}", i, _rows * _cols - 1)));
     }
     _matrix.emplace(std::make_pair(i, value));
   }
@@ -349,9 +350,8 @@ namespace dsm {
     requires(std::unsigned_integral<Index>)
   void SparseMatrix<Index, T>::insert_or_assign(Index index, T value) {
     if (index > _rows * _cols - 1) {
-      throw std::out_of_range(buildLog("Index " + std::to_string(index) +
-                                       " out of range " +
-                                       std::to_string(_rows * _cols - 1)));
+      throw std::out_of_range(
+          buildLog(std::format("Index {} out of range 0-{}", index, _rows * _cols - 1)));
     }
     _matrix.insert_or_assign(index, value);
   }
@@ -380,10 +380,12 @@ namespace dsm {
     requires(std::unsigned_integral<Index>)
   void SparseMatrix<Index, T>::erase(Index i, Index j) {
     if (i >= _rows || j >= _cols) {
-      throw std::out_of_range(buildLog("Index out of range"));
+      throw std::out_of_range(buildLog(
+          std::format("Index ({}, {}) out of range ({}, {})", i, j, _rows, _cols)));
     }
     if (_matrix.find(i * _cols + j) == _matrix.end()) {
-      throw std::runtime_error(buildLog("Element not found"));
+      throw std::runtime_error(
+          buildLog(std::format("Element with index {} not found", i * _cols + j)));
     }
     _matrix.erase(i * _cols + j);
   }
@@ -392,10 +394,12 @@ namespace dsm {
     requires(std::unsigned_integral<Index>)
   void SparseMatrix<Index, T>::erase(Index index) {
     if (index > _rows * _cols - 1) {
-      throw std::out_of_range(buildLog("Index out of range"));
+      throw std::out_of_range(
+          buildLog(std::format("Index {} out of range 0-{}", index, _rows * _cols - 1)));
     }
     if (_matrix.find(index) == _matrix.end()) {
-      throw std::runtime_error(buildLog("Element not found"));
+      throw std::runtime_error(
+          buildLog(std::format("Element with index {} not found", index)));
     }
     _matrix.erase(index);
   }
@@ -404,7 +408,8 @@ namespace dsm {
     requires(std::unsigned_integral<Index>)
   void SparseMatrix<Index, T>::eraseRow(Index index) {
     if (index > _rows - 1) {
-      throw std::out_of_range(buildLog("Index out of range"));
+      throw std::out_of_range(
+          buildLog(std::format("Index {} out of range 0-{}", index, _rows - 1)));
     }
     for (Index i = 0; i < _cols; ++i) {
       _matrix.erase(index * _cols + i);
@@ -425,7 +430,8 @@ namespace dsm {
     requires(std::unsigned_integral<Index>)
   void SparseMatrix<Index, T>::eraseColumn(Index index) {
     if (index > _cols - 1) {
-      throw std::out_of_range(buildLog("Index out of range"));
+      throw std::out_of_range(
+          buildLog(std::format("Index {} out of range 0-{}", index, _cols - 1)));
     }
     for (Index i = 0; i < _rows; ++i) {
       _matrix.erase(i * _cols + index);
@@ -471,7 +477,8 @@ namespace dsm {
     requires(std::unsigned_integral<Index>)
   bool SparseMatrix<Index, T>::contains(Index i, Index j) const {
     if (i >= _rows || j >= _cols) {
-      throw std::out_of_range(buildLog("Index out of range"));
+      throw std::out_of_range(buildLog(
+          std::format("Index ({}, {}) out of range ({}, {})", i, j, _rows, _cols)));
     }
     return _matrix.contains(i * _cols + j);
   }
@@ -480,7 +487,8 @@ namespace dsm {
     requires(std::unsigned_integral<Index>)
   bool SparseMatrix<Index, T>::contains(Index const index) const {
     if (index > _rows * _cols - 1) {
-      throw std::out_of_range(buildLog("Index out of range"));
+      throw std::out_of_range(
+          buildLog(std::format("Index {} out of range 0-{}", index, _rows * _cols - 1)));
     }
     return _matrix.contains(index);
   }
@@ -536,7 +544,8 @@ namespace dsm {
   SparseMatrix<Index, T> SparseMatrix<Index, T>::getRow(Index index,
                                                         bool keepIndex) const {
     if (index >= _rows) {
-      throw std::out_of_range(buildLog("Index out of range"));
+      throw std::out_of_range(
+          buildLog(std::format("Index {} out of range 0-{}", index, _rows - 1)));
     }
     SparseMatrix row(1, _cols);
     if (keepIndex) {
@@ -556,7 +565,8 @@ namespace dsm {
   SparseMatrix<Index, T> SparseMatrix<Index, T>::getCol(Index index,
                                                         bool keepIndex) const {
     if (index >= _cols) {
-      throw std::out_of_range(buildLog("Index out of range"));
+      throw std::out_of_range(
+          buildLog(std::format("Index {} out of range 0-{}", index, _cols - 1)));
     }
     SparseMatrix col(_rows, 1);
     if (keepIndex) {
@@ -646,7 +656,8 @@ namespace dsm {
     requires(std::unsigned_integral<Index>)
   const T& SparseMatrix<Index, T>::operator()(Index i, Index j) const {
     if (i >= _rows || j >= _cols) {
-      throw std::out_of_range(buildLog("Index out of range"));
+      throw std::out_of_range(buildLog(
+          std::format("Index ({}, {}) out of range ({}, {})", i, j, _rows, _cols)));
     }
     auto const& it = _matrix.find(i * _cols + j);
     return it != _matrix.end() ? it->second : _defaultReturn;
@@ -656,7 +667,8 @@ namespace dsm {
     requires(std::unsigned_integral<Index>)
   T& SparseMatrix<Index, T>::operator()(Index i, Index j) {
     if (i >= _rows || j >= _cols) {
-      throw std::out_of_range(buildLog("Index out of range"));
+      throw std::out_of_range(buildLog(
+          std::format("Index ({}, {}) out of range ({}, {})", i, j, _rows, _cols)));
     }
     auto const& it = _matrix.find(i * _cols + j);
     return it != _matrix.end() ? it->second : _defaultReturn;
@@ -666,7 +678,8 @@ namespace dsm {
     requires(std::unsigned_integral<Index>)
   const T& SparseMatrix<Index, T>::operator()(Index index) const {
     if (index >= _rows * _cols) {
-      throw std::out_of_range(buildLog("Index out of range"));
+      throw std::out_of_range(
+          buildLog(std::format("Index {} out of range 0-{}", index, _rows * _cols - 1)));
     }
     auto const& it = _matrix.find(index);
     return it != _matrix.end() ? it->second : _defaultReturn;
@@ -676,7 +689,8 @@ namespace dsm {
     requires(std::unsigned_integral<Index>)
   T& SparseMatrix<Index, T>::operator()(Index index) {
     if (index >= _rows * _cols) {
-      throw std::out_of_range(buildLog("Index out of range"));
+      throw std::out_of_range(
+          buildLog(std::format("Index {} out of range 0-{}", index, _rows * _cols - 1)));
     }
     auto const& it = _matrix.find(index);
     return it != _matrix.end() ? it->second : _defaultReturn;
@@ -699,7 +713,12 @@ namespace dsm {
   SparseMatrix<Index, T>& SparseMatrix<Index, T>::operator+=(
       const SparseMatrix<I, U>& other) {
     if (this->_rows != other._rows || this->_cols != other._cols) {
-      throw std::runtime_error(buildLog("Dimensions do not match"));
+      throw std::runtime_error(
+          buildLog(std::format("Dimensions ({}, {}) and ({}, {}) do not match",
+                               this->_rows,
+                               this->_cols,
+                               other._rows,
+                               other._cols)));
     }
     for (auto& it : other._matrix) {
       this->contains(it.first)
@@ -716,7 +735,12 @@ namespace dsm {
   SparseMatrix<Index, T>& SparseMatrix<Index, T>::operator-=(
       const SparseMatrix<I, U>& other) {
     if (this->_rows != other._rows || this->_cols != other._cols) {
-      throw std::runtime_error(buildLog("Dimensions do not match"));
+      throw std::runtime_error(
+          buildLog(std::format("Dimensions ({}, {}) and ({}, {}) do not match",
+                               this->_rows,
+                               this->_cols,
+                               other._rows,
+                               other._cols)));
     }
     for (auto& it : other._matrix) {
       this->contains(it.first)
