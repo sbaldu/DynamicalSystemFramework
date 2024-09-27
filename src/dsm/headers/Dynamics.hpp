@@ -750,8 +750,8 @@ namespace dsm {
   void Dynamics<Id, Size, Delay>::addAgent(const Agent<Id, Size, Delay>& agent) {
     if (this->m_agents.size() + 1 > this->m_graph.maxCapacity()) {
       throw std::overflow_error(buildLog(
-          std::format "Graph its already holding the max possible number of agents ({})",
-          this->m_graph.maxCapacity()));
+          std::format("Graph its already holding the max possible number of agents ({})",
+                      this->m_graph.maxCapacity())));
     }
     if (this->m_agents.contains(agent.id())) {
       throw std::invalid_argument(
