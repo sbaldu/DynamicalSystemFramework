@@ -17,6 +17,7 @@
 #include <optional>
 #include <set>
 #include <map>
+#include <format>
 
 #include "../utility/Logger.hpp"
 #include "../utility/queue.hpp"
@@ -150,8 +151,10 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Node<Id, Size>::setCapacity(Size capacity) {
     if (capacity < m_agents.size()) {
-      throw std::runtime_error(
-          buildLog("Node capacity is smaller than the current queue size"));
+      throw std::runtime_error(buildLog(
+          std::format("Node capacity ({}) is smaller than the current queue size ({}).",
+                      capacity,
+                      m_agents.size())));
     }
     NodeConcept<Id, Size>::setCapacity(capacity);
   }
@@ -160,11 +163,12 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Node<Id, Size>::addAgent(double angle, Id agentId) {
     if (m_agents.size() == this->m_capacity) {
-      throw std::runtime_error(buildLog("Node is full"));
+      throw std::runtime_error(buildLog("Node is full."));
     }
     for (auto const [angle, id] : m_agents) {
       if (id == agentId) {
-        throw std::runtime_error(buildLog("Agent is already on the node."));
+        throw std::runtime_error(
+            buildLog(std::format("Agent with id {} is already on the node.", agentId)));
       }
     }
     auto iAngle{static_cast<int16_t>(angle * 100)};
@@ -176,11 +180,12 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Node<Id, Size>::addAgent(Id agentId) {
     if (m_agents.size() == this->m_capacity) {
-      throw std::runtime_error(buildLog("Node is full"));
+      throw std::runtime_error(buildLog("Node is full."));
     }
     for (auto const [angle, id] : m_agents) {
       if (id == agentId) {
-        throw std::runtime_error(buildLog("Agent is already on the node."));
+        throw std::runtime_error(
+            buildLog(std::format("Agent with id {} is already on the node.", id)));
       }
     }
     int lastKey{0};
@@ -200,7 +205,8 @@ namespace dsm {
         return;
       }
     }
-    throw std::runtime_error(buildLog("Agent is not on the node"));
+    throw std::runtime_error(
+        buildLog(std::format("Agent with id {} is not on the node", agentId)));
   }
 
   template <typename Id, typename Size>
@@ -434,11 +440,12 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Roundabout<Id, Size>::enqueue(Id agentId) {
     if (m_agents.size() == this->m_capacity) {
-      throw std::runtime_error(buildLog("Roundabout is full"));
+      throw std::runtime_error(buildLog("Roundabout is full."));
     }
     for (const auto id : m_agents) {
       if (id == agentId) {
-        throw std::runtime_error(buildLog("Agent is already on the roundabout."));
+        throw std::runtime_error(buildLog(
+            std::format("Agent with id {} is already on the roundabout.", agentId)));
       }
     }
     m_agents.push(agentId);
@@ -447,7 +454,7 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   Id Roundabout<Id, Size>::dequeue() {
     if (m_agents.empty()) {
-      throw std::runtime_error(buildLog("Roundabout is empty"));
+      throw std::runtime_error(buildLog("Roundabout is empty."));
     }
     Id agentId{m_agents.front()};
     m_agents.pop();

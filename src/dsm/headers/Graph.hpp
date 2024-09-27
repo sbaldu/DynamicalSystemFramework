@@ -24,6 +24,7 @@
 #include <fstream>
 #include <sstream>
 #include <cassert>
+#include <format>
 
 #include "Node.hpp"
 #include "SparseMatrix.hpp"
@@ -619,7 +620,8 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Graph<Id, Size>::makeSpireStreet(Id streetId) {
     if (!m_streets.contains(streetId)) {
-      throw std::invalid_argument(buildLog("Street does not exist."));
+      throw std::invalid_argument(
+          buildLog(std::format("Street with id {} does not exist.", streetId)));
     }
     auto& pStreet = m_streets[streetId];
     pStreet = std::make_unique<SpireStreet<Id, Size>>(pStreet->id(), *pStreet);
@@ -629,7 +631,8 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Graph<Id, Size>::addStreet(std::shared_ptr<Street<Id, Size>> street) {
     if (m_streets.contains(street->id())) {
-      throw std::invalid_argument(buildLog("Street with same id already exists."));
+      throw std::invalid_argument(
+          buildLog(std::format("Street with id {} already exists.", street->id())));
     }
     // emplace nodes
     const auto srcId{street.nodePair().first};
@@ -648,7 +651,8 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Graph<Id, Size>::addStreet(const Street<Id, Size>& street) {
     if (m_streets.contains(street.id())) {
-      throw std::invalid_argument(buildLog("Street with same id already exists."));
+      throw std::invalid_argument(
+          buildLog(std::format("Street with id {} already exists.", street.id())));
     }
     // emplace nodes
     const auto srcId{street.nodePair().first};
@@ -670,7 +674,8 @@ namespace dsm {
     requires is_street_v<std::remove_reference_t<T1>>
   void Graph<Id, Size>::addStreets(T1&& street) {
     if (m_streets.contains(street.id())) {
-      throw std::invalid_argument(buildLog("Street with same id already exists."));
+      throw std::invalid_argument(
+          buildLog(std::format("Street with id {} already exists.", street.id())));
     }
     // emplace nodes
     const auto srcId{street.nodePair().first};

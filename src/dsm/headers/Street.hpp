@@ -16,6 +16,7 @@
 #include <cmath>
 #include <numbers>
 #include <set>
+#include <format>
 
 #include "Agent.hpp"
 #include "Node.hpp"
@@ -232,7 +233,8 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Street<Id, Size>::setLength(double len) {
     if (len < 0.) {
-      throw std::invalid_argument(buildLog("The length of a street cannot be negative."));
+      throw std::invalid_argument(
+          buildLog(std::format("The length of a street ({}) cannot be negative.", len)));
     }
     m_len = len;
   }
@@ -240,8 +242,8 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Street<Id, Size>::setMaxSpeed(double speed) {
     if (speed < 0.) {
-      throw std::invalid_argument(
-          buildLog("The maximum speed of a street cannot be negative."));
+      throw std::invalid_argument(buildLog(
+          std::format("The maximum speed of a street ({}) cannot be negative.", speed)));
     }
     m_maxSpeed = speed;
   }
@@ -262,9 +264,8 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Street<Id, Size>::setAngle(double angle) {
     if (std::abs(angle) > 2 * std::numbers::pi) {
-      throw std::invalid_argument(
-          buildLog("The angle of a street must be between - 2 * pi and 2 * pi. Got: " +
-                   std::to_string(angle) + "."));
+      throw std::invalid_argument(buildLog(std::format(
+          "The angle of a street ({}) must be between - 2 * pi and 2 * pi.", angle)));
     }
     m_angle = angle;
   }
@@ -283,11 +284,13 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Street<Id, Size>::addAgent(Id agentId) {
     if (m_waitingAgents.contains(agentId)) {
-      throw std::runtime_error(buildLog("The agent is already on the street."));
+      throw std::runtime_error(
+          buildLog(std::format("Agent with id {} is already on the street.", agentId)));
     }
     for (auto const& id : m_exitQueue) {
       if (id == agentId) {
-        throw std::runtime_error(buildLog("The agent is already on the street."));
+        throw std::runtime_error(
+            buildLog(std::format("Agent with id {} is already on the street.", agentId)));
       }
     }
     m_waitingAgents.insert(agentId);
@@ -296,11 +299,13 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Street<Id, Size>::enqueue(Id agentId) {
     if (!m_waitingAgents.contains(agentId)) {
-      throw std::runtime_error(buildLog("The agent is not on the street."));
+      throw std::runtime_error(
+          buildLog(std::format("Agent with id {} is not on the street.", agentId)));
     }
     for (auto const& id : m_exitQueue) {
       if (id == agentId) {
-        throw std::runtime_error(buildLog("The agent is already on the street."));
+        throw std::runtime_error(
+            buildLog(std::format("Agent with id {} is already on the street.", agentId)));
       }
     }
     m_waitingAgents.erase(agentId);

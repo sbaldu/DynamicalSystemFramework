@@ -17,6 +17,7 @@
 #include <unordered_map>
 #include <cmath>
 #include <cassert>
+#include <format>
 
 #include "Agent.hpp"
 #include "Itinerary.hpp"
@@ -591,8 +592,8 @@ namespace dsm {
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::setMinSpeedRateo(double minSpeedRateo) {
     if (minSpeedRateo < 0. || minSpeedRateo > 1.) {
-      throw std::invalid_argument(
-          buildLog("The minim speed rateo must be between 0 and 1"));
+      throw std::invalid_argument(buildLog(std::format(
+          "The minimum speed rateo ({}) must be between 0 and 1", minSpeedRateo)));
     }
     m_minSpeedRateo = minSpeedRateo;
   }
@@ -602,8 +603,8 @@ namespace dsm {
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::setErrorProbability(double errorProbability) {
     if (errorProbability < 0. || errorProbability > 1.) {
-      throw std::invalid_argument(
-          buildLog("The error probability must be between 0 and 1"));
+      throw std::invalid_argument(buildLog(std::format(
+          "The error probability ({}) must be between 0 and 1", errorProbability)));
     }
     m_errorProbability = errorProbability;
   }
@@ -614,7 +615,8 @@ namespace dsm {
   void Dynamics<Id, Size, Delay>::setMaxFlowPercentage(double maxFlowPercentage) {
     if (maxFlowPercentage < 0. || maxFlowPercentage > 1.) {
       throw std::invalid_argument(
-          buildLog("The maximum flow percentage must be between 0 and 1"));
+          buildLog(std::format("The maximum flow percentage ({}) must be between 0 and 1",
+                               maxFlowPercentage)));
     }
     m_maxFlowPercentage = maxFlowPercentage;
   }
@@ -649,8 +651,11 @@ namespace dsm {
             // if the shortest path exists, save the distance
             distance = result.value().distance();
           } else if (nextNodeId != itinerary->destination()) {
-            std::cerr << "WARNING: No path found between " << nodeId << " and "
-                      << itinerary->destination() << '\n';
+            std::cerr << std::format(
+                             "WARNING: No path found between from node {} to node {}",
+                             nodeId,
+                             itinerary->destination())
+                      << std::endl;
           }
 
           // if (!(distance > minDistance + expectedTravelTime)) {
@@ -744,13 +749,13 @@ namespace dsm {
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::addAgent(const Agent<Id, Size, Delay>& agent) {
     if (this->m_agents.size() + 1 > this->m_graph.maxCapacity()) {
-      throw std::overflow_error(
-          buildLog("Graph its already holding the max possible number of agents (" +
-                   std::to_string(this->m_graph.maxCapacity()) + ')'));
+      throw std::overflow_error(buildLog(
+          std::format("Graph its already holding the max possible number of agents ({})",
+                      this->m_graph.maxCapacity())));
     }
     if (this->m_agents.contains(agent.id())) {
       throw std::invalid_argument(
-          buildLog("Agent " + std::to_string(agent.id()) + " already exists."));
+          buildLog(std::format("Agent with id {} already exists.", agent.id())));
     }
     this->m_agents.emplace(agent.id(), std::make_unique<Agent<Id, Size, Delay>>(agent));
   }
@@ -759,13 +764,13 @@ namespace dsm {
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::addAgent(std::unique_ptr<Agent<Id, Size, Delay>> agent) {
     if (this->m_agents.size() + 1 > this->m_graph.maxCapacity()) {
-      throw std::overflow_error(
-          buildLog("Graph its already holding the max possible number of agents (" +
-                   std::to_string(this->m_graph.maxCapacity()) + ')'));
+      throw std::overflow_error(buildLog(
+          std::format("Graph its already holding the max possible number of agents ({})",
+                      this->m_graph.maxCapacity())));
     }
     if (this->m_agents.contains(agent->id())) {
       throw std::invalid_argument(
-          buildLog("Agent " + std::to_string(agent->id()) + " already exists."));
+          buildLog(std::format("Agent with id {} already exists.", agent->id())));
     }
     this->m_agents.emplace(agent->id(), std::move(agent));
   }
@@ -776,14 +781,14 @@ namespace dsm {
                                             Size nAgents,
                                             std::optional<Id> srcNodeId) {
     if (this->m_agents.size() + nAgents > this->m_graph.maxCapacity()) {
-      throw std::overflow_error(
-          buildLog("Graph its already holding the max possible number of agents (" +
-                   std::to_string(this->m_graph.maxCapacity()) + ')'));
+      throw std::overflow_error(buildLog(
+          std::format("Graph its already holding the max possible number of agents ({})",
+                      this->m_graph.maxCapacity())));
     }
     auto itineraryIt{m_itineraries.find(itineraryId)};
     if (itineraryIt == m_itineraries.end()) {
       throw std::invalid_argument(
-          buildLog("Itinerary " + std::to_string(itineraryId) + " not found"));
+          buildLog(std::format("Itinerary with id {} not found", itineraryId)));
     }
     Size agentId{0};
     if (!this->m_agents.empty()) {
@@ -819,9 +824,9 @@ namespace dsm {
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::addAgents(std::span<Agent<Id, Size, Delay>> agents) {
     if (this->m_agents.size() + agents.size() > this->m_graph.maxCapacity()) {
-      throw std::overflow_error(
-          buildLog("Graph its already holding the max possible number of agents (" +
-                   std::to_string(this->m_graph.maxCapacity()) + ')'));
+      throw std::overflow_error(buildLog(
+          std::format("Graph its already holding the max possible number of agents ({})",
+                      this->m_graph.maxCapacity())));
     }
     std::ranges::for_each(agents, [this](const auto& agent) -> void {
       this->m_agents.push_back(std::make_unique(agent));
@@ -834,9 +839,9 @@ namespace dsm {
   void Dynamics<Id, Size, Delay>::addAgentsUniformly(Size nAgents,
                                                      std::optional<Id> itineraryId) {
     if (this->m_agents.size() + nAgents > this->m_graph.maxCapacity()) {
-      throw std::overflow_error(
-          buildLog("Graph its already holding the max possible number of agents (" +
-                   std::to_string(this->m_graph.maxCapacity()) + ')'));
+      throw std::overflow_error(buildLog(
+          std::format("Graph its already holding the max possible number of agents ({})",
+                      this->m_graph.maxCapacity())));
     }
     if (this->m_itineraries.empty()) {
       // TODO: make this possible for random agents
@@ -886,7 +891,7 @@ namespace dsm {
     auto agentIt{m_agents.find(agentId)};
     if (agentIt == m_agents.end()) {
       throw std::invalid_argument(
-          buildLog("Agent " + std::to_string(agentId) + " not found."));
+          buildLog(std::format("Agent with id {} not found.", agentId)));
     }
     m_agents.erase(agentId);
   }
