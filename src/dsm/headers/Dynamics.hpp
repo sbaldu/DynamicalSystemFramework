@@ -6,7 +6,8 @@
 ///             of the graph's id and the type of the graph's capacity.
 ///             The graph's id and capacity must be unsigned integral types.
 
-#pragma once
+#ifndef dynamics_hpp
+#define dynamics_hpp
 
 #include <algorithm>
 #include <concepts>
@@ -17,8 +18,6 @@
 #include <unordered_map>
 #include <cmath>
 #include <cassert>
-#include <format>
-#include <thread>
 
 #include "Agent.hpp"
 #include "Itinerary.hpp"
@@ -86,6 +85,7 @@ namespace dsm {
     bool m_forcePriorities;
     std::unordered_map<Id, std::array<unsigned long long, 4>> m_turnCounts;
     std::unordered_map<Id, std::array<long, 4>> m_turnMapping;
+    std::unordered_map<Id,unsigned long long> m_streetTails;
 
     /// @brief Get the next street id
     /// @param agentId The id of the agent
@@ -110,9 +110,6 @@ namespace dsm {
     /// @details Puts all new agents on a street, if possible, decrements all delays
     /// and increments all travel times.
     virtual void m_evolveAgents();
-    /// @brief Update the path of a single itinerary
-    /// @param pItinerary An std::unique_prt to the itinerary
-    void m_updatePath(const std::unique_ptr<Itinerary<Id>>& pItinerary);
 
   public:
     Dynamics() = delete;
@@ -325,6 +322,7 @@ namespace dsm {
         m_maxFlowPercentage{1.},
         m_forcePriorities{false} {
     for (const auto& [streetId, street] : m_graph.streetSet()) {
+      m_streetTails.emplace(streetId, 0);
       m_turnCounts.emplace(streetId, std::array<unsigned long long, 4>{0, 0, 0, 0});
       // fill turn mapping as [streetId, [left street Id, straight street Id, right street Id, U self street Id]]
       m_turnMapping.emplace(streetId, std::array<long, 4>{-1, -1, -1, -1});
@@ -413,6 +411,10 @@ namespace dsm {
       const auto agentId{street->queue().front()};
       if (m_agents[agentId]->delay() > 0) {
         continue;
+      }
+      if(m_time % 30 == 0) {
+        //m_streetTails[streetId] += street->queue().size();
+        m_streetTails[streetId] += street->waitingAgents().size();
       }
       m_agents[agentId]->setSpeed(0.);
       const auto& destinationNode{this->m_graph.nodeSet()[street->nodePair().second]};
@@ -585,53 +587,6 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
-  void Dynamics<Id, Size, Delay>::m_updatePath(
-      const std::unique_ptr<Itinerary<Id>>& pItinerary) {
-    const Size dimension = m_graph.adjMatrix().getRowDim();
-    const auto destinationID = pItinerary->destination();
-    SparseMatrix<Id, bool> path{dimension, dimension};
-    // cycle over the nodes
-    for (const auto& [nodeId, node] : m_graph.nodeSet()) {
-      if (nodeId == destinationID) {
-        continue;
-      }
-      auto result{m_graph.shortestPath(nodeId, destinationID)};
-      if (!result.has_value()) {
-        continue;
-      }
-      // save the minimum distance between i and the destination
-      const auto minDistance{result.value().distance()};
-      for (const auto [nextNodeId, _] : m_graph.adjMatrix().getRow(nodeId)) {
-        // init distance from a neighbor node to the destination to zero
-        double distance{0.};
-
-        // TimePoint expectedTravelTime{
-        //     streetLength};  // / street->maxSpeed()};  // TODO: change into input speed
-        result = m_graph.shortestPath(nextNodeId, destinationID);
-
-        if (result.has_value()) {
-          // if the shortest path exists, save the distance
-          distance = result.value().distance();
-        } else if (nextNodeId != destinationID) {
-          std::cerr << std::format(
-                           "WARNING: No path found between from node {} to node {}",
-                           nodeId,
-                           destinationID)
-                    << std::endl;
-        }
-        if (minDistance ==
-            distance +
-                m_graph.streetSet().at(nodeId * dimension + nextNodeId)->length()) {
-          path.insert(nodeId, nextNodeId, true);
-        }
-      }
-      pItinerary->setPath(path);
-    }
-  }
-
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::setItineraries(std::span<Itinerary<Id>> itineraries) {
     std::ranges::for_each(itineraries, [this](const auto& itinerary) {
       this->m_itineraries.insert(std::make_unique<Itinerary<Id>>(itinerary));
@@ -643,8 +598,8 @@ namespace dsm {
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::setMinSpeedRateo(double minSpeedRateo) {
     if (minSpeedRateo < 0. || minSpeedRateo > 1.) {
-      throw std::invalid_argument(buildLog(std::format(
-          "The minimum speed rateo ({}) must be between 0 and 1", minSpeedRateo)));
+      throw std::invalid_argument(
+          buildLog("The minim speed rateo must be between 0 and 1"));
     }
     m_minSpeedRateo = minSpeedRateo;
   }
@@ -654,8 +609,8 @@ namespace dsm {
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::setErrorProbability(double errorProbability) {
     if (errorProbability < 0. || errorProbability > 1.) {
-      throw std::invalid_argument(buildLog(std::format(
-          "The error probability ({}) must be between 0 and 1", errorProbability)));
+      throw std::invalid_argument(
+          buildLog("The error probability must be between 0 and 1"));
     }
     m_errorProbability = errorProbability;
   }
@@ -666,8 +621,7 @@ namespace dsm {
   void Dynamics<Id, Size, Delay>::setMaxFlowPercentage(double maxFlowPercentage) {
     if (maxFlowPercentage < 0. || maxFlowPercentage > 1.) {
       throw std::invalid_argument(
-          buildLog(std::format("The maximum flow percentage ({}) must be between 0 and 1",
-                               maxFlowPercentage)));
+          buildLog("The maximum flow percentage must be between 0 and 1"));
     }
     m_maxFlowPercentage = maxFlowPercentage;
   }
@@ -676,14 +630,52 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::updatePaths() {
-    std::vector<std::thread> threads;
-    threads.reserve(m_itineraries.size());
+    const Size dimension = m_graph.adjMatrix().getRowDim();
     for (const auto& [itineraryId, itinerary] : m_itineraries) {
-      threads.emplace_back(
-          std::thread([this, &itinerary] { this->m_updatePath(itinerary); }));
-    }
-    for (auto& thread : threads) {
-      thread.join();
+      SparseMatrix<Id, bool> path{dimension, dimension};
+      // cycle over the nodes
+      for (const auto& [nodeId, node] : m_graph.nodeSet()) {
+        if (nodeId == itinerary->destination()) {
+          continue;
+        }
+        auto result{m_graph.shortestPath(nodeId, itinerary->destination())};
+        if (!result.has_value()) {
+          continue;
+        }
+        // save the minimum distance between i and the destination
+        const auto minDistance{result.value().distance()};
+        for (const auto [nextNodeId, _] : m_graph.adjMatrix().getRow(nodeId)) {
+          // init distance from a neighbor node to the destination to zero
+          double distance{0.};
+
+          // TimePoint expectedTravelTime{
+          //     streetLength};  // / street->maxSpeed()};  // TODO: change into input velocity
+          result = m_graph.shortestPath(nextNodeId, itinerary->destination());
+
+          if (result.has_value()) {
+            // if the shortest path exists, save the distance
+            distance = result.value().distance();
+          } else if (nextNodeId != itinerary->destination()) {
+            std::cerr << "WARNING: No path found between " << nodeId << " and "
+                      << itinerary->destination() << '\n';
+          }
+
+          // if (!(distance > minDistance + expectedTravelTime)) {
+          if (minDistance ==
+              distance +
+                  m_graph.streetSet().at(nodeId * dimension + nextNodeId)->length()) {
+            // std::cout << "minDistance: " << minDistance << " distance: " << distance
+            //           << " streetLength: " << streetLength << '\n';
+            // std::cout << "Inserting " << i << ';' << node.first << '\n';
+            path.insert(nodeId, nextNodeId, true);
+          }
+        }
+        itinerary->setPath(path);
+        // for (auto i{0}; i < dimension; ++i) {
+        //   std::cout << path.getRow(i).size() << ' ';
+        // }
+        // std::cout << '\n';
+      }
     }
   }
 
@@ -708,64 +700,142 @@ namespace dsm {
                                                         double threshold) {
     for (const auto& [nodeId, node] : m_graph.nodeSet()) {
       if (!node->isTrafficLight()) {
+        //std::cout << '\t' << " -> Non è un semaforo" << '\n';
         continue;
       }
       auto& tl = dynamic_cast<TrafficLight<Id, Size, Delay>&>(*node);
       if (!tl.delay().has_value()) {
+        //std::cout << '\t' << " -> Il delay non ha valore" << '\n';
         continue;
       }
+      //std::cout << '\t' << '\t' << '\t' << "NODO " << nodeId << '\n';
       auto [greenTime, redTime] = tl.delay().value();
+      //std::cout << '\t' << " -> greenTime: " << static_cast<unsigned int>(greenTime) << '\n';
+      //std::cout << '\t' << " -> redTime: " << static_cast<unsigned int>(redTime) << '\n';
       const auto cycleTime = greenTime + redTime;
-      // const Delay delta = cycleTime * percentage;
       const auto& streetPriorities = tl.streetPriorities();
       Size greenSum{0}, greenQueue{0};
       Size redSum{0}, redQueue{0};
       for (const auto& [streetId, _] : m_graph.adjMatrix().getCol(nodeId, true)) {
         if (streetPriorities.contains(streetId)) {
-          greenSum += m_graph.streetSet()[streetId]->nAgents();
-          greenQueue += m_graph.streetSet()[streetId]->queue().size();
+          greenSum += m_streetTails[streetId];
+          greenQueue += m_graph.streetSet()[streetId]->queue().size(); 
         } else {
-          redSum += m_graph.streetSet()[streetId]->nAgents();
+          redSum += m_streetTails[streetId];
           redQueue += m_graph.streetSet()[streetId]->queue().size();
         }
       }
+      //std::cout << '\t' << " -> greenSum: " << static_cast<unsigned int>(greenSum) << '\n';
+      //std::cout << '\t' << " -> greenQueue: " << static_cast<unsigned int>(greenQueue) << '\n';
+      //std::cout << '\t' << " -> redSum: " << static_cast<unsigned int>(redSum) << '\n';
+      //std::cout << '\t' << " -> redQueue: " << static_cast<unsigned int>(redQueue) << '\n';
       const Delay delta =
           std::floor(std::abs(static_cast<int>(greenQueue - redQueue)) / percentage);
+          //std::cout << '\t' << " -> delta: " << static_cast<unsigned int>(delta) << '\n';
       if (delta == 0) {
+        //std::cout << '\t' << " -> modTime: " << tl.modTime() << '\n';
         continue;
       }
       const Size smallest = std::min(greenSum, redSum);
       if (std::abs(static_cast<int>(greenSum - redSum)) < threshold * smallest) {
+        //std::cout << '\t' << " -> MINORE della threshold" << '\n';
         tl.setDelay(std::floor(cycleTime / 2));
+        //auto [greenTime1, redTime1] = tl.delay().value();
+        //std::cout << '\t' << " -> greenTime: " << static_cast<unsigned int>(greenTime1) << '\n';
+        //std::cout << '\t' << " -> redTime: " << static_cast<unsigned int>(redTime1) << '\n';
+        //std::cout << '\t' << " -> modTime: " << tl.modTime() << '\n';
         continue;
       }
-      if ((greenSum > redSum) && !(greenTime > redTime) && (greenQueue > redQueue)) {
-        if (redTime > delta) {
-          greenTime += delta;
-          redTime -= delta;
-          tl.setDelay(std::make_pair(greenTime, redTime));
+      //std::cout << '\t' << " -> MAGGIORE della threshold" << '\n';
+      // se non vale la condizione sopra (vale quella col >)
+      // cosa devo fare:
+      //    - controllo che le le strade che danno sul nodo abbiano una densità minore della densità media (o minore
+      //      della densità media + percentuale): voglio evitare di essere dentro al cluster. Voglio essere fuori o (al 
+      //      più) sul bordo
+      //    - se è minore: faccio fare all'algoritmo quello che vuole fare
+      //    - se NON lo è: non gli faccio fare nulla (non modifico nulla)
+      auto meanDensity_whole = streetMeanDensity().mean;  // Measurement<double>
+      double densitySum{};
+      int i{};
+      // cerco su tutto il set di strade quelle che sono USCENTI rispetto a quel nodo e mi salvo il loro id
+      for (const auto& [streetId, street] : m_graph.streetSet()) {
+        if (street->nodePair().first == nodeId) {
+        i++;
+        auto density = street->density();
+        densitySum += density;
         }
-      } else if (!(redTime > greenTime) && (greenTime > delta) &&
-                 (redQueue > greenQueue)) {
-        greenTime -= delta;
-        redTime += delta;
-        tl.setDelay(std::make_pair(greenTime, redTime));
       }
+      // fai la media delle quattro e confronti la media
+      auto meanDensity_streets = densitySum / i;
+      //std::cout << '\t' << " -> Densità media del network: " << std::setprecision(7) << meanDensity_whole << '\n';
+      //std::cout << '\t' << " -> Densità media delle 4 strade uscenti: " << std::setprecision(7) << meanDensity_streets << '\n';
+      auto ratio = meanDensity_whole/meanDensity_streets;
+      auto dyn_thresh = std::tanh(ratio) * 3/10; // il 3/10 è lì perché è il massimo bordo che voglio includere
+      //std::cout << '\t' << " -> Parametro ratio: " << std::setprecision(7) << ratio << '\n';
+      //std::cout << '\t' << " -> Parametro dyn_thresh: " << std::setprecision(7) << dyn_thresh << '\n';
+      if (meanDensity_whole + (dyn_thresh) * meanDensity_whole > meanDensity_streets) {
+        //std::cout << '\t' << " -> Sono sul BORDO del cluster" << '\n';
+        if(meanDensity_whole > meanDensity_streets) {
+          //std::cout << '\t' << " -> MINORE della densità massima" << '\n';
+          if(!(redTime > greenTime) && (redSum > greenSum) && (greenTime > delta)) {
+              greenTime -= delta; 
+              redTime += delta;
+              tl.setDelay(std::make_pair(greenTime, redTime));
+            } else if (!(greenTime > redTime) && (greenSum > redSum) && (redTime > delta)) {
+              greenTime += delta;
+              redTime -= delta; 
+              tl.setDelay(std::make_pair(greenTime, redTime));
+            } else { 
+              //std::cout << '\t' << " -> NON sono entrato negli if precedenti" << '\n';
+              tl.setDelay(std::make_pair(greenTime, redTime)); 
+            }
+            //std::cout << '\t' << " -> greenTime: " << static_cast<unsigned int>(greenTime) << '\n';
+            //std::cout << '\t' << " -> redTime: " << static_cast<unsigned int>(redTime) << '\n';
+            //std::cout << '\t' << " -> modTime: " << tl.modTime() << '\n';
+        } else {
+          //std::cout << '\t' << " -> MAGGIORE della densità massima" << '\n';
+          if(!(redTime > greenTime) && (redSum > greenSum) && (greenTime > ratio * delta)) {
+            greenTime -= dyn_thresh * delta;  //
+            redTime += delta;
+            tl.setDelay(std::make_pair(greenTime, redTime));
+          } else if (!(greenTime > redTime) && (greenSum > redSum) && (redTime > ratio * delta)) {
+            greenTime += delta;
+            redTime -= dyn_thresh * delta;      //
+            tl.setDelay(std::make_pair(greenTime, redTime));
+          } else if (!(redTime > greenTime) && (redSum < greenSum) && (redTime > delta)) {
+            greenTime += dyn_thresh * delta;    //
+            redTime -= delta;
+            tl.setDelay(std::make_pair(greenTime, redTime));
+          } else if (!(redTime < greenTime) && (redSum > greenSum) && (greenTime > delta)) {
+            greenTime -= delta;
+            redTime += dyn_thresh * delta;      //
+            tl.setDelay(std::make_pair(greenTime, redTime));
+          } else {
+            //std::cout << '\t' << " -> NON sono entrato negli if precedenti" << '\n';
+            tl.setDelay(std::make_pair(greenTime, redTime));
+          }
+          //std::cout << '\t' << " -> greenTime: " << static_cast<unsigned int>(greenTime) << '\n';
+          //std::cout << '\t' << " -> redTime: " << static_cast<unsigned int>(redTime) << '\n';
+          //std::cout << '\t' << " -> modTime: " << tl.modTime() << '\n';
+        }
+      } else {
+        //std::cout << '\t' << " -> Sono DENTRO il cluster" << '\n';
+        //std::cout << '\t' << " -> modTime: " << tl.modTime() << '\n';
+      } 
+    }
+    for (auto& [id, element] : m_streetTails) {
+      element = 0;
     }
   }
+
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::addAgent(const Agent<Id, Size, Delay>& agent) {
-    if (this->m_agents.size() + 1 > this->m_graph.maxCapacity()) {
-      throw std::overflow_error(buildLog(
-          std::format("Graph its already holding the max possible number of agents ({})",
-                      this->m_graph.maxCapacity())));
-    }
     if (this->m_agents.contains(agent.id())) {
       throw std::invalid_argument(
-          buildLog(std::format("Agent with id {} already exists.", agent.id())));
+          buildLog("Agent " + std::to_string(agent.id()) + " already exists."));
     }
     this->m_agents.emplace(agent.id(), std::make_unique<Agent<Id, Size, Delay>>(agent));
   }
@@ -773,14 +843,9 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::addAgent(std::unique_ptr<Agent<Id, Size, Delay>> agent) {
-    if (this->m_agents.size() + 1 > this->m_graph.maxCapacity()) {
-      throw std::overflow_error(buildLog(
-          std::format("Graph its already holding the max possible number of agents ({})",
-                      this->m_graph.maxCapacity())));
-    }
     if (this->m_agents.contains(agent->id())) {
       throw std::invalid_argument(
-          buildLog(std::format("Agent with id {} already exists.", agent->id())));
+          buildLog("Agent " + std::to_string(agent->id()) + " already exists."));
     }
     this->m_agents.emplace(agent->id(), std::move(agent));
   }
@@ -790,21 +855,16 @@ namespace dsm {
   void Dynamics<Id, Size, Delay>::addAgents(Id itineraryId,
                                             Size nAgents,
                                             std::optional<Id> srcNodeId) {
-    if (this->m_agents.size() + nAgents > this->m_graph.maxCapacity()) {
-      throw std::overflow_error(buildLog(
-          std::format("Graph its already holding the max possible number of agents ({})",
-                      this->m_graph.maxCapacity())));
-    }
     auto itineraryIt{m_itineraries.find(itineraryId)};
     if (itineraryIt == m_itineraries.end()) {
       throw std::invalid_argument(
-          buildLog(std::format("Itinerary with id {} not found", itineraryId)));
+          buildLog("Itinerary " + std::to_string(itineraryId) + " not found"));
     }
     Size agentId{0};
     if (!this->m_agents.empty()) {
       agentId = this->m_agents.rbegin()->first + 1;
     }
-    for (Size i{0}; i < nAgents; ++i, ++agentId) {
+    for (auto i{0}; i < nAgents; ++i, ++agentId) {
       this->addAgent(Agent<Id, Size, Delay>{agentId, itineraryId});
       if (srcNodeId.has_value()) {
         this->m_agents[agentId]->setSourceNodeId(srcNodeId.value());
@@ -833,11 +893,6 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::addAgents(std::span<Agent<Id, Size, Delay>> agents) {
-    if (this->m_agents.size() + agents.size() > this->m_graph.maxCapacity()) {
-      throw std::overflow_error(buildLog(
-          std::format("Graph its already holding the max possible number of agents ({})",
-                      this->m_graph.maxCapacity())));
-    }
     std::ranges::for_each(agents, [this](const auto& agent) -> void {
       this->m_agents.push_back(std::make_unique(agent));
     });
@@ -848,14 +903,9 @@ namespace dsm {
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::addAgentsUniformly(Size nAgents,
                                                      std::optional<Id> itineraryId) {
-    if (this->m_agents.size() + nAgents > this->m_graph.maxCapacity()) {
-      throw std::overflow_error(buildLog(
-          std::format("Graph its already holding the max possible number of agents ({})",
-                      this->m_graph.maxCapacity())));
-    }
     if (this->m_itineraries.empty()) {
       // TODO: make this possible for random agents
-      throw std::invalid_argument(
+      throw std::runtime_error(
           buildLog("It is not possible to add random agents without itineraries."));
     }
     const bool randomItinerary{!itineraryId.has_value()};
@@ -901,7 +951,7 @@ namespace dsm {
     auto agentIt{m_agents.find(agentId)};
     if (agentIt == m_agents.end()) {
       throw std::invalid_argument(
-          buildLog(std::format("Agent with id {} not found.", agentId)));
+          buildLog("Agent " + std::to_string(agentId) + " not found."));
     }
     m_agents.erase(agentId);
   }
@@ -1294,3 +1344,5 @@ namespace dsm {
   void SecondOrderDynamics<Id, Size>::setSpeed() {}
 
 };  // namespace dsm
+
+#endif
