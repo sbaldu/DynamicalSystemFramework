@@ -1,0 +1,35 @@
+name: Profile the use of CPU caches
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install Valgrind
+      run: sudo apt-get install -y valgrind perf
+
+    - name: Build test simulation
+      working-directory: ${{github.workspace}}/profiling
+      run: cmake -S . -B build && cmake --build build
+
+    - name: Profile using cachegrind
+      working-directory: ${{github.workspace}}/profiling
+      run: |
+        valgrind --tool=cachegrind ./cache.out
+        cg_annotate cachegrind.out.*
+
+    - name: Profile using perf
+      working-directory: ${{github.workspace}}/profiling
+      run: |
+        perf stat -B -e cache-references,cache-misses,cycles,instructions,branches ./cache.out
+        perf record ./cache.out
+        perf record -e cache-misses ./cache.out
+        perf report -v
