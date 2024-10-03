@@ -18,6 +18,9 @@ jobs:
         sudo apt-get install -y valgrind
         sudo apt-get install -y linux-tools-common linux-tools-generic
 
+    - name: Relax perf_event_paranoid
+      run: sudo sysctl kernel.perf_event_paranoid=-1
+
     - name: Build test simulation
       working-directory: ${{github.workspace}}/profiling
       run: cmake -S . -B build && cmake --build build
