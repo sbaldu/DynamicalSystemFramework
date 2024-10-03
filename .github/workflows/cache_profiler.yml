@@ -14,7 +14,9 @@ jobs:
     - uses: actions/checkout@v3
 
     - name: Install Valgrind
-      run: sudo apt-get install -y valgrind perf
+      run: |
+        sudo apt-get install -y valgrind perf
+        sudo apt-get install -y linux-tools-common linux-tools-generic
 
     - name: Build test simulation
       working-directory: ${{github.workspace}}/profiling
