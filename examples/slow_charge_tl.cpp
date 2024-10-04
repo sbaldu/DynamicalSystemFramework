@@ -310,7 +310,7 @@ int main(int argc, char** argv) {
     }
     dynamics.evolve(false);
     if (OPTIMIZE && (dynamics.time() % 420 == 0)) {
-      dynamics.optimizeTrafficLights(std::floor(420. / 60), 0.15);
+      dynamics.optimizeTrafficLights(std::floor(420. / 60), 0.15, 3. / 10);
     }
     if (dynamics.time() % 2400 == 0 && nAgents > 0) {
       // auto meanDelta = std::accumulate(deltas.begin(), deltas.end(), 0) /

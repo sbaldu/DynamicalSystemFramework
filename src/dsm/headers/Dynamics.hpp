@@ -171,9 +171,12 @@ namespace dsm {
     /// @brief Optimize the traffic lights by changing the green and red times
     /// @param percentage double, The percentage of the TOTAL cycle time to add or subtract to the green time
     /// @param threshold double, The percentage of the mean capacity of the streets used as threshold for the delta between the two tails.
+    /// @param densityTolerance double, The algorithm will consider all streets with density up to densityTolerance*meanDensity
     /// @details The function cycles over the traffic lights and, if the difference between the two tails is greater than
     ///   the threshold multiplied by the mean capacity of the streets, it changes the green and red times of the traffic light, keeping the total cycle time constant.
-    void optimizeTrafficLights(double percentage, double threshold = 0.);
+    void optimizeTrafficLights(double percentage,
+                               double threshold = 0.,
+                               double densityTolerance = 0.);
 
     /// @brief Get the graph
     /// @return const Graph<Id, Size>&, The graph
@@ -720,7 +723,20 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::optimizeTrafficLights(double percentage,
-                                                        double threshold) {
+                                                        double threshold,
+                                                        double densityTolerance) {
+    if (threshold < 0 || threshold > 1) {
+      throw std::invalid_argument(
+          buildLog(std::format("The threshold parameter is a percentage and must be "
+                               "bounded between 0-1. Inserted value: {}",
+                               threshold)));
+    }
+    if (densityTolerance < 0 || densityTolerance > 1) {
+      throw std::invalid_argument(buildLog(
+          std::format("The densityTolerance parameter is a percentage and must be "
+                      "bounded between 0-1. Inserted value: {}",
+                      densityTolerance)));
+    }
     for (const auto& [nodeId, node] : m_graph.nodeSet()) {
       if (!node->isTrafficLight()) {
         continue;
@@ -772,9 +788,8 @@ namespace dsm {
       //std::cout << '\t' << " -> Mean network density: " << std::setprecision(7) << meanDensity_whole << '\n';
       //std::cout << '\t' << " -> Mean density of 4 outgoing streets: " << std::setprecision(7) << meanDensity_streets << '\n';
       auto ratio = meanDensity_whole / meanDensity_streets;
-      auto dyn_thresh =
-          std::tanh(ratio) * 3 /
-          10;  // il 3/10 è lì perché è il massimo bordo che voglio includere
+      // densityTolerance represents the max border we want to consider
+      auto dyn_thresh = std::tanh(ratio) * densityTolerance;
       //std::cout << '\t' << " -> Parametro ratio: " << std::setprecision(7) << ratio << '\n';
       //std::cout << '\t' << " -> Parametro dyn_thresh: " << std::setprecision(7) << dyn_thresh << '\n';
       if (meanDensity_whole + (dyn_thresh)*meanDensity_whole > meanDensity_streets) {
