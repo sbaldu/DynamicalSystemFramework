@@ -84,6 +84,7 @@ namespace dsm {
     std::vector<unsigned int> m_travelTimes;
     std::unordered_map<Id, Id> m_agentNextStreetId;
     bool m_forcePriorities;
+    std::optional<Delay> m_dataUpdatePeriod;
     std::unordered_map<Id, std::array<unsigned long long, 4>> m_turnCounts;
     std::unordered_map<Id, std::array<long, 4>> m_turnMapping;
     std::unordered_map<Id, unsigned long long> m_streetTails;
@@ -148,6 +149,12 @@ namespace dsm {
     /// @param forcePriorities The flag
     /// @details If true, if an agent cannot move to the next street, the whole node is skipped
     void setForcePriorities(bool forcePriorities) { m_forcePriorities = forcePriorities; }
+    /// @brief Set the data update period.
+    /// @param dataUpdatePeriod Delay, The period
+    /// @details Some data, i.e. the street queue lengths, are stored only after a fixed amount of time which is represented by this variable.
+    void setDataUpdatePeriod(Delay dataUpdatePeriod) {
+      m_dataUpdatePeriod = dataUpdatePeriod;
+    }
 
     /// @brief Update the paths of the itineraries based on the actual travel times
     virtual void updatePaths();
@@ -416,9 +423,11 @@ namespace dsm {
       if (m_agents[agentId]->delay() > 0) {
         continue;
       }
-      if (m_time % 30 == 0) {
-        //m_streetTails[streetId] += street->queue().size();
-        m_streetTails[streetId] += street->waitingAgents().size();
+      if (m_dataUpdatePeriod.has_value()) {
+        if (m_time % m_dataUpdatePeriod.value() == 0) {
+          //m_streetTails[streetId] += street->queue().size();
+          m_streetTails[streetId] += street->waitingAgents().size();
+        }
       }
       m_agents[agentId]->setSpeed(0.);
       const auto& destinationNode{this->m_graph.nodeSet()[street->nodePair().second]};
