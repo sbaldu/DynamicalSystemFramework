@@ -737,6 +737,7 @@ namespace dsm {
                       "bounded between 0-1. Inserted value: {}",
                       densityTolerance)));
     }
+    const auto meanDensityGlob = streetMeanDensity().mean;  // Measurement<double>
     for (const auto& [nodeId, node] : m_graph.nodeSet()) {
       if (!node->isTrafficLight()) {
         continue;
@@ -772,29 +773,26 @@ namespace dsm {
       // If the difference is not less than the threshold
       //    - Check that the incoming streets have a density less than the mean one (eventually + tolerance): I want to avoid being into the cluster, better to be out or on the border
       //    - If the previous check fails, do nothing
-      auto meanDensity_whole = streetMeanDensity().mean;  // Measurement<double>
-      double densitySum{};
-      int i{};
-      // Store the ids of outgoing streets
-      for (const auto& [streetId, street] : m_graph.streetSet()) {
-        if (street->nodePair().first == nodeId) {
-          i++;
-          auto density = street->density();
-          densitySum += density;
+      double meanDensity_streets{0.};
+      {
+        // Store the ids of outgoing streets
+        const auto& row{m_graph.adjMatrix().getRow(nodeId, true)};
+        for (const auto& [streetId, _] : row) {
+          meanDensity_streets += m_graph.streetSet()[streetId]->density();
         }
+        // Take the mean density of the outgoing streets
+        meanDensity_streets /= row.size();
       }
-      // Take the mean density of the outgoing streets
-      auto meanDensity_streets = densitySum / i;
-      //std::cout << '\t' << " -> Mean network density: " << std::setprecision(7) << meanDensity_whole << '\n';
+      //std::cout << '\t' << " -> Mean network density: " << std::setprecision(7) << meanDensityGlob << '\n';
       //std::cout << '\t' << " -> Mean density of 4 outgoing streets: " << std::setprecision(7) << meanDensity_streets << '\n';
-      auto ratio = meanDensity_whole / meanDensity_streets;
+      const auto ratio = meanDensityGlob / meanDensity_streets;
       // densityTolerance represents the max border we want to consider
-      auto dyn_thresh = std::tanh(ratio) * densityTolerance;
+      const auto dyn_thresh = std::tanh(ratio) * densityTolerance;
       //std::cout << '\t' << " -> Parametro ratio: " << std::setprecision(7) << ratio << '\n';
       //std::cout << '\t' << " -> Parametro dyn_thresh: " << std::setprecision(7) << dyn_thresh << '\n';
-      if (meanDensity_whole + (dyn_thresh)*meanDensity_whole > meanDensity_streets) {
+      if (meanDensityGlob * (1. + dyn_thresh) > meanDensity_streets) {
         //std::cout << '\t' << " -> I'm on the cluster's border" << '\n';
-        if (meanDensity_whole > meanDensity_streets) {
+        if (meanDensityGlob > meanDensity_streets) {
           //std::cout << '\t' << " -> LESS than max density" << '\n';
           if (!(redTime > greenTime) && (redSum > greenSum) && (greenTime > delta)) {
             greenTime -= delta;
