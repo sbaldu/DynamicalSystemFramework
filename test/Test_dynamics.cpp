@@ -180,6 +180,20 @@ TEST_CASE("Dynamics") {
     }
   }
   SUBCASE("Update paths") {
+    GIVEN("A dynamics object with a single street") {
+      Street s1{0, 1, 2., std::make_pair(0, 1)};
+      Graph graph2;
+      graph2.addStreets(s1);
+      graph2.buildAdj();
+      Dynamics dynamics{graph2};
+      WHEN("We add a topologically impossible itinerary") {
+        Itinerary itinerary{0, 0};
+        dynamics.addItinerary(itinerary);
+        THEN("When updating paths, empty itinerary throws exception") {
+          CHECK_THROWS_AS(dynamics.updatePaths(), std::runtime_error);
+        }
+      }
+    }
     GIVEN("A dynamics object, many streets and an itinerary") {
       Street s1{0, 1, 2., std::make_pair(0, 1)};
       Street s2{1, 1, 5., std::make_pair(1, 2)};
@@ -389,27 +403,27 @@ TEST_CASE("Dynamics") {
       Itinerary itinerary{0, 2};
       dynamics.addItinerary(itinerary);
       dynamics.updatePaths();
-      // dynamics.addAgent(Agent(0, 0, 0));
-      // WHEN("We evolve the dynamics") {
-      //   dynamics.evolve(false);
-      //   THEN(
-      //       "The agent is ready to go through the traffic light at time 3 but the "
-      //       "traffic light is red"
-      //       " until time 4, so the agent waits until time 4") {
-      //     for (uint8_t i{0}; i < 5; ++i) {
-      //       dynamics.evolve(false);
-      //       if (i < 3) {
-      //         CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 1);
-      //       } else {
-      //         CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 7);
-      //       }
-      //       if (i == 2) {
-      //         CHECK_EQ(dynamics.agents().at(0)->distance(), 30.);
-      //       }
-      //     }
-      //     CHECK_EQ(dynamics.agents().at(0)->distance(), 60.);
-      //   }
-      // }
+      dynamics.addAgent(Agent(0, 0, 0));
+      WHEN("We evolve the dynamics") {
+        dynamics.evolve(false);
+        THEN(
+            "The agent is ready to go through the traffic light at time 3 but the "
+            "traffic light is red"
+            " until time 4, so the agent waits until time 4") {
+          for (uint8_t i{0}; i < 5; ++i) {
+            dynamics.evolve(false);
+            if (i < 3) {
+              CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 1);
+            } else {
+              CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 7);
+            }
+            if (i == 2) {
+              CHECK_EQ(dynamics.agents().at(0)->distance(), 30.);
+            }
+          }
+          CHECK_EQ(dynamics.agents().at(0)->distance(), 60.);
+        }
+      }
     }
   }
   SUBCASE("Roundabout") {

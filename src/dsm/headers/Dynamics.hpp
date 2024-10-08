@@ -361,7 +361,7 @@ namespace dsm {
                                                Id nodeId,
                                                std::optional<Id> streetId) {
     auto possibleMoves = m_graph.adjMatrix().getRow(nodeId, true);
-    if (this->m_itineraries.size() > 0 and
+    if (this->m_itineraries.size() > 0 &&
         this->m_uniformDist(this->m_generator) > this->m_errorProbability) {
       const auto& it = this->m_itineraries[this->m_agents[agentId]->itineraryId()];
       if (it->destination() != nodeId) {
@@ -602,31 +602,39 @@ namespace dsm {
       // save the minimum distance between i and the destination
       const auto minDistance{result.value().distance()};
       for (const auto [nextNodeId, _] : m_graph.adjMatrix().getRow(nodeId)) {
-        // init distance from a neighbor node to the destination to zero
-        double distance{0.};
-
+        if (nextNodeId == destinationID &&
+            minDistance ==
+                m_graph.streetSet().at(nodeId * dimension + nextNodeId)->length()) {
+          path.insert(nodeId, nextNodeId, true);
+          continue;
+        }
         // TimePoint expectedTravelTime{
         //     streetLength};  // / street->maxSpeed()};  // TODO: change into input speed
         result = m_graph.shortestPath(nextNodeId, destinationID);
 
         if (result.has_value()) {
           // if the shortest path exists, save the distance
-          distance = result.value().distance();
-        } else if (nextNodeId != destinationID) {
-          std::cerr << std::format(
-                           "WARNING: No path found from node {} to node {}",
-                           nodeId,
-                           destinationID)
+          if (minDistance ==
+              result.value().distance() +
+                  m_graph.streetSet().at(nodeId * dimension + nextNodeId)->length()) {
+            path.insert(nodeId, nextNodeId, true);
+          }
+        } else if ((nextNodeId != destinationID)) {
+          std::cerr << std::format("WARNING: No path found from node {} to node {}",
+                                   nextNodeId,
+                                   destinationID)
                     << std::endl;
         }
-        if (minDistance ==
-            distance +
-                m_graph.streetSet().at(nodeId * dimension + nextNodeId)->length()) {
-          path.insert(nodeId, nextNodeId, true);
-        }
       }
-      pItinerary->setPath(path);
     }
+    if (path.size() == 0) {
+      throw std::runtime_error(
+          buildLog(std::format("Path with id {} and destination {} is empty. Please "
+                               "check the adjacency matrix.",
+                               pItinerary->id(),
+                               pItinerary->destination())));
+    }
+    pItinerary->setPath(path);
   }
 
   template <typename Id, typename Size, typename Delay>
@@ -678,13 +686,23 @@ namespace dsm {
   void Dynamics<Id, Size, Delay>::updatePaths() {
     std::vector<std::thread> threads;
     threads.reserve(m_itineraries.size());
+    std::exception_ptr pThreadException;
     for (const auto& [itineraryId, itinerary] : m_itineraries) {
-      threads.emplace_back(
-          std::thread([this, &itinerary] { this->m_updatePath(itinerary); }));
+      threads.emplace_back(std::thread([this, &itinerary, &pThreadException] {
+        try {
+          this->m_updatePath(itinerary);
+        } catch (...) {
+          if (!pThreadException)
+            pThreadException = std::current_exception();
+        }
+      }));
     }
     for (auto& thread : threads) {
       thread.join();
     }
+    // Throw the exception launched first
+    if (pThreadException)
+      std::rethrow_exception(pThreadException);
   }
 
   template <typename Id, typename Size, typename Delay>
