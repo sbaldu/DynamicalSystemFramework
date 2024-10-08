@@ -614,7 +614,7 @@ namespace dsm {
           distance = result.value().distance();
         } else if (nextNodeId != destinationID) {
           std::cerr << std::format(
-                           "WARNING: No path found between from node {} to node {}",
+                           "WARNING: No path found from node {} to node {}",
                            nodeId,
                            destinationID)
                     << std::endl;
