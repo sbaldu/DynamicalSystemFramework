@@ -70,6 +70,15 @@ namespace dsm {
     /// @param maxSpeed The street's speed limit
     /// @param nodePair The street's node pair
     Street(Id id, Size capacity, double len, double maxSpeed, std::pair<Id, Id> nodePair);
+    /// @brief Construct a new Street object
+    /// @details The default speed limit is 50 km/h, i.e. 13.8888888889 m/s.
+    /// @param id The street's id
+    /// @param capacity The street's capacity
+    /// @param len The street's length
+    /// @param lanes The street's number of lanes
+    /// @param maxSpeed The street's speed limit
+    /// @param nodePair The street's node pair
+    Street(Id id, Size capacity, double len,  double maxSpeed, std::pair<Id, Id> nodePair, uint8_t nLanes);
 
     virtual ~Street() = default;
 
@@ -188,7 +197,7 @@ namespace dsm {
         m_id{id},
         m_capacity{street.capacity()},
         m_transportCapacity{street.transportCapacity()},
-        m_nLanes{1} {}
+        m_nLanes{street.nLanes()} {}
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
@@ -227,6 +236,23 @@ namespace dsm {
         m_nLanes{1} {
     this->setMaxSpeed(maxSpeed);
   }
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  Street<Id, Size>::Street(
+      Id id, Size capacity, double len, double maxSpeed, std::pair<Id, Id> nodePair, uint8_t nLanes)
+      : m_nodePair{std::move(nodePair)},
+        m_len{len},
+        m_angle{0.},
+        m_id{id},
+        m_capacity{capacity},
+        m_transportCapacity{std::numeric_limits<Size>::max()},
+        m_nLanes{nLanes}  // Initialize m_nLanes with the passed value
+      
+      {
+      this->setMaxSpeed(maxSpeed);
+  }
+
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
