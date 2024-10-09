@@ -84,8 +84,10 @@ namespace dsm {
     std::vector<unsigned int> m_travelTimes;
     std::unordered_map<Id, Id> m_agentNextStreetId;
     bool m_forcePriorities;
+    std::optional<Delay> m_dataUpdatePeriod;
     std::unordered_map<Id, std::array<unsigned long long, 4>> m_turnCounts;
     std::unordered_map<Id, std::array<long, 4>> m_turnMapping;
+    std::unordered_map<Id, unsigned long long> m_streetTails;
 
     /// @brief Get the next street id
     /// @param agentId The id of the agent
@@ -147,6 +149,12 @@ namespace dsm {
     /// @param forcePriorities The flag
     /// @details If true, if an agent cannot move to the next street, the whole node is skipped
     void setForcePriorities(bool forcePriorities) { m_forcePriorities = forcePriorities; }
+    /// @brief Set the data update period.
+    /// @param dataUpdatePeriod Delay, The period
+    /// @details Some data, i.e. the street queue lengths, are stored only after a fixed amount of time which is represented by this variable.
+    void setDataUpdatePeriod(Delay dataUpdatePeriod) {
+      m_dataUpdatePeriod = dataUpdatePeriod;
+    }
 
     /// @brief Update the paths of the itineraries based on the actual travel times
     virtual void updatePaths();
@@ -163,9 +171,12 @@ namespace dsm {
     /// @brief Optimize the traffic lights by changing the green and red times
     /// @param percentage double, The percentage of the TOTAL cycle time to add or subtract to the green time
     /// @param threshold double, The percentage of the mean capacity of the streets used as threshold for the delta between the two tails.
+    /// @param densityTolerance double, The algorithm will consider all streets with density up to densityTolerance*meanDensity
     /// @details The function cycles over the traffic lights and, if the difference between the two tails is greater than
     ///   the threshold multiplied by the mean capacity of the streets, it changes the green and red times of the traffic light, keeping the total cycle time constant.
-    void optimizeTrafficLights(double percentage, double threshold = 0.);
+    void optimizeTrafficLights(double percentage,
+                               double threshold = 0.,
+                               double densityTolerance = 0.);
 
     /// @brief Get the graph
     /// @return const Graph<Id, Size>&, The graph
@@ -325,6 +336,7 @@ namespace dsm {
         m_maxFlowPercentage{1.},
         m_forcePriorities{false} {
     for (const auto& [streetId, street] : m_graph.streetSet()) {
+      m_streetTails.emplace(streetId, 0);
       m_turnCounts.emplace(streetId, std::array<unsigned long long, 4>{0, 0, 0, 0});
       // fill turn mapping as [streetId, [left street Id, straight street Id, right street Id, U self street Id]]
       m_turnMapping.emplace(streetId, std::array<long, 4>{-1, -1, -1, -1});
@@ -413,6 +425,12 @@ namespace dsm {
       const auto agentId{street->queue().front()};
       if (m_agents[agentId]->delay() > 0) {
         continue;
+      }
+      if (m_dataUpdatePeriod.has_value()) {
+        if (m_time % m_dataUpdatePeriod.value() == 0) {
+          //m_streetTails[streetId] += street->queue().size();
+          m_streetTails[streetId] += street->waitingAgents().size();
+        }
       }
       m_agents[agentId]->setSpeed(0.);
       const auto& destinationNode{this->m_graph.nodeSet()[street->nodePair().second]};
@@ -705,7 +723,21 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::optimizeTrafficLights(double percentage,
-                                                        double threshold) {
+                                                        double threshold,
+                                                        double densityTolerance) {
+    if (threshold < 0 || threshold > 1) {
+      throw std::invalid_argument(
+          buildLog(std::format("The threshold parameter is a percentage and must be "
+                               "bounded between 0-1. Inserted value: {}",
+                               threshold)));
+    }
+    if (densityTolerance < 0 || densityTolerance > 1) {
+      throw std::invalid_argument(buildLog(
+          std::format("The densityTolerance parameter is a percentage and must be "
+                      "bounded between 0-1. Inserted value: {}",
+                      densityTolerance)));
+    }
+    const auto meanDensityGlob = streetMeanDensity().mean;  // Measurement<double>
     for (const auto& [nodeId, node] : m_graph.nodeSet()) {
       if (!node->isTrafficLight()) {
         continue;
@@ -716,16 +748,15 @@ namespace dsm {
       }
       auto [greenTime, redTime] = tl.delay().value();
       const auto cycleTime = greenTime + redTime;
-      // const Delay delta = cycleTime * percentage;
       const auto& streetPriorities = tl.streetPriorities();
       Size greenSum{0}, greenQueue{0};
       Size redSum{0}, redQueue{0};
       for (const auto& [streetId, _] : m_graph.adjMatrix().getCol(nodeId, true)) {
         if (streetPriorities.contains(streetId)) {
-          greenSum += m_graph.streetSet()[streetId]->nAgents();
+          greenSum += m_streetTails[streetId];
           greenQueue += m_graph.streetSet()[streetId]->queue().size();
         } else {
-          redSum += m_graph.streetSet()[streetId]->nAgents();
+          redSum += m_streetTails[streetId];
           redQueue += m_graph.streetSet()[streetId]->queue().size();
         }
       }
@@ -739,18 +770,81 @@ namespace dsm {
         tl.setDelay(std::floor(cycleTime / 2));
         continue;
       }
-      if ((greenSum > redSum) && !(greenTime > redTime) && (greenQueue > redQueue)) {
-        if (redTime > delta) {
-          greenTime += delta;
-          redTime -= delta;
-          tl.setDelay(std::make_pair(greenTime, redTime));
+      // If the difference is not less than the threshold
+      //    - Check that the incoming streets have a density less than the mean one (eventually + tolerance): I want to avoid being into the cluster, better to be out or on the border
+      //    - If the previous check fails, do nothing
+      double meanDensity_streets{0.};
+      {
+        // Store the ids of outgoing streets
+        const auto& row{m_graph.adjMatrix().getRow(nodeId, true)};
+        for (const auto& [streetId, _] : row) {
+          meanDensity_streets += m_graph.streetSet()[streetId]->density();
         }
-      } else if (!(redTime > greenTime) && (greenTime > delta) &&
-                 (redQueue > greenQueue)) {
-        greenTime -= delta;
-        redTime += delta;
-        tl.setDelay(std::make_pair(greenTime, redTime));
+        // Take the mean density of the outgoing streets
+        meanDensity_streets /= row.size();
       }
+      //std::cout << '\t' << " -> Mean network density: " << std::setprecision(7) << meanDensityGlob << '\n';
+      //std::cout << '\t' << " -> Mean density of 4 outgoing streets: " << std::setprecision(7) << meanDensity_streets << '\n';
+      const auto ratio = meanDensityGlob / meanDensity_streets;
+      // densityTolerance represents the max border we want to consider
+      const auto dyn_thresh = std::tanh(ratio) * densityTolerance;
+      //std::cout << '\t' << " -> Parametro ratio: " << std::setprecision(7) << ratio << '\n';
+      //std::cout << '\t' << " -> Parametro dyn_thresh: " << std::setprecision(7) << dyn_thresh << '\n';
+      if (meanDensityGlob * (1. + dyn_thresh) > meanDensity_streets) {
+        //std::cout << '\t' << " -> I'm on the cluster's border" << '\n';
+        if (meanDensityGlob > meanDensity_streets) {
+          //std::cout << '\t' << " -> LESS than max density" << '\n';
+          if (!(redTime > greenTime) && (redSum > greenSum) && (greenTime > delta)) {
+            greenTime -= delta;
+            redTime += delta;
+            tl.setDelay(std::make_pair(greenTime, redTime));
+          } else if (!(greenTime > redTime) && (greenSum > redSum) && (redTime > delta)) {
+            greenTime += delta;
+            redTime -= delta;
+            tl.setDelay(std::make_pair(greenTime, redTime));
+          } else {
+            //std::cout << '\t' << " -> NOT entered into previous ifs" << '\n';
+            tl.setDelay(std::make_pair(greenTime, redTime));
+          }
+          //std::cout << '\t' << " -> greenTime: " << static_cast<unsigned int>(greenTime) << '\n';
+          //std::cout << '\t' << " -> redTime: " << static_cast<unsigned int>(redTime) << '\n';
+          //std::cout << '\t' << " -> modTime: " << tl.modTime() << '\n';
+        } else {
+          //std::cout << '\t' << " -> GREATER than max density" << '\n';
+          if (!(redTime > greenTime) && (redSum > greenSum) &&
+              (greenTime > ratio * delta)) {
+            greenTime -= dyn_thresh * delta;  //
+            redTime += delta;
+            tl.setDelay(std::make_pair(greenTime, redTime));
+          } else if (!(greenTime > redTime) && (greenSum > redSum) &&
+                     (redTime > ratio * delta)) {
+            greenTime += delta;
+            redTime -= dyn_thresh * delta;  //
+            tl.setDelay(std::make_pair(greenTime, redTime));
+          } else if (!(redTime > greenTime) && (redSum < greenSum) && (redTime > delta)) {
+            greenTime += dyn_thresh * delta;  //
+            redTime -= delta;
+            tl.setDelay(std::make_pair(greenTime, redTime));
+          } else if (!(redTime < greenTime) && (redSum > greenSum) &&
+                     (greenTime > delta)) {
+            greenTime -= delta;
+            redTime += dyn_thresh * delta;  //
+            tl.setDelay(std::make_pair(greenTime, redTime));
+          } else {
+            //std::cout << '\t' << " -> NON sono entrato negli if precedenti" << '\n';
+            tl.setDelay(std::make_pair(greenTime, redTime));
+          }
+          //std::cout << '\t' << " -> greenTime: " << static_cast<unsigned int>(greenTime) << '\n';
+          //std::cout << '\t' << " -> redTime: " << static_cast<unsigned int>(redTime) << '\n';
+          //std::cout << '\t' << " -> modTime: " << tl.modTime() << '\n';
+        }
+      } else {
+        //std::cout << '\t' << " -> I'm INTO the cluster" << '\n';
+        //std::cout << '\t' << " -> modTime: " << tl.modTime() << '\n';
+      }
+    }
+    for (auto& [id, element] : m_streetTails) {
+      element = 0;
     }
   }
 
