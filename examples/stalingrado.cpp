@@ -14,16 +14,17 @@
 #include <thread>
 #include <atomic>
 
-using unit = uint32_t;
+std::atomic<unsigned int> progress{0};
 
-std::atomic<unit> progress{0};
+using Unit = unsigned int;
+using Delay = uint8_t;
 
-using Graph = dsm::Graph<unit, unit>;
-using Itinerary = dsm::Itinerary<unit>;
-using Dynamics = dsm::FirstOrderDynamics<unit, unit, unit>;
-using TrafficLight = dsm::TrafficLight<unit, unit, unit>;
-using Street = dsm::Street<unit, unit>;
-using SpireStreet = dsm::SpireStreet<unit, unit>;
+using Graph = dsm::Graph<Unit, Unit>;
+using Itinerary = dsm::Itinerary<Unit>;
+using Dynamics = dsm::FirstOrderDynamics<Unit, Unit, Delay>;
+using Street = dsm::Street<Unit, Unit>;
+using SpireStreet = dsm::SpireStreet<Unit, Unit>;
+using TrafficLight = dsm::TrafficLight<Unit, Unit, Delay>;
 
 void printLoadingBar(int const i, int const n) {
   std::cout << "Loading: " << std::setprecision(2) << std::fixed << (i * 100. / n) << "%"
@@ -34,15 +35,15 @@ void printLoadingBar(int const i, int const n) {
 int main() {
   // Import input data
   std::ifstream ifs{"./data/stalingrado_input.txt"};
-  unit timeUnit{0};
+  Unit timeUnit{0};
   ifs >> timeUnit;
-  std::vector<unit> vehiclesToInsert{};
+  std::vector<Unit> vehiclesToInsert{};
   while (!ifs.eof()) {
-    unit vehicleId{0};
+    Unit vehicleId{0};
     ifs >> vehicleId;
     vehiclesToInsert.push_back(vehicleId);
   }
-  const auto MAX_TIME{static_cast<unit>(timeUnit * vehiclesToInsert.size())};
+  const auto MAX_TIME{static_cast<Unit>(timeUnit * vehiclesToInsert.size())};
 
   // Create the graph
   TrafficLight tl1{1}, tl2{2}, tl3{3}, tl4{4};
