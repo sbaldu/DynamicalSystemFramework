@@ -169,12 +169,12 @@ namespace dsm {
     /// @param reinsert_agents If true, the agents are reinserted in the simulation after they reach their destination
     virtual void evolve(bool reinsert_agents = false);
     /// @brief Optimize the traffic lights by changing the green and red times
-    /// @param percentage double, The percentage of the TOTAL cycle time to add or subtract to the green time
+    /// @param nCycles Delay, The number of cycles (times agents are being added) between two calls of this function
     /// @param threshold double, The percentage of the mean capacity of the streets used as threshold for the delta between the two tails.
     /// @param densityTolerance double, The algorithm will consider all streets with density up to densityTolerance*meanDensity
     /// @details The function cycles over the traffic lights and, if the difference between the two tails is greater than
     ///   the threshold multiplied by the mean capacity of the streets, it changes the green and red times of the traffic light, keeping the total cycle time constant.
-    void optimizeTrafficLights(double percentage,
+    void optimizeTrafficLights(Delay nCycles,
                                double threshold = 0.,
                                double densityTolerance = 0.);
 
@@ -740,7 +740,7 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
-  void Dynamics<Id, Size, Delay>::optimizeTrafficLights(double percentage,
+  void Dynamics<Id, Size, Delay>::optimizeTrafficLights(Delay nCycles,
                                                         double threshold,
                                                         double densityTolerance) {
     if (threshold < 0 || threshold > 1) {
@@ -779,7 +779,7 @@ namespace dsm {
         }
       }
       const Delay delta =
-          std::floor(std::abs(static_cast<int>(greenQueue - redQueue)) / percentage);
+          std::floor(std::abs(static_cast<double>(greenQueue - redQueue)) / nCycles);
       if (delta == 0) {
         continue;
       }
