@@ -52,18 +52,9 @@ int main(int argc, char** argv) {
 
   const int SEED = std::stoi(argv[1]);  // seed for random number generator
   const double ERROR_PROBABILITY{std::stod(argv[2])};
-  const std::string BASE_OUT_FOLDER{argv[3]};
+  std::string BASE_OUT_FOLDER{argv[3]};
   const bool OPTIMIZE{std::string(argv[4]) != std::string("0")};
-
-  std::cout << "-------------------------------------------------\n";
-  std::cout << "Input parameters:\n";
-  std::cout << "Seed: " << SEED << '\n';
-  std::cout << "Error probability: " << ERROR_PROBABILITY << '\n';
-  std::cout << "Base output folder: " << BASE_OUT_FOLDER << '\n';
-  if (OPTIMIZE) {
-    std::cout << "Traffic light optimization enabled.\n";
-  }
-  std::cout << "-------------------------------------------------\n";
+  BASE_OUT_FOLDER += OPTIMIZE ? "_op/" : "/";
 
   const std::string IN_MATRIX{"./data/matrix.dat"};       // input matrix file
   const std::string IN_COORDS{"./data/coordinates.dsm"};  // input coords file
@@ -71,10 +62,17 @@ int main(int argc, char** argv) {
                                      BASE_OUT_FOLDER,
                                      ERROR_PROBABILITY,
                                      std::to_string(SEED))};  // output folder
+  constexpr auto MAX_TIME{static_cast<unsigned int>(1e6)};  // maximum time of simulation
+
+  std::cout << "-------------------------------------------------\n";
+  std::cout << "Input parameters:\n";
+  std::cout << "Seed: " << SEED << '\n';
+  std::cout << "Error probability: " << ERROR_PROBABILITY << '\n';
+  std::cout << "Base output folder: " << BASE_OUT_FOLDER << '\n';
   if (OPTIMIZE) {
-    OUT_FOLDER += "_op/";
+    std::cout << "Traffic light optimization ENABLED.\n";
   }
-  const auto MAX_TIME{static_cast<unsigned int>(1e6)};  // maximum time of simulation
+  std::cout << "-------------------------------------------------\n";
 
   // Clear output folder or create it if it doesn't exist
   if (!fs::exists(BASE_OUT_FOLDER)) {
