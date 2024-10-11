@@ -529,7 +529,6 @@ if __name__ == "__main__":
 
         df_std = pd.concat(df_array)
         df_std = df_std.groupby(df_std.index).std()
-        df_std.to_csv("aaaaaaaaaaaaaaaaaaa.csv")
         # df_std = df_std.interpolate(method='linear', limit_direction='both')
         df_std = df_std.abs()
 
