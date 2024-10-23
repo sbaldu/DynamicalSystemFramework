@@ -799,7 +799,10 @@ namespace dsm {
           meanDensity_streets += m_graph.streetSet()[streetId]->density();
         }
         // Take the mean density of the outgoing streets
-        meanDensity_streets /= row.size();
+        const auto nStreets = row.size();
+        if (nStreets > 1) {
+          meanDensity_streets /= nStreets;
+        }
       }
       //std::cout << '\t' << " -> Mean network density: " << std::setprecision(7) << meanDensityGlob << '\n';
       //std::cout << '\t' << " -> Mean density of 4 outgoing streets: " << std::setprecision(7) << meanDensity_streets << '\n';
