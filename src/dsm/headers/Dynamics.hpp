@@ -779,7 +779,7 @@ namespace dsm {
         }
       }
       const Delay delta =
-          std::floor(std::abs(static_cast<double>(greenQueue - redQueue)) / nCycles);
+          std::floor(std::fabs(static_cast<int>(greenQueue - redQueue)) / nCycles);
       if (delta == 0) {
         continue;
       }
