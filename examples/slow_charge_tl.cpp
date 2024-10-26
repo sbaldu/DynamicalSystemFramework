@@ -226,6 +226,8 @@ int main(int argc, char** argv) {
   // dynamics.setForcePriorities(false);
   dynamics.setSpeedFluctuationSTD(0.1);
   dynamics.setMinSpeedRateo(0.95);
+  if (OPTIMIZE)
+    dynamics.setDataUpdatePeriod(30);  // Store data every 30 time steps
   dynamics.updatePaths();
 
   const auto TM = dynamics.turnMapping();
@@ -308,7 +310,7 @@ int main(int argc, char** argv) {
     }
     dynamics.evolve(false);
     if (OPTIMIZE && (dynamics.time() % 420 == 0)) {
-      dynamics.optimizeTrafficLights(std::floor(420. / 60), 0.15);
+      dynamics.optimizeTrafficLights(std::floor(420. / 60), 0.15, 3. / 10);
     }
     if (dynamics.time() % 2400 == 0 && nAgents > 0) {
       // auto meanDelta = std::accumulate(deltas.begin(), deltas.end(), 0) /
