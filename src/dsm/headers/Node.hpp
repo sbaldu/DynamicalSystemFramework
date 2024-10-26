@@ -225,12 +225,6 @@ namespace dsm {
     std::optional<std::pair<Delay, Delay>> m_delay;
     Delay m_counter;
     Delay m_phase;
-    /// @brief Variabile che mi dice come sono in rapporto tra di loro il tempo di verde e il tempo di rosso
-    /// @details Valori possibili: 0, 1, 2 (fino a che non verrà modificata)
-    ///           - se 0: |redTime - greenTime| < 10 && redTime > 5 && greenTime > 5
-    ///           - se 1: |redtime - greenTime| \geq 10 && |redTime - greenTime| < 40 && redTime > 5 && greenTime > 5
-    ///           - se 2: |redTime - greenTime| \geq 40 || redTime < 5 || greenTime < 5
-    int m_modTime{7};
 
   public:
     TrafficLight() = delete;
@@ -278,9 +272,6 @@ namespace dsm {
     /// @return std::optional<Delay> The node's delay
     std::optional<std::pair<Delay, Delay>> delay() const { return m_delay; }
     Delay counter() const { return m_counter; }
-    /// @brief Get the node's modTime
-    /// @return int. The node's modTime
-    int modTime() const { return m_modTime; }
     /// @brief Returns true if the traffic light is green
     /// @return bool True if the traffic light is green
     bool isGreen() const;
@@ -313,11 +304,6 @@ namespace dsm {
       }
     }
     m_delay = std::make_pair(delay, delay);
-    if (delay < 5) {
-      m_modTime = 2;
-    } else {
-      m_modTime = 0;
-    }
   }
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
@@ -333,18 +319,6 @@ namespace dsm {
       }
     }
     m_delay = std::move(delay);
-    if (delay.first < 5 || delay.second < 5) {
-      m_modTime = 2;
-    } else if (std::abs(delay.first - delay.second) < 10) {
-      m_modTime = 0;
-    } else if ((std::abs(delay.first - delay.second) > 10 ||
-                std::abs(delay.first - delay.second) == 10) &&
-               (std::abs(delay.first - delay.second) < 40 ||
-                std::abs(delay.first - delay.second) == 40)) {
-      m_modTime = 1;
-    } else if (std::abs(delay.first - delay.second) > 40) {
-      m_modTime = 2;
-    }
   }
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
