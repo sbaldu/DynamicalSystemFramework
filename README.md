@@ -6,7 +6,12 @@ This rework consists of a full code rewriting, in order to implement more featur
 
 ## Requirements
 
-The project only requires `C++20` and `cmake`.
+The project only requires `C++20` or greater and `cmake`.
+
+Utilities are written in python. To install their dependencies:
+```shell
+pip install -r ./requirements.txt
+```
 
 ## Installation
 The library can be installed using CMake. To do this build it with the commands:
