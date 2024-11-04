@@ -430,17 +430,18 @@ TEST_CASE("Dynamics") {
     GIVEN("A dynamics object with a traffic light intersection") {
       TrafficLight tl{1};
       tl.setDelay(4);
+      tl.setPhase(3);
       double length{90.}, max_speed{15.};
       Street s_01{1, 10, length, max_speed, std::make_pair(0, 1)};
-      Street s_10{5, 5, length, max_speed, std::make_pair(1, 0)};
-      Street s_12{7, 5, length, max_speed, std::make_pair(1, 2)};
+      Street s_10{5, 10, length, max_speed, std::make_pair(1, 0)};
+      Street s_12{7, 10, length, max_speed, std::make_pair(1, 2)};
       Street s_21{11, 10, length, max_speed, std::make_pair(2, 1)};
-      Street s_13{8, 5, length, max_speed, std::make_pair(1, 3)};
+      Street s_13{8, 10, length, max_speed, std::make_pair(1, 3)};
       Street s_31{16, 10, length, max_speed, std::make_pair(3, 1)};
-      Street s_14{9, 5, length, max_speed, std::make_pair(1, 4)};
+      Street s_14{9, 10, length, max_speed, std::make_pair(1, 4)};
       Street s_41{21, 10, length, max_speed, std::make_pair(4, 1)};
       tl.addStreetPriority(1);
-      tl.addStreetPriority(7);
+      tl.addStreetPriority(11);
       Graph graph2;
       graph2.addNode(std::make_unique<TrafficLight>(tl));
       graph2.addStreets(s_01, s_10, s_12, s_21, s_13, s_31, s_14, s_41);
@@ -454,20 +455,37 @@ TEST_CASE("Dynamics") {
       dynamics.updatePaths();
       dynamics.addAgents(0, 7, 2);
       dynamics.addAgents(1, 7, 0);
-      dynamics.addAgents(2, 2, 4);
-      dynamics.addAgents(3, 2, 3);
       dynamics.setDataUpdatePeriod(1);
       WHEN("We evolve the dynamics and optimize traffic lights") {
-        for (int i = 0; i < 15; ++i) {
+        for (int i = 0; i < 8; ++i) {
           dynamics.evolve(false);
         }
-        dynamics.optimizeTrafficLights(2, 0.1, 1.);
+        dynamics.optimizeTrafficLights(2, 0.1, 0.);
         THEN("Green and red time are different") {
           const auto timing =
               dynamic_cast<TrafficLight&>(*dynamics.graph().nodeSet().at(1))
                   .delay()
                   .value();
-          CHECK(timing.first != timing.second);
+          CHECK(timing.first > timing.second);
+        }
+      }
+      WHEN(
+          "We evolve the dynamics and optimize traffic lights with outgoing streets "
+          "full") {
+        dynamics.addAgents(0, 5, 1);
+        dynamics.addAgents(1, 5, 1);
+        dynamics.addAgents(2, 5, 1);
+        dynamics.addAgents(3, 5, 1);
+        for (int i = 0; i < 15; ++i) {
+          dynamics.evolve(false);
+        }
+        dynamics.optimizeTrafficLights(2, 0.1, 0.);
+        THEN("Green and red time are equal") {
+          const auto timing =
+              dynamic_cast<TrafficLight&>(*dynamics.graph().nodeSet().at(1))
+                  .delay()
+                  .value();
+          CHECK_EQ(timing.first, timing.second);
         }
       }
     }
