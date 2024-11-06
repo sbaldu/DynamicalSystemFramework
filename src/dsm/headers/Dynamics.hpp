@@ -1050,6 +1050,37 @@ namespace dsm {
       throw std::invalid_argument(
           buildLog("The destination weights are not normalized (sum is {})."));
     }
+    while (nAgents > 0) {
+      Id srcId{0}, dstId{0};
+      double dRand{this->m_uniformDist(this->m_generator)}, sum{0.};
+      for (const auto& [id, weight] : src_weights) {
+        sum += weight;
+        if (dRand < sum) {
+          srcId = id;
+          break;
+        }
+      }
+      dRand = this->m_uniformDist(this->m_generator);
+      sum = 0.;
+      for (const auto& [id, weight] : dst_weights) {
+        sum += weight;
+        if (dRand < sum) {
+          dstId = id;
+          break;
+        }
+      }
+      // find the itinerary with the given destination as destination
+      auto itineraryIt{std::find_if(
+          m_itineraries.begin(), m_itineraries.end(), [dstId](const auto& itinerary) {
+            return itinerary.second->destination() == dstId;
+          })};
+      if (itineraryIt == m_itineraries.end()) {
+        throw std::invalid_argument(
+            buildLog(std::format("Itinerary with destination {} not found.", dstId)));
+      }
+      this->addAgents(itineraryIt->first, 1, dstId);
+      --nAgents;
+    }
   }
 
   template <typename Id, typename Size, typename Delay>
