@@ -457,20 +457,43 @@ TEST_CASE("Dijkstra") {
     CHECK_FALSE(result.has_value());
   }
 
-  SUBCASE("street") {
-    /// GIVEN: a graph
-    /// WHEN: we add a street
-    /// THEN: the street is added
-    Graph graph{};
-    Street street{1, 1, 1., std::make_pair(0, 1)};
-    graph.addStreet(street);
-    auto result = graph.street(0, 1);
-    CHECK(result);
-    const auto& street2 = *result;
-    CHECK_EQ(street2->id(), 1);
-    CHECK_EQ(street2->length(), 1.);
-    CHECK_EQ(street2->capacity(), 1);
-    CHECK_FALSE(graph.street(1, 0));
+  SUBCASE("street and oppositeStreet") {
+    GIVEN("A Graph object with two streets") {
+      Graph graph{};
+      Street street{1, 1, 1., std::make_pair(0, 1)};
+      Street opposite{2, 1, 1., std::make_pair(1, 0)};
+      graph.addStreets(street, opposite);
+      graph.buildAdj();
+      WHEN("We search for a street") {
+        auto result = graph.street(0, 1);
+        THEN("The street is found and has correct values") {
+          CHECK(result);
+          const auto& road = *result;
+          CHECK_EQ(road->id(), 1);
+          CHECK_EQ(road->length(), 1.);
+          CHECK_EQ(road->capacity(), 1);
+        }
+      }
+      WHEN("We search for the opposite street") {
+        auto result = graph.oppositeStreet(1);
+        THEN("The opposite street is found and has correct values") {
+          CHECK(result);
+          const auto& road = *result;
+          CHECK_EQ(road->id(), 2);
+          CHECK_EQ(road->length(), 1.);
+          CHECK_EQ(road->capacity(), 1);
+        }
+      }
+      WHEN("We search for a not existing street") {
+        auto result = graph.street(1, 2);
+        THEN("The street is not found") { CHECK_FALSE(result); }
+      }
+      WHEN("We search for the opposite of a not existing street") {
+        THEN("It throws an exception") {
+          CHECK_THROWS_AS(graph.oppositeStreet(3), std::invalid_argument);
+        }
+      }
+    }
   }
 
   SUBCASE("equal length") {
