@@ -168,6 +168,9 @@ namespace dsm {
     void makeSpireStreet(Id streetId);
 
     /// @brief Add a street to the graph
+    /// @param street A std::shared_ptr to the street to add
+    void addStreet(std::shared_ptr<Street<Id, Size>> street);
+    /// @brief Add a street to the graph
     /// @param street A reference to the street to add
     void addStreet(const Street<Id, Size>& street);
 
