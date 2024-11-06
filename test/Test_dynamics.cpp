@@ -131,6 +131,47 @@ TEST_CASE("Dynamics") {
       auto graph = Graph{};
       graph.importMatrix("./data/matrix.dsm");
       Dynamics dynamics{graph};
+      dynamics.setSeed(69);
+      WHEN("We add one agent for existing itinerary") {
+        std::unordered_map<uint16_t, double> src{{0, 1.}};
+        std::unordered_map<uint16_t, double> dst{{2, 1.}};
+        dynamics.addItinerary(Itinerary{0, 2});
+        dynamics.addAgentsRandomly(1, src, dst);
+        THEN("The agents are correctly set") {
+          CHECK_EQ(dynamics.agents().size(), 1);
+          CHECK_EQ(dynamics.itineraries()
+                       .at(dynamics.agents().at(0)->itineraryId())
+                       ->destination(),
+                   2);
+          CHECK_EQ(dynamics.agents().at(0)->srcNodeId().value(), 0);
+        }
+      }
+      WHEN("We add agents for existing itineraries") {
+        std::unordered_map<uint16_t, double> src{{1, 0.3}, {27, 0.3}, {118, 0.4}};
+        std::unordered_map<uint16_t, double> dst{{14, 0.3}, {102, 0.3}, {107, 0.4}};
+        dynamics.addItinerary(Itinerary{0, 14});
+        dynamics.addItinerary(Itinerary{1, 102});
+        dynamics.addItinerary(Itinerary{2, 107});
+        dynamics.addAgentsRandomly(3, src, dst);
+        THEN("The agents are correctly set") {
+          CHECK_EQ(dynamics.agents().size(), 3);
+          CHECK_EQ(dynamics.itineraries()
+                       .at(dynamics.agents().at(0)->itineraryId())
+                       ->destination(),
+                   107);
+          CHECK_EQ(dynamics.agents().at(0)->srcNodeId().value(), 27);
+          CHECK_EQ(dynamics.itineraries()
+                       .at(dynamics.agents().at(1)->itineraryId())
+                       ->destination(),
+                   14);
+          CHECK_EQ(dynamics.agents().at(1)->srcNodeId().value(), 1);
+          CHECK_EQ(dynamics.itineraries()
+                       .at(dynamics.agents().at(2)->itineraryId())
+                       ->destination(),
+                   14);
+          CHECK_EQ(dynamics.agents().at(2)->srcNodeId().value(), 118);
+        }
+      }
       WHEN("We add agents without adding itineraries") {
         THEN("An exception is thrown") {
           std::unordered_map<uint16_t, double> src{{0, 1.}};
