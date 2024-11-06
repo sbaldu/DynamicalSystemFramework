@@ -218,6 +218,10 @@ namespace dsm {
     /// @throw std::runtime_error If there are no itineraries
     virtual void addAgentsUniformly(Size nAgents,
                                     std::optional<Id> itineraryId = std::nullopt);
+    template <TContainer>
+      requires std::is_same_v<TContainer, std::unordered_map<Id, double>> ||
+               std::is_same_v<TContainer, std::map<Id, double>>
+    void addRandomAgents(Size nAgents, const TContainer& src_weights, const TContainer& dst_weights);
 
     /// @brief Remove an agent from the simulation
     /// @param agentId the id of the agent to remove
