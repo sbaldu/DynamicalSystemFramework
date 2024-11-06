@@ -212,6 +212,11 @@ namespace dsm {
     /// @return A std::optional containing a std::shared_ptr to the street if it exists, otherwise
     /// std::nullopt
     const std::unique_ptr<Street<Id, Size>>* street(Id source, Id destination) const;
+    /// @brief Get the opposite street of a street in the graph
+    /// @param streetId The id of the street
+    /// @return A std::optional containing a std::shared_ptr to the opposite street if it exists,
+    /// otherwise std::nullopt
+    const std::unique_ptr<Street<Id, Size>>* oppositeStreet(Id streetId) const;
 
     /// @brief Get the maximum agent capacity
     /// @return unsigned long long The maximum agent capacity of the graph
@@ -724,6 +729,14 @@ namespace dsm {
       std::cout << "Nodes: " << id2 << std::endl;
     }
     return &(streetIt->second);
+  }
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  const std::unique_ptr<Street<Id, Size>>* Graph<Id, Size>::oppositeStreet(
+      Id streetId) const {
+    const auto& nodePair = m_streets.at(streetId)->nodePair();
+    return this->street(nodePair.second, nodePair.first);
   }
 
   template <typename Id, typename Size>
