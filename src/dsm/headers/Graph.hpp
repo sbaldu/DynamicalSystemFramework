@@ -209,14 +209,12 @@ namespace dsm {
     /// @brief Get a street from the graph
     /// @param source The source node
     /// @param destination The destination node
-    /// @return A std::optional containing a std::shared_ptr to the street if it exists, otherwise
-    /// std::nullopt
+    /// @return A *std::unique_ptr containing a std::unique_ptr to the street if it exists, nullptr otherwise
     const std::unique_ptr<Street<Id, Size>>* street(Id source, Id destination) const;
     /// @brief Get the opposite street of a street in the graph
     /// @param streetId The id of the street
     /// @throws std::invalid_argument if the street does not exist
-    /// @return A std::optional containing a std::shared_ptr to the opposite street if it exists,
-    /// otherwise std::nullopt
+    /// @return A *std::unique_ptr containing a std::unique_ptr to the street if it exists, nullptr otherwise
     const std::unique_ptr<Street<Id, Size>>* oppositeStreet(Id streetId) const;
 
     /// @brief Get the maximum agent capacity
