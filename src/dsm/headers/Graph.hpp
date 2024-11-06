@@ -136,7 +136,7 @@ namespace dsm {
     void exportMatrix(std::string path = "./matrix.dsm", bool isAdj = true);
 
     /// @brief Add a node to the graph
-    /// @param node A std::shared_ptr to the node to add
+    /// @param node A std::unique_ptr to the node to add
     void addNode(std::unique_ptr<NodeConcept<Id, Size>> node);
     /// @brief Add a node to the graph
     /// @param node A reference to the node to add
@@ -209,12 +209,12 @@ namespace dsm {
     /// @brief Get a street from the graph
     /// @param source The source node
     /// @param destination The destination node
-    /// @return A *std::unique_ptr containing a std::unique_ptr to the street if it exists, nullptr otherwise
+    /// @return A *std::unique_ptr to the street if it exists, nullptr otherwise
     const std::unique_ptr<Street<Id, Size>>* street(Id source, Id destination) const;
     /// @brief Get the opposite street of a street in the graph
     /// @param streetId The id of the street
     /// @throws std::invalid_argument if the street does not exist
-    /// @return A *std::unique_ptr containing a std::unique_ptr to the street if it exists, nullptr otherwise
+    /// @return A *std::unique_ptr to the street if it exists, nullptr otherwise
     const std::unique_ptr<Street<Id, Size>>* oppositeStreet(Id streetId) const;
 
     /// @brief Get the maximum agent capacity
