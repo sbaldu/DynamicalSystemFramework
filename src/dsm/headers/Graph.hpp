@@ -168,9 +168,6 @@ namespace dsm {
     void makeSpireStreet(Id streetId);
 
     /// @brief Add a street to the graph
-    /// @param street A std::shared_ptr to the street to add
-    void addStreet(std::shared_ptr<Street<Id, Size>> street);
-    /// @brief Add a street to the graph
     /// @param street A reference to the street to add
     void addStreet(const Street<Id, Size>& street);
 
@@ -209,12 +206,12 @@ namespace dsm {
     /// @brief Get a street from the graph
     /// @param source The source node
     /// @param destination The destination node
-    /// @return A *std::unique_ptr to the street if it exists, nullptr otherwise
+    /// @return A std::unique_ptr to the street if it exists, nullptr otherwise
     const std::unique_ptr<Street<Id, Size>>* street(Id source, Id destination) const;
     /// @brief Get the opposite street of a street in the graph
     /// @param streetId The id of the street
     /// @throws std::invalid_argument if the street does not exist
-    /// @return A *std::unique_ptr to the street if it exists, nullptr otherwise
+    /// @return A std::unique_ptr to the street if it exists, nullptr otherwise
     const std::unique_ptr<Street<Id, Size>>* oppositeStreet(Id streetId) const;
 
     /// @brief Get the maximum agent capacity
