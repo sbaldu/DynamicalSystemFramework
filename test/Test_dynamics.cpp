@@ -126,6 +126,23 @@ TEST_CASE("Dynamics") {
       }
     }
   }
+  SUBCASE("addAgentsRandomly") {
+    GIVEN("A graph object") {
+      auto graph = Graph{};
+      graph.importMatrix("./data/matrix.dsm");
+      Dynamics dynamics{graph};
+      WHEN("We try to add agents with non-normalized node maps") {
+        std::unordered_map<uint16_t, double> not_norm_weights{{0, 1.5}, {1, 0.5}};
+        std::unordered_map<uint16_t, double> norm_weights{{0, 0.5}, {1, 0.5}};
+        THEN("An exception is thrown") {
+          CHECK_THROWS_AS(dynamics.addAgentsRandomly(1, not_norm_weights, norm_weights),
+                          std::invalid_argument);
+          CHECK_THROWS_AS(dynamics.addAgentsRandomly(1, norm_weights, not_norm_weights),
+                          std::invalid_argument);
+        }
+      }
+    }
+  }
   SUBCASE("addAgents") {
     GIVEN("A dynamics object and one itinerary") {
       auto graph = Graph{};

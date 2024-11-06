@@ -229,10 +229,12 @@ namespace dsm {
     /// @throw std::runtime_error If there are no itineraries
     virtual void addAgentsUniformly(Size nAgents,
                                     std::optional<Id> itineraryId = std::nullopt);
-    template <TContainer>
-      requires std::is_same_v<TContainer, std::unordered_map<Id, double>> ||
-               std::is_same_v<TContainer, std::map<Id, double>>
-    void addRandomAgents(Size nAgents, const TContainer& src_weights, const TContainer& dst_weights);
+    template <typename TContainer>
+      requires(std::is_same_v<TContainer, std::unordered_map<Id, double>> ||
+               std::is_same_v<TContainer, std::map<Id, double>>)
+    void addAgentsRandomly(Size nAgents,
+                           const TContainer& src_weights,
+                           const TContainer& dst_weights);
 
     /// @brief Remove an agent from the simulation
     /// @param agentId the id of the agent to remove
@@ -1010,6 +1012,43 @@ namespace dsm {
           std::ceil(street->length() / this->m_agents[agentId]->speed()));
       street->addAgent(agentId);
       ++agentId;
+    }
+  }
+
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>)
+  template <typename TContainer>
+    requires(std::is_same_v<TContainer, std::unordered_map<Id, double>> ||
+             std::is_same_v<TContainer, std::map<Id, double>>)
+  void Dynamics<Id, Size, Delay>::addAgentsRandomly(Size nAgents,
+                                                    const TContainer& src_weights,
+                                                    const TContainer& dst_weights) {
+    if (this->m_agents.size() + nAgents > this->m_graph.maxCapacity()) {
+      throw std::overflow_error(buildLog(
+          std::format("Graph its already holding the max possible number of agents ({})",
+                      this->m_graph.maxCapacity())));
+    }
+    // Check if the weights are normalized
+    if (std::abs(std::accumulate(src_weights.begin(),
+                                 src_weights.end(),
+                                 0.,
+                                 [](double sum, const std::pair<Id, double>& p) {
+                                   return sum + p.second;
+                                 }) -
+                 1.) > std::numeric_limits<double>::epsilon()) {
+      throw std::invalid_argument(
+          buildLog("The source weights are not normalized (sum is {})."));
+    }
+    if (std::abs(std::accumulate(dst_weights.begin(),
+                                 dst_weights.end(),
+                                 0.,
+                                 [](double sum, const std::pair<Id, double>& p) {
+                                   return sum + p.second;
+                                 }) -
+                 1.) > std::numeric_limits<double>::epsilon()) {
+      throw std::invalid_argument(
+          buildLog("The destination weights are not normalized (sum is {})."));
     }
   }
 
