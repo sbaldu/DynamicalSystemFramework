@@ -1078,7 +1078,7 @@ namespace dsm {
         throw std::invalid_argument(
             buildLog(std::format("Itinerary with destination {} not found.", dstId)));
       }
-      this->addAgents(itineraryIt->first, 1, dstId);
+      this->addAgents(itineraryIt->first, 1, srcId);
       --nAgents;
     }
   }
