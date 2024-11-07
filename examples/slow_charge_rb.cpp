@@ -123,7 +123,7 @@ int main(int argc, char** argv) {
   Unit n{0};
   {
     std::vector<Unit> destinationNodes;
-    for (const auto& [nodeId, degree] : dv) {
+    for (const auto& [nodeId, degree] : degreeVector) {
       if (degree < 4) {
         destinationNodes.push_back(nodeId);
         ++n;
