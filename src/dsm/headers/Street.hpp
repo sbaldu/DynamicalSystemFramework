@@ -158,7 +158,7 @@ namespace dsm {
     Size nAgents() const { return m_exitQueue.size() + m_waitingAgents.size(); }
     /// @brief Get the street's density in \f$m^{-1}\f$
     /// @return double, The street's density
-    double density() const { return nAgents() / m_len; }
+    double density() const { return nAgents() / ( m_len * m_nLanes ); }
     /// @brief Get the street's normalized density
     /// @return double, The street's normalized density
     double normDensity() const { return nAgents() / static_cast<double>(m_capacity); }
@@ -251,6 +251,7 @@ namespace dsm {
       
       {
       this->setMaxSpeed(maxSpeed);
+      this->setCapacity(len * nLanes / 5);
   }
 
 
