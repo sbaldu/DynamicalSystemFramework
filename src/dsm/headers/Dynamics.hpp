@@ -117,7 +117,6 @@ namespace dsm {
     void m_updatePath(const std::unique_ptr<Itinerary<Id>>& pItinerary);
 
   public:
-    Dynamics() = delete;
     /// @brief Construct a new Dynamics object
     /// @param graph The graph representing the network
     Dynamics(Graph<Id, Size>& graph);
@@ -1370,7 +1369,6 @@ namespace dsm {
     double m_speedFluctuationSTD;
 
   public:
-    FirstOrderDynamics() = delete;
     /// @brief Construct a new First Order Dynamics object
     /// @param graph, The graph representing the network
     FirstOrderDynamics(Graph<Id, Size>& graph)

@@ -227,7 +227,6 @@ namespace dsm {
     Delay m_phase;
 
   public:
-    TrafficLight() = delete;
     /// @brief Construct a new TrafficLight object
     /// @param id The node's id
     explicit TrafficLight(Id id) : Node<Id, Size>{id}, m_counter{0}, m_phase{0} {};
