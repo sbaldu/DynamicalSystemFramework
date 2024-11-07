@@ -201,6 +201,11 @@ namespace dsm {
     /// @brief Add an agent to the simulation
     /// @param agent std::unique_ptr to the agent
     void addAgent(std::unique_ptr<Agent<Id, Size, Delay>> agent);
+    /// @brief Add an agent with given source node and itinerary
+    /// @param srcNodeId The id of the source node
+    /// @param itineraryId The id of the itinerary
+    /// @throws std::invalid_argument If the source node or the itinerary are not found
+    void addAgent(Id srcNodeId, Id itineraryId);
     /// @brief Add a pack of agents to the simulation
     /// @param itineraryId The index of the itinerary
     /// @param nAgents The number of agents to add
@@ -908,6 +913,29 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
+  void Dynamics<Id, Size, Delay>::addAgent(Id srcNodeId, Id itineraryId) {
+    if (this->m_agents.size() + 1 > this->m_graph.maxCapacity()) {
+      throw std::overflow_error(buildLog(
+          std::format("Graph its already holding the max possible number of agents ({})",
+                      this->m_graph.maxCapacity())));
+    }
+    if (!(srcNodeId < this->m_graph.nodeSet().size())) {
+      throw std::invalid_argument(
+          buildLog(std::format("Node with id {} not found", srcNodeId)));
+    }
+    if (!(this->m_itineraries.contains(itineraryId))) {
+      throw std::invalid_argument(
+          buildLog(std::format("Itinerary with id {} not found", itineraryId)));
+    }
+    Size agentId{0};
+    if (!this->m_agents.empty()) {
+      agentId = this->m_agents.rbegin()->first + 1;
+    }
+    this->addAgent(Agent<Id, Size, Delay>{agentId, itineraryId, srcNodeId});
+  }
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::addAgents(Id itineraryId,
                                             Size nAgents,
                                             std::optional<Id> srcNodeId) {
@@ -1024,11 +1052,6 @@ namespace dsm {
   void Dynamics<Id, Size, Delay>::addAgentsRandomly(Size nAgents,
                                                     const TContainer& src_weights,
                                                     const TContainer& dst_weights) {
-    if (this->m_agents.size() + nAgents > this->m_graph.maxCapacity()) {
-      throw std::overflow_error(buildLog(
-          std::format("Graph its already holding the max possible number of agents ({})",
-                      this->m_graph.maxCapacity())));
-    }
     // Check if the weights are normalized
     if (std::abs(std::accumulate(src_weights.begin(),
                                  src_weights.end(),
@@ -1078,7 +1101,7 @@ namespace dsm {
         throw std::invalid_argument(
             buildLog(std::format("Itinerary with destination {} not found.", dstId)));
       }
-      this->addAgents(itineraryIt->first, 1, srcId);
+      this->addAgent(srcId, itineraryIt->first);
       --nAgents;
     }
   }

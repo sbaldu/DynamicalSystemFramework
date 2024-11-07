@@ -65,6 +65,34 @@ TEST_CASE("Dynamics") {
       }
     }
   }
+  SUBCASE("addAgent") {
+    GIVEN("A dynamics object, a source node and a destination node") {
+      auto graph = Graph{};
+      graph.importMatrix("./data/matrix.dsm");
+      Dynamics dynamics{graph};
+      dynamics.addItinerary(Itinerary{2, 2});
+      WHEN("We add the agent") {
+        dynamics.addAgent(0, 2);
+        THEN("The agent is added") {
+          CHECK_EQ(dynamics.agents().size(), 1);
+          const auto& agent = dynamics.agents().at(0);
+          CHECK_EQ(agent->id(), 0);
+          CHECK_EQ(agent->srcNodeId().value(), 0);
+          CHECK_EQ(agent->itineraryId(), 2);
+        }
+      }
+      WHEN("We try to add an agent with a non-existing source node") {
+        THEN("An exception is thrown") {
+          CHECK_THROWS_AS(dynamics.addAgent(3, 2), std::invalid_argument);
+        }
+      }
+      WHEN("We try to add an agent with a non-existing itinerary") {
+        THEN("An exception is thrown") {
+          CHECK_THROWS_AS(dynamics.addAgent(0, 0), std::invalid_argument);
+        }
+      }
+    }
+  }
   SUBCASE("addAgentsUniformly") {
     GIVEN("A dynamics object and an itinerary") {
       auto graph = Graph{};
@@ -129,7 +157,7 @@ TEST_CASE("Dynamics") {
   SUBCASE("addAgentsRandomly") {
     GIVEN("A graph object") {
       auto graph = Graph{};
-      graph.importMatrix("./data/matrix.dsm");
+      graph.importMatrix("./data/matrix.dat");
       Dynamics dynamics{graph};
       dynamics.setSeed(69);
       WHEN("We add one agent for existing itinerary") {
