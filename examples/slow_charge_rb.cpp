@@ -30,7 +30,6 @@ using Unit = unsigned int;
 using Delay = uint8_t;
 
 using Graph = dsm::Graph<Unit, Unit>;
-using Itinerary = dsm::Itinerary<Unit>;
 using Dynamics = dsm::FirstOrderDynamics<Unit, Unit, Delay>;
 using Street = dsm::Street<Unit, Unit>;
 using SpireStreet = dsm::SpireStreet<Unit, Unit>;
@@ -122,11 +121,15 @@ int main(int argc, char** argv) {
 
   Dynamics dynamics{graph};
   Unit n{0};
-  for (const auto& [nodeId, degree] : degreeVector) {
-    if (degree < 4) {
-      dynamics.addItinerary(Itinerary{n, nodeId});
-      ++n;
+  {
+    std::vector<Unit> destinationNodes;
+    for (const auto& [nodeId, degree] : dv) {
+      if (degree < 4) {
+        destinationNodes.push_back(nodeId);
+        ++n;
+      }
     }
+    dynamics.addDestinationNodes(destinationNodes);
   }
   std::cout << "Number of exits: " << n << '\n';
 
@@ -136,7 +139,6 @@ int main(int argc, char** argv) {
   // dynamics.setForcePriorities(true);
   dynamics.setSpeedFluctuationSTD(0.1);
   dynamics.setMinSpeedRateo(0.95);
-  dynamics.updatePaths();
 
   std::cout << "Done." << std::endl;
   std::cout << "Running simulation...\n";
