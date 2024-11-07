@@ -201,6 +201,11 @@ namespace dsm {
     /// @brief Add an agent to the simulation
     /// @param agent std::unique_ptr to the agent
     void addAgent(std::unique_ptr<Agent<Id, Size, Delay>> agent);
+    /// @brief Add an agent with given source node and itinerary
+    /// @param srcNodeId The id of the source node
+    /// @param itineraryId The id of the itinerary
+    /// @throws std::invalid_argument If the source node or the itinerary are not found
+    void addAgent(Id srcNodeId, Id itineraryId);
     /// @brief Add a pack of agents to the simulation
     /// @param itineraryId The index of the itinerary
     /// @param nAgents The number of agents to add
@@ -229,6 +234,12 @@ namespace dsm {
     /// @throw std::runtime_error If there are no itineraries
     virtual void addAgentsUniformly(Size nAgents,
                                     std::optional<Id> itineraryId = std::nullopt);
+    template <typename TContainer>
+      requires(std::is_same_v<TContainer, std::unordered_map<Id, double>> ||
+               std::is_same_v<TContainer, std::map<Id, double>>)
+    void addAgentsRandomly(Size nAgents,
+                           const TContainer& src_weights,
+                           const TContainer& dst_weights);
 
     /// @brief Remove an agent from the simulation
     /// @param agentId the id of the agent to remove
@@ -902,6 +913,29 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
+  void Dynamics<Id, Size, Delay>::addAgent(Id srcNodeId, Id itineraryId) {
+    if (this->m_agents.size() + 1 > this->m_graph.maxCapacity()) {
+      throw std::overflow_error(buildLog(
+          std::format("Graph its already holding the max possible number of agents ({})",
+                      this->m_graph.maxCapacity())));
+    }
+    if (!(srcNodeId < this->m_graph.nodeSet().size())) {
+      throw std::invalid_argument(
+          buildLog(std::format("Node with id {} not found", srcNodeId)));
+    }
+    if (!(this->m_itineraries.contains(itineraryId))) {
+      throw std::invalid_argument(
+          buildLog(std::format("Itinerary with id {} not found", itineraryId)));
+    }
+    Size agentId{0};
+    if (!this->m_agents.empty()) {
+      agentId = this->m_agents.rbegin()->first + 1;
+    }
+    this->addAgent(Agent<Id, Size, Delay>{agentId, itineraryId, srcNodeId});
+  }
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::addAgents(Id itineraryId,
                                             Size nAgents,
                                             std::optional<Id> srcNodeId) {
@@ -1006,6 +1040,69 @@ namespace dsm {
           std::ceil(street->length() / this->m_agents[agentId]->speed()));
       street->addAgent(agentId);
       ++agentId;
+    }
+  }
+
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>)
+  template <typename TContainer>
+    requires(std::is_same_v<TContainer, std::unordered_map<Id, double>> ||
+             std::is_same_v<TContainer, std::map<Id, double>>)
+  void Dynamics<Id, Size, Delay>::addAgentsRandomly(Size nAgents,
+                                                    const TContainer& src_weights,
+                                                    const TContainer& dst_weights) {
+    // Check if the weights are normalized
+    if (std::abs(std::accumulate(src_weights.begin(),
+                                 src_weights.end(),
+                                 0.,
+                                 [](double sum, const std::pair<Id, double>& p) {
+                                   return sum + p.second;
+                                 }) -
+                 1.) > std::numeric_limits<double>::epsilon()) {
+      throw std::invalid_argument(
+          buildLog("The source weights are not normalized (sum is {})."));
+    }
+    if (std::abs(std::accumulate(dst_weights.begin(),
+                                 dst_weights.end(),
+                                 0.,
+                                 [](double sum, const std::pair<Id, double>& p) {
+                                   return sum + p.second;
+                                 }) -
+                 1.) > std::numeric_limits<double>::epsilon()) {
+      throw std::invalid_argument(
+          buildLog("The destination weights are not normalized (sum is {})."));
+    }
+    while (nAgents > 0) {
+      Id srcId{0}, dstId{0};
+      double dRand{this->m_uniformDist(this->m_generator)}, sum{0.};
+      for (const auto& [id, weight] : src_weights) {
+        sum += weight;
+        if (dRand < sum) {
+          srcId = id;
+          break;
+        }
+      }
+      dRand = this->m_uniformDist(this->m_generator);
+      sum = 0.;
+      for (const auto& [id, weight] : dst_weights) {
+        sum += weight;
+        if (dRand < sum) {
+          dstId = id;
+          break;
+        }
+      }
+      // find the itinerary with the given destination as destination
+      auto itineraryIt{std::find_if(
+          m_itineraries.begin(), m_itineraries.end(), [dstId](const auto& itinerary) {
+            return itinerary.second->destination() == dstId;
+          })};
+      if (itineraryIt == m_itineraries.end()) {
+        throw std::invalid_argument(
+            buildLog(std::format("Itinerary with destination {} not found.", dstId)));
+      }
+      this->addAgent(srcId, itineraryIt->first);
+      --nAgents;
     }
   }
 

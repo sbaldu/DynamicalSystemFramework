@@ -65,6 +65,34 @@ TEST_CASE("Dynamics") {
       }
     }
   }
+  SUBCASE("addAgent") {
+    GIVEN("A dynamics object, a source node and a destination node") {
+      auto graph = Graph{};
+      graph.importMatrix("./data/matrix.dsm");
+      Dynamics dynamics{graph};
+      dynamics.addItinerary(Itinerary{2, 2});
+      WHEN("We add the agent") {
+        dynamics.addAgent(0, 2);
+        THEN("The agent is added") {
+          CHECK_EQ(dynamics.agents().size(), 1);
+          const auto& agent = dynamics.agents().at(0);
+          CHECK_EQ(agent->id(), 0);
+          CHECK_EQ(agent->srcNodeId().value(), 0);
+          CHECK_EQ(agent->itineraryId(), 2);
+        }
+      }
+      WHEN("We try to add an agent with a non-existing source node") {
+        THEN("An exception is thrown") {
+          CHECK_THROWS_AS(dynamics.addAgent(3, 2), std::invalid_argument);
+        }
+      }
+      WHEN("We try to add an agent with a non-existing itinerary") {
+        THEN("An exception is thrown") {
+          CHECK_THROWS_AS(dynamics.addAgent(0, 0), std::invalid_argument);
+        }
+      }
+    }
+  }
   SUBCASE("addAgentsUniformly") {
     GIVEN("A dynamics object and an itinerary") {
       auto graph = Graph{};
@@ -122,6 +150,71 @@ TEST_CASE("Dynamics") {
                    Itinerary1.destination());
           CHECK(dynamics.agents().at(2)->streetId().has_value());
           CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 1);
+        }
+      }
+    }
+  }
+  SUBCASE("addAgentsRandomly") {
+    GIVEN("A graph object") {
+      auto graph = Graph{};
+      graph.importMatrix("./data/matrix.dat");
+      Dynamics dynamics{graph};
+      dynamics.setSeed(69);
+      WHEN("We add one agent for existing itinerary") {
+        std::unordered_map<uint16_t, double> src{{0, 1.}};
+        std::unordered_map<uint16_t, double> dst{{2, 1.}};
+        dynamics.addItinerary(Itinerary{0, 2});
+        dynamics.addAgentsRandomly(1, src, dst);
+        THEN("The agents are correctly set") {
+          CHECK_EQ(dynamics.agents().size(), 1);
+          CHECK_EQ(dynamics.itineraries()
+                       .at(dynamics.agents().at(0)->itineraryId())
+                       ->destination(),
+                   2);
+          CHECK_EQ(dynamics.agents().at(0)->srcNodeId().value(), 0);
+        }
+      }
+      WHEN("We add agents for existing itineraries") {
+        std::unordered_map<uint16_t, double> src{{1, 0.3}, {27, 0.3}, {118, 0.4}};
+        std::unordered_map<uint16_t, double> dst{{14, 0.3}, {102, 0.3}, {107, 0.4}};
+        dynamics.addItinerary(Itinerary{0, 14});
+        dynamics.addItinerary(Itinerary{1, 102});
+        dynamics.addItinerary(Itinerary{2, 107});
+        dynamics.addAgentsRandomly(3, src, dst);
+        THEN("The agents are correctly set") {
+          CHECK_EQ(dynamics.agents().size(), 3);
+          CHECK_EQ(dynamics.itineraries()
+                       .at(dynamics.agents().at(0)->itineraryId())
+                       ->destination(),
+                   107);
+          CHECK_EQ(dynamics.agents().at(0)->srcNodeId().value(), 27);
+          CHECK_EQ(dynamics.itineraries()
+                       .at(dynamics.agents().at(1)->itineraryId())
+                       ->destination(),
+                   14);
+          CHECK_EQ(dynamics.agents().at(1)->srcNodeId().value(), 1);
+          CHECK_EQ(dynamics.itineraries()
+                       .at(dynamics.agents().at(2)->itineraryId())
+                       ->destination(),
+                   14);
+          CHECK_EQ(dynamics.agents().at(2)->srcNodeId().value(), 118);
+        }
+      }
+      WHEN("We add agents without adding itineraries") {
+        THEN("An exception is thrown") {
+          std::unordered_map<uint16_t, double> src{{0, 1.}};
+          std::unordered_map<uint16_t, double> dst{{10, 1.}};
+          CHECK_THROWS_AS(dynamics.addAgentsRandomly(1, src, dst), std::invalid_argument);
+        }
+      }
+      WHEN("We try to add agents with non-normalized node maps") {
+        std::unordered_map<uint16_t, double> not_norm_weights{{0, 1.5}, {1, 0.5}};
+        std::unordered_map<uint16_t, double> norm_weights{{0, 0.5}, {1, 0.5}};
+        THEN("An exception is thrown") {
+          CHECK_THROWS_AS(dynamics.addAgentsRandomly(1, not_norm_weights, norm_weights),
+                          std::invalid_argument);
+          CHECK_THROWS_AS(dynamics.addAgentsRandomly(1, norm_weights, not_norm_weights),
+                          std::invalid_argument);
         }
       }
     }
