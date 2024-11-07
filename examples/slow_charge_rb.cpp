@@ -129,7 +129,7 @@ int main(int argc, char** argv) {
         ++n;
       }
     }
-    dynamics.addDestinationNodes(destinationNodes);
+    dynamics.setDestinationNodes(destinationNodes);
   }
   std::cout << "Number of exits: " << n << '\n';
 
