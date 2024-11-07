@@ -37,14 +37,14 @@ namespace dsm {
   /// @param mean The mean
   /// @param std The standard deviation of the sample
   struct Measurement {
-    float mean;
-    float std;
+    double mean;
+    double std;
 
-    Measurement(T mean, T std) : mean{mean}, std{std} {}
-    Measurement(const std::vector<T>& data) {
+    Measurement(double mean, double std) : mean{mean}, std{std} {}
+    Measurement(const std::vector<double>& data) {
 	  assert(data.size() > 1);
 
-	  double x_mean = 0., x2_mean = 0.;
+	  float x_mean = 0., x2_mean = 0.;
 	  std::for_each(data.begin(), data.end(), 0., [&x_mean, &x2_mean](auto value) -> void {
 		x_mean += value;
 		x2_mean += value * value;
