@@ -1037,7 +1037,9 @@ namespace dsm {
         0, static_cast<Size>(this->m_graph.streetSet().size() - 1)};
     for (Size i{0}; i < nAgents; ++i) {
       if (randomItinerary) {
-        itineraryId = itineraryDist(this->m_generator);
+        auto itineraryIt{this->m_itineraries.begin()};
+        std::advance(itineraryIt, itineraryDist(this->m_generator));
+        itineraryId = itineraryIt->first;
       }
       Id agentId{0};
       if (!this->m_agents.empty()) {
