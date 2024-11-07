@@ -23,6 +23,10 @@
 temp*
 
 # Examples generated files
-examples/sctl/*
-examples/scrb/*
+examples/sctl*
+examples/scrb*
 examples/*.csv
+
+# Utils generated folders
+__pycache__
+images

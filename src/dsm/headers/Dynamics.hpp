@@ -18,6 +18,7 @@
 #include <cmath>
 #include <cassert>
 #include <format>
+#include <thread>
 
 #include "Agent.hpp"
 #include "Itinerary.hpp"
@@ -83,8 +84,10 @@ namespace dsm {
     std::vector<unsigned int> m_travelTimes;
     std::unordered_map<Id, Id> m_agentNextStreetId;
     bool m_forcePriorities;
+    std::optional<Delay> m_dataUpdatePeriod;
     std::unordered_map<Id, std::array<unsigned long long, 4>> m_turnCounts;
     std::unordered_map<Id, std::array<long, 4>> m_turnMapping;
+    std::unordered_map<Id, unsigned long long> m_streetTails;
 
     /// @brief Get the next street id
     /// @param agentId The id of the agent
@@ -109,6 +112,9 @@ namespace dsm {
     /// @details Puts all new agents on a street, if possible, decrements all delays
     /// and increments all travel times.
     virtual void m_evolveAgents();
+    /// @brief Update the path of a single itinerary
+    /// @param pItinerary An std::unique_prt to the itinerary
+    void m_updatePath(const std::unique_ptr<Itinerary<Id>>& pItinerary);
 
   public:
     Dynamics() = delete;
@@ -143,6 +149,12 @@ namespace dsm {
     /// @param forcePriorities The flag
     /// @details If true, if an agent cannot move to the next street, the whole node is skipped
     void setForcePriorities(bool forcePriorities) { m_forcePriorities = forcePriorities; }
+    /// @brief Set the data update period.
+    /// @param dataUpdatePeriod Delay, The period
+    /// @details Some data, i.e. the street queue lengths, are stored only after a fixed amount of time which is represented by this variable.
+    void setDataUpdatePeriod(Delay dataUpdatePeriod) {
+      m_dataUpdatePeriod = dataUpdatePeriod;
+    }
 
     /// @brief Update the paths of the itineraries based on the actual travel times
     virtual void updatePaths();
@@ -157,11 +169,14 @@ namespace dsm {
     /// @param reinsert_agents If true, the agents are reinserted in the simulation after they reach their destination
     virtual void evolve(bool reinsert_agents = false);
     /// @brief Optimize the traffic lights by changing the green and red times
-    /// @param percentage double, The percentage of the TOTAL cycle time to add or subtract to the green time
+    /// @param nCycles Delay, The number of cycles (times agents are being added) between two calls of this function
     /// @param threshold double, The percentage of the mean capacity of the streets used as threshold for the delta between the two tails.
+    /// @param densityTolerance double, The algorithm will consider all streets with density up to densityTolerance*meanDensity
     /// @details The function cycles over the traffic lights and, if the difference between the two tails is greater than
     ///   the threshold multiplied by the mean capacity of the streets, it changes the green and red times of the traffic light, keeping the total cycle time constant.
-    void optimizeTrafficLights(double percentage, double threshold = 0.);
+    void optimizeTrafficLights(Delay nCycles,
+                               double threshold = 0.,
+                               double densityTolerance = 0.);
 
     /// @brief Get the graph
     /// @return const Graph<Id, Size>&, The graph
@@ -186,6 +201,11 @@ namespace dsm {
     /// @brief Add an agent to the simulation
     /// @param agent std::unique_ptr to the agent
     void addAgent(std::unique_ptr<Agent<Id, Size, Delay>> agent);
+    /// @brief Add an agent with given source node and itinerary
+    /// @param srcNodeId The id of the source node
+    /// @param itineraryId The id of the itinerary
+    /// @throws std::invalid_argument If the source node or the itinerary are not found
+    void addAgent(Id srcNodeId, Id itineraryId);
     /// @brief Add a pack of agents to the simulation
     /// @param itineraryId The index of the itinerary
     /// @param nAgents The number of agents to add
@@ -214,6 +234,12 @@ namespace dsm {
     /// @throw std::runtime_error If there are no itineraries
     virtual void addAgentsUniformly(Size nAgents,
                                     std::optional<Id> itineraryId = std::nullopt);
+    template <typename TContainer>
+      requires(std::is_same_v<TContainer, std::unordered_map<Id, double>> ||
+               std::is_same_v<TContainer, std::map<Id, double>>)
+    void addAgentsRandomly(Size nAgents,
+                           const TContainer& src_weights,
+                           const TContainer& dst_weights);
 
     /// @brief Remove an agent from the simulation
     /// @param agentId the id of the agent to remove
@@ -321,6 +347,7 @@ namespace dsm {
         m_maxFlowPercentage{1.},
         m_forcePriorities{false} {
     for (const auto& [streetId, street] : m_graph.streetSet()) {
+      m_streetTails.emplace(streetId, 0);
       m_turnCounts.emplace(streetId, std::array<unsigned long long, 4>{0, 0, 0, 0});
       // fill turn mapping as [streetId, [left street Id, straight street Id, right street Id, U self street Id]]
       m_turnMapping.emplace(streetId, std::array<long, 4>{-1, -1, -1, -1});
@@ -357,7 +384,7 @@ namespace dsm {
                                                Id nodeId,
                                                std::optional<Id> streetId) {
     auto possibleMoves = m_graph.adjMatrix().getRow(nodeId, true);
-    if (this->m_itineraries.size() > 0 and
+    if (this->m_itineraries.size() > 0 &&
         this->m_uniformDist(this->m_generator) > this->m_errorProbability) {
       const auto& it = this->m_itineraries[this->m_agents[agentId]->itineraryId()];
       if (it->destination() != nodeId) {
@@ -409,6 +436,12 @@ namespace dsm {
       const auto agentId{street->queue().front()};
       if (m_agents[agentId]->delay() > 0) {
         continue;
+      }
+      if (m_dataUpdatePeriod.has_value()) {
+        if (m_time % m_dataUpdatePeriod.value() == 0) {
+          //m_streetTails[streetId] += street->queue().size();
+          m_streetTails[streetId] += street->waitingAgents().size();
+        }
       }
       m_agents[agentId]->setSpeed(0.);
       const auto& destinationNode{this->m_graph.nodeSet()[street->nodePair().second]};
@@ -581,6 +614,61 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
+  void Dynamics<Id, Size, Delay>::m_updatePath(
+      const std::unique_ptr<Itinerary<Id>>& pItinerary) {
+    const Size dimension = m_graph.adjMatrix().getRowDim();
+    const auto destinationID = pItinerary->destination();
+    SparseMatrix<Id, bool> path{dimension, dimension};
+    // cycle over the nodes
+    for (const auto& [nodeId, node] : m_graph.nodeSet()) {
+      if (nodeId == destinationID) {
+        continue;
+      }
+      auto result{m_graph.shortestPath(nodeId, destinationID)};
+      if (!result.has_value()) {
+        continue;
+      }
+      // save the minimum distance between i and the destination
+      const auto minDistance{result.value().distance()};
+      for (const auto [nextNodeId, _] : m_graph.adjMatrix().getRow(nodeId)) {
+        if (nextNodeId == destinationID &&
+            minDistance ==
+                m_graph.streetSet().at(nodeId * dimension + nextNodeId)->length()) {
+          path.insert(nodeId, nextNodeId, true);
+          continue;
+        }
+        // TimePoint expectedTravelTime{
+        //     streetLength};  // / street->maxSpeed()};  // TODO: change into input speed
+        result = m_graph.shortestPath(nextNodeId, destinationID);
+
+        if (result.has_value()) {
+          // if the shortest path exists, save the distance
+          if (minDistance ==
+              result.value().distance() +
+                  m_graph.streetSet().at(nodeId * dimension + nextNodeId)->length()) {
+            path.insert(nodeId, nextNodeId, true);
+          }
+        } else if ((nextNodeId != destinationID)) {
+          std::cerr << std::format("WARNING: No path found from node {} to node {}",
+                                   nextNodeId,
+                                   destinationID)
+                    << std::endl;
+        }
+      }
+    }
+    if (path.size() == 0) {
+      throw std::runtime_error(
+          buildLog(std::format("Path with id {} and destination {} is empty. Please "
+                               "check the adjacency matrix.",
+                               pItinerary->id(),
+                               pItinerary->destination())));
+    }
+    pItinerary->setPath(path);
+  }
+
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::setItineraries(std::span<Itinerary<Id>> itineraries) {
     std::ranges::for_each(itineraries, [this](const auto& itinerary) {
       this->m_itineraries.insert(std::make_unique<Itinerary<Id>>(itinerary));
@@ -625,56 +713,25 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::updatePaths() {
-    const Size dimension = m_graph.adjMatrix().getRowDim();
+    std::vector<std::thread> threads;
+    threads.reserve(m_itineraries.size());
+    std::exception_ptr pThreadException;
     for (const auto& [itineraryId, itinerary] : m_itineraries) {
-      SparseMatrix<Id, bool> path{dimension, dimension};
-      // cycle over the nodes
-      for (const auto& [nodeId, node] : m_graph.nodeSet()) {
-        if (nodeId == itinerary->destination()) {
-          continue;
+      threads.emplace_back(std::thread([this, &itinerary, &pThreadException] {
+        try {
+          this->m_updatePath(itinerary);
+        } catch (...) {
+          if (!pThreadException)
+            pThreadException = std::current_exception();
         }
-        auto result{m_graph.shortestPath(nodeId, itinerary->destination())};
-        if (!result.has_value()) {
-          continue;
-        }
-        // save the minimum distance between i and the destination
-        const auto minDistance{result.value().distance()};
-        for (const auto [nextNodeId, _] : m_graph.adjMatrix().getRow(nodeId)) {
-          // init distance from a neighbor node to the destination to zero
-          double distance{0.};
-
-          // TimePoint expectedTravelTime{
-          //     streetLength};  // / street->maxSpeed()};  // TODO: change into input velocity
-          result = m_graph.shortestPath(nextNodeId, itinerary->destination());
-
-          if (result.has_value()) {
-            // if the shortest path exists, save the distance
-            distance = result.value().distance();
-          } else if (nextNodeId != itinerary->destination()) {
-            std::cerr << std::format(
-                             "WARNING: No path found between from node {} to node {}",
-                             nodeId,
-                             itinerary->destination())
-                      << std::endl;
-          }
-
-          // if (!(distance > minDistance + expectedTravelTime)) {
-          if (minDistance ==
-              distance +
-                  m_graph.streetSet().at(nodeId * dimension + nextNodeId)->length()) {
-            // std::cout << "minDistance: " << minDistance << " distance: " << distance
-            //           << " streetLength: " << streetLength << '\n';
-            // std::cout << "Inserting " << i << ';' << node.first << '\n';
-            path.insert(nodeId, nextNodeId, true);
-          }
-        }
-        itinerary->setPath(path);
-        // for (auto i{0}; i < dimension; ++i) {
-        //   std::cout << path.getRow(i).size() << ' ';
-        // }
-        // std::cout << '\n';
-      }
+      }));
     }
+    for (auto& thread : threads) {
+      thread.join();
+    }
+    // Throw the exception launched first
+    if (pThreadException)
+      std::rethrow_exception(pThreadException);
   }
 
   template <typename Id, typename Size, typename Delay>
@@ -694,8 +751,22 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
-  void Dynamics<Id, Size, Delay>::optimizeTrafficLights(double percentage,
-                                                        double threshold) {
+  void Dynamics<Id, Size, Delay>::optimizeTrafficLights(Delay nCycles,
+                                                        double threshold,
+                                                        double densityTolerance) {
+    if (threshold < 0 || threshold > 1) {
+      throw std::invalid_argument(
+          buildLog(std::format("The threshold parameter is a percentage and must be "
+                               "bounded between 0-1. Inserted value: {}",
+                               threshold)));
+    }
+    if (densityTolerance < 0 || densityTolerance > 1) {
+      throw std::invalid_argument(buildLog(
+          std::format("The densityTolerance parameter is a percentage and must be "
+                      "bounded between 0-1. Inserted value: {}",
+                      densityTolerance)));
+    }
+    const auto meanDensityGlob = streetMeanDensity().mean;  // Measurement<double>
     for (const auto& [nodeId, node] : m_graph.nodeSet()) {
       if (!node->isTrafficLight()) {
         continue;
@@ -706,21 +777,20 @@ namespace dsm {
       }
       auto [greenTime, redTime] = tl.delay().value();
       const auto cycleTime = greenTime + redTime;
-      // const Delay delta = cycleTime * percentage;
       const auto& streetPriorities = tl.streetPriorities();
       Size greenSum{0}, greenQueue{0};
       Size redSum{0}, redQueue{0};
       for (const auto& [streetId, _] : m_graph.adjMatrix().getCol(nodeId, true)) {
         if (streetPriorities.contains(streetId)) {
-          greenSum += m_graph.streetSet()[streetId]->nAgents();
+          greenSum += m_streetTails[streetId];
           greenQueue += m_graph.streetSet()[streetId]->queue().size();
         } else {
-          redSum += m_graph.streetSet()[streetId]->nAgents();
+          redSum += m_streetTails[streetId];
           redQueue += m_graph.streetSet()[streetId]->queue().size();
         }
       }
       const Delay delta =
-          std::floor(std::abs(static_cast<int>(greenQueue - redQueue)) / percentage);
+          std::floor(std::fabs(static_cast<int>(greenQueue - redQueue)) / nCycles);
       if (delta == 0) {
         continue;
       }
@@ -729,18 +799,84 @@ namespace dsm {
         tl.setDelay(std::floor(cycleTime / 2));
         continue;
       }
-      if ((greenSum > redSum) && !(greenTime > redTime) && (greenQueue > redQueue)) {
-        if (redTime > delta) {
-          greenTime += delta;
-          redTime -= delta;
-          tl.setDelay(std::make_pair(greenTime, redTime));
+      // If the difference is not less than the threshold
+      //    - Check that the incoming streets have a density less than the mean one (eventually + tolerance): I want to avoid being into the cluster, better to be out or on the border
+      //    - If the previous check fails, do nothing
+      double meanDensity_streets{0.};
+      {
+        // Store the ids of outgoing streets
+        const auto& row{m_graph.adjMatrix().getRow(nodeId, true)};
+        for (const auto& [streetId, _] : row) {
+          meanDensity_streets += m_graph.streetSet()[streetId]->density();
         }
-      } else if (!(redTime > greenTime) && (greenTime > delta) &&
-                 (redQueue > greenQueue)) {
-        greenTime -= delta;
-        redTime += delta;
-        tl.setDelay(std::make_pair(greenTime, redTime));
+        // Take the mean density of the outgoing streets
+        const auto nStreets = row.size();
+        if (nStreets > 1) {
+          meanDensity_streets /= nStreets;
+        }
       }
+      //std::cout << '\t' << " -> Mean network density: " << std::setprecision(7) << meanDensityGlob << '\n';
+      //std::cout << '\t' << " -> Mean density of 4 outgoing streets: " << std::setprecision(7) << meanDensity_streets << '\n';
+      const auto ratio = meanDensityGlob / meanDensity_streets;
+      // densityTolerance represents the max border we want to consider
+      const auto dyn_thresh = std::tanh(ratio) * densityTolerance;
+      //std::cout << '\t' << " -> Parametro ratio: " << std::setprecision(7) << ratio << '\n';
+      //std::cout << '\t' << " -> Parametro dyn_thresh: " << std::setprecision(7) << dyn_thresh << '\n';
+      if (meanDensityGlob * (1. + dyn_thresh) > meanDensity_streets) {
+        //std::cout << '\t' << " -> I'm on the cluster's border" << '\n';
+        if (meanDensityGlob > meanDensity_streets) {
+          //std::cout << '\t' << " -> LESS than max density" << '\n';
+          if (!(redTime > greenTime) && (redSum > greenSum) && (greenTime > delta)) {
+            greenTime -= delta;
+            redTime += delta;
+            tl.setDelay(std::make_pair(greenTime, redTime));
+          } else if (!(greenTime > redTime) && (greenSum > redSum) && (redTime > delta)) {
+            greenTime += delta;
+            redTime -= delta;
+            tl.setDelay(std::make_pair(greenTime, redTime));
+          } else {
+            //std::cout << '\t' << " -> NOT entered into previous ifs" << '\n';
+            tl.setDelay(std::make_pair(greenTime, redTime));
+          }
+          //std::cout << '\t' << " -> greenTime: " << static_cast<unsigned int>(greenTime) << '\n';
+          //std::cout << '\t' << " -> redTime: " << static_cast<unsigned int>(redTime) << '\n';
+          //std::cout << '\t' << " -> modTime: " << tl.modTime() << '\n';
+        } else {
+          //std::cout << '\t' << " -> GREATER than max density" << '\n';
+          if (!(redTime > greenTime) && (redSum > greenSum) &&
+              (greenTime > ratio * delta)) {
+            greenTime -= dyn_thresh * delta;  //
+            redTime += delta;
+            tl.setDelay(std::make_pair(greenTime, redTime));
+          } else if (!(greenTime > redTime) && (greenSum > redSum) &&
+                     (redTime > ratio * delta)) {
+            greenTime += delta;
+            redTime -= dyn_thresh * delta;  //
+            tl.setDelay(std::make_pair(greenTime, redTime));
+          } else if (!(redTime > greenTime) && (redSum < greenSum) && (redTime > delta)) {
+            greenTime += dyn_thresh * delta;  //
+            redTime -= delta;
+            tl.setDelay(std::make_pair(greenTime, redTime));
+          } else if (!(redTime < greenTime) && (redSum > greenSum) &&
+                     (greenTime > delta)) {
+            greenTime -= delta;
+            redTime += dyn_thresh * delta;  //
+            tl.setDelay(std::make_pair(greenTime, redTime));
+          } else {
+            //std::cout << '\t' << " -> NON sono entrato negli if precedenti" << '\n';
+            tl.setDelay(std::make_pair(greenTime, redTime));
+          }
+          //std::cout << '\t' << " -> greenTime: " << static_cast<unsigned int>(greenTime) << '\n';
+          //std::cout << '\t' << " -> redTime: " << static_cast<unsigned int>(redTime) << '\n';
+          //std::cout << '\t' << " -> modTime: " << tl.modTime() << '\n';
+        }
+      } else {
+        //std::cout << '\t' << " -> I'm INTO the cluster" << '\n';
+        //std::cout << '\t' << " -> modTime: " << tl.modTime() << '\n';
+      }
+    }
+    for (auto& [id, element] : m_streetTails) {
+      element = 0;
     }
   }
 
@@ -773,6 +909,29 @@ namespace dsm {
           buildLog(std::format("Agent with id {} already exists.", agent->id())));
     }
     this->m_agents.emplace(agent->id(), std::move(agent));
+  }
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>)
+  void Dynamics<Id, Size, Delay>::addAgent(Id srcNodeId, Id itineraryId) {
+    if (this->m_agents.size() + 1 > this->m_graph.maxCapacity()) {
+      throw std::overflow_error(buildLog(
+          std::format("Graph its already holding the max possible number of agents ({})",
+                      this->m_graph.maxCapacity())));
+    }
+    if (!(srcNodeId < this->m_graph.nodeSet().size())) {
+      throw std::invalid_argument(
+          buildLog(std::format("Node with id {} not found", srcNodeId)));
+    }
+    if (!(this->m_itineraries.contains(itineraryId))) {
+      throw std::invalid_argument(
+          buildLog(std::format("Itinerary with id {} not found", itineraryId)));
+    }
+    Size agentId{0};
+    if (!this->m_agents.empty()) {
+      agentId = this->m_agents.rbegin()->first + 1;
+    }
+    this->addAgent(Agent<Id, Size, Delay>{agentId, itineraryId, srcNodeId});
   }
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
@@ -881,6 +1040,69 @@ namespace dsm {
           std::ceil(street->length() / this->m_agents[agentId]->speed()));
       street->addAgent(agentId);
       ++agentId;
+    }
+  }
+
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>)
+  template <typename TContainer>
+    requires(std::is_same_v<TContainer, std::unordered_map<Id, double>> ||
+             std::is_same_v<TContainer, std::map<Id, double>>)
+  void Dynamics<Id, Size, Delay>::addAgentsRandomly(Size nAgents,
+                                                    const TContainer& src_weights,
+                                                    const TContainer& dst_weights) {
+    // Check if the weights are normalized
+    if (std::abs(std::accumulate(src_weights.begin(),
+                                 src_weights.end(),
+                                 0.,
+                                 [](double sum, const std::pair<Id, double>& p) {
+                                   return sum + p.second;
+                                 }) -
+                 1.) > std::numeric_limits<double>::epsilon()) {
+      throw std::invalid_argument(
+          buildLog("The source weights are not normalized (sum is {})."));
+    }
+    if (std::abs(std::accumulate(dst_weights.begin(),
+                                 dst_weights.end(),
+                                 0.,
+                                 [](double sum, const std::pair<Id, double>& p) {
+                                   return sum + p.second;
+                                 }) -
+                 1.) > std::numeric_limits<double>::epsilon()) {
+      throw std::invalid_argument(
+          buildLog("The destination weights are not normalized (sum is {})."));
+    }
+    while (nAgents > 0) {
+      Id srcId{0}, dstId{0};
+      double dRand{this->m_uniformDist(this->m_generator)}, sum{0.};
+      for (const auto& [id, weight] : src_weights) {
+        sum += weight;
+        if (dRand < sum) {
+          srcId = id;
+          break;
+        }
+      }
+      dRand = this->m_uniformDist(this->m_generator);
+      sum = 0.;
+      for (const auto& [id, weight] : dst_weights) {
+        sum += weight;
+        if (dRand < sum) {
+          dstId = id;
+          break;
+        }
+      }
+      // find the itinerary with the given destination as destination
+      auto itineraryIt{std::find_if(
+          m_itineraries.begin(), m_itineraries.end(), [dstId](const auto& itinerary) {
+            return itinerary.second->destination() == dstId;
+          })};
+      if (itineraryIt == m_itineraries.end()) {
+        throw std::invalid_argument(
+            buildLog(std::format("Itinerary with destination {} not found.", dstId)));
+      }
+      this->addAgent(srcId, itineraryIt->first);
+      --nAgents;
     }
   }
 

@@ -182,6 +182,7 @@ if __name__ == "__main__":
         type=str,
         required=False,
         help="Path to the second input folder (optional).",
+        default=None,
     )
     args = parser.parse_args()
 
@@ -270,10 +271,10 @@ if __name__ == "__main__":
     # Load densities
     ############################################
 
-    adj = np.loadtxt("matrix.dat", skiprows=1)
+    adj = np.loadtxt("../examples/data/matrix.dat", skiprows=1)
     n = len(adj)
     # read the coordinates
-    coord = np.loadtxt("coordinates.dat")
+    coord = np.loadtxt("../examples/data/coordinates.dsm", skiprows=1)
     # create a directed graph
     G, edges, pos = create_graph_from_adj(adj, coord)
 
@@ -506,7 +507,7 @@ if __name__ == "__main__":
 
     DF_OPT = None
 
-    if os.path.exists(INPUT_FOLDER_OPT):
+    if INPUT_FOLDER_OPT is not None and os.path.exists(INPUT_FOLDER_OPT):
         df_opt_array = []
         for folder in os.listdir(INPUT_FOLDER_OPT):
             if os.path.isdir(os.path.join(INPUT_FOLDER_OPT, folder)):
@@ -528,7 +529,6 @@ if __name__ == "__main__":
 
         df_std = pd.concat(df_array)
         df_std = df_std.groupby(df_std.index).std()
-        df_std.to_csv("aaaaaaaaaaaaaaaaaaa.csv")
         # df_std = df_std.interpolate(method='linear', limit_direction='both')
         df_std = df_std.abs()
 
