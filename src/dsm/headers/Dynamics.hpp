@@ -42,9 +42,11 @@ namespace dsm {
 
     Measurement(double mean, double std) : mean{mean}, std{std} {}
     Measurement(const std::vector<double>& data) {
-	  assert(data.size() > 1);
-
 	  float x_mean = 0., x2_mean = 0.;
+	  if (data.empty()) {
+		return;
+	  }
+
 	  std::for_each(data.begin(), data.end(), [&x_mean, &x2_mean](auto value) -> void {
 		x_mean += value;
 		x2_mean += value * value;
