@@ -517,12 +517,13 @@ namespace dsm {
           continue;
         }
         std::istringstream iss{line};
-        std::string sourceId, targetId, length, oneway, highway, maxspeed, bridge;
+        std::string sourceId, targetId, length, oneway, lanes, highway, maxspeed, bridge;
         // u;v;length;oneway;highway;maxspeed;bridge
         std::getline(iss, sourceId, ';');
         std::getline(iss, targetId, ';');
         std::getline(iss, length, ';');
         std::getline(iss, oneway, ';');
+        std::getline(iss, lanes, ';');
         std::getline(iss, highway, ';');
         std::getline(iss, maxspeed, ';');
         std::getline(iss, bridge, ';');
@@ -531,6 +532,25 @@ namespace dsm {
         } catch (const std::invalid_argument& e) {
           maxspeed = "30";
         }
+        
+        uint8_t numLanes;
+        if (lanes.empty()) {
+                numLanes = 1;  // Default to 1 lane if no value is provided
+            } else {
+                try {
+                    // Convert lanes to a double first, then cast to uint8_t
+                    double lanesVal = std::stod(lanes);
+                    if (lanesVal < 1 || std::isnan(lanesVal)) {
+                        numLanes = 1;  // Default to 1 if lanes is invalid
+                    } else {
+                        numLanes = static_cast<uint8_t>(lanesVal);  // Cast to uint8_t
+                    }
+                } catch (const std::invalid_argument&) {
+                    numLanes = 1;  // Default to 1 if conversion fails
+                }
+            }
+
+
         Id streetId = std::stoul(sourceId) + std::stoul(targetId) * m_nodes.size();
         m_streets.emplace(streetId,
                           std::make_unique<Street<Id, Size>>(
@@ -539,7 +559,9 @@ namespace dsm {
                               std::stod(maxspeed),
                               std::stod(length),
                               std::make_pair(m_nodeMapping[std::stoul(sourceId)],
-                                             m_nodeMapping[std::stoul(targetId)])));
+                                             m_nodeMapping[std::stoul(targetId)]),
+                              numLanes
+                              ));
       }
     } else {
       std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
