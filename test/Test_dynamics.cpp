@@ -65,6 +65,30 @@ TEST_CASE("Dynamics") {
       }
     }
   }
+  SUBCASE("setDestinationNodes") {
+    GIVEN("A dynamics object and a destination node") {
+      auto graph = Graph{};
+      graph.importMatrix("./data/matrix.dat");
+      Dynamics dynamics{graph};
+      WHEN("We add a span of destination nodes") {
+        std::array<uint16_t, 3> nodes{0, 1, 2};
+        dynamics.setDestinationNodes(nodes);
+        THEN("The destination nodes are added") {
+          const auto& itineraries = dynamics.itineraries();
+          CHECK_EQ(itineraries.size(), nodes.size());
+          for (uint16_t i{0}; i < nodes.size(); ++i) {
+            CHECK_EQ(itineraries.at(i)->destination(), nodes.at(i));
+          }
+        }
+      }
+      WHEN("We add a span with non existing nodes") {
+        std::array<uint16_t, 3> nodes{0, 1, 169};
+        THEN("An exception is thrown") {
+          CHECK_THROWS_AS(dynamics.setDestinationNodes(nodes), std::invalid_argument);
+        }
+      }
+    }
+  }
   SUBCASE("addAgent") {
     GIVEN("A dynamics object, a source node and a destination node") {
       auto graph = Graph{};
