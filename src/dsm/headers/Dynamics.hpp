@@ -36,13 +36,14 @@ namespace dsm {
   /// @brief The Measurement struct represents the mean of a quantity and its standard deviation
   /// @param mean The mean
   /// @param std The standard deviation of the sample
+  template <typename T>
   struct Measurement {
-    double mean;
-    double std;
+    T mean;
+    T std;
 
-    Measurement(double mean, double std) : mean{mean}, std{std} {}
-    Measurement(const std::vector<double>& data) {
-	  float x_mean = 0., x2_mean = 0.;
+    Measurement(T mean, T std) : mean{mean}, std{std} {}
+    Measurement(std::span<T> data) {
+	  float x_mean = T{}, x2_mean = T{};
 	  if (data.empty()) {
 		return;
 	  }
@@ -279,38 +280,38 @@ namespace dsm {
 
     /// @brief Get the mean speed of the agents in \f$m/s\f$
     /// @return Measurement The mean speed of the agents and the standard deviation
-    Measurement agentMeanSpeed() const;
+    Measurement<double> agentMeanSpeed() const;
     // TODO: implement the following functions
     // We can implement the base version of these functions by cycling over agents... I won't do it for now.
     // Grufoony - 19/02/2024
     virtual double streetMeanSpeed(Id) const = 0;
-    virtual Measurement streetMeanSpeed() const = 0;
-    virtual Measurement streetMeanSpeed(double, bool) const = 0;
+    virtual Measurement<double> streetMeanSpeed() const = 0;
+    virtual Measurement<double> streetMeanSpeed(double, bool) const = 0;
     /// @brief Get the mean density of the streets in \f$m^{-1}\f$
     /// @return Measurement The mean density of the streets and the standard deviation
-    Measurement streetMeanDensity() const;
+    Measurement<double> streetMeanDensity() const;
     /// @brief Get the mean flow of the streets in \f$s^{-1}\f$
     /// @return Measurement The mean flow of the streets and the standard deviation
-    Measurement streetMeanFlow() const;
+    Measurement<double> streetMeanFlow() const;
     /// @brief Get the mean flow of the streets in \f$s^{-1}\f$
     /// @param threshold The density threshold to consider
     /// @param above If true, the function returns the mean flow of the streets with a density above the threshold, otherwise below
     /// @return Measurement The mean flow of the streets and the standard deviation
-    Measurement streetMeanFlow(double threshold, bool above) const;
+    Measurement<double> streetMeanFlow(double threshold, bool above) const;
     /// @brief Get the mean spire input flow of the streets in \f$s^{-1}\f$
     /// @param resetValue If true, the spire input/output flows are cleared after the computation
     /// @return Measurement The mean spire input flow of the streets and the standard deviation
     /// @details The spire input flow is computed as the sum of counts over the product of the number of spires and the time delta
-    Measurement meanSpireInputFlow(bool resetValue = true);
+    Measurement<double> meanSpireInputFlow(bool resetValue = true);
     /// @brief Get the mean spire output flow of the streets in \f$s^{-1}\f$
     /// @param resetValue If true, the spire output/input flows are cleared after the computation
     /// @return Measurement The mean spire output flow of the streets and the standard deviation
     /// @details The spire output flow is computed as the sum of counts over the product of the number of spires and the time delta
-    Measurement meanSpireOutputFlow(bool resetValue = true);
+    Measurement<double> meanSpireOutputFlow(bool resetValue = true);
     /// @brief Get the mean travel time of the agents in \f$s\f$
     /// @param clearData If true, the travel times are cleared after the computation
     /// @return Measurement The mean travel time of the agents and the standard
-    Measurement meanTravelTime(bool clearData = false);
+    Measurement<double> meanTravelTime(bool clearData = false);
     /// @brief Get the turn counts of the agents
     /// @return const std::array<unsigned long long, 3>& The turn counts
     /// @details The array contains the counts of left (0), straight (1), right (2) and U (3) turns
@@ -1171,7 +1172,7 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
-  Measurement Dynamics<Id, Size, Delay>::agentMeanSpeed() const {
+  Measurement<double> Dynamics<Id, Size, Delay>::agentMeanSpeed() const {
     if (m_agents.size() == 0) {
       return Measurement(0., 0.);
     }
@@ -1199,7 +1200,7 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
-  Measurement Dynamics<Id, Size, Delay>::streetMeanDensity() const {
+  Measurement<double> Dynamics<Id, Size, Delay>::streetMeanDensity() const {
     if (m_graph.streetSet().size() == 0) {
       return Measurement(0., 0.);
     }
@@ -1223,18 +1224,18 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
-  Measurement Dynamics<Id, Size, Delay>::streetMeanFlow() const {
+  Measurement<double> Dynamics<Id, Size, Delay>::streetMeanFlow() const {
     std::vector<double> flows;
     flows.reserve(m_graph.streetSet().size());
     for (const auto& [streetId, street] : m_graph.streetSet()) {
       flows.push_back(street->density() * this->streetMeanSpeed(streetId));
     }
-    return Measurement(flows);
+    return Measurement<double>(flows);
   }
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
-  Measurement Dynamics<Id, Size, Delay>::streetMeanFlow(double threshold,
+  Measurement<double> Dynamics<Id, Size, Delay>::streetMeanFlow(double threshold,
                                                                 bool above) const {
     std::vector<double> flows;
     flows.reserve(m_graph.streetSet().size());
@@ -1245,12 +1246,12 @@ namespace dsm {
         flows.push_back(street->density() * this->streetMeanSpeed(streetId));
       }
     }
-    return Measurement(flows);
+    return Measurement<double>(flows);
   }
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
-  Measurement Dynamics<Id, Size, Delay>::meanSpireInputFlow(bool resetValue) {
+  Measurement<double> Dynamics<Id, Size, Delay>::meanSpireInputFlow(bool resetValue) {
     auto deltaTime{m_time - m_previousSpireTime};
     if (deltaTime == 0) {
       return Measurement(0., 0.);
@@ -1264,12 +1265,12 @@ namespace dsm {
         flows.push_back(static_cast<double>(spire.inputCounts(resetValue)) / deltaTime);
       }
     }
-    return Measurement(flows);
+    return Measurement<double>(flows);
   }
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
-  Measurement Dynamics<Id, Size, Delay>::meanSpireOutputFlow(bool resetValue) {
+  Measurement<double> Dynamics<Id, Size, Delay>::meanSpireOutputFlow(bool resetValue) {
     auto deltaTime{m_time - m_previousSpireTime};
     if (deltaTime == 0) {
       return Measurement(0., 0.);
@@ -1283,12 +1284,12 @@ namespace dsm {
         flows.push_back(static_cast<double>(spire.outputCounts(resetValue)) / deltaTime);
       }
     }
-    return Measurement(flows);
+    return Measurement<double>(flows);
   }
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
-  Measurement Dynamics<Id, Size, Delay>::meanTravelTime(bool clearData) {
+  Measurement<double> Dynamics<Id, Size, Delay>::meanTravelTime(bool clearData) {
     if (m_travelTimes.size() == 0) {
       return Measurement(0., 0.);
     }
@@ -1359,12 +1360,12 @@ namespace dsm {
     double streetMeanSpeed(Id streetId) const override;
     /// @brief Get the mean speed of the streets in \f$m/s\f$
     /// @return Measurement The mean speed of the agents and the standard deviation
-    Measurement streetMeanSpeed() const override;
+    Measurement<double> streetMeanSpeed() const override;
     /// @brief Get the mean speed of the streets with density above or below a threshold in \f$m/s\f$
     /// @param threshold The density threshold to consider
     /// @param above If true, the function returns the mean speed of the streets with a density above the threshold, otherwise below
     /// @return Measurement The mean speed of the agents and the standard deviation
-    Measurement streetMeanSpeed(double threshold, bool above) const override;
+    Measurement<double> streetMeanSpeed(double threshold, bool above) const override;
   };
 
   template <typename Id, typename Size, typename Delay>
@@ -1446,7 +1447,7 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              std::unsigned_integral<Delay>)
-  Measurement FirstOrderDynamics<Id, Size, Delay>::streetMeanSpeed() const {
+  Measurement<double> FirstOrderDynamics<Id, Size, Delay>::streetMeanSpeed() const {
     if (this->m_agents.size() == 0) {
       return Measurement(0., 0.);
     }
@@ -1455,12 +1456,12 @@ namespace dsm {
     for (const auto& [streetId, street] : this->m_graph.streetSet()) {
       speeds.push_back(this->streetMeanSpeed(streetId));
     }
-    return Measurement(speeds);
+    return Measurement<double>(speeds);
   }
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              std::unsigned_integral<Delay>)
-  Measurement FirstOrderDynamics<Id, Size, Delay>::streetMeanSpeed(
+  Measurement<double> FirstOrderDynamics<Id, Size, Delay>::streetMeanSpeed(
       double threshold, bool above) const {
     if (this->m_agents.size() == 0) {
       return Measurement(0., 0.);
@@ -1478,7 +1479,7 @@ namespace dsm {
         }
       }
     }
-    return Measurement(speeds);
+    return Measurement<double>(speeds);
   }
 
   template <typename Id, typename Size>
