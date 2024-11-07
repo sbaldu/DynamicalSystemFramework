@@ -79,7 +79,12 @@ namespace dsm {
     /// @param lanes The street's number of lanes
     /// @param maxSpeed The street's speed limit
     /// @param nodePair The street's node pair
-    Street(Id id, Size capacity, double len,  double maxSpeed, std::pair<Id, Id> nodePair, uint8_t nLanes);
+    Street(Id id,
+           Size capacity,
+           double len,
+           double maxSpeed,
+           std::pair<Id, Id> nodePair,
+           uint8_t nLanes);
 
     virtual ~Street() = default;
 
@@ -159,7 +164,7 @@ namespace dsm {
     Size nAgents() const { return m_exitQueue.size() + m_waitingAgents.size(); }
     /// @brief Get the street's density in \f$m^{-1}\f$
     /// @return double, The street's density
-    double density() const { return nAgents() / ( m_len * m_nLanes ); }
+    double density() const { return nAgents() / (m_len * m_nLanes); }
     /// @brief Get the street's normalized density
     /// @return double, The street's normalized density
     double normDensity() const { return nAgents() / static_cast<double>(m_capacity); }
@@ -240,8 +245,12 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  Street<Id, Size>::Street(
-      Id id, Size capacity, double len, double maxSpeed, std::pair<Id, Id> nodePair, uint8_t nLanes)
+  Street<Id, Size>::Street(Id id,
+                           Size capacity,
+                           double len,
+                           double maxSpeed,
+                           std::pair<Id, Id> nodePair,
+                           uint8_t nLanes)
       : m_nodePair{std::move(nodePair)},
         m_len{len},
         m_angle{0.},
@@ -249,12 +258,11 @@ namespace dsm {
         m_capacity{capacity},
         m_transportCapacity{std::numeric_limits<Size>::max()},
         m_nLanes{nLanes}  // Initialize m_nLanes with the passed value
-      
-      {
-      this->setMaxSpeed(maxSpeed);
-      this->setCapacity(len * nLanes / 5);
-  }
 
+  {
+    this->setMaxSpeed(maxSpeed);
+    this->setCapacity(len * nLanes / 5);
+  }
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)

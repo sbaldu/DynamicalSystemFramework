@@ -536,24 +536,23 @@ namespace dsm {
         } catch (const std::invalid_argument& e) {
           maxspeed = "30";
         }
-        
+
         uint8_t numLanes;
         if (lanes.empty()) {
-                numLanes = 1;  // Default to 1 lane if no value is provided
+          numLanes = 1;  // Default to 1 lane if no value is provided
+        } else {
+          try {
+            // Convert lanes to a double first, then cast to uint8_t
+            double lanesVal = std::stod(lanes);
+            if (lanesVal < 1 || std::isnan(lanesVal)) {
+              numLanes = 1;  // Default to 1 if lanes is invalid
             } else {
-                try {
-                    // Convert lanes to a double first, then cast to uint8_t
-                    double lanesVal = std::stod(lanes);
-                    if (lanesVal < 1 || std::isnan(lanesVal)) {
-                        numLanes = 1;  // Default to 1 if lanes is invalid
-                    } else {
-                        numLanes = static_cast<uint8_t>(lanesVal);  // Cast to uint8_t
-                    }
-                } catch (const std::invalid_argument&) {
-                    numLanes = 1;  // Default to 1 if conversion fails
-                }
+              numLanes = static_cast<uint8_t>(lanesVal);  // Cast to uint8_t
             }
-
+          } catch (const std::invalid_argument&) {
+            numLanes = 1;  // Default to 1 if conversion fails
+          }
+        }
 
         Id streetId = std::stoul(sourceId) + std::stoul(targetId) * m_nodes.size();
         m_streets.emplace(streetId,
@@ -564,8 +563,7 @@ namespace dsm {
                               std::stod(length),
                               std::make_pair(m_nodeMapping[std::stoul(sourceId)],
                                              m_nodeMapping[std::stoul(targetId)]),
-                              numLanes
-                              ));
+                              numLanes));
       }
     } else {
       std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
