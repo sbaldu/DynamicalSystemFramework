@@ -221,10 +221,6 @@ namespace dsm {
     /// @return unsigned long long The maximum agent capacity of the graph
     unsigned long long maxCapacity() const { return m_maxAgentCapacity; }
 
-    /// @brief Get the maximum agent capacity
-    /// @return unsigned long long The maximum agent capacity of the graph
-    const unsigned long long maxCapacity() const { return m_maxAgentCapacity; }
-
     /// @brief Get the shortest path between two nodes using dijkstra algorithm
     /// @param source The source node
     /// @param destination The destination node
