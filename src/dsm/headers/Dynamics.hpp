@@ -99,11 +99,15 @@ namespace dsm {
                               std::optional<Id> streetId = std::nullopt);
     /// @brief Increase the turn counts
     virtual void m_increaseTurnCounts(Id streetId, double delta);
+
+    virtual void m_evolveStreet(const Id streetId,
+                                const std::unique_ptr<Street<Id, Size>>& pStreet,
+                                bool reinsert_agents);
     /// @brief Evolve the streets
     /// @param reinsert_agents If true, the agents are reinserted in the simulation after they reach their destination
     /// @details If possible, removes the first agent of each street queue, putting it in the destination node.
     /// If the agent is going into the destination node, it is removed from the simulation (and then reinserted if reinsert_agents is true)
-    virtual void m_evolveStreets(bool reinsert_agents);
+    void m_evolveStreets(bool reinsert_agents);
     /// @brief Evolve the nodes
     /// @details If possible, removes all agents from each node, putting them on the next street.
     /// If the error probability is not zero, the agents can move to a random street.
@@ -434,72 +438,84 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
+  void Dynamics<Id, Size, Delay>::m_evolveStreet(
+      const Id streetId,
+      const std::unique_ptr<Street<Id, Size>>& pStreet,
+      bool reinsert_agents) {
+    if (m_uniformDist(m_generator) > m_maxFlowPercentage || pStreet->queue().empty()) {
+      return;
+    }
+    const auto agentId{pStreet->queue().front()};
+    if (m_agents[agentId]->delay() > 0) {
+      return;
+    }
+    if (m_dataUpdatePeriod.has_value()) {
+      if (m_time % m_dataUpdatePeriod.value() == 0) {
+        //m_streetTails[streetId] += pStreet->queue().size();
+        m_streetTails[streetId] += pStreet->waitingAgents().size();
+      }
+    }
+    m_agents[agentId]->setSpeed(0.);
+    const auto& destinationNode{this->m_graph.nodeSet()[pStreet->nodePair().second]};
+    if (destinationNode->isFull()) {
+      return;
+    }
+    if (destinationNode->isTrafficLight()) {
+      auto& tl = dynamic_cast<TrafficLight<Id, Size, Delay>&>(*destinationNode);
+      if (!tl.isGreen(streetId)) {
+        return;
+      }
+    }
+    if (destinationNode->id() ==
+        m_itineraries[m_agents[agentId]->itineraryId()]->destination()) {
+      pStreet->dequeue();
+      m_travelTimes.push_back(m_agents[agentId]->time());
+      if (reinsert_agents) {
+        // take last agent id in map
+        Agent<Id, Size, Delay> newAgent{static_cast<Id>(m_agents.rbegin()->first + 1),
+                                        m_agents[agentId]->itineraryId(),
+                                        m_agents[agentId]->srcNodeId().value()};
+        if (m_agents[agentId]->srcNodeId().has_value()) {
+          newAgent.setSourceNodeId(this->m_agents[agentId]->srcNodeId().value());
+        }
+        this->removeAgent(agentId);
+        this->addAgent(newAgent);
+      } else {
+        this->removeAgent(agentId);
+      }
+      return;
+    }
+    const auto& nextStreet{m_graph.streetSet()[this->m_nextStreetId(
+        agentId, destinationNode->id(), streetId)]};
+    if (nextStreet->isFull()) {
+      return;
+    }
+    pStreet->dequeue();
+    assert(destinationNode->id() == nextStreet->nodePair().first);
+    if (destinationNode->isIntersection()) {
+      auto& intersection = dynamic_cast<Node<Id, Size>&>(*destinationNode);
+      auto delta = nextStreet->angle() - pStreet->angle();
+      if (delta > std::numbers::pi) {
+        delta -= 2 * std::numbers::pi;
+      } else if (delta < -std::numbers::pi) {
+        delta += 2 * std::numbers::pi;
+      }
+      m_increaseTurnCounts(streetId, delta);
+      intersection.addAgent(delta, agentId);
+      m_agentNextStreetId.emplace(agentId, nextStreet->id());
+    } else if (destinationNode->isRoundabout()) {
+      auto& roundabout = dynamic_cast<Roundabout<Id, Size>&>(*destinationNode);
+      roundabout.enqueue(agentId);
+    }
+  }
+
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::m_evolveStreets(bool reinsert_agents) {
     for (const auto& [streetId, street] : m_graph.streetSet()) {
-      if (m_uniformDist(m_generator) > m_maxFlowPercentage || street->queue().empty()) {
-        continue;
-      }
-      const auto agentId{street->queue().front()};
-      if (m_agents[agentId]->delay() > 0) {
-        continue;
-      }
-      if (m_dataUpdatePeriod.has_value()) {
-        if (m_time % m_dataUpdatePeriod.value() == 0) {
-          //m_streetTails[streetId] += street->queue().size();
-          m_streetTails[streetId] += street->waitingAgents().size();
-        }
-      }
-      m_agents[agentId]->setSpeed(0.);
-      const auto& destinationNode{this->m_graph.nodeSet()[street->nodePair().second]};
-      if (destinationNode->isFull()) {
-        continue;
-      }
-      if (destinationNode->isTrafficLight()) {
-        auto& tl = dynamic_cast<TrafficLight<Id, Size, Delay>&>(*destinationNode);
-        if (!tl.isGreen(streetId)) {
-          continue;
-        }
-      }
-      if (destinationNode->id() ==
-          m_itineraries[m_agents[agentId]->itineraryId()]->destination()) {
-        street->dequeue();
-        m_travelTimes.push_back(m_agents[agentId]->time());
-        if (reinsert_agents) {
-          // take last agent id in map
-          Agent<Id, Size, Delay> newAgent{static_cast<Id>(m_agents.rbegin()->first + 1),
-                                          m_agents[agentId]->itineraryId(),
-                                          m_agents[agentId]->srcNodeId().value()};
-          if (m_agents[agentId]->srcNodeId().has_value()) {
-            newAgent.setSourceNodeId(this->m_agents[agentId]->srcNodeId().value());
-          }
-          this->removeAgent(agentId);
-          this->addAgent(newAgent);
-        } else {
-          this->removeAgent(agentId);
-        }
-        continue;
-      }
-      const auto& nextStreet{m_graph.streetSet()[this->m_nextStreetId(
-          agentId, destinationNode->id(), streetId)]};
-      if (nextStreet->isFull()) {
-        continue;
-      }
-      street->dequeue();
-      assert(destinationNode->id() == nextStreet->nodePair().first);
-      if (destinationNode->isIntersection()) {
-        auto& intersection = dynamic_cast<Node<Id, Size>&>(*destinationNode);
-        auto delta = nextStreet->angle() - street->angle();
-        if (delta > std::numbers::pi) {
-          delta -= 2 * std::numbers::pi;
-        } else if (delta < -std::numbers::pi) {
-          delta += 2 * std::numbers::pi;
-        }
-        m_increaseTurnCounts(streetId, delta);
-        intersection.addAgent(delta, agentId);
-        m_agentNextStreetId.emplace(agentId, nextStreet->id());
-      } else if (destinationNode->isRoundabout()) {
-        auto& roundabout = dynamic_cast<Roundabout<Id, Size>&>(*destinationNode);
-        roundabout.enqueue(agentId);
+      for (auto i = 0; i < street->transportCapacity(); ++i) {
+        m_evolveStreet(streetId, street, reinsert_agents);
       }
     }
   }
