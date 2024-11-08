@@ -4,26 +4,26 @@
 
 #include "doctest.h"
 
-using Node = dsm::Node<uint16_t, uint16_t>;
+using Intersection = dsm::Intersection<uint16_t, uint16_t>;
 using TrafficLight = dsm::TrafficLight<uint16_t, uint16_t, uint16_t>;
 
-TEST_CASE("Node") {
+TEST_CASE("Intersection") {
   SUBCASE("Constructor") {
     /*This tests the constructor that takes an Id.
     GIVEN: An Id
-    WHEN: A Node is constructed
+    WHEN: A Intersection is constructed
     THEN: The Id is set correctly
     */
-    Node node{1};
+    Intersection node{1};
     CHECK(node.id() == 1);
   }
   SUBCASE("Constructor") {
     /*This tests the constructor that takes an Id and coordinates.
     GIVEN: An Id and coordinates
-    WHEN: A Node is constructed
+    WHEN: A Intersection is constructed
     THEN: The Id and coordinates are set correctly
     */
-    Node node{1, std::make_pair(2.5, 3.5)};
+    Intersection node{1, std::make_pair(2.5, 3.5)};
     CHECK(node.id() == 1);
     CHECK(node.coords().value().first == 2.5);
     CHECK(node.coords().value().second == 3.5);

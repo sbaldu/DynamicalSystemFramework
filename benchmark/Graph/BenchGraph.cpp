@@ -8,7 +8,7 @@
 #include "Graph.hpp"
 
 using Graph = dsm::Graph<uint32_t, uint32_t>;
-using Node = dsm::Node<uint32_t, uint32_t>;
+using Intersection = dsm::Intersection<uint32_t, uint32_t>;
 using Street = dsm::Street<uint32_t, uint32_t>;
 using SparseMatrix = dsm::SparseMatrix<uint32_t, bool>;
 
@@ -20,12 +20,12 @@ int main() {
   Bench b1(n_rep);
 
   std::cout << "Benchmarking addNode\n";
-  Node n1(std::rand());
-  b1.benchmark([&g1](const Node& node) -> void { g1.addNode(node); }, n1);
+  Intersection n1(std::rand());
+  b1.benchmark([&g1](const Intersection& node) -> void { g1.addNode(node); }, n1);
   b1.print();
   std::cout << "Benchmarking addNodes overhead for a single node\n";
-  n1 = Node(std::rand());
-  b1.benchmark([&g1](const Node& node) -> void { g1.addNodes(node); }, n1);
+  n1 = Intersection(std::rand());
+  b1.benchmark([&g1](const Intersection& node) -> void { g1.addNodes(node); }, n1);
   b1.print();
 
   // std::cout << "Benchmarking addStreet\n";
