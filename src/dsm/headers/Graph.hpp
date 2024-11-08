@@ -339,7 +339,6 @@ namespace dsm {
     }
     this->m_reassignIds();
     this->m_setStreetAngles();
-    this->adjustNodesTransportCapacity();
   }
 
   template <typename Id, typename Size>
@@ -355,12 +354,18 @@ namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Graph<Id, Size>::adjustNodeCapacities() {
+    int16_t value;
     for (Id nodeId = 0; nodeId < m_nodes.size(); ++nodeId) {
-      int16_t capacity{0};
+      value = 0;
       for (const auto& [streetId, _] : m_adjacency.getCol(nodeId, true)) {
-        capacity += m_streets[streetId]->transportCapacity();
+        value += m_streets[streetId]->transportCapacity();
       }
-      m_nodes[nodeId]->setCapacity(capacity);
+      m_nodes[nodeId]->setCapacity(value);
+      value = 0;
+      for (const auto& [streetId, _] : m_adjacency.getRow(nodeId, true)) {
+        value += m_streets[streetId]->transportCapacity();
+      }
+      m_nodes[nodeId]->setTransportCapacity(value);
     }
   }
 
