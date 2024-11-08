@@ -377,9 +377,12 @@ namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Graph<Id, Size>::normalizeStreetCapacities(double meanVehicleLength) {
+    m_maxAgentCapacity = 0;
     for (const auto& [_, street] : m_streets) {
-      street->setCapacity(
-          static_cast<Size>(street->length() * street->nLanes() / meanVehicleLength));
+      auto const maxCapacity{
+          static_cast<Size>(street->length() * street->nLanes() / meanVehicleLength)};
+      m_maxAgentCapacity += maxCapacity;
+      street->setCapacity(maxCapacity);
     }
   }
 
