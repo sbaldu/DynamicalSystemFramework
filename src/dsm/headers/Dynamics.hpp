@@ -783,8 +783,8 @@ namespace dsm {
     // move the first agent of each street queue, if possible, putting it in the next node
     if (m_dataUpdatePeriod.has_value() && m_time % m_dataUpdatePeriod.value() == 0) {
       for (const auto& [streetId, pStreet] : m_graph.streetSet()) {
-        //m_streetTails[streetId] += pStreet->nExitAgents();
-        m_streetTails[streetId] += pStreet->waitingAgents().size();
+        m_streetTails[streetId] += pStreet->nExitingAgents();
+        // m_streetTails[streetId] += pStreet->waitingAgents().size();
         this->m_evolveStreet(streetId, pStreet, reinsert_agents);
       }
     } else {
