@@ -93,15 +93,13 @@ namespace dsm {
                               std::optional<Id> streetId = std::nullopt);
     /// @brief Increase the turn counts
     virtual void m_increaseTurnCounts(Id streetId, double delta);
-
+    /// @brief Evolve a street
+    /// @param reinsert_agents If true, the agents are reinserted in the simulation after they reach their destination
+    /// @details If possible, removes the first agent of the street's queue, putting it in the destination node.
+    /// If the agent is going into the destination node, it is removed from the simulation (and then reinserted if reinsert_agents is true)
     virtual void m_evolveStreet(const Id streetId,
                                 const std::unique_ptr<Street<Id, Size>>& pStreet,
                                 bool reinsert_agents);
-    /// @brief Evolve the streets
-    /// @param reinsert_agents If true, the agents are reinserted in the simulation after they reach their destination
-    /// @details If possible, removes the first agent of each street queue, putting it in the destination node.
-    /// If the agent is going into the destination node, it is removed from the simulation (and then reinserted if reinsert_agents is true)
-    void m_evolveStreets(bool reinsert_agents);
     /// @brief Evolve the nodes
     /// @details If possible, removes all agents from each node, putting them on the next street.
     /// If the error probability is not zero, the agents can move to a random street.
@@ -496,17 +494,6 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
-  void Dynamics<Id, Size, Delay>::m_evolveStreets(bool reinsert_agents) {
-    for (const auto& [streetId, street] : m_graph.streetSet()) {
-      for (auto i = 0; i < street->transportCapacity(); ++i) {
-        m_evolveStreet(streetId, street, reinsert_agents);
-      }
-    }
-  }
-
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::m_evolveNodes() {
     for (const auto& [nodeId, node] : m_graph.nodeSet()) {
       if (node->isIntersection()) {
@@ -762,7 +749,11 @@ namespace dsm {
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::evolve(bool reinsert_agents) {
     // move the first agent of each street queue, if possible, putting it in the next node
-    this->m_evolveStreets(reinsert_agents);
+    for (const auto& [streetId, street] : m_graph.streetSet()) {
+      for (auto i = 0; i < street->transportCapacity(); ++i) {
+        this->m_evolveStreet(streetId, street, reinsert_agents);
+      }
+    }
     // move all the agents from each node, if possible
     this->m_evolveNodes();
     // cycle over agents and update their times
