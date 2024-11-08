@@ -33,17 +33,18 @@ namespace dsm {
     Id m_id;
     std::optional<std::pair<double, double>> m_coords;
     Size m_capacity;
+    Size m_transportCapacity;
 
   public:
     NodeConcept() = default;
     /// @brief Construct a new Node object with capacity 1
     /// @param id The node's id
-    explicit NodeConcept(Id id) : m_id{id}, m_capacity{1} {}
+    explicit NodeConcept(Id id) : m_id{id}, m_capacity{1}, m_transportCapacity{1} {}
     /// @brief Construct a new Node object with capacity 1
     /// @param id The node's id
     /// @param coords A std::pair containing the node's coordinates (lat, lon)
     NodeConcept(Id id, std::pair<double, double> coords)
-        : m_id{id}, m_coords{std::move(coords)}, m_capacity{1} {}
+        : m_id{id}, m_coords{std::move(coords)}, m_capacity{1}, m_transportCapacity{1} {}
     virtual ~NodeConcept() = default;
 
     /// @brief Set the node's id
@@ -55,6 +56,9 @@ namespace dsm {
     /// @brief Set the node's capacity
     /// @param capacity The node's capacity
     virtual void setCapacity(Size capacity) { m_capacity = capacity; }
+    /// @brief Set the node's transport capacity
+    /// @param capacity The node's transport capacity
+    virtual void setTransportCapacity(Size capacity) { m_transportCapacity = capacity; }
     /// @brief Get the node's id
     /// @return Id The node's id
     Id id() const { return m_id; }
@@ -64,6 +68,9 @@ namespace dsm {
     /// @brief Get the node's capacity
     /// @return Size The node's capacity
     Size capacity() const { return m_capacity; }
+    /// @brief Get the node's transport capacity
+    /// @return Size The node's transport capacity
+    Size transportCapacity() const { return m_transportCapacity; }
 
     virtual bool isFull() const = 0;
 
