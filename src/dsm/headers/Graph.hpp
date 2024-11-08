@@ -108,6 +108,11 @@ namespace dsm {
     /// @brief Adjust the nodes' transport capacity
     /// @details The nodes' capacity is adjusted using the graph's streets transport capacity, which may vary basing on the number of lanes. The node capacity will be set to the sum of the incoming streets' transport capacity.
     void adjustNodeCapacities();
+    /// @brief Normalize the streets' capacities
+    /// @param meanVehicleLength The mean vehicle length
+    /// @details The streets' capacities are normalized using the mean vehicle length following the formula:
+    /// \f$ \text{capacity} = \frac{\text{length} * \text{nLanes}}{\text{meanVehicleLength}} \f$
+    void normalizeStreetCapacities(double meanVehicleLength = 5.);
 
     /// @brief Import the graph's adjacency matrix from a file.
     /// If the file is not of a supported format, it will read the file as a matrix with the first two elements being
@@ -366,6 +371,15 @@ namespace dsm {
         value += m_streets[streetId]->transportCapacity();
       }
       m_nodes[nodeId]->setTransportCapacity(value);
+    }
+  }
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Graph<Id, Size>::normalizeStreetCapacities(double meanVehicleLength) {
+    for (const auto& [_, street] : m_streets) {
+      street->setCapacity(
+          static_cast<Size>(street->length() * street->nLanes() / meanVehicleLength));
     }
   }
 

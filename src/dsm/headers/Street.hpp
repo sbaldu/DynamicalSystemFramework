@@ -277,9 +277,8 @@ namespace dsm {
 
   {
     this->setMaxSpeed(maxSpeed);
-    this->setCapacity(len * nLanes / 5);
+    this->setCapacity(capacity);
     this->setNLanes(nLanes);
-    this->setTransportCapacity(nLanes);
     m_exitQueues.resize(nLanes);
     for (auto i{0}; i < nLanes; ++i) {
       m_exitQueues.push_back(dsm::queue<Size>());
