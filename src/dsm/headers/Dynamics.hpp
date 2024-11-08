@@ -9,6 +9,7 @@
 #pragma once
 
 #include <algorithm>
+#include <cassert>
 #include <concepts>
 #include <vector>
 #include <random>
@@ -33,7 +34,7 @@ namespace dsm {
   using TimePoint = long long unsigned int;
 
   /// @brief The Measurement struct represents the mean of a quantity and its standard deviation
-  /// @tparam T The type of the mean and the standard deviation
+  /// @tparam T The type of the quantity
   /// @param mean The mean
   /// @param std The standard deviation of the sample
   template <typename T>
@@ -42,25 +43,18 @@ namespace dsm {
     T std;
 
     Measurement(T mean, T std) : mean{mean}, std{std} {}
-    Measurement(const std::vector<T>& data) {
-      if (data.size() == 0) {
-        mean = 0.;
-        std = 0.;
-      } else {
-        mean = std::accumulate(data.cbegin(), data.cend(), 0.) / data.size();
-        if (data.size() < 2) {
-          std = 0.;
-        } else {
-          const double cvariance{std::accumulate(data.cbegin(),
-                                                 data.cend(),
-                                                 0.,
-                                                 [this](double sum, const auto& value) {
-                                                   return sum + std::pow(value - mean, 2);
-                                                 }) /
-                                 (data.size() - 1)};
-          std = std::sqrt(cvariance);
-        }
+    Measurement(std::span<T> data) {
+      auto x_mean = T{}, x2_mean = T{};
+      if (data.empty()) {
+        return;
       }
+
+      std::for_each(data.begin(), data.end(), [&x_mean, &x2_mean](auto value) -> void {
+        x_mean += value;
+        x2_mean += value * value;
+      });
+      mean = x_mean / data.size();
+      std = std::sqrt(x2_mean / data.size() - mean * mean);
     }
   };
 
@@ -788,7 +782,7 @@ namespace dsm {
                       "bounded between 0-1. Inserted value: {}",
                       densityTolerance)));
     }
-    const auto meanDensityGlob = streetMeanDensity().mean;  // Measurement<double>
+    const auto meanDensityGlob = streetMeanDensity().mean;  // Measurement
     for (const auto& [nodeId, node] : m_graph.nodeSet()) {
       if (!node->isTrafficLight()) {
         continue;
@@ -1261,7 +1255,7 @@ namespace dsm {
     for (const auto& [streetId, street] : m_graph.streetSet()) {
       flows.push_back(street->density() * this->streetMeanSpeed(streetId));
     }
-    return Measurement(flows);
+    return Measurement<double>(flows);
   }
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
@@ -1277,7 +1271,7 @@ namespace dsm {
         flows.push_back(street->density() * this->streetMeanSpeed(streetId));
       }
     }
-    return Measurement(flows);
+    return Measurement<double>(flows);
   }
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
@@ -1296,7 +1290,7 @@ namespace dsm {
         flows.push_back(static_cast<double>(spire.inputCounts(resetValue)) / deltaTime);
       }
     }
-    return Measurement(flows);
+    return Measurement<double>(flows);
   }
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
@@ -1315,7 +1309,7 @@ namespace dsm {
         flows.push_back(static_cast<double>(spire.outputCounts(resetValue)) / deltaTime);
       }
     }
-    return Measurement(flows);
+    return Measurement<double>(flows);
   }
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
@@ -1486,7 +1480,7 @@ namespace dsm {
     for (const auto& [streetId, street] : this->m_graph.streetSet()) {
       speeds.push_back(this->streetMeanSpeed(streetId));
     }
-    return Measurement(speeds);
+    return Measurement<double>(speeds);
   }
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
@@ -1509,7 +1503,7 @@ namespace dsm {
         }
       }
     }
-    return Measurement(speeds);
+    return Measurement<double>(speeds);
   }
 
   template <typename Id, typename Size>
