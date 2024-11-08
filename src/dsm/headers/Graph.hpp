@@ -104,6 +104,9 @@ namespace dsm {
     void buildAdj();
     /// @brief Build the graph's street angles using the node's coordinates
     void buildStreetAngles();
+    /// @brief Adjust the nodes' transport capacity
+    /// @details The nodes' capacity is adjusted using the graph's streets transport capacity, which may vary basing on the number of lanes. The node capacity will be set to the sum of the incoming streets' transport capacity.
+    void adjustNodeCapacities();
 
     /// @brief Import the graph's adjacency matrix from a file.
     /// If the file is not of a supported format, it will read the file as a matrix with the first two elements being
@@ -336,6 +339,7 @@ namespace dsm {
     }
     this->m_reassignIds();
     this->m_setStreetAngles();
+    this->adjustNodesTransportCapacity();
   }
 
   template <typename Id, typename Size>
@@ -345,6 +349,18 @@ namespace dsm {
       const auto& node1{m_nodes[street.second->nodePair().first]};
       const auto& node2{m_nodes[street.second->nodePair().second]};
       street.second->setAngle(node1->coords(), node2->coords());
+    }
+  }
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Graph<Id, Size>::adjustNodeCapacities() {
+    for (Id nodeId = 0; nodeId < m_nodes.size(); ++nodeId) {
+      int16_t capacity{0};
+      for (const auto& [streetId, _] : m_adjacency.getCol(nodeId, true)) {
+        capacity += m_streets[streetId]->transportCapacity();
+      }
+      m_nodes[nodeId]->setCapacity(capacity);
     }
   }
 
