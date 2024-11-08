@@ -17,6 +17,7 @@
 #include <numbers>
 #include <set>
 #include <format>
+#include <cassert>
 
 #include "Agent.hpp"
 #include "Node.hpp"
@@ -40,8 +41,8 @@ namespace dsm {
     double m_angle;
     Id m_id;
     Size m_capacity;
-    Size m_transportCapacity;
-    uint8_t m_nLanes;  // Max 255 lanes for a street, seems reasonable.
+    int16_t m_transportCapacity;
+    int16_t m_nLanes;  // Max 255 lanes for a street, seems reasonable.
 
   public:
     Street() = delete;
@@ -84,7 +85,7 @@ namespace dsm {
            double len,
            double maxSpeed,
            std::pair<Id, Id> nodePair,
-           uint8_t nLanes);
+           int16_t nLanes);
 
     virtual ~Street() = default;
 
@@ -98,7 +99,7 @@ namespace dsm {
     /// @details The transport capacity is the maximum number of agents that can traverse the street
     ///          in a time step.
     /// @param capacity The street's transport capacity
-    void setTransportCapacity(Size capacity) { m_transportCapacity = capacity; }
+    void setTransportCapacity(int16_t capacity) { m_transportCapacity = capacity; }
     /// @brief Set the street's length
     /// @param len The street's length
     /// @throw std::invalid_argument, If the length is negative
@@ -134,7 +135,7 @@ namespace dsm {
     /// @brief Set the street's number of lanes
     /// @param nLanes The street's number of lanes
     /// @throw std::invalid_argument If the number of lanes is 0
-    void setNLanes(const uint8_t nLanes);
+    void setNLanes(const int16_t nLanes);
 
     /// @brief Get the street's id
     /// @return Id, The street's id
@@ -146,7 +147,7 @@ namespace dsm {
     /// @details The transport capacity is the maximum number of agents that can traverse the street
     ///          in a time step.
     /// @return Size, The street's transport capacity
-    Size transportCapacity() const { return m_transportCapacity; }
+    int16_t transportCapacity() const { return m_transportCapacity; }
     /// @brief Get the street's length
     /// @return double, The street's length
     double length() const { return m_len; }
@@ -178,8 +179,8 @@ namespace dsm {
     /// @return double The street's angle
     double angle() const { return m_angle; }
     /// @brief Get the street's number of lanes
-    /// @return uint8_t The street's number of lanes
-    uint8_t nLanes() const { return m_nLanes; }
+    /// @return int16_t The street's number of lanes
+    int16_t nLanes() const { return m_nLanes; }
 
     virtual void addAgent(Id agentId);
     /// @brief Add an agent to the street's queue
@@ -214,7 +215,7 @@ namespace dsm {
         m_angle{0.},
         m_id{index},
         m_capacity{1},
-        m_transportCapacity{std::numeric_limits<Size>::max()},
+        m_transportCapacity{1},
         m_nLanes{1} {}
 
   template <typename Id, typename Size>
@@ -226,7 +227,7 @@ namespace dsm {
         m_angle{0.},
         m_id{id},
         m_capacity{capacity},
-        m_transportCapacity{std::numeric_limits<Size>::max()},
+        m_transportCapacity{1},
         m_nLanes{1} {}
 
   template <typename Id, typename Size>
@@ -238,7 +239,7 @@ namespace dsm {
         m_angle{0.},
         m_id{id},
         m_capacity{capacity},
-        m_transportCapacity{std::numeric_limits<Size>::max()},
+        m_transportCapacity{1},
         m_nLanes{1} {
     this->setMaxSpeed(maxSpeed);
   }
@@ -250,18 +251,18 @@ namespace dsm {
                            double len,
                            double maxSpeed,
                            std::pair<Id, Id> nodePair,
-                           uint8_t nLanes)
+                           int16_t nLanes)
       : m_nodePair{std::move(nodePair)},
         m_len{len},
         m_angle{0.},
         m_id{id},
-        m_capacity{capacity},
-        m_transportCapacity{std::numeric_limits<Size>::max()},
-        m_nLanes{nLanes}  // Initialize m_nLanes with the passed value
+        m_capacity{capacity}
 
   {
     this->setMaxSpeed(maxSpeed);
     this->setCapacity(len * nLanes / 5);
+    this->setNLanes(nLanes);
+    this->setTransportCapacity(nLanes);
   }
 
   template <typename Id, typename Size>
@@ -306,12 +307,11 @@ namespace dsm {
   }
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Street<Id, Size>::setNLanes(const uint8_t nLanes) {
-    if (nLanes == static_cast<uint8_t>(0)) {
-      throw std::invalid_argument(buildLog("The number of lanes of the street " +
-                                           std::to_string(m_id) +
-                                           " must be greater than 0."));
-    }
+  void Street<Id, Size>::setNLanes(const int16_t nLanes) {
+    assert(
+        (void(std::format("The number of lanes of the street {} must be greater than 0",
+                          static_cast<int>(m_id))),
+         nLanes > 0));
     m_nLanes = nLanes;
   }
 

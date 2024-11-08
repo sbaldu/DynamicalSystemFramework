@@ -24,12 +24,12 @@ TEST_CASE("Street") {
     Street street{1, std::make_pair(0, 1)};
     CHECK_EQ(street.id(), 1);
     CHECK_EQ(street.capacity(), 1);
-    CHECK_EQ(street.transportCapacity(), 65535);
+    CHECK_EQ(street.transportCapacity(), 1);
     CHECK_EQ(street.length(), 1.);
     CHECK_EQ(street.nodePair().first, 0);
     CHECK_EQ(street.nodePair().second, 1);
     CHECK_EQ(street.maxSpeed(), 13.8888888889);
-    CHECK_EQ(street.nLanes(), static_cast<uint8_t>(1));
+    CHECK_EQ(street.nLanes(), 1);
   }
 
   SUBCASE("Constructor_2") {
@@ -42,13 +42,13 @@ TEST_CASE("Street") {
     Street street{1, 2, 3.5, std::make_pair(4, 5)};
     CHECK_EQ(street.id(), 1);
     CHECK_EQ(street.capacity(), 2);
-    CHECK_EQ(street.transportCapacity(), 65535);
+    CHECK_EQ(street.transportCapacity(), 1);
     CHECK_EQ(street.length(), 3.5);
     CHECK_EQ(street.nodePair().first, 4);
     CHECK_EQ(street.nodePair().second, 5);
     CHECK_EQ(doctest::Approx(street.density()), 0);
     CHECK_EQ(street.maxSpeed(), 13.8888888889);
-    CHECK_EQ(street.nLanes(), static_cast<uint8_t>(1));
+    CHECK_EQ(street.nLanes(), 1);
   }
   SUBCASE("Constructor_3") {
     /*This tests the constructor that takes an Id, capacity, length, nodePair, and maxSpeed.
@@ -60,49 +60,44 @@ TEST_CASE("Street") {
     Street street{1, 2, 3.5, 40., std::make_pair(4, 5)};
     CHECK_EQ(street.id(), 1);
     CHECK_EQ(street.capacity(), 2);
-    CHECK_EQ(street.transportCapacity(), 65535);
+    CHECK_EQ(street.transportCapacity(), 1);
     CHECK_EQ(street.length(), 3.5);
     CHECK_EQ(street.nodePair().first, 4);
     CHECK_EQ(street.nodePair().second, 5);
     CHECK_EQ(doctest::Approx(street.density()), 0);
     CHECK_EQ(street.maxSpeed(), 40.);
-    CHECK_EQ(street.nLanes(), static_cast<uint8_t>(1));
+    CHECK_EQ(street.nLanes(), 1);
   }
-  SUBCASE("setNLanes") {
-    /*This tests the setNLanes method*/
-
-    Street street{1, std::make_pair(0, 1)};
-    CHECK_THROWS(street.setNLanes(0));
-    street.setNLanes(3);
-    CHECK_EQ(street.nLanes(), 3);
-  }
-  SUBCASE("SetNodePair_1") {
-    /*This tests the setNodePair method*/
-
-    Street street{1, std::make_pair(0, 1)};
-    street.setNodePair(4, 5);
-    CHECK_EQ(street.nodePair().first, 4);
-    CHECK_EQ(street.nodePair().second, 5);
-  }
-
-  SUBCASE("SetNodePair_2") {
-    /*This tests the setNodePair method*/
-
-    Street street{1, std::make_pair(0, 1)};
-    Node node1{4};
-    Node node2{5};
-    street.setNodePair(node1, node2);
-    CHECK_EQ(street.nodePair().first, 4);
-    CHECK_EQ(street.nodePair().second, 5);
-  }
-
-  SUBCASE("SetNodePair_3") {
-    /*This tests the setNodePair method*/
-
-    Street street{1, std::make_pair(0, 1)};
-    street.setNodePair(std::make_pair(4, 5));
-    CHECK_EQ(street.nodePair().first, 4);
-    CHECK_EQ(street.nodePair().second, 5);
+  SUBCASE("Street API") {
+    GIVEN("A street") {
+      Street street{1, std::make_pair(0, 1)};
+      WHEN("The number of lanes is set") {
+        street.setNLanes(3);
+        THEN("The number of lanes is set correctly") { CHECK_EQ(street.nLanes(), 3); }
+      }
+      WHEN("The node pair is set using ids") {
+        street.setNodePair(4, 5);
+        THEN("The node pair is set correctly") {
+          CHECK_EQ(street.nodePair().first, 4);
+          CHECK_EQ(street.nodePair().second, 5);
+        }
+      }
+      WHEN("The node pair is set using ids pair") {
+        street.setNodePair(std::make_pair(4, 5));
+        THEN("The node pair is set correctly") {
+          CHECK_EQ(street.nodePair().first, 4);
+          CHECK_EQ(street.nodePair().second, 5);
+        }
+      }
+      WHEN("The node pair is set suing nodes") {
+        Node node1{4}, node2{5};
+        street.setNodePair(node1, node2);
+        THEN("The node pair is set correctly") {
+          CHECK_EQ(street.nodePair().first, 4);
+          CHECK_EQ(street.nodePair().second, 5);
+        }
+      }
+    }
   }
 
   SUBCASE("Enqueue") {
