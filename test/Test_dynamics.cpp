@@ -3,8 +3,8 @@
 #include "Dynamics.hpp"
 #include "Graph.hpp"
 #include "Node.hpp"
-#include "Street.hpp"
 #include "SparseMatrix.hpp"
+#include "Street.hpp"
 
 #include "doctest.h"
 
@@ -18,6 +18,35 @@ using Itinerary = dsm::Itinerary<uint16_t>;
 using Intersection = dsm::Intersection<uint16_t, uint16_t>;
 using TrafficLight = dsm::TrafficLight<uint16_t, uint16_t, uint16_t>;
 using Roundabout = dsm::Roundabout<uint16_t, uint16_t>;
+using Measurement = dsm::Measurement<float>;
+
+TEST_CASE("Measurement") {
+  SUBCASE("STL vector") {
+    std::vector<float> data(100);
+    std::iota(data.begin(), data.end(), 0.f);
+
+    Measurement m(data);
+    CHECK_EQ(m.mean, 49.5f);
+    CHECK_EQ(m.std, doctest::Approx(28.8661f));
+  }
+  SUBCASE("STL array") {
+    std::array<float, 100> data;
+    std::iota(data.begin(), data.end(), 0.f);
+
+    Measurement m(data);
+    CHECK_EQ(m.mean, 49.5f);
+    CHECK_EQ(m.std, doctest::Approx(28.8661f));
+  }
+  SUBCASE("STL span") {
+    auto p = std::make_unique_for_overwrite<float[]>(100);
+    std::span<float> data(p.get(), 100);
+    std::iota(data.begin(), data.end(), 0.f);
+
+    Measurement m(data);
+    CHECK_EQ(m.mean, 49.5f);
+    CHECK_EQ(m.std, doctest::Approx(28.8661f));
+  }
+}
 
 TEST_CASE("Dynamics") {
   SUBCASE("Constructor") {
@@ -65,13 +94,67 @@ TEST_CASE("Dynamics") {
       }
     }
   }
+  SUBCASE("setDestinationNodes") {
+    GIVEN("A dynamics object and a destination node") {
+      auto graph = Graph{};
+      graph.importMatrix("./data/matrix.dat");
+      Dynamics dynamics{graph};
+      WHEN("We add a span of destination nodes") {
+        std::array<uint16_t, 3> nodes{0, 1, 2};
+        dynamics.setDestinationNodes(nodes);
+        THEN("The destination nodes are added") {
+          const auto& itineraries = dynamics.itineraries();
+          CHECK_EQ(itineraries.size(), nodes.size());
+          for (uint16_t i{0}; i < nodes.size(); ++i) {
+            CHECK_EQ(itineraries.at(i)->destination(), nodes.at(i));
+          }
+        }
+      }
+      WHEN("We add a span with non existing nodes") {
+        std::array<uint16_t, 3> nodes{0, 1, 169};
+        THEN("An exception is thrown") {
+          CHECK_THROWS_AS(dynamics.setDestinationNodes(nodes), std::invalid_argument);
+        }
+      }
+    }
+  }
+  SUBCASE("addAgent") {
+    GIVEN("A dynamics object, a source node and a destination node") {
+      auto graph = Graph{};
+      graph.importMatrix("./data/matrix.dsm");
+      Dynamics dynamics{graph};
+      dynamics.addItinerary(Itinerary{2, 2});
+      WHEN("We add the agent") {
+        dynamics.addAgent(0, 2);
+        THEN("The agent is added") {
+          CHECK_EQ(dynamics.agents().size(), 1);
+          const auto& agent = dynamics.agents().at(0);
+          CHECK_EQ(agent->id(), 0);
+          CHECK_EQ(agent->srcNodeId().value(), 0);
+          CHECK_EQ(agent->itineraryId(), 2);
+        }
+      }
+      WHEN("We try to add an agent with a non-existing source node") {
+        THEN("An exception is thrown") {
+          CHECK_THROWS_AS(dynamics.addAgent(3, 2), std::invalid_argument);
+        }
+      }
+      WHEN("We try to add an agent with a non-existing itinerary") {
+        THEN("An exception is thrown") {
+          CHECK_THROWS_AS(dynamics.addAgent(0, 0), std::invalid_argument);
+        }
+      }
+    }
+  }
   SUBCASE("addAgentsUniformly") {
     GIVEN("A dynamics object and an itinerary") {
       auto graph = Graph{};
       graph.importMatrix("./data/matrix.dsm");
       Dynamics dynamics(graph);
       WHEN("We add agents without adding itineraries") {
-        THEN("An exception is thrown") { CHECK_THROWS(dynamics.addAgentsUniformly(1)); }
+        THEN("An exception is thrown") {
+          CHECK_THROWS_AS(dynamics.addAgentsUniformly(1), std::invalid_argument);
+        }
       }
       Itinerary itinerary{0, 2};
       WHEN("We add a random agent") {
@@ -99,27 +182,93 @@ TEST_CASE("Dynamics") {
       WHEN("We add many agents") {
         dynamics.addAgentsUniformly(3);
         THEN(
-            "The number of agents is 3, the destination and the street is the same as "
+            "The number of agents is 3, the destination and the street is the "
+            "same as "
             "the itinerary") {
           CHECK_EQ(dynamics.agents().size(), 3);
           CHECK_EQ(dynamics.itineraries()
                        .at(dynamics.agents().at(0)->itineraryId())
                        ->destination(),
-                   Itinerary2.destination());
+                   Itinerary1.destination());
           CHECK(dynamics.agents().at(0)->streetId().has_value());
           CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 3);
           CHECK_EQ(dynamics.itineraries()
                        .at(dynamics.agents().at(1)->itineraryId())
                        ->destination(),
-                   Itinerary2.destination());
+                   Itinerary1.destination());
           CHECK(dynamics.agents().at(1)->streetId().has_value());
           CHECK_EQ(dynamics.agents().at(1)->streetId().value(), 8);
           CHECK_EQ(dynamics.itineraries()
                        .at(dynamics.agents().at(2)->itineraryId())
                        ->destination(),
-                   Itinerary1.destination());
+                   Itinerary2.destination());
           CHECK(dynamics.agents().at(2)->streetId().has_value());
           CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 1);
+        }
+      }
+    }
+  }
+  SUBCASE("addAgentsRandomly") {
+    GIVEN("A graph object") {
+      auto graph = Graph{};
+      graph.importMatrix("./data/matrix.dat");
+      Dynamics dynamics{graph};
+      dynamics.setSeed(69);
+      WHEN("We add one agent for existing itinerary") {
+        std::unordered_map<uint16_t, double> src{{0, 1.}};
+        std::unordered_map<uint16_t, double> dst{{2, 1.}};
+        dynamics.addItinerary(Itinerary{0, 2});
+        dynamics.addAgentsRandomly(1, src, dst);
+        THEN("The agents are correctly set") {
+          CHECK_EQ(dynamics.agents().size(), 1);
+          CHECK_EQ(dynamics.itineraries()
+                       .at(dynamics.agents().at(0)->itineraryId())
+                       ->destination(),
+                   2);
+          CHECK_EQ(dynamics.agents().at(0)->srcNodeId().value(), 0);
+        }
+      }
+      WHEN("We add agents for existing itineraries") {
+        std::unordered_map<uint16_t, double> src{{1, 0.3}, {27, 0.3}, {118, 0.4}};
+        std::unordered_map<uint16_t, double> dst{{14, 0.3}, {102, 0.3}, {107, 0.4}};
+        dynamics.addItinerary(Itinerary{0, 14});
+        dynamics.addItinerary(Itinerary{1, 102});
+        dynamics.addItinerary(Itinerary{2, 107});
+        dynamics.addAgentsRandomly(3, src, dst);
+        THEN("The agents are correctly set") {
+          CHECK_EQ(dynamics.agents().size(), 3);
+          CHECK_EQ(dynamics.itineraries()
+                       .at(dynamics.agents().at(0)->itineraryId())
+                       ->destination(),
+                   107);
+          CHECK_EQ(dynamics.agents().at(0)->srcNodeId().value(), 27);
+          CHECK_EQ(dynamics.itineraries()
+                       .at(dynamics.agents().at(1)->itineraryId())
+                       ->destination(),
+                   14);
+          CHECK_EQ(dynamics.agents().at(1)->srcNodeId().value(), 1);
+          CHECK_EQ(dynamics.itineraries()
+                       .at(dynamics.agents().at(2)->itineraryId())
+                       ->destination(),
+                   14);
+          CHECK_EQ(dynamics.agents().at(2)->srcNodeId().value(), 118);
+        }
+      }
+      WHEN("We add agents without adding itineraries") {
+        THEN("An exception is thrown") {
+          std::unordered_map<uint16_t, double> src{{0, 1.}};
+          std::unordered_map<uint16_t, double> dst{{10, 1.}};
+          CHECK_THROWS_AS(dynamics.addAgentsRandomly(1, src, dst), std::invalid_argument);
+        }
+      }
+      WHEN("We try to add agents with non-normalized node maps") {
+        std::unordered_map<uint16_t, double> not_norm_weights{{0, 1.5}, {1, 0.5}};
+        std::unordered_map<uint16_t, double> norm_weights{{0, 0.5}, {1, 0.5}};
+        THEN("An exception is thrown") {
+          CHECK_THROWS_AS(dynamics.addAgentsRandomly(1, not_norm_weights, norm_weights),
+                          std::invalid_argument);
+          CHECK_THROWS_AS(dynamics.addAgentsRandomly(1, norm_weights, not_norm_weights),
+                          std::invalid_argument);
         }
       }
     }
@@ -132,7 +281,9 @@ TEST_CASE("Dynamics") {
       Itinerary itinerary{0, 2};
       dynamics.addItinerary(itinerary);
       WHEN("We add an agent with itinerary 1") {
-        THEN("An exception is thrown") { CHECK_THROWS(dynamics.addAgents(1)); }
+        THEN("An exception is thrown") {
+          CHECK_THROWS_AS(dynamics.addAgents(1), std::invalid_argument);
+        }
       }
       WHEN("We add and agent with itinerary 0") {
         dynamics.addAgents(0);
@@ -152,7 +303,44 @@ TEST_CASE("Dynamics") {
       }
     }
   }
+  SUBCASE("Add too many agents") {
+    GIVEN("A simple graph with two nodes and only one street") {
+      Street s{0, 1, 2., std::make_pair(0, 1)};  // Capacity of 1 agent
+      Graph graph2;
+      graph2.addStreets(s);
+      graph2.buildAdj();
+      Dynamics dynamics{graph2};
+      Itinerary itinerary{0, 1};
+      dynamics.addItinerary(itinerary);
+      dynamics.updatePaths();
+      dynamics.addAgentsUniformly(1);
+      WHEN("We add more than one agent") {
+        THEN("It throws") {
+          CHECK_THROWS_AS(dynamics.addAgentsUniformly(1), std::overflow_error);
+          CHECK_THROWS_AS(dynamics.addAgents(0, 1), std::overflow_error);
+          auto dummyAgent = Agent(0, 0);
+          CHECK_THROWS_AS(dynamics.addAgent(dummyAgent), std::overflow_error);
+          CHECK_THROWS_AS(dynamics.addAgent(std::make_unique<Agent>(dummyAgent)),
+                          std::overflow_error);
+        }
+      }
+    }
+  }
   SUBCASE("Update paths") {
+    GIVEN("A dynamics object with a single street") {
+      Street s1{0, 1, 2., std::make_pair(0, 1)};
+      Graph graph2;
+      graph2.addStreets(s1);
+      graph2.buildAdj();
+      Dynamics dynamics{graph2};
+      WHEN("We add a topologically impossible itinerary") {
+        Itinerary itinerary{0, 0};
+        dynamics.addItinerary(itinerary);
+        THEN("When updating paths, empty itinerary throws exception") {
+          CHECK_THROWS_AS(dynamics.updatePaths(), std::runtime_error);
+        }
+      }
+    }
     GIVEN("A dynamics object, many streets and an itinerary") {
       Street s1{0, 1, 2., std::make_pair(0, 1)};
       Street s2{1, 1, 5., std::make_pair(1, 2)};
@@ -166,7 +354,8 @@ TEST_CASE("Dynamics") {
         dynamics.addItinerary(itinerary);
         dynamics.updatePaths();
         THEN(
-            "The number of itineraries is 1 and the path is updated and correctly "
+            "The number of itineraries is 1 and the path is updated and "
+            "correctly "
             "formed") {
           CHECK_EQ(dynamics.itineraries().size(), 1);
           CHECK(dynamics.itineraries().at(0)->path()(0, 1));
@@ -185,7 +374,9 @@ TEST_CASE("Dynamics") {
         }
       }
     }
-    GIVEN("A dynamics objects, many streets and many itinearies with same destination") {
+    GIVEN(
+        "A dynamics objects, many streets and many itinearies with same "
+        "destination") {
       Graph graph2{};
       graph2.importMatrix("./data/matrix.dat");
       Itinerary it1{0, 118};
@@ -344,7 +535,9 @@ TEST_CASE("Dynamics") {
     }
   }
   SUBCASE("TrafficLights") {
-    GIVEN("A dynamics object, a network with traffic lights, an itinerary and an agent") {
+    GIVEN(
+        "A dynamics object, a network with traffic lights, an itinerary and "
+        "an agent") {
       TrafficLight tl{1};
       tl.setDelay(2);
       Street s1{1, 1, 30., 15., std::make_pair(0, 1)};
@@ -362,32 +555,99 @@ TEST_CASE("Dynamics") {
       Itinerary itinerary{0, 2};
       dynamics.addItinerary(itinerary);
       dynamics.updatePaths();
-      // dynamics.addAgent(Agent(0, 0, 0));
-      // WHEN("We evolve the dynamics") {
-      //   dynamics.evolve(false);
-      //   THEN(
-      //       "The agent is ready to go through the traffic light at time 3 but the "
-      //       "traffic light is red"
-      //       " until time 4, so the agent waits until time 4") {
-      //     for (uint8_t i{0}; i < 5; ++i) {
-      //       dynamics.evolve(false);
-      //       if (i < 3) {
-      //         CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 1);
-      //       } else {
-      //         CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 7);
-      //       }
-      //       if (i == 2) {
-      //         CHECK_EQ(dynamics.agents().at(0)->distance(), 30.);
-      //       }
-      //     }
-      //     CHECK_EQ(dynamics.agents().at(0)->distance(), 60.);
-      //   }
-      // }
+      dynamics.addAgent(Agent(0, 0, 0));
+      WHEN("We evolve the dynamics") {
+        dynamics.evolve(false);
+        THEN(
+            "The agent is ready to go through the traffic light at time 3 but "
+            "the "
+            "traffic light is red"
+            " until time 4, so the agent waits until time 4") {
+          for (uint8_t i{0}; i < 5; ++i) {
+            dynamics.evolve(false);
+            if (i < 3) {
+              CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 1);
+            } else {
+              CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 7);
+            }
+            if (i == 2) {
+              CHECK_EQ(dynamics.agents().at(0)->distance(), 30.);
+            }
+          }
+          CHECK_EQ(dynamics.agents().at(0)->distance(), 60.);
+        }
+      }
+    }
+  }
+  SUBCASE("Traffic Lights optimization algorithm") {
+    GIVEN("A dynamics object with a traffic light intersection") {
+      TrafficLight tl{1};
+      tl.setDelay(4);
+      tl.setPhase(3);
+      double length{90.}, max_speed{15.};
+      Street s_01{1, 10, length, max_speed, std::make_pair(0, 1)};
+      Street s_10{5, 10, length, max_speed, std::make_pair(1, 0)};
+      Street s_12{7, 10, length, max_speed, std::make_pair(1, 2)};
+      Street s_21{11, 10, length, max_speed, std::make_pair(2, 1)};
+      Street s_13{8, 10, length, max_speed, std::make_pair(1, 3)};
+      Street s_31{16, 10, length, max_speed, std::make_pair(3, 1)};
+      Street s_14{9, 10, length, max_speed, std::make_pair(1, 4)};
+      Street s_41{21, 10, length, max_speed, std::make_pair(4, 1)};
+      tl.addStreetPriority(1);
+      tl.addStreetPriority(11);
+      Graph graph2;
+      graph2.addNode(std::make_unique<TrafficLight>(tl));
+      graph2.addStreets(s_01, s_10, s_12, s_21, s_13, s_31, s_14, s_41);
+      graph2.buildAdj();
+      Dynamics dynamics{graph2};
+      Itinerary it_0{0, 0}, it_1{1, 2}, it_2{2, 3}, it_3{3, 4};
+      dynamics.addItinerary(it_0);
+      dynamics.addItinerary(it_1);
+      dynamics.addItinerary(it_2);
+      dynamics.addItinerary(it_3);
+      dynamics.updatePaths();
+      dynamics.addAgents(0, 7, 2);
+      dynamics.addAgents(1, 7, 0);
+      dynamics.setDataUpdatePeriod(1);
+      WHEN("We evolve the dynamics and optimize traffic lights") {
+        for (int i = 0; i < 8; ++i) {
+          dynamics.evolve(false);
+        }
+        dynamics.optimizeTrafficLights(2, 0.1, 0.);
+        THEN("Green and red time are different") {
+          const auto timing =
+              dynamic_cast<TrafficLight&>(*dynamics.graph().nodeSet().at(1))
+                  .delay()
+                  .value();
+          CHECK(timing.first > timing.second);
+        }
+      }
+      WHEN(
+          "We evolve the dynamics and optimize traffic lights with outgoing "
+          "streets "
+          "full") {
+        dynamics.addAgents(0, 5, 1);
+        dynamics.addAgents(1, 5, 1);
+        dynamics.addAgents(2, 5, 1);
+        dynamics.addAgents(3, 5, 1);
+        for (int i = 0; i < 15; ++i) {
+          dynamics.evolve(false);
+        }
+        dynamics.optimizeTrafficLights(2, 0.1, 0.);
+        THEN("Green and red time are equal") {
+          const auto timing =
+              dynamic_cast<TrafficLight&>(*dynamics.graph().nodeSet().at(1))
+                  .delay()
+                  .value();
+          CHECK_EQ(timing.first, timing.second);
+        }
+      }
     }
   }
   SUBCASE("Roundabout") {
     GIVEN(
-        "A dynamics object with four streets, one agent for each street, two itineraries "
+        "A dynamics object with four streets, one agent for each street, two "
+        "itineraries "
         "and a roundabout") {
       Roundabout roundabout{1};
       roundabout.setCapacity(2);
@@ -409,7 +669,8 @@ TEST_CASE("Dynamics") {
       dynamics.addAgent(Agent(0, 0, 0));
       dynamics.addAgent(Agent(1, 1, 2));
       WHEN(
-          "We evolve the dynamics adding an agent on the path of the agent with "
+          "We evolve the dynamics adding an agent on the path of the agent "
+          "with "
           "priority") {
         dynamics.evolve(false);
         dynamics.addAgent(Agent(2, 0, 1));
@@ -488,10 +749,10 @@ TEST_CASE("Dynamics") {
     meanSpeed /= (dynamics.graph().streetSet().at(1)->queue().size() +
                   dynamics.graph().streetSet().at(1)->waitingAgents().size());
     CHECK_EQ(dynamics.streetMeanSpeed(1), meanSpeed);
-    // I don't think the mean speed of agents should be equal to the street's one...
-    // CHECK_EQ(dynamics.streetMeanSpeed().mean, dynamics.agentMeanSpeed().mean);
-    // CHECK_EQ(dynamics.streetMeanSpeed().std, 0.);
-    // street 1 density should be 0.4 so...
+    // I don't think the mean speed of agents should be equal to the street's
+    // one... CHECK_EQ(dynamics.streetMeanSpeed().mean,
+    // dynamics.agentMeanSpeed().mean); CHECK_EQ(dynamics.streetMeanSpeed().std,
+    // 0.); street 1 density should be 0.4 so...
     CHECK_EQ(dynamics.streetMeanSpeed(0.2, true).mean, meanSpeed);
     CHECK_EQ(dynamics.streetMeanSpeed(0.2, true).std, 0.);
     CHECK_EQ(dynamics.streetMeanSpeed(0.2, false).mean, 15.);

@@ -4,20 +4,18 @@
 #include <cstdint>
 
 static constexpr uint8_t DSM_VERSION_MAJOR = 1;
-static constexpr uint8_t DSM_VERSION_MINOR = 3;
-static constexpr uint8_t DSM_VERSION_PATCH = 12;
-static constexpr uint8_t DSM_VERSION_BUILD = 0;
+static constexpr uint8_t DSM_VERSION_MINOR = 4;
+static constexpr uint8_t DSM_VERSION_PATCH = 4;
 
 #include <string>
+#include <format>
 
 namespace dsm {
-  std::string version();
+  constexpr std::string_view version();
 }
 
-std::string dsm::version() {
-  return std::to_string(DSM_VERSION_MAJOR) + "." + std::to_string(DSM_VERSION_MINOR) +
-         "." + std::to_string(DSM_VERSION_PATCH) + "." +
-         std::to_string(DSM_VERSION_BUILD);
+constexpr std::string_view dsm::version() {
+  return std::format("{}.{}.{}", DSM_VERSION_MAJOR, DSM_VERSION_MINOR, DSM_VERSION_PATCH);
 }
 
 #include "headers/Agent.hpp"

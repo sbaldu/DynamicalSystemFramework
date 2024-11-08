@@ -13,6 +13,7 @@
 #include <concepts>
 #include <utility>
 #include <string>
+#include <format>
 
 namespace dsm {
   /// @brief The Itinerary class represents an itinerary in the network.
@@ -26,7 +27,6 @@ namespace dsm {
     Id m_destination;
 
   public:
-    Itinerary() = delete;
     /// @brief Construct a new Itinerary object
     /// @param destination The itinerary's destination
     Itinerary(Id id, Id destination);
@@ -74,13 +74,18 @@ namespace dsm {
     requires(std::unsigned_integral<Id>)
   void Itinerary<Id>::setPath(SparseMatrix<Id, bool> path) {
     if (path.getRowDim() != path.getColDim()) {
-      throw std::invalid_argument(
-          buildLog("The path's row and column dimensions must be equal."));
+      throw std::invalid_argument(buildLog(
+          std::format("The path's row ({}) and column ({}) dimensions must be equal.",
+                      path.getRowDim(),
+                      path.getColDim())));
     }
     if (path.getRowDim() < m_destination) {
       throw std::invalid_argument(
-          buildLog("The path's row and column dimensions must be greater than the "
-                   "itinerary's destination."));
+          buildLog(std::format("The path's row ({}) and column ({}) dimensions must be "
+                               "greater than the itinerary's destination ({}).",
+                               path.getRowDim(),
+                               path.getColDim(),
+                               m_destination)));
     }
     m_path = std::move(path);
   }
