@@ -33,7 +33,7 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   class Street {
   private:
-    dsm::queue<Size> m_exitQueue;
+    std::vector<dsm::queue<Size>> m_exitQueues;
     std::set<Id> m_waitingAgents;
     std::pair<Id, Id> m_nodePair;
     double m_len;
@@ -105,7 +105,9 @@ namespace dsm {
     void setLength(double len);
     /// @brief Set the street's queue
     /// @param queue The street's queue
-    void setQueue(dsm::queue<Size> queue) { m_exitQueue = std::move(queue); }
+    void setQueue(dsm::queue<Size> queue, size_t index) {
+      m_exitQueues[index] = std::move(queue);
+    }
     /// @brief Set the street's node pair
     /// @param node1 The source node of the street
     /// @param node2 The destination node of the street
@@ -155,13 +157,16 @@ namespace dsm {
     const std::set<Id>& waitingAgents() const { return m_waitingAgents; }
     /// @brief Get the street's queue
     /// @return dsm::queue<Size>, The street's queue
-    const dsm::queue<Size>& queue() const { return m_exitQueue; }
+    const dsm::queue<Size>& queue(size_t index) const { return m_exitQueues[index]; }
+    /// @brief Get the street's queues
+    /// @return std::vector<dsm::queue<Size>> The street's queues
+    const std::vector<dsm::queue<Size>>& exitQueues() const { return m_exitQueues; }
     /// @brief Get the street's node pair
     /// @return std::pair<Id, Id>, The street's node pair
     const std::pair<Id, Id>& nodePair() const { return m_nodePair; }
     /// @brief  Get the number of agents on the street
     /// @return Size, The number of agents on the street
-    Size nAgents() const { return m_exitQueue.size() + m_waitingAgents.size(); }
+    Size nAgents() const;
     /// @brief Get the street's density in \f$m^{-1}\f$
     /// @return double, The street's density
     double density() const { return nAgents() / (m_len * m_nLanes); }
@@ -180,14 +185,17 @@ namespace dsm {
     /// @brief Get the street's number of lanes
     /// @return int16_t The street's number of lanes
     int16_t nLanes() const { return m_nLanes; }
+    /// @brief Get the number of agents on all queues
+    /// @return Size The number of agents on all queues
+    Size nExitingAgents() const;
 
     virtual void addAgent(Id agentId);
     /// @brief Add an agent to the street's queue
     /// @param agentId The id of the agent to add to the street's queue
     /// @throw std::runtime_error If the street's queue is full
-    void enqueue(Id agentId);
+    void enqueue(Id agentId, size_t index);
     /// @brief Remove an agent from the street's queue
-    virtual std::optional<Id> dequeue();
+    virtual std::optional<Id> dequeue(size_t index);
     /// @brief Check if the street is a spire
     /// @return bool True if the street is a spire, false otherwise
     virtual bool isSpire() const { return false; };
@@ -203,7 +211,12 @@ namespace dsm {
         m_id{id},
         m_capacity{street.capacity()},
         m_transportCapacity{street.transportCapacity()},
-        m_nLanes{street.nLanes()} {}
+        m_nLanes{street.nLanes()} {
+    m_exitQueues.resize(street.nLanes());
+    for (auto i{0}; i < street.nLanes(); ++i) {
+      m_exitQueues.push_back(dsm::queue<Size>());
+    }
+  }
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
@@ -215,7 +228,9 @@ namespace dsm {
         m_id{index},
         m_capacity{1},
         m_transportCapacity{1},
-        m_nLanes{1} {}
+        m_nLanes{1} {
+    m_exitQueues.push_back(dsm::queue<Size>());
+  }
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
@@ -227,7 +242,9 @@ namespace dsm {
         m_id{id},
         m_capacity{capacity},
         m_transportCapacity{1},
-        m_nLanes{1} {}
+        m_nLanes{1} {
+    m_exitQueues.push_back(dsm::queue<Size>());
+  }
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
@@ -241,6 +258,7 @@ namespace dsm {
         m_transportCapacity{1},
         m_nLanes{1} {
     this->setMaxSpeed(maxSpeed);
+    m_exitQueues.push_back(dsm::queue<Size>());
   }
 
   template <typename Id, typename Size>
@@ -262,15 +280,18 @@ namespace dsm {
     this->setCapacity(len * nLanes / 5);
     this->setNLanes(nLanes);
     this->setTransportCapacity(nLanes);
+    m_exitQueues.resize(nLanes);
+    for (auto i{0}; i < nLanes; ++i) {
+      m_exitQueues.push_back(dsm::queue<Size>());
+    }
   }
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Street<Id, Size>::setLength(double len) {
-    if (len < 0.) {
-      throw std::invalid_argument(
-          buildLog(std::format("The length of a street ({}) cannot be negative.", len)));
-    }
+    assert((void(std::format("The length of the street {} must be greater than 0",
+                             static_cast<int>(m_id))),
+            len > 0.));
     m_len = len;
   }
   template <typename Id, typename Size>
@@ -316,43 +337,62 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Street<Id, Size>::addAgent(Id agentId) {
-    if (m_waitingAgents.contains(agentId)) {
-      throw std::runtime_error(
-          buildLog(std::format("Agent with id {} is already on the street.", agentId)));
+  Size Street<Id, Size>::nAgents() const {
+    Size nAgents{static_cast<Size>(m_waitingAgents.size())};
+    for (const auto& queue : m_exitQueues) {
+      nAgents += queue.size();
     }
-    for (auto const& id : m_exitQueue) {
-      if (id == agentId) {
-        throw std::runtime_error(
-            buildLog(std::format("Agent with id {} is already on the street.", agentId)));
+    return nAgents;
+  }
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  Size Street<Id, Size>::nExitingAgents() const {
+    Size nAgents{0};
+    for (const auto& queue : m_exitQueues) {
+      nAgents += queue.size();
+    }
+    return nAgents;
+  }
+
+  template <typename Id, typename Size>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
+  void Street<Id, Size>::addAgent(Id agentId) {
+    assert((void(std::format("Agent with id {} is not on the street.", agentId)),
+            !m_waitingAgents.contains(agentId)));
+    for (auto const& queue : m_exitQueues) {
+      for (auto const& id : queue) {
+        if (id == agentId) {
+          throw std::runtime_error(buildLog(
+              std::format("Agent with id {} is already on the street.", agentId)));
+        }
       }
     }
     m_waitingAgents.insert(agentId);
   }
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Street<Id, Size>::enqueue(Id agentId) {
-    if (!m_waitingAgents.contains(agentId)) {
-      throw std::runtime_error(
-          buildLog(std::format("Agent with id {} is not on the street.", agentId)));
-    }
-    for (auto const& id : m_exitQueue) {
-      if (id == agentId) {
-        throw std::runtime_error(
-            buildLog(std::format("Agent with id {} is already on the street.", agentId)));
+  void Street<Id, Size>::enqueue(Id agentId, size_t index) {
+    assert((void(std::format("Agent with id {} is not on the street.", agentId)),
+            m_waitingAgents.contains(agentId)));
+    for (auto const& queue : m_exitQueues) {
+      for (auto const& id : queue) {
+        if (id == agentId) {
+          throw std::runtime_error(buildLog(
+              std::format("Agent with id {} is already on the queue.", agentId)));
+        }
       }
     }
     m_waitingAgents.erase(agentId);
-    m_exitQueue.push(agentId);
+    m_exitQueues[index].push(agentId);
   }
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  std::optional<Id> Street<Id, Size>::dequeue() {
-    if (m_exitQueue.empty()) {
+  std::optional<Id> Street<Id, Size>::dequeue(size_t index) {
+    if (m_exitQueues[index].empty()) {
       return std::nullopt;
     }
-    Id id = m_exitQueue.front();
-    m_exitQueue.pop();
+    Id id = m_exitQueues[index].front();
+    m_exitQueues[index].pop();
     return id;
   }
 
@@ -407,7 +447,7 @@ namespace dsm {
     int meanFlow();
     /// @brief Remove an agent from the street's queue
     /// @return std::optional<Id> The id of the agent removed from the street's queue
-    std::optional<Id> dequeue() override;
+    std::optional<Id> dequeue(size_t index) override;
     /// @brief Check if the street is a spire
     /// @return bool True if the street is a spire, false otherwise
     bool isSpire() const override { return true; };
@@ -474,8 +514,8 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  std::optional<Id> SpireStreet<Id, Size>::dequeue() {
-    std::optional<Id> id = Street<Id, Size>::dequeue();
+  std::optional<Id> SpireStreet<Id, Size>::dequeue(size_t index) {
+    std::optional<Id> id = Street<Id, Size>::dequeue(index);
     if (id.has_value()) {
       ++m_agentCounterOut;
     }

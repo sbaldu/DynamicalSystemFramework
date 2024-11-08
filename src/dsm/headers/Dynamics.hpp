@@ -427,70 +427,65 @@ namespace dsm {
       const Id streetId,
       const std::unique_ptr<Street<Id, Size>>& pStreet,
       bool reinsert_agents) {
-    if (m_uniformDist(m_generator) > m_maxFlowPercentage || pStreet->queue().empty()) {
-      return;
-    }
-    const auto agentId{pStreet->queue().front()};
-    if (m_agents[agentId]->delay() > 0) {
-      return;
-    }
-    if (m_dataUpdatePeriod.has_value()) {
-      if (m_time % m_dataUpdatePeriod.value() == 0) {
-        //m_streetTails[streetId] += pStreet->queue().size();
-        m_streetTails[streetId] += pStreet->waitingAgents().size();
+    for (auto queueIndex = 0; queueIndex < pStreet->nLanes(); ++queueIndex) {
+      if (m_uniformDist(m_generator) > m_maxFlowPercentage ||
+          pStreet->queue(queueIndex).empty()) {
+        continue;
       }
-    }
-    m_agents[agentId]->setSpeed(0.);
-    const auto& destinationNode{this->m_graph.nodeSet()[pStreet->nodePair().second]};
-    if (destinationNode->isFull()) {
-      return;
-    }
-    if (destinationNode->isTrafficLight()) {
-      auto& tl = dynamic_cast<TrafficLight<Id, Size, Delay>&>(*destinationNode);
-      if (!tl.isGreen(streetId)) {
+      const auto agentId{pStreet->queue(queueIndex).front()};
+      if (m_agents[agentId]->delay() > 0) {
+        continue;
+      }
+      m_agents[agentId]->setSpeed(0.);
+      const auto& destinationNode{this->m_graph.nodeSet()[pStreet->nodePair().second]};
+      if (destinationNode->isFull()) {
+        continue;
+      }
+      if (destinationNode->isTrafficLight()) {
+        auto& tl = dynamic_cast<TrafficLight<Id, Size, Delay>&>(*destinationNode);
+        if (!tl.isGreen(streetId)) {
+          continue;
+        }
+      }
+      if (destinationNode->id() ==
+          m_itineraries[m_agents[agentId]->itineraryId()]->destination()) {
+        pStreet->dequeue(queueIndex);
+        m_travelTimes.push_back(m_agents[agentId]->time());
+        if (reinsert_agents) {
+          // take last agent id in map
+          Agent<Id, Size, Delay> newAgent{static_cast<Id>(m_agents.rbegin()->first + 1),
+                                          m_agents[agentId]->itineraryId(),
+                                          m_agents[agentId]->srcNodeId().value()};
+          if (m_agents[agentId]->srcNodeId().has_value()) {
+            newAgent.setSourceNodeId(this->m_agents[agentId]->srcNodeId().value());
+          }
+          this->removeAgent(agentId);
+          this->addAgent(newAgent);
+        } else {
+          this->removeAgent(agentId);
+        }
         return;
       }
-    }
-    if (destinationNode->id() ==
-        m_itineraries[m_agents[agentId]->itineraryId()]->destination()) {
-      pStreet->dequeue();
-      m_travelTimes.push_back(m_agents[agentId]->time());
-      if (reinsert_agents) {
-        // take last agent id in map
-        Agent<Id, Size, Delay> newAgent{static_cast<Id>(m_agents.rbegin()->first + 1),
-                                        m_agents[agentId]->itineraryId(),
-                                        m_agents[agentId]->srcNodeId().value()};
-        if (m_agents[agentId]->srcNodeId().has_value()) {
-          newAgent.setSourceNodeId(this->m_agents[agentId]->srcNodeId().value());
+      const auto& nextStreet{m_graph.streetSet()[m_agentNextStreetId[agentId]]};
+      if (nextStreet->isFull()) {
+        continue;
+      }
+      pStreet->dequeue(queueIndex);
+      assert(destinationNode->id() == nextStreet->nodePair().first);
+      if (destinationNode->isIntersection()) {
+        auto& intersection = dynamic_cast<Intersection<Id, Size>&>(*destinationNode);
+        auto delta = nextStreet->angle() - pStreet->angle();
+        if (delta > std::numbers::pi) {
+          delta -= 2 * std::numbers::pi;
+        } else if (delta < -std::numbers::pi) {
+          delta += 2 * std::numbers::pi;
         }
-        this->removeAgent(agentId);
-        this->addAgent(newAgent);
-      } else {
-        this->removeAgent(agentId);
+        m_increaseTurnCounts(streetId, delta);
+        intersection.addAgent(delta, agentId);
+      } else if (destinationNode->isRoundabout()) {
+        auto& roundabout = dynamic_cast<Roundabout<Id, Size>&>(*destinationNode);
+        roundabout.enqueue(agentId);
       }
-      return;
-    }
-    const auto& nextStreet{m_graph.streetSet()[this->m_nextStreetId(
-        agentId, destinationNode->id(), streetId)]};
-    if (nextStreet->isFull()) {
-      return;
-    }
-    pStreet->dequeue();
-    assert(destinationNode->id() == nextStreet->nodePair().first);
-    if (destinationNode->isIntersection()) {
-      auto& intersection = dynamic_cast<Intersection<Id, Size>&>(*destinationNode);
-      auto delta = nextStreet->angle() - pStreet->angle();
-      if (delta > std::numbers::pi) {
-        delta -= 2 * std::numbers::pi;
-      } else if (delta < -std::numbers::pi) {
-        delta += 2 * std::numbers::pi;
-      }
-      m_increaseTurnCounts(streetId, delta);
-      intersection.addAgent(delta, agentId);
-      m_agentNextStreetId.emplace(agentId, nextStreet->id());
-    } else if (destinationNode->isRoundabout()) {
-      auto& roundabout = dynamic_cast<Roundabout<Id, Size>&>(*destinationNode);
-      roundabout.enqueue(agentId);
     }
   }
 
@@ -569,7 +564,42 @@ namespace dsm {
         }
         agent->decrementDelay();
         if (agent->delay() == 0) {
-          street->enqueue(agentId);
+          auto const nLanes = street->nLanes();
+          if (this->m_itineraries[agent->itineraryId()]->destination() ==
+              street->nodePair().second) {
+            std::uniform_int_distribution<size_t> laneDist{
+                0, static_cast<size_t>(nLanes - 1)};
+            street->enqueue(agentId, laneDist(m_generator));
+          } else {
+            auto const nextStreetId =
+                this->m_nextStreetId(agentId, street->nodePair().second, street->id());
+            auto const& pNextStreet{m_graph.streetSet()[nextStreetId]};
+            m_agentNextStreetId.emplace(agentId, nextStreetId);
+            if (nLanes == 1) {
+              street->enqueue(agentId, 0);
+            } else {
+              double deltaAngle{pNextStreet->angle() - street->angle()};
+              if (deltaAngle > std::numbers::pi) {
+                deltaAngle -= 2 * std::numbers::pi;
+              } else if (deltaAngle < -std::numbers::pi) {
+                deltaAngle += 2 * std::numbers::pi;
+              }
+              if (std::abs(deltaAngle) < std::numbers::pi) {
+                // Lanes are counted as 0 is the far right lane
+                if (deltaAngle < 0.) {                   // Right
+                  street->enqueue(agentId, 0);           // Always the first lane
+                } else if (deltaAngle > 0.) {            // Left
+                  street->enqueue(agentId, nLanes - 1);  // Always the last lane
+                } else {                                 // Straight
+                  std::uniform_int_distribution<size_t> laneDist{
+                      0, static_cast<size_t>(nLanes - 2)};
+                  street->enqueue(agentId, laneDist(m_generator));
+                }
+              } else {                                 // U turn
+                street->enqueue(agentId, nLanes - 1);  // Always the last lane
+              }
+            }
+          }
         }
       } else if (!agent->streetId().has_value()) {
         assert(agent->srcNodeId().has_value());
@@ -752,15 +782,20 @@ namespace dsm {
   void Dynamics<Id, Size, Delay>::evolve(bool reinsert_agents) {
     // move the first agent of each street queue, if possible, putting it in the next node
     for (const auto& [streetId, pStreet] : m_graph.streetSet()) {
-      for (auto i = 0; i < pStreet->transportCapacity(); ++i) {
-        this->m_evolveStreet(streetId, pStreet, reinsert_agents);
+      if (m_dataUpdatePeriod.has_value()) {
+        if (m_time % m_dataUpdatePeriod.value() == 0) {
+          //m_streetTails[streetId] += pStreet->queue().size();
+          m_streetTails[streetId] += pStreet->waitingAgents().size();
+        }
       }
+      this->m_evolveStreet(streetId, pStreet, reinsert_agents);
     }
     // move all the agents from each node, if possible
     for (const auto& [nodeId, pNode] : m_graph.nodeSet()) {
-      for (auto i = 0; i < pNode->transportCapacity(); ++i) {
-        this->m_evolveNode(nodeId, pNode);
-      }
+      this->m_evolveNode(nodeId, pNode);
+      // for (auto i = 0; i < pNode->transportCapacity(); ++i) {
+      //   this->m_evolveNode(nodeId, pNode);
+      // }
     }
     // cycle over agents and update their times
     this->m_evolveAgents();
@@ -803,10 +838,14 @@ namespace dsm {
       for (const auto& [streetId, _] : m_graph.adjMatrix().getCol(nodeId, true)) {
         if (streetPriorities.contains(streetId)) {
           greenSum += m_streetTails[streetId];
-          greenQueue += m_graph.streetSet()[streetId]->queue().size();
+          for (auto const& queue : m_graph.streetSet()[streetId]->exitQueues()) {
+            greenQueue += queue.size();
+          }
         } else {
           redSum += m_streetTails[streetId];
-          redQueue += m_graph.streetSet()[streetId]->queue().size();
+          for (auto const& queue : m_graph.streetSet()[streetId]->exitQueues()) {
+            redQueue += queue.size();
+          }
         }
       }
       const Delay delta =
@@ -1075,25 +1114,23 @@ namespace dsm {
                                                     const TContainer& src_weights,
                                                     const TContainer& dst_weights) {
     // Check if the weights are normalized
-    if (std::abs(std::accumulate(src_weights.begin(),
-                                 src_weights.end(),
-                                 0.,
-                                 [](double sum, const std::pair<Id, double>& p) {
-                                   return sum + p.second;
-                                 }) -
-                 1.) > std::numeric_limits<double>::epsilon()) {
-      throw std::invalid_argument(
-          buildLog("The source weights are not normalized (sum is {})."));
+    {
+      auto const sum{std::accumulate(
+          src_weights.begin(),
+          src_weights.end(),
+          0.,
+          [](double sum, const std::pair<Id, double>& p) { return sum + p.second; })};
+      assert((void("The source weights are not normalized"),
+              std::abs(sum - 1.) < std::numeric_limits<double>::epsilon()));
     }
-    if (std::abs(std::accumulate(dst_weights.begin(),
-                                 dst_weights.end(),
-                                 0.,
-                                 [](double sum, const std::pair<Id, double>& p) {
-                                   return sum + p.second;
-                                 }) -
-                 1.) > std::numeric_limits<double>::epsilon()) {
-      throw std::invalid_argument(
-          buildLog("The destination weights are not normalized (sum is {})."));
+    {
+      auto const sum{std::accumulate(
+          dst_weights.begin(),
+          dst_weights.end(),
+          0.,
+          [](double sum, const std::pair<Id, double>& p) { return sum + p.second; })};
+      assert((void("The destination weights are not normalized"),
+              std::abs(sum - 1.) < std::numeric_limits<double>::epsilon()));
     }
     while (nAgents > 0) {
       Id srcId{0}, dstId{0};
@@ -1426,7 +1463,7 @@ namespace dsm {
     }
     double meanSpeed{0.};
     Size n{0};
-    if (street->queue().size() == 0) {
+    if (street->nExitingAgents() == 0) {
       n = static_cast<Size>(street->waitingAgents().size());
       double alpha{this->m_minSpeedRateo / street->capacity()};
       meanSpeed = street->maxSpeed() * n * (1. - 0.5 * alpha * (n - 1.));
@@ -1435,9 +1472,11 @@ namespace dsm {
         meanSpeed += this->m_agents.at(agentId)->speed();
         ++n;
       }
-      for (const auto& agentId : street->queue()) {
-        meanSpeed += this->m_agents.at(agentId)->speed();
-        ++n;
+      for (auto const& queue : street->exitQueues()) {
+        for (const auto& agentId : queue) {
+          meanSpeed += this->m_agents.at(agentId)->speed();
+          ++n;
+        }
       }
     }
     const auto& node = this->m_graph.nodeSet().at(street->nodePair().second);

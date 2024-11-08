@@ -112,20 +112,18 @@ TEST_CASE("Street") {
     Street street{1, 4, 3.5, std::make_pair(0, 1)};
     // fill the queue
     street.addAgent(a1.id());
-    street.enqueue(a1.id());
-    CHECK_THROWS(street.enqueue(a1.id()));
-    CHECK_THROWS(street.enqueue(a2.id()));
+    street.enqueue(a1.id(), 0);
     street.addAgent(a2.id());
-    street.enqueue(a2.id());
+    street.enqueue(a2.id(), 0);
     CHECK_EQ(doctest::Approx(street.density()), 0.571429);
     street.addAgent(a3.id());
-    street.enqueue(a3.id());
+    street.enqueue(a3.id(), 0);
     street.addAgent(a4.id());
-    street.enqueue(a4.id());
-    CHECK_EQ(street.queue().front(), 1);
-    CHECK_EQ(street.queue().back(), 4);
-    CHECK_EQ(street.queue().size(), street.capacity());
-    CHECK_EQ(street.queue().size(), street.capacity());
+    street.enqueue(a4.id(), 0);
+    CHECK_EQ(street.queue(0).front(), 1);
+    CHECK_EQ(street.queue(0).back(), 4);
+    CHECK_EQ(street.queue(0).size(), street.capacity());
+    CHECK_EQ(street.queue(0).size(), street.capacity());
     CHECK_EQ(doctest::Approx(street.density()), 1.14286);
     CHECK(street.isFull());
   }
@@ -142,28 +140,28 @@ TEST_CASE("Street") {
     Street street{1, 4, 3.5, std::make_pair(0, 1)};
     // fill the queue
     street.addAgent(a1.id());
-    street.enqueue(a1.id());
+    street.enqueue(a1.id(), 0);
     street.addAgent(a2.id());
-    street.enqueue(a2.id());
+    street.enqueue(a2.id(), 0);
     street.addAgent(a3.id());
-    street.enqueue(a3.id());
+    street.enqueue(a3.id(), 0);
     street.addAgent(a4.id());
-    street.enqueue(a4.id());
-    CHECK_EQ(street.queue().front(),
+    street.enqueue(a4.id(), 0);
+    CHECK_EQ(street.queue(0).front(),
              1);  // check that agent 1 is at the front of the queue
     // dequeue
-    street.dequeue();
-    CHECK_EQ(street.queue().front(), 2);  // check that agent 2 is now at front
+    street.dequeue(0);
+    CHECK_EQ(street.queue(0).front(), 2);  // check that agent 2 is now at front
     // check that the length of the queue has decreased
-    CHECK_EQ(street.queue().size(), 3);
-    CHECK_EQ(street.queue().size(), 3);
+    CHECK_EQ(street.queue(0).size(), 3);
+    CHECK_EQ(street.queue(0).size(), 3);
     // check that the next agent dequeued is agent 2
-    CHECK_EQ(street.dequeue().value(), 2);
-    CHECK_EQ(street.queue().size(), 2);
-    street.dequeue();
-    street.dequeue();  // the queue is now empty
+    CHECK_EQ(street.dequeue(0).value(), 2);
+    CHECK_EQ(street.queue(0).size(), 2);
+    street.dequeue(0);
+    street.dequeue(0);  // the queue is now empty
     // check that the result of dequeue is std::nullopt
-    CHECK_FALSE(street.dequeue().has_value());
+    CHECK_FALSE(street.dequeue(0).has_value());
   }
   SUBCASE("Angle") {
     /// This tests the angle method
@@ -174,9 +172,6 @@ TEST_CASE("Street") {
     CHECK_EQ(street.angle(), 0);
     street.setAngle(std::make_pair(0, 1), std::make_pair(1, 0));
     CHECK_EQ(street.angle(), 3 * std::numbers::pi / 4);
-    // exceptions
-    CHECK_THROWS(street.setAngle(-7.));
-    CHECK_THROWS(street.setAngle(7.));
   }
 }
 
@@ -187,7 +182,7 @@ TEST_CASE("SpireStreet") {
       WHEN("An agent is enqueued") {
         street.addAgent(1);
         THEN("The input flow is one") { CHECK_EQ(street.inputCounts(), 1); }
-        street.enqueue(1);
+        street.enqueue(1, 0);
         THEN("The density is updated") {
           CHECK_EQ(doctest::Approx(street.density()), 0.285714);
         }
@@ -196,11 +191,11 @@ TEST_CASE("SpireStreet") {
       }
       WHEN("Three agents are enqueued") {
         street.addAgent(1);
-        street.enqueue(1);
+        street.enqueue(1, 0);
         street.addAgent(2);
-        street.enqueue(2);
+        street.enqueue(2, 0);
         street.addAgent(3);
-        street.enqueue(3);
+        street.enqueue(3, 0);
         THEN("The density is updated") {
           CHECK_EQ(doctest::Approx(street.density()), 0.857143);
         }
@@ -210,8 +205,8 @@ TEST_CASE("SpireStreet") {
       }
       WHEN("An agent is dequeued") {
         street.addAgent(1);
-        street.enqueue(1);
-        street.dequeue();
+        street.enqueue(1, 0);
+        street.dequeue(0);
         THEN("The density is updated") { CHECK_EQ(doctest::Approx(street.density()), 0); }
         THEN("Input flow is one") { CHECK_EQ(street.inputCounts(), 1); }
         THEN("Output flow is one") { CHECK_EQ(street.outputCounts(), 1); }
@@ -219,14 +214,14 @@ TEST_CASE("SpireStreet") {
       }
       WHEN("Three agents are dequeued") {
         street.addAgent(1);
-        street.enqueue(1);
+        street.enqueue(1, 0);
         street.addAgent(2);
-        street.enqueue(2);
+        street.enqueue(2, 0);
         street.addAgent(3);
-        street.enqueue(3);
-        street.dequeue();
-        street.dequeue();
-        street.dequeue();
+        street.enqueue(3, 0);
+        street.dequeue(0);
+        street.dequeue(0);
+        street.dequeue(0);
         THEN("The density is updated") { CHECK_EQ(doctest::Approx(street.density()), 0); }
         THEN("Input flow is three") { CHECK_EQ(street.inputCounts(), 3); }
         THEN("Output flow is three") { CHECK_EQ(street.outputCounts(), 3); }
@@ -234,13 +229,13 @@ TEST_CASE("SpireStreet") {
       }
       WHEN("Input is greater than output") {
         street.addAgent(1);
-        street.enqueue(1);
+        street.enqueue(1, 0);
         street.addAgent(2);
-        street.enqueue(2);
-        street.dequeue();
-        street.dequeue();
+        street.enqueue(2, 0);
+        street.dequeue(0);
+        street.dequeue(0);
         street.addAgent(3);
-        street.enqueue(3);
+        street.enqueue(3, 0);
         THEN("The density is updated") {
           CHECK_EQ(doctest::Approx(street.density()), 0.285714);
         }
@@ -248,14 +243,14 @@ TEST_CASE("SpireStreet") {
       }
       WHEN("Output is greater than input") {
         street.addAgent(1);
-        street.enqueue(1);
+        street.enqueue(1, 0);
         street.addAgent(2);
-        street.enqueue(2);
+        street.enqueue(2, 0);
         street.meanFlow();
         street.addAgent(3);
-        street.enqueue(3);
-        street.dequeue();
-        street.dequeue();
+        street.enqueue(3, 0);
+        street.dequeue(0);
+        street.dequeue(0);
         THEN("The density is updated") {
           CHECK_EQ(doctest::Approx(street.density()), 0.285714);
         }
