@@ -40,7 +40,6 @@ namespace dsm {
     unsigned int m_time;  // Travelled time
 
   public:
-    Agent() = delete;
     /// @brief Construct a new Agent object
     /// @param id The agent's id
     /// @param itineraryId The agent's itinerary

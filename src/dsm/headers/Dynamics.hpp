@@ -111,7 +111,6 @@ namespace dsm {
     void m_updatePath(const std::unique_ptr<Itinerary<Id>>& pItinerary);
 
   public:
-    Dynamics() = delete;
     /// @brief Construct a new Dynamics object
     /// @param graph The graph representing the network
     Dynamics(Graph<Id, Size>& graph);
@@ -135,6 +134,12 @@ namespace dsm {
     /// @details The maximum flow percentage is the percentage of the maximum flow that a street can transmit. Default is 1 (100%).
     /// @throw std::invalid_argument If the maximum flow percentage is not between 0 and 1
     void setMaxFlowPercentage(double maxFlowPercentage);
+    /// @brief Set the dynamics destination nodes auto-generating itineraries
+    /// @param destinationNodes The destination nodes
+    /// @param updatePaths If true, the paths are updated
+    /// @throws std::invalid_argument Ifone or more destination nodes do not exist
+    void setDestinationNodes(const std::span<Id>& destinationNodes,
+                             bool updatePaths = true);
     /// @brief Set the speed of an agent
     /// @details This is a pure-virtual function, it must be implemented in the derived classes
     /// @param agentId The id of the agent
@@ -706,6 +711,23 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
+  void Dynamics<Id, Size, Delay>::setDestinationNodes(
+      const std::span<Id>& destinationNodes, bool updatePaths) {
+    for (const auto& nodeId : destinationNodes) {
+      if (!m_graph.nodeSet().contains(nodeId)) {
+        throw std::invalid_argument(
+            buildLog(std::format("Node with id {} not found", nodeId)));
+      }
+      this->addItinerary(Itinerary<Id>{nodeId, nodeId});
+    }
+    if (updatePaths) {
+      this->updatePaths();
+    }
+  }
+
+  template <typename Id, typename Size, typename Delay>
+    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
+             is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::updatePaths() {
     std::vector<std::thread> threads;
     threads.reserve(m_itineraries.size());
@@ -1008,7 +1030,9 @@ namespace dsm {
         0, static_cast<Size>(this->m_graph.streetSet().size() - 1)};
     for (Size i{0}; i < nAgents; ++i) {
       if (randomItinerary) {
-        itineraryId = itineraryDist(this->m_generator);
+        auto itineraryIt{this->m_itineraries.begin()};
+        std::advance(itineraryIt, itineraryDist(this->m_generator));
+        itineraryId = itineraryIt->first;
       }
       Id agentId{0};
       if (!this->m_agents.empty()) {
@@ -1339,7 +1363,6 @@ namespace dsm {
     double m_speedFluctuationSTD;
 
   public:
-    FirstOrderDynamics() = delete;
     /// @brief Construct a new First Order Dynamics object
     /// @param graph, The graph representing the network
     FirstOrderDynamics(Graph<Id, Size>& graph)

@@ -43,7 +43,6 @@ namespace dsm {
     Size m_transportCapacity;
 
   public:
-    Street() = delete;
     /// @brief Construct a new Street object starting from an existing street
     /// @details The new street has different id but same capacity, length, speed limit, and node pair as the
     ///          existing street.
@@ -311,7 +310,6 @@ namespace dsm {
     Size m_agentCounterOut;
 
   public:
-    SpireStreet() = delete;
     /// @brief Construct a new SpireStreet object starting from an existing street
     /// @param id The street's id
     /// @param street The existing street
