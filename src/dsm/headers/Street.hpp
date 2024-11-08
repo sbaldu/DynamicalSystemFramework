@@ -273,7 +273,8 @@ namespace dsm {
         m_len{len},
         m_angle{0.},
         m_id{id},
-        m_capacity{capacity}
+        m_capacity{capacity},
+        m_transportCapacity{1}
 
   {
     this->setMaxSpeed(maxSpeed);

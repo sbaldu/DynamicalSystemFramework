@@ -363,14 +363,17 @@ namespace dsm {
     for (Id nodeId = 0; nodeId < m_nodes.size(); ++nodeId) {
       value = 0;
       for (const auto& [streetId, _] : m_adjacency.getCol(nodeId, true)) {
-        value += m_streets[streetId]->transportCapacity();
+        value += m_streets[streetId]->nLanes() * m_streets[streetId]->transportCapacity();
       }
       m_nodes[nodeId]->setCapacity(value);
       value = 0;
       for (const auto& [streetId, _] : m_adjacency.getRow(nodeId, true)) {
-        value += m_streets[streetId]->transportCapacity();
+        value += m_streets[streetId]->nLanes() * m_streets[streetId]->transportCapacity();
       }
       m_nodes[nodeId]->setTransportCapacity(value);
+      if (m_nodes[nodeId]->capacity() == 0) {
+        m_nodes[nodeId]->setCapacity(value);
+      }
     }
   }
 
