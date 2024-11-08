@@ -34,6 +34,7 @@ namespace dsm {
   using TimePoint = long long unsigned int;
 
   /// @brief The Measurement struct represents the mean of a quantity and its standard deviation
+  /// @tparam T The type of the quantity
   /// @param mean The mean
   /// @param std The standard deviation of the sample
   template <typename T>
@@ -279,7 +280,7 @@ namespace dsm {
     void evolve(F f, Tn... args);
 
     /// @brief Get the mean speed of the agents in \f$m/s\f$
-    /// @return Measurement The mean speed of the agents and the standard deviation
+    /// @return Measurement<double> The mean speed of the agents and the standard deviation
     Measurement<double> agentMeanSpeed() const;
     // TODO: implement the following functions
     // We can implement the base version of these functions by cycling over agents... I won't do it for now.
@@ -288,29 +289,29 @@ namespace dsm {
     virtual Measurement<double> streetMeanSpeed() const = 0;
     virtual Measurement<double> streetMeanSpeed(double, bool) const = 0;
     /// @brief Get the mean density of the streets in \f$m^{-1}\f$
-    /// @return Measurement The mean density of the streets and the standard deviation
+    /// @return Measurement<double> The mean density of the streets and the standard deviation
     Measurement<double> streetMeanDensity() const;
     /// @brief Get the mean flow of the streets in \f$s^{-1}\f$
-    /// @return Measurement The mean flow of the streets and the standard deviation
+    /// @return Measurement<double> The mean flow of the streets and the standard deviation
     Measurement<double> streetMeanFlow() const;
     /// @brief Get the mean flow of the streets in \f$s^{-1}\f$
     /// @param threshold The density threshold to consider
     /// @param above If true, the function returns the mean flow of the streets with a density above the threshold, otherwise below
-    /// @return Measurement The mean flow of the streets and the standard deviation
+    /// @return Measurement<double> The mean flow of the streets and the standard deviation
     Measurement<double> streetMeanFlow(double threshold, bool above) const;
     /// @brief Get the mean spire input flow of the streets in \f$s^{-1}\f$
     /// @param resetValue If true, the spire input/output flows are cleared after the computation
-    /// @return Measurement The mean spire input flow of the streets and the standard deviation
+    /// @return Measurement<double> The mean spire input flow of the streets and the standard deviation
     /// @details The spire input flow is computed as the sum of counts over the product of the number of spires and the time delta
     Measurement<double> meanSpireInputFlow(bool resetValue = true);
     /// @brief Get the mean spire output flow of the streets in \f$s^{-1}\f$
     /// @param resetValue If true, the spire output/input flows are cleared after the computation
-    /// @return Measurement The mean spire output flow of the streets and the standard deviation
+    /// @return Measurement<double> The mean spire output flow of the streets and the standard deviation
     /// @details The spire output flow is computed as the sum of counts over the product of the number of spires and the time delta
     Measurement<double> meanSpireOutputFlow(bool resetValue = true);
     /// @brief Get the mean travel time of the agents in \f$s\f$
     /// @param clearData If true, the travel times are cleared after the computation
-    /// @return Measurement The mean travel time of the agents and the standard
+    /// @return Measurement<double> The mean travel time of the agents and the standard
     Measurement<double> meanTravelTime(bool clearData = false);
     /// @brief Get the turn counts of the agents
     /// @return const std::array<unsigned long long, 3>& The turn counts
