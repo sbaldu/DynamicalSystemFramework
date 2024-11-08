@@ -44,7 +44,7 @@ namespace dsm {
 
     Measurement(T mean, T std) : mean{mean}, std{std} {}
     Measurement(std::span<T> data) {
-	  float x_mean = T{}, x2_mean = T{};
+	  auto x_mean = T{}, x2_mean = T{};
 	  if (data.empty()) {
 		return;
 	  }
