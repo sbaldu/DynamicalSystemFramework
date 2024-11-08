@@ -279,15 +279,6 @@ namespace dsm {
     /// @brief Reset the simulation time
     void resetTime();
 
-    /// @brief Evolve the simulation
-    /// @tparam F The type of the function to call
-    /// @tparam ...Tn The types of the arguments of the function
-    /// @param f The function to call
-    /// @param ...args The arguments of the function
-    template <typename F, typename... Tn>
-      requires std::is_invocable_v<F, Tn...>
-    void evolve(F f, Tn... args);
-
     /// @brief Get the mean speed of the agents in \f$m/s\f$
     /// @return Measurement<double> The mean speed of the agents and the standard deviation
     Measurement<double> agentMeanSpeed() const;
@@ -1200,15 +1191,6 @@ namespace dsm {
   void Dynamics<Id, Size, Delay>::resetTime() {
     m_time = 0;
   }
-
-  // template <typename Id, typename Size, typename Delay>
-  //   requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-  //            is_numeric_v<Delay>)
-  // template <typename F, typename... Tn>
-  //   requires(std::is_invocable_v<F, Tn...>)
-  // void Dynamics<Id, Size, Delay>::evolve(F f, Tn... args) {
-  //   f(args...);
-  // }
 
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
