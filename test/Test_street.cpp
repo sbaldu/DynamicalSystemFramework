@@ -9,7 +9,7 @@
 #include "doctest.h"
 
 using Agent = dsm::Agent<uint16_t, uint16_t, double>;
-using Node = dsm::Node<uint16_t, uint16_t>;
+using Intersection = dsm::Intersection<uint16_t, uint16_t>;
 using Street = dsm::Street<uint16_t, uint16_t>;
 using SpireStreet = dsm::SpireStreet<uint16_t, uint16_t>;
 
@@ -90,7 +90,7 @@ TEST_CASE("Street") {
         }
       }
       WHEN("The node pair is set suing nodes") {
-        Node node1{4}, node2{5};
+        Intersection node1{4}, node2{5};
         street.setNodePair(node1, node2);
         THEN("The node pair is set correctly") {
           CHECK_EQ(street.nodePair().first, 4);

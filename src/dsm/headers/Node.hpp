@@ -23,12 +23,12 @@
 #include "../utility/queue.hpp"
 
 namespace dsm {
-  /// @brief The NodeConcept class represents the concept of a node in the network.
+  /// @brief The Node class represents the concept of a node in the network.
   /// @tparam Id The type of the node's id
   /// @tparam Size The type of the node's capacity
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  class NodeConcept {
+  class Node {
   protected:
     Id m_id;
     std::optional<std::pair<double, double>> m_coords;
@@ -36,16 +36,16 @@ namespace dsm {
     Size m_transportCapacity;
 
   public:
-    NodeConcept() = default;
+    Node() = default;
     /// @brief Construct a new Node object with capacity 1
     /// @param id The node's id
-    explicit NodeConcept(Id id) : m_id{id}, m_capacity{1}, m_transportCapacity{1} {}
+    explicit Node(Id id) : m_id{id}, m_capacity{1}, m_transportCapacity{1} {}
     /// @brief Construct a new Node object with capacity 1
     /// @param id The node's id
     /// @param coords A std::pair containing the node's coordinates (lat, lon)
-    NodeConcept(Id id, std::pair<double, double> coords)
+    Node(Id id, std::pair<double, double> coords)
         : m_id{id}, m_coords{std::move(coords)}, m_capacity{1}, m_transportCapacity{1} {}
-    virtual ~NodeConcept() = default;
+    virtual ~Node() = default;
 
     /// @brief Set the node's id
     /// @param id The node's id
@@ -78,11 +78,11 @@ namespace dsm {
     virtual bool isTrafficLight() const noexcept { return false; }
     virtual bool isRoundabout() const noexcept { return false; }
   };
-  /// @brief The Node class represents a node in the network.
+  /// @brief The Intersection class represents a node in a road network.
   /// @tparam Id The type of the node's id. It must be an unsigned integral type.
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  class Node : public NodeConcept<Id, Size> {
+  class Intersection : public Node<Id, Size> {
   protected:
     std::multimap<int16_t, Id> m_agents;
     std::set<Id>
@@ -90,16 +90,16 @@ namespace dsm {
     Size m_agentCounter;
 
   public:
-    Node() = default;
-    /// @brief Construct a new Node object
+    Intersection() = default;
+    /// @brief Construct a new Intersection object
     /// @param id The node's id
-    explicit Node(Id id) : NodeConcept<Id, Size>{id} {};
-    /// @brief Construct a new Node object
+    explicit Intersection(Id id) : Node<Id, Size>{id} {};
+    /// @brief Construct a new Intersection object
     /// @param id The node's id
     /// @param coords A std::pair containing the node's coordinates
-    Node(Id id, std::pair<double, double> coords) : NodeConcept<Id, Size>{id, coords} {};
+    Intersection(Id id, std::pair<double, double> coords) : Node<Id, Size>{id, coords} {};
 
-    virtual ~Node() = default;
+    virtual ~Intersection() = default;
 
     /// @brief Set the node's capacity
     /// @param capacity The node's capacity
@@ -156,21 +156,19 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Node<Id, Size>::setCapacity(Size capacity) {
+  void Intersection<Id, Size>::setCapacity(Size capacity) {
     if (capacity < m_agents.size()) {
-      throw std::runtime_error(buildLog(
-          std::format("Node capacity ({}) is smaller than the current queue size ({}).",
-                      capacity,
-                      m_agents.size())));
+      throw std::runtime_error(
+          buildLog("Intersection capacity is smaller than the current queue size"));
     }
-    NodeConcept<Id, Size>::setCapacity(capacity);
+    Node<Id, Size>::setCapacity(capacity);
   }
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Node<Id, Size>::addAgent(double angle, Id agentId) {
+  void Intersection<Id, Size>::addAgent(double angle, Id agentId) {
     if (m_agents.size() == this->m_capacity) {
-      throw std::runtime_error(buildLog("Node is full."));
+      throw std::runtime_error(buildLog("Intersection is full"));
     }
     for (auto const [angle, id] : m_agents) {
       if (id == agentId) {
@@ -185,9 +183,9 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Node<Id, Size>::addAgent(Id agentId) {
+  void Intersection<Id, Size>::addAgent(Id agentId) {
     if (m_agents.size() == this->m_capacity) {
-      throw std::runtime_error(buildLog("Node is full."));
+      throw std::runtime_error(buildLog("Intersection is full"));
     }
     for (auto const [angle, id] : m_agents) {
       if (id == agentId) {
@@ -205,7 +203,7 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Node<Id, Size>::removeAgent(Id agentId) {
+  void Intersection<Id, Size>::removeAgent(Id agentId) {
     for (auto it{m_agents.begin()}; it != m_agents.end(); ++it) {
       if (it->second == agentId) {
         m_agents.erase(it);
@@ -218,7 +216,7 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  Size Node<Id, Size>::agentCounter() {
+  Size Intersection<Id, Size>::agentCounter() {
     Size copy{m_agentCounter};
     m_agentCounter = 0;
     return copy;
@@ -227,7 +225,7 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              std::unsigned_integral<Delay>)
-  class TrafficLight : public Node<Id, Size> {
+  class TrafficLight : public Intersection<Id, Size> {
   private:
     std::optional<std::pair<Delay, Delay>> m_delay;
     Delay m_counter;
@@ -236,10 +234,11 @@ namespace dsm {
   public:
     /// @brief Construct a new TrafficLight object
     /// @param id The node's id
-    explicit TrafficLight(Id id) : Node<Id, Size>{id}, m_counter{0}, m_phase{0} {};
+    explicit TrafficLight(Id id)
+        : Intersection<Id, Size>{id}, m_counter{0}, m_phase{0} {};
     /// @brief Construct a new TrafficLight object
-    /// @param node A Node object
-    TrafficLight(const NodeConcept<Id, Size>& node);
+    /// @param node A Intersection object
+    TrafficLight(const Node<Id, Size>& node);
 
     /// @brief Set the node's delay
     /// @details This function is used to set the node's delay.
@@ -288,8 +287,8 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              std::unsigned_integral<Delay>)
-  TrafficLight<Id, Size, Delay>::TrafficLight(const NodeConcept<Id, Size>& node)
-      : Node<Id, Size>{node.id()}, m_counter{0}, m_phase{0} {
+  TrafficLight<Id, Size, Delay>::TrafficLight(const Node<Id, Size>& node)
+      : Intersection<Id, Size>{node.id()}, m_counter{0}, m_phase{0} {
     if (node.coords().has_value()) {
       this->setCoords(node.coords().value());
     }
@@ -395,7 +394,7 @@ namespace dsm {
   /// @tparam Size The type of the node's capacity
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  class Roundabout : public NodeConcept<Id, Size> {
+  class Roundabout : public Node<Id, Size> {
   protected:
     dsm::queue<Id> m_agents;
 
@@ -403,15 +402,14 @@ namespace dsm {
     Roundabout() = default;
     /// @brief Construct a new Roundabout object
     /// @param id The node's id
-    explicit Roundabout(Id id) : NodeConcept<Id, Size>{id} {};
+    explicit Roundabout(Id id) : Node<Id, Size>{id} {};
     /// @brief Construct a new Roundabout object
     /// @param id The node's id
     /// @param coords A std::pair containing the node's coordinates
-    Roundabout(Id id, std::pair<double, double> coords)
-        : NodeConcept<Id, Size>{id, coords} {};
+    Roundabout(Id id, std::pair<double, double> coords) : Node<Id, Size>{id, coords} {};
     /// @brief Construct a new Roundabout object
-    /// @param node A Node object
-    Roundabout(const NodeConcept<Id, Size>& node);
+    /// @param node A Intersection object
+    Roundabout(const Node<Id, Size>& node);
 
     virtual ~Roundabout() = default;
 
@@ -435,8 +433,8 @@ namespace dsm {
   };
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  Roundabout<Id, Size>::Roundabout(const NodeConcept<Id, Size>& node)
-      : NodeConcept<Id, Size>{node.id()} {
+  Roundabout<Id, Size>::Roundabout(const Node<Id, Size>& node)
+      : Node<Id, Size>{node.id()} {
     if (node.coords().has_value()) {
       this->setCoords(node.coords().value());
     }

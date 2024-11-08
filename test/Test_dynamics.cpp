@@ -15,7 +15,7 @@ using Street = dsm::Street<uint16_t, uint16_t>;
 using SpireStreet = dsm::SpireStreet<uint16_t, uint16_t>;
 using Agent = dsm::Agent<uint16_t, uint16_t, uint16_t>;
 using Itinerary = dsm::Itinerary<uint16_t>;
-using Node = dsm::Node<uint16_t, uint16_t>;
+using Intersection = dsm::Intersection<uint16_t, uint16_t>;
 using TrafficLight = dsm::TrafficLight<uint16_t, uint16_t, uint16_t>;
 using Roundabout = dsm::Roundabout<uint16_t, uint16_t>;
 using Measurement = dsm::Measurement<float>;
@@ -771,13 +771,13 @@ TEST_CASE("Dynamics") {
     CHECK_EQ(dynamics.graph().streetSet().at(1)->queue().size(), 3);
     CHECK_EQ(dynamics.streetMeanSpeed(1), meanSpeed);
   }
-  SUBCASE("Node priorities") {
+  SUBCASE("Intersection priorities") {
     GIVEN("A dynamics object with five nodes and eight streets") {
-      Node nodeO{0, std::make_pair(0, 0)};
-      Node nodeA{1, std::make_pair(-1, 1)};
-      Node nodeB{2, std::make_pair(1, 1)};
-      Node nodeC{3, std::make_pair(1, -1)};
-      Node nodeD{4, std::make_pair(-1, -1)};
+      Intersection nodeO{0, std::make_pair(0, 0)};
+      Intersection nodeA{1, std::make_pair(-1, 1)};
+      Intersection nodeB{2, std::make_pair(1, 1)};
+      Intersection nodeC{3, std::make_pair(1, -1)};
+      Intersection nodeD{4, std::make_pair(-1, -1)};
       Street sAO{0, 1, 10., 10., std::make_pair(1, 0)};
       Street sBO{1, 1, 10., 10., std::make_pair(2, 0)};
       Street sCO{2, 1, 10., 10., std::make_pair(3, 0)};

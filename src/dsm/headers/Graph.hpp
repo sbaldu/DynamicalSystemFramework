@@ -43,7 +43,7 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   class Graph {
   private:
-    std::unordered_map<Id, std::unique_ptr<NodeConcept<Id, Size>>> m_nodes;
+    std::unordered_map<Id, std::unique_ptr<Node<Id, Size>>> m_nodes;
     std::unordered_map<Id, std::unique_ptr<Street<Id, Size>>> m_streets;
     std::unordered_map<Id, Id> m_nodeMapping;
     SparseMatrix<Id, bool> m_adjacency;
@@ -68,7 +68,8 @@ namespace dsm {
 
     Graph(const Graph<Id, Size>& other) {
       std::for_each(other.m_nodes.begin(), other.m_nodes.end(), [this](const auto& pair) {
-        this->m_nodes.emplace(pair.first, std::make_unique<Node<Id, Size>>(*pair.second));
+        this->m_nodes.emplace(pair.first,
+                              std::make_unique<Intersection<Id, Size>>(*pair.second));
       });
       std::for_each(
           other.m_streets.begin(), other.m_streets.end(), [this](const auto& pair) {
@@ -81,8 +82,8 @@ namespace dsm {
 
     Graph& operator=(const Graph<Id, Size>& other) {
       std::for_each(other.m_nodes.begin(), other.m_nodes.end(), [this](const auto& pair) {
-        this->m_nodes.insert_or_assign(pair.first,
-                                       std::make_unique<Node<Id, Size>>(*pair.second));
+        this->m_nodes.insert_or_assign(
+            pair.first, std::make_unique<Intersection<Id, Size>>(*pair.second));
       });
       std::for_each(
           other.m_streets.begin(), other.m_streets.end(), [this](const auto& pair) {
@@ -139,11 +140,11 @@ namespace dsm {
     void exportMatrix(std::string path = "./matrix.dsm", bool isAdj = true);
 
     /// @brief Add a node to the graph
-    /// @param node A std::unique_ptr to the node to add
-    void addNode(std::unique_ptr<NodeConcept<Id, Size>> node);
+    /// @param node A std::shared_ptr to the node to add
+    void addNode(std::unique_ptr<Node<Id, Size>> node);
     /// @brief Add a node to the graph
     /// @param node A reference to the node to add
-    void addNode(const Node<Id, Size>& node);
+    void addNode(const Intersection<Id, Size>& node);
 
     template <typename... Tn>
       requires(is_node_v<std::remove_reference_t<Tn>> && ...)
@@ -191,14 +192,12 @@ namespace dsm {
     const SparseMatrix<Id, bool>& adjMatrix() const { return m_adjacency; }
     /// @brief Get the graph's node map
     /// @return A std::unordered_map containing the graph's nodes
-    const std::unordered_map<Id, std::unique_ptr<NodeConcept<Id, Size>>>& nodeSet() const {
+    const std::unordered_map<Id, std::unique_ptr<Node<Id, Size>>>& nodeSet() const {
       return m_nodes;
     }
     /// @brief Get the graph's node map
     /// @return A std::unordered_map containing the graph's nodes
-    std::unordered_map<Id, std::unique_ptr<NodeConcept<Id, Size>>>& nodeSet() {
-      return m_nodes;
-    }
+    std::unordered_map<Id, std::unique_ptr<Node<Id, Size>>>& nodeSet() { return m_nodes; }
     /// @brief Get the graph's street map
     /// @return A std::unordered_map containing the graph's streets
     const std::unordered_map<Id, std::unique_ptr<Street<Id, Size>>>& streetSet() const {
@@ -229,7 +228,8 @@ namespace dsm {
     /// @param destination The destination node
     /// @return A DijkstraResult object containing the path and the distance
     std::optional<DijkstraResult<Id>> shortestPath(
-        const Node<Id, Size>& source, const Node<Id, Size>& destination) const;
+        const Intersection<Id, Size>& source,
+        const Intersection<Id, Size>& destination) const;
     /// @brief Get the shortest path between two nodes using dijkstra algorithm
     /// @param source The source node id
     /// @param destination The destination node id
@@ -254,10 +254,10 @@ namespace dsm {
       const auto srcId{static_cast<Id>(id / n)};
       const auto dstId{static_cast<Id>(id % n)};
       if (!m_nodes.contains(srcId)) {
-        m_nodes.emplace(srcId, std::make_unique<Node<Id, Size>>(srcId));
+        m_nodes.emplace(srcId, std::make_unique<Intersection<Id, Size>>(srcId));
       }
       if (!m_nodes.contains(dstId)) {
-        m_nodes.emplace(dstId, std::make_unique<Node<Id, Size>>(dstId));
+        m_nodes.emplace(dstId, std::make_unique<Intersection<Id, Size>>(dstId));
       }
       m_streets.emplace(
           id, std::make_unique<Street<Id, Size>>(id, std::make_pair(srcId, dstId)));
@@ -274,8 +274,8 @@ namespace dsm {
 
       Id node1 = street->nodePair().first;
       Id node2 = street->nodePair().second;
-      m_nodes.emplace(node1, std::make_unique<Node<Id, Size>>(node1));
-      m_nodes.emplace(node2, std::make_unique<Node<Id, Size>>(node2));
+      m_nodes.emplace(node1, std::make_unique<Intersection<Id, Size>>(node1));
+      m_nodes.emplace(node2, std::make_unique<Intersection<Id, Size>>(node2));
     }
 
     buildAdj();
@@ -303,7 +303,7 @@ namespace dsm {
     for (const auto& [nodeId, node] : m_nodes) {
       // This is probably not the best way to do this
       if (node->isIntersection()) {
-        auto& intersection = dynamic_cast<Node<Id, Size>&>(*node);
+        auto& intersection = dynamic_cast<Intersection<Id, Size>&>(*node);
         const auto& oldStreetPriorities{intersection.streetPriorities()};
         std::set<Id> newStreetPriorities;
         for (const auto streetId : oldStreetPriorities) {
@@ -395,10 +395,10 @@ namespace dsm {
         const auto srcId{static_cast<Id>(index / n)};
         const auto dstId{static_cast<Id>(index % n)};
         if (!m_nodes.contains(srcId)) {
-          m_nodes.emplace(srcId, std::make_unique<Node<Id, Size>>(srcId));
+          m_nodes.emplace(srcId, std::make_unique<Intersection<Id, Size>>(srcId));
         }
         if (!m_nodes.contains(dstId)) {
-          m_nodes.emplace(dstId, std::make_unique<Node<Id, Size>>(dstId));
+          m_nodes.emplace(dstId, std::make_unique<Intersection<Id, Size>>(dstId));
         }
         m_streets.emplace(
             index,
@@ -441,10 +441,10 @@ namespace dsm {
           const auto srcId{static_cast<Id>(index / n)};
           const auto dstId{static_cast<Id>(index % n)};
           if (!m_nodes.contains(srcId)) {
-            m_nodes.emplace(srcId, std::make_unique<Node<Id, Size>>(srcId));
+            m_nodes.emplace(srcId, std::make_unique<Intersection<Id, Size>>(srcId));
           }
           if (!m_nodes.contains(dstId)) {
-            m_nodes.emplace(dstId, std::make_unique<Node<Id, Size>>(dstId));
+            m_nodes.emplace(dstId, std::make_unique<Intersection<Id, Size>>(dstId));
           }
           m_streets.emplace(
               index,
@@ -513,7 +513,7 @@ namespace dsm {
         std::getline(iss, highway, ';');
         Id nodeId{static_cast<Id>(std::stoul(id))};
         m_nodes.emplace(nodeIndex,
-                        std::make_unique<Node<Id, Size>>(
+                        std::make_unique<Intersection<Id, Size>>(
                             nodeIndex, std::make_pair(std::stod(lat), std::stod(lon))));
         m_nodeMapping.emplace(std::make_pair(nodeId, nodeIndex));
         ++nodeIndex;
@@ -615,14 +615,15 @@ namespace dsm {
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Graph<Id, Size>::addNode(std::unique_ptr<NodeConcept<Id, Size>> node) {
+  void Graph<Id, Size>::addNode(std::unique_ptr<Node<Id, Size>> node) {
     m_nodes.emplace(std::make_pair(node->id(), std::move(node)));
   }
 
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Graph<Id, Size>::addNode(const Node<Id, Size>& node) {
-    m_nodes.emplace(std::make_pair(node.id(), std::make_unique<Node<Id, Size>>(node)));
+  void Graph<Id, Size>::addNode(const Intersection<Id, Size>& node) {
+    m_nodes.emplace(
+        std::make_pair(node.id(), std::make_unique<Intersection<Id, Size>>(node)));
   }
 
   template <typename Id, typename Size>
@@ -647,7 +648,7 @@ namespace dsm {
     requires(std::unsigned_integral<Delay>)
   void Graph<Id, Size>::makeTrafficLight(Id nodeId) {
     if (!m_nodes.contains(nodeId)) {
-      throw std::invalid_argument(buildLog("Node does not exist."));
+      throw std::invalid_argument(buildLog("Intersection does not exist."));
     }
     auto& pNode = m_nodes[nodeId];
     pNode = std::make_unique<TrafficLight<Id, Size, Delay>>(*pNode);
@@ -656,7 +657,7 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Graph<Id, Size>::makeRoundabout(Id nodeId) {
     if (!m_nodes.contains(nodeId)) {
-      throw std::invalid_argument(buildLog("Node does not exist."));
+      throw std::invalid_argument(buildLog("Intersection does not exist."));
     }
     auto& pNode = m_nodes[nodeId];
     pNode = std::make_unique<Roundabout<Id, Size>>(*pNode);
@@ -683,10 +684,10 @@ namespace dsm {
     const auto srcId{street.nodePair().first};
     const auto dstId{street.nodePair().second};
     if (!m_nodes.contains(srcId)) {
-      m_nodes.emplace(srcId, std::make_unique<Node<Id, Size>>(srcId));
+      m_nodes.emplace(srcId, std::make_unique<Intersection<Id, Size>>(srcId));
     }
     if (!m_nodes.contains(dstId)) {
-      m_nodes.emplace(dstId, std::make_unique<Node<Id, Size>>(dstId));
+      m_nodes.emplace(dstId, std::make_unique<Intersection<Id, Size>>(dstId));
     }
     // emplace street
     m_streets.emplace(std::make_pair(street->id(), street));
@@ -703,10 +704,10 @@ namespace dsm {
     const auto srcId{street.nodePair().first};
     const auto dstId{street.nodePair().second};
     if (!m_nodes.contains(srcId)) {
-      m_nodes.emplace(srcId, std::make_unique<Node<Id, Size>>(srcId));
+      m_nodes.emplace(srcId, std::make_unique<Intersection<Id, Size>>(srcId));
     }
     if (!m_nodes.contains(dstId)) {
-      m_nodes.emplace(dstId, std::make_unique<Node<Id, Size>>(dstId));
+      m_nodes.emplace(dstId, std::make_unique<Intersection<Id, Size>>(dstId));
     }
     // emplace street
     m_streets.emplace(
@@ -726,10 +727,10 @@ namespace dsm {
     const auto srcId{street.nodePair().first};
     const auto dstId{street.nodePair().second};
     if (!m_nodes.contains(srcId)) {
-      m_nodes.emplace(srcId, std::make_unique<Node<Id, Size>>(srcId));
+      m_nodes.emplace(srcId, std::make_unique<Intersection<Id, Size>>(srcId));
     }
     if (!m_nodes.contains(dstId)) {
-      m_nodes.emplace(dstId, std::make_unique<Node<Id, Size>>(dstId));
+      m_nodes.emplace(dstId, std::make_unique<Intersection<Id, Size>>(dstId));
     }
     // emplace street
     m_streets.emplace(
@@ -788,7 +789,8 @@ namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   std::optional<DijkstraResult<Id>> Graph<Id, Size>::shortestPath(
-      const Node<Id, Size>& source, const Node<Id, Size>& destination) const {
+      const Intersection<Id, Size>& source,
+      const Intersection<Id, Size>& destination) const {
     return this->shortestPath(source.id(), destination.id());
   }
 
