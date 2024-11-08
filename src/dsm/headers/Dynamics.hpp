@@ -44,17 +44,17 @@ namespace dsm {
 
     Measurement(T mean, T std) : mean{mean}, std{std} {}
     Measurement(std::span<T> data) {
-	  auto x_mean = T{}, x2_mean = T{};
-	  if (data.empty()) {
-		return;
-	  }
+      auto x_mean = T{}, x2_mean = T{};
+      if (data.empty()) {
+        return;
+      }
 
-	  std::for_each(data.begin(), data.end(), [&x_mean, &x2_mean](auto value) -> void {
-		x_mean += value;
-		x2_mean += value * value;
-	  });
-	  mean = x_mean / data.size();
-	  std = std::sqrt(x2_mean / data.size() - mean * mean);
+      std::for_each(data.begin(), data.end(), [&x_mean, &x2_mean](auto value) -> void {
+        x_mean += value;
+        x2_mean += value * value;
+      });
+      mean = x_mean / data.size();
+      std = std::sqrt(x2_mean / data.size() - mean * mean);
     }
   };
 
