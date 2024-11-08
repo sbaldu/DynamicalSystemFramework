@@ -2,20 +2,19 @@
 #define dsm_hpp
 
 #include <cstdint>
-
-static constexpr uint8_t DSM_VERSION_MAJOR = 1;
-static constexpr uint8_t DSM_VERSION_MINOR = 4;
-static constexpr uint8_t DSM_VERSION_PATCH = 4;
-
-#include <string>
 #include <format>
 
+static constexpr uint8_t DSM_VERSION_MAJOR = 1;
+static constexpr uint8_t DSM_VERSION_MINOR = 5;
+static constexpr uint8_t DSM_VERSION_PATCH = 0;
+
 namespace dsm {
-  constexpr std::string_view version();
+  constexpr const char* version();
 }
 
-constexpr std::string_view dsm::version() {
-  return std::format("{}.{}.{}", DSM_VERSION_MAJOR, DSM_VERSION_MINOR, DSM_VERSION_PATCH);
+constexpr const char* dsm::version() {
+  return std::format("{}.{}.{}", DSM_VERSION_MAJOR, DSM_VERSION_MINOR, DSM_VERSION_PATCH)
+      .c_str();
 }
 
 #include "headers/Agent.hpp"
