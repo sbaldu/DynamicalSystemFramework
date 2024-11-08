@@ -27,7 +27,6 @@ namespace dsm {
     Id m_destination;
 
   public:
-    Itinerary() = delete;
     /// @brief Construct a new Itinerary object
     /// @param destination The itinerary's destination
     Itinerary(Id id, Id destination);
