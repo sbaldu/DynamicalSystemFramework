@@ -792,10 +792,9 @@ namespace dsm {
     }
     // move all the agents from each node, if possible
     for (const auto& [nodeId, pNode] : m_graph.nodeSet()) {
-      this->m_evolveNode(nodeId, pNode);
-      // for (auto i = 0; i < pNode->transportCapacity(); ++i) {
-      //   this->m_evolveNode(nodeId, pNode);
-      // }
+      for (auto i = 0; i < pNode->transportCapacity(); ++i) {
+        this->m_evolveNode(nodeId, pNode);
+      }
     }
     // cycle over agents and update their times
     this->m_evolveAgents();
