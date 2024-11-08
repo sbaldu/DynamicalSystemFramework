@@ -291,7 +291,7 @@ namespace dsm {
     virtual Measurement<double> streetMeanSpeed(double, bool) const = 0;
     /// @brief Get the mean density of the streets in \f$m^{-1}\f$
     /// @return Measurement<double> The mean density of the streets and the standard deviation
-    Measurement<double> streetMeanDensity() const;
+    Measurement<double> streetMeanDensity(bool normalized = false) const;
     /// @brief Get the mean flow of the streets in \f$s^{-1}\f$
     /// @return Measurement<double> The mean flow of the streets and the standard deviation
     Measurement<double> streetMeanFlow() const;
@@ -1258,26 +1258,16 @@ namespace dsm {
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
-  Measurement<double> Dynamics<Id, Size, Delay>::streetMeanDensity() const {
+  Measurement<double> Dynamics<Id, Size, Delay>::streetMeanDensity(bool normalized) const {
     if (m_graph.streetSet().size() == 0) {
       return Measurement(0., 0.);
     }
-    const double mean{std::accumulate(m_graph.streetSet().cbegin(),
-                                      m_graph.streetSet().cend(),
-                                      0.,
-                                      [](double sum, const auto& street) {
-                                        return sum + street.second->density();
-                                      }) /
-                      m_graph.streetSet().size()};
-    const double variance{
-        std::accumulate(m_graph.streetSet().cbegin(),
-                        m_graph.streetSet().cend(),
-                        0.,
-                        [mean](double sum, const auto& street) {
-                          return sum + std::pow(street.second->density() - mean, 2);
-                        }) /
-        (m_graph.streetSet().size() - 1)};
-    return Measurement(mean, std::sqrt(variance));
+    std::vector<double> densities;
+    densities.reserve(m_graph.streetSet().size());
+    for (const auto& [streetId, street] : m_graph.streetSet()) {
+      densities.push_back(normalized ? street->normDensity() : street->density());
+    }
+    return Measurement<double>(densities);
   }
   template <typename Id, typename Size, typename Delay>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
