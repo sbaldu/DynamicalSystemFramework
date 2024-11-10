@@ -6,25 +6,23 @@
 #include <type_traits>
 
 namespace dsm {
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   class Node;
 
   // define is_node type trait
   template <typename T>
   struct is_node : std::false_type {};
 
-  template <typename Id, typename Size>
-  struct is_node<Node<Id, Size>> : std::true_type {};
+  template <>
+  struct is_node<Node> : std::true_type {};
 
-  template <typename Id, typename Size>
-  struct is_node<const Node<Id, Size>> : std::true_type {};
+  template <>
+  struct is_node<const Node> : std::true_type {};
 
-  template <typename Id, typename Size>
-  struct is_node<const Node<Id, Size>&> : std::true_type {};
+  template <>
+  struct is_node<const Node&> : std::true_type {};
 
-  template <typename Id, typename Size>
-  struct is_node<std::unique_ptr<Node<Id, Size>>> : std::true_type {};
+  template <>
+  struct is_node<std::unique_ptr<Node>> : std::true_type {};
 
   template <typename T>
   inline constexpr bool is_node_v = is_node<T>::value;

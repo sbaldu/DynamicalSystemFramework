@@ -14,6 +14,7 @@
 #include "SparseMatrix.hpp"
 #include "../utility/TypeTraits/is_numeric.hpp"
 #include "../utility/Logger.hpp"
+#include "../utility/Typedef.hpp"
 
 #include <concepts>
 #include <stdexcept>
@@ -25,9 +26,8 @@ namespace dsm {
   /// @tparam Id, The type of the agent's id. It must be an unsigned integral type.
   /// @tparam Size, The type of the size of a street. It must be an unsigned integral type.
   /// @tparam Delay, The type of the agent's delay. It must be a numeric type (see utility/TypeTraits/is_numeric.hpp).
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             is_numeric_v<Delay>)
+  template <typename Delay>
+    requires(is_numeric_v<Delay>)
   class Agent {
   private:
     Id m_id;
@@ -114,10 +114,9 @@ namespace dsm {
     unsigned int time() const { return m_time; }
   };
 
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             is_numeric_v<Delay>)
-  Agent<Id, Size, Delay>::Agent(Id id, Id itineraryId)
+  template <typename Delay>
+    requires(is_numeric_v<Delay>)
+  Agent<Delay>::Agent(Id id, Id itineraryId)
       : m_id{id},
         m_itineraryId{itineraryId},
         m_delay{0},
@@ -125,10 +124,9 @@ namespace dsm {
         m_distance{0.},
         m_time{0} {}
 
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             is_numeric_v<Delay>)
-  Agent<Id, Size, Delay>::Agent(Id id, Id itineraryId, Id srcNodeId)
+  template <typename Delay>
+    requires(is_numeric_v<Delay>)
+  Agent<Delay>::Agent(Id id, Id itineraryId, Id srcNodeId)
       : m_id{id},
         m_itineraryId{itineraryId},
         m_srcNodeId{srcNodeId},
@@ -137,66 +135,59 @@ namespace dsm {
         m_distance{0.},
         m_time{0} {}
 
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             is_numeric_v<Delay>)
-  void Agent<Id, Size, Delay>::setSpeed(double speed) {
+  template <typename Delay>
+    requires(is_numeric_v<Delay>)
+  void Agent<Delay>::setSpeed(double speed) {
     if (speed < 0) {
       throw std::invalid_argument(buildLog("Speed must be positive"));
     }
     m_speed = speed;
   }
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             is_numeric_v<Delay>)
-  void Agent<Id, Size, Delay>::incrementDelay() {
+  template <typename Delay>
+    requires(is_numeric_v<Delay>)
+  void Agent<Delay>::incrementDelay() {
     if (m_delay == std::numeric_limits<Delay>::max()) {
       throw std::overflow_error(buildLog("Delay has reached its maximum value"));
     }
     ++m_delay;
   }
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             is_numeric_v<Delay>)
-  void Agent<Id, Size, Delay>::incrementDelay(Delay delay) {
+  template <typename Delay>
+    requires(is_numeric_v<Delay>)
+  void Agent<Delay>::incrementDelay(Delay delay) {
     if (m_delay + delay < m_delay) {
       throw std::overflow_error(buildLog("Delay has reached its maximum value"));
     }
     m_delay = delay;
   }
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             is_numeric_v<Delay>)
-  void Agent<Id, Size, Delay>::decrementDelay() {
+  template <typename Delay>
+    requires(is_numeric_v<Delay>)
+  void Agent<Delay>::decrementDelay() {
     if (m_delay == 0) {
       throw std::underflow_error(buildLog("Delay has reached its minimum value"));
     }
     --m_delay;
   }
 
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             is_numeric_v<Delay>)
-  void Agent<Id, Size, Delay>::incrementDistance(double distance) {
+  template <typename Delay>
+    requires(is_numeric_v<Delay>)
+  void Agent<Delay>::incrementDistance(double distance) {
     if (distance < 0) {
       throw std::invalid_argument(buildLog("Distance travelled must be positive"));
     }
     m_distance += distance;
   }
 
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             is_numeric_v<Delay>)
-  void Agent<Id, Size, Delay>::incrementTime() {
+  template <typename Delay>
+    requires(is_numeric_v<Delay>)
+  void Agent<Delay>::incrementTime() {
     if (m_time == std::numeric_limits<unsigned int>::max()) {
       throw std::overflow_error(buildLog("Time has reached its maximum value"));
     }
     ++m_time;
   }
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             is_numeric_v<Delay>)
-  void Agent<Id, Size, Delay>::incrementTime(unsigned int time) {
+  template <typename Delay>
+    requires(is_numeric_v<Delay>)
+  void Agent<Delay>::incrementTime(unsigned int time) {
     if (m_time + time < m_time) {
       throw std::overflow_error(buildLog("Time has reached its maximum value"));
     }
