@@ -114,7 +114,54 @@ namespace dsm {
     virtual void m_evolveAgents();
     /// @brief Update the path of a single itinerary
     /// @param pItinerary An std::unique_prt to the itinerary
-    void m_updatePath(const std::unique_ptr<Itinerary>& pItinerary);
+    void m_updatePath(const std::unique_ptr<Itinerary>& pItinerary) {
+      const Size dimension = m_graph.adjMatrix().getRowDim();
+      const auto destinationID = pItinerary->destination();
+      SparseMatrix<bool> path{dimension, dimension};
+      // cycle over the nodes
+      for (const auto& [nodeId, node] : m_graph.nodeSet()) {
+        if (nodeId == destinationID) {
+          continue;
+        }
+        auto result{m_graph.shortestPath(nodeId, destinationID)};
+        if (!result.has_value()) {
+          continue;
+        }
+        // save the minimum distance between i and the destination
+        const auto minDistance{result.value().distance()};
+        for (const auto [nextNodeId, _] : m_graph.adjMatrix().getRow(nodeId)) {
+          if (nextNodeId == destinationID &&
+              minDistance ==
+                  m_graph.streetSet().at(nodeId * dimension + nextNodeId)->length()) {
+            path.insert(nodeId, nextNodeId, true);
+            continue;
+          }
+          result = m_graph.shortestPath(nextNodeId, destinationID);
+
+          if (result.has_value()) {
+            // if the shortest path exists, save the distance
+            if (minDistance ==
+                result.value().distance() +
+                    m_graph.streetSet().at(nodeId * dimension + nextNodeId)->length()) {
+              path.insert(nodeId, nextNodeId, true);
+            }
+          } else if ((nextNodeId != destinationID)) {
+            std::cerr << std::format("WARNING: No path found from node {} to node {}",
+                                     nextNodeId,
+                                     destinationID)
+                      << std::endl;
+          }
+        }
+      }
+      if (path.size() == 0) {
+        throw std::runtime_error(
+            buildLog(std::format("Path with id {} and destination {} is empty. Please "
+                                 "check the adjacency matrix.",
+                                 pItinerary->id(),
+                                 pItinerary->destination())));
+      }
+      pItinerary->setPath(path);
+    }
 
   public:
     /// @brief Construct a new Dynamics object
@@ -193,9 +240,7 @@ namespace dsm {
     }
     /// @brief Get the agents
     /// @return const std::unordered_map<Id, Agent<Id>>&, The agents
-    const std::map<Id, std::unique_ptr<Agent<Delay>>>& agents() const {
-      return m_agents;
-    }
+    const std::map<Id, std::unique_ptr<Agent<Delay>>>& agents() const { return m_agents; }
     /// @brief Get the time
     /// @return TimePoint The time
     TimePoint time() const { return m_time; }
@@ -383,9 +428,7 @@ namespace dsm {
 
   template <typename Delay>
     requires(is_numeric_v<Delay>)
-  Id Dynamics<Delay>::m_nextStreetId(Id agentId,
-                                               Id nodeId,
-                                               std::optional<Id> streetId) {
+  Id Dynamics<Delay>::m_nextStreetId(Id agentId, Id nodeId, std::optional<Id> streetId) {
     auto possibleMoves = m_graph.adjMatrix().getRow(nodeId, true);
     if (this->m_itineraries.size() > 0 &&
         this->m_uniformDist(this->m_generator) > this->m_errorProbability) {
@@ -462,8 +505,8 @@ namespace dsm {
         if (reinsert_agents) {
           // take last agent id in map
           Agent<Delay> newAgent{static_cast<Id>(m_agents.rbegin()->first + 1),
-                                          m_agents[agentId]->itineraryId(),
-                                          m_agents[agentId]->srcNodeId().value()};
+                                m_agents[agentId]->itineraryId(),
+                                m_agents[agentId]->srcNodeId().value()};
           if (m_agents[agentId]->srcNodeId().has_value()) {
             newAgent.setSourceNodeId(this->m_agents[agentId]->srcNodeId().value());
           }
@@ -611,8 +654,8 @@ namespace dsm {
   }
 
   /* template <typename Delay> */
-  /*   requires is_numeric_v<Delay> */
-  /* void Dynamics<Delay>::m_updatePath(const std::unique_ptr<Itinerary>>& pItinerary) { */
+  /*   requires(is_numeric_v<Delay>) */
+  /* void Dynamics<Delay>::m_updatePath(const std::unique_ptr < Itinerary >> &pItinerary) { */
   /*   const Size dimension = m_graph.adjMatrix().getRowDim(); */
   /*   const auto destinationID = pItinerary->destination(); */
   /*   SparseMatrix<bool> path{dimension, dimension}; */
@@ -634,8 +677,6 @@ namespace dsm {
   /*         path.insert(nodeId, nextNodeId, true); */
   /*         continue; */
   /*       } */
-  /*       // TimePoint expectedTravelTime{ */
-  /*       //     streetLength};  // / street->maxSpeed()};  // TODO: change into input speed */
   /*       result = m_graph.shortestPath(nextNodeId, destinationID); */
 
   /*       if (result.has_value()) { */
@@ -704,8 +745,8 @@ namespace dsm {
 
   template <typename Delay>
     requires(is_numeric_v<Delay>)
-  void Dynamics<Delay>::setDestinationNodes(
-      const std::span<Id>& destinationNodes, bool updatePaths) {
+  void Dynamics<Delay>::setDestinationNodes(const std::span<Id>& destinationNodes,
+                                            bool updatePaths) {
     for (const auto& nodeId : destinationNodes) {
       if (!m_graph.nodeSet().contains(nodeId)) {
         throw std::invalid_argument(
@@ -758,8 +799,8 @@ namespace dsm {
   template <typename Delay>
     requires(is_numeric_v<Delay>)
   void Dynamics<Delay>::optimizeTrafficLights(Delay nCycles,
-                                                        double threshold,
-                                                        double densityTolerance) {
+                                              double threshold,
+                                              double densityTolerance) {
     if (threshold < 0 || threshold > 1) {
       throw std::invalid_argument(
           buildLog(std::format("The threshold parameter is a percentage and must be "
@@ -939,8 +980,8 @@ namespace dsm {
   template <typename Delay>
     requires(is_numeric_v<Delay>)
   void Dynamics<Delay>::addAgents(Id itineraryId,
-                                            Size nAgents,
-                                            std::optional<Id> srcNodeId) {
+                                  Size nAgents,
+                                  std::optional<Id> srcNodeId) {
     if (this->m_agents.size() + nAgents > this->m_graph.maxCapacity()) {
       throw std::overflow_error(buildLog(
           std::format("Graph its already holding the max possible number of agents ({})",
@@ -993,8 +1034,7 @@ namespace dsm {
 
   template <typename Delay>
     requires(is_numeric_v<Delay>)
-  void Dynamics<Delay>::addAgentsUniformly(Size nAgents,
-                                                     std::optional<Id> itineraryId) {
+  void Dynamics<Delay>::addAgentsUniformly(Size nAgents, std::optional<Id> itineraryId) {
     if (this->m_agents.size() + nAgents > this->m_graph.maxCapacity()) {
       throw std::overflow_error(buildLog(
           std::format("Graph its already holding the max possible number of agents ({})",
@@ -1031,8 +1071,7 @@ namespace dsm {
         streetId = streetIt->first;
       } while (this->m_graph.streetSet()[streetId]->isFull());
       const auto& street{this->m_graph.streetSet()[streetId]};
-      Agent<Delay> agent{
-          agentId, itineraryId.value(), street->nodePair().first};
+      Agent<Delay> agent{agentId, itineraryId.value(), street->nodePair().first};
       agent.setStreetId(streetId);
       this->addAgent(agent);
       this->setAgentSpeed(agentId);
@@ -1049,8 +1088,8 @@ namespace dsm {
     requires(std::is_same_v<TContainer, std::unordered_map<Id, double>> ||
              std::is_same_v<TContainer, std::map<Id, double>>)
   void Dynamics<Delay>::addAgentsRandomly(Size nAgents,
-                                                    const TContainer& src_weights,
-                                                    const TContainer& dst_weights) {
+                                          const TContainer& src_weights,
+                                          const TContainer& dst_weights) {
     // Check if the weights are normalized
     if (std::abs(std::accumulate(src_weights.begin(),
                                  src_weights.end(),
@@ -1233,7 +1272,7 @@ namespace dsm {
   template <typename Delay>
     requires(is_numeric_v<Delay>)
   Measurement<double> Dynamics<Delay>::streetMeanFlow(double threshold,
-                                                                bool above) const {
+                                                      bool above) const {
     std::vector<double> flows;
     flows.reserve(m_graph.streetSet().size());
     for (const auto& [streetId, street] : m_graph.streetSet()) {
@@ -1307,8 +1346,8 @@ namespace dsm {
 
   template <typename Delay>
     requires(is_numeric_v<Delay>)
-  std::unordered_map<Id, std::array<double, 4>>
-  Dynamics<Delay>::turnProbabilities(bool reset) {
+  std::unordered_map<Id, std::array<double, 4>> Dynamics<Delay>::turnProbabilities(
+      bool reset) {
     std::unordered_map<Id, std::array<double, 4>> res;
     for (auto& [streetId, counts] : m_turnCounts) {
       std::array<double, 4> probabilities{0., 0., 0., 0.};
@@ -1381,8 +1420,7 @@ namespace dsm {
 
   template <typename Delay>
     requires(std::unsigned_integral<Delay>)
-  void FirstOrderDynamics<Delay>::setSpeedFluctuationSTD(
-      double speedFluctuationSTD) {
+  void FirstOrderDynamics<Delay>::setSpeedFluctuationSTD(double speedFluctuationSTD) {
     if (speedFluctuationSTD < 0.) {
       throw std::invalid_argument(
           buildLog("The speed fluctuation standard deviation must be positive."));
@@ -1451,8 +1489,8 @@ namespace dsm {
   }
   template <typename Delay>
     requires(std::unsigned_integral<Delay>)
-  Measurement<double> FirstOrderDynamics<Delay>::streetMeanSpeed(
-      double threshold, bool above) const {
+  Measurement<double> FirstOrderDynamics<Delay>::streetMeanSpeed(double threshold,
+                                                                 bool above) const {
     if (this->m_agents.size() == 0) {
       return Measurement(0., 0.);
     }
