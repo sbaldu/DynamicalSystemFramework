@@ -9,29 +9,21 @@ using dsm::is_node_v;
 using dsm::Node;
 
 // check the type trait
-static_assert(is_node<Node<uint8_t, uint8_t>>::value);
-static_assert(is_node<Node<uint16_t, uint16_t>>::value);
-static_assert(is_node<Node<uint32_t, uint32_t>>::value);
+static_assert(is_node<Node>::value);
 static_assert(!is_node<int>::value);
 static_assert(!is_node<unsigned int>::value);
 static_assert(!is_node<std::string>::value);
-static_assert(is_node<std::unique_ptr<Node<uint8_t, uint8_t>>>::value);
-static_assert(is_node<std::unique_ptr<Node<uint16_t, uint16_t>>>::value);
-static_assert(is_node<std::unique_ptr<Node<uint32_t, uint32_t>>>::value);
+static_assert(is_node<std::unique_ptr<Node>>::value);
 static_assert(!is_node<std::unique_ptr<int>>::value);
 static_assert(!is_node<std::unique_ptr<unsigned int>>::value);
 static_assert(!is_node<std::unique_ptr<std::string>>::value);
 
 // check the template variable
-static_assert(is_node_v<Node<uint8_t, uint8_t>>);
-static_assert(is_node_v<Node<uint16_t, uint16_t>>);
-static_assert(is_node_v<Node<uint32_t, uint32_t>>);
+static_assert(is_node_v<Node>);
 static_assert(!is_node_v<int>);
 static_assert(!is_node_v<unsigned int>);
 static_assert(!is_node_v<std::string>);
-static_assert(is_node_v<std::unique_ptr<Node<uint8_t, uint8_t>>>);
-static_assert(is_node_v<std::unique_ptr<Node<uint16_t, uint16_t>>>);
-static_assert(is_node_v<std::unique_ptr<Node<uint32_t, uint32_t>>>);
+static_assert(is_node_v<std::unique_ptr<Node>>);
 static_assert(!is_node_v<std::unique_ptr<int>>);
 static_assert(!is_node_v<std::unique_ptr<unsigned int>>);
 static_assert(!is_node_v<std::unique_ptr<std::string>>);

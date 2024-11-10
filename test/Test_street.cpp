@@ -8,10 +8,10 @@
 
 #include "doctest.h"
 
-using Agent = dsm::Agent<uint16_t, uint16_t, double>;
-using Node = dsm::Node<uint16_t, uint16_t>;
-using Street = dsm::Street<uint16_t, uint16_t>;
-using SpireStreet = dsm::SpireStreet<uint16_t, uint16_t>;
+using Agent = dsm::Agent<double>;
+using Node = dsm::Node;
+using Street = dsm::Street;
+using SpireStreet = dsm::SpireStreet;
 
 TEST_CASE("Street") {
   SUBCASE("Constructor_1") {

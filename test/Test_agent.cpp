@@ -5,8 +5,8 @@
 
 #include "doctest.h"
 
-using Agent = dsm::Agent<uint16_t, uint16_t, uint16_t>;
-using Itinerary = dsm::Itinerary<uint16_t>;
+using Agent = dsm::Agent<uint16_t>;
+using Itinerary = dsm::Itinerary;
 
 TEST_CASE("Agent") {
   SUBCASE("Constructors") {
