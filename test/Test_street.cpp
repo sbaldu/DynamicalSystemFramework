@@ -5,6 +5,7 @@
 #include "Agent.hpp"
 #include "Node.hpp"
 #include "Street.hpp"
+#include "../utility/Typedef.hpp"
 
 #include "doctest.h"
 
@@ -24,7 +25,7 @@ TEST_CASE("Street") {
     Street street{1, std::make_pair(0, 1)};
     CHECK_EQ(street.id(), 1);
     CHECK_EQ(street.capacity(), 1);
-    CHECK_EQ(street.transportCapacity(), 65535);
+    CHECK_EQ(street.transportCapacity(), std::numeric_limits<dsm::Size>::max());
     CHECK_EQ(street.length(), 1.);
     CHECK_EQ(street.nodePair().first, 0);
     CHECK_EQ(street.nodePair().second, 1);
@@ -41,7 +42,7 @@ TEST_CASE("Street") {
     Street street{1, 2, 3.5, std::make_pair(4, 5)};
     CHECK_EQ(street.id(), 1);
     CHECK_EQ(street.capacity(), 2);
-    CHECK_EQ(street.transportCapacity(), 65535);
+    CHECK_EQ(street.transportCapacity(), std::numeric_limits<dsm::Size>::max());
     CHECK_EQ(street.length(), 3.5);
     CHECK_EQ(street.nodePair().first, 4);
     CHECK_EQ(street.nodePair().second, 5);
@@ -58,7 +59,7 @@ TEST_CASE("Street") {
     Street street{1, 2, 3.5, 40., std::make_pair(4, 5)};
     CHECK_EQ(street.id(), 1);
     CHECK_EQ(street.capacity(), 2);
-    CHECK_EQ(street.transportCapacity(), 65535);
+    CHECK_EQ(street.transportCapacity(), std::numeric_limits<dsm::Size>::max());
     CHECK_EQ(street.length(), 3.5);
     CHECK_EQ(street.nodePair().first, 4);
     CHECK_EQ(street.nodePair().second, 5);
