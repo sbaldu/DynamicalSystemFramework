@@ -51,21 +51,21 @@ namespace dsm {
     /// @brief Reassign the street ids using the max node id
     /// @details The street ids are reassigned using the max node id, i.e.
     /// newStreetId = srcId * n + dstId, where n is the max node id.
-    void m_reassignIds();
+    inline void m_reassignIds();
     /// @brief If every node has coordinates, set the street angles
     /// @details The street angles are set using the node's coordinates.
-    void m_setStreetAngles();
+    inline void m_setStreetAngles();
 
   public:
-    Graph();
+    inline Graph();
     /// @brief Construct a new Graph object
     /// @param adj An adjacency matrix made by a SparseMatrix representing the graph's adjacency matrix
-    Graph(const SparseMatrix<bool>& adj);
+    inline Graph(const SparseMatrix<bool>& adj);
     /// @brief Construct a new Graph object
     /// @param streetSet A map of streets representing the graph's streets
-    Graph(const std::unordered_map<Id, std::unique_ptr<Street>>& streetSet);
+    inline Graph(const std::unordered_map<Id, std::unique_ptr<Street>>& streetSet);
 
-    Graph(const Graph& other) {
+    inline Graph(const Graph& other) {
       std::for_each(other.m_nodes.begin(), other.m_nodes.end(), [this](const auto& pair) {
         this->m_nodes.emplace(pair.first, pair.second.get());
       });
@@ -78,7 +78,7 @@ namespace dsm {
       m_adjacency = other.m_adjacency;
     }
 
-    Graph& operator=(const Graph& other) {
+    inline Graph& operator=(const Graph& other) {
       std::for_each(other.m_nodes.begin(), other.m_nodes.end(), [this](const auto& pair) {
         this->m_nodes.insert_or_assign(pair.first,
                                        std::unique_ptr<NodeConcept>(pair.second.get()));
@@ -94,15 +94,15 @@ namespace dsm {
       return *this;
     }
 
-    Graph(Graph&&) = default;
-    Graph& operator=(Graph&&) = default;
+    inline Graph(Graph&&) = default;
+    inline Graph& operator=(Graph&&) = default;
 
     /// @brief Build the graph's adjacency matrix and computes max capacity
     /// @details The adjacency matrix is built using the graph's streets and nodes. N.B.: The street ids
     /// are reassigned using the max node id, i.e. newStreetId = srcId * n + dstId, where n is the max node id.
-    void buildAdj();
+    inline void buildAdj();
     /// @brief Build the graph's street angles using the node's coordinates
-    void buildStreetAngles();
+    inline void buildStreetAngles();
 
     /// @brief Import the graph's adjacency matrix from a file.
     /// If the file is not of a supported format, it will read the file as a matrix with the first two elements being
@@ -111,44 +111,44 @@ namespace dsm {
     /// @param isAdj A boolean value indicating if the file contains the adjacency matrix or the distance matrix.
     /// @throws std::invalid_argument if the file is not found or invalid
     /// The matrix format is deduced from the file extension. Currently only .dsm files are supported.
-    void importMatrix(const std::string& fileName, bool isAdj = true);
+    inline void importMatrix(const std::string& fileName, bool isAdj = true);
     /// @brief Import the graph's nodes from a file
     /// @param fileName The name of the file to import the nodes from.
     /// @throws std::invalid_argument if the file is not found, invalid or the format is not supported
     /// @details The file format is deduced from the file extension. Currently only .dsm files are supported.
     ///           The first input number is the number of nodes, followed by the coordinates of each node.
     ///           In the i-th row of the file, the (i - 1)-th node's coordinates are expected.
-    void importCoordinates(const std::string& fileName);
+    inline void importCoordinates(const std::string& fileName);
     /// @brief Import the graph's nodes from a file
     /// @param fileName The name of the file to import the nodes from.
     /// @throws std::invalid_argument if the file is not found, invalid or the format is not supported
-    void importOSMNodes(const std::string& fileName);
+    inline void importOSMNodes(const std::string& fileName);
     /// @brief Import the graph's streets from a file
     /// @param fileName The name of the file to import the streets from.
     /// @throws std::invalid_argument if the file is not found, invalid or the format is not supported
-    void importOSMEdges(const std::string& fileName);
+    inline void importOSMEdges(const std::string& fileName);
 
     /// @brief Export the graph's adjacency matrix to a file
     /// @param path The path to the file to export the adjacency matrix to.
     /// @param isAdj A boolean value indicating if the file contains the adjacency matrix or the distance matrix.
     /// @throws std::invalid_argument if the file is not found or invalid
-    void exportMatrix(std::string path = "./matrix.dsm", bool isAdj = true);
+    inline void exportMatrix(std::string path = "./matrix.dsm", bool isAdj = true);
 
     /// @brief Add a node to the graph
     /// @param node A std::unique_ptr to the node to add
-    void addNode(std::unique_ptr<NodeConcept> node);
+    inline void addNode(std::unique_ptr<NodeConcept> node);
     /// @brief Add a node to the graph
     /// @param node A reference to the node to add
-    void addNode(const Node& node);
+    inline void addNode(const Node& node);
 
     template <typename... Tn>
       requires(is_node_v<std::remove_reference_t<Tn>> && ...)
-    void addNodes(Tn&&... nodes);
+    inline void addNodes(Tn&&... nodes);
 
     template <typename T1, typename... Tn>
       requires is_node_v<std::remove_reference_t<T1>> &&
                (is_node_v<std::remove_reference_t<Tn>> && ...)
-    void addNodes(T1&& node, Tn&&... nodes);
+    inline void addNodes(T1&& node, Tn&&... nodes);
 
     /// @brief Convert an existing node to a traffic light
     /// @tparam Delay The type of the traffic light's delay
@@ -156,81 +156,81 @@ namespace dsm {
     /// @throws std::invalid_argument if the node does not exist
     template <typename Delay>
       requires(std::unsigned_integral<Delay>)
-    void makeTrafficLight(Id nodeId);
+    inline void makeTrafficLight(Id nodeId);
     /// @brief Convert an existing node into a roundabout
     /// @param nodeId The id of the node to convert to a roundabout
     /// @throws std::invalid_argument if the node does not exist
-    void makeRoundabout(Id nodeId);
+    inline void makeRoundabout(Id nodeId);
     /// @brief Convert an existing street into a spire street
     /// @param streetId The id of the street to convert to a spire street
     /// @throws std::invalid_argument if the street does not exist
-    void makeSpireStreet(Id streetId);
+    inline void makeSpireStreet(Id streetId);
 
     /// @brief Add a street to the graph
     /// @param street A std::shared_ptr to the street to add
-    void addStreet(std::shared_ptr<Street> street);
+    inline void addStreet(std::shared_ptr<Street> street);
     /// @brief Add a street to the graph
     /// @param street A reference to the street to add
-    void addStreet(const Street& street);
+    inline void addStreet(const Street& street);
 
     template <typename T1>
       requires is_street_v<std::remove_reference_t<T1>>
-    void addStreets(T1&& street);
+    inline void addStreets(T1&& street);
 
     template <typename T1, typename... Tn>
       requires is_street_v<std::remove_reference_t<T1>> &&
                (is_street_v<std::remove_reference_t<Tn>> && ...)
-    void addStreets(T1&& street, Tn&&... streets);
+    inline void addStreets(T1&& street, Tn&&... streets);
 
     /// @brief Get the graph's adjacency matrix
     /// @return A std::shared_ptr to the graph's adjacency matrix
-    const SparseMatrix<bool>& adjMatrix() const { return m_adjacency; }
+    inline const SparseMatrix<bool>& adjMatrix() const { return m_adjacency; }
     /// @brief Get the graph's node map
     /// @return A std::unordered_map containing the graph's nodes
-    const std::unordered_map<Id, std::unique_ptr<NodeConcept>>& nodeSet() const {
+    inline const std::unordered_map<Id, std::unique_ptr<NodeConcept>>& nodeSet() const {
       return m_nodes;
     }
     /// @brief Get the graph's node map
     /// @return A std::unordered_map containing the graph's nodes
-    std::unordered_map<Id, std::unique_ptr<NodeConcept>>& nodeSet() {
+    inline std::unordered_map<Id, std::unique_ptr<NodeConcept>>& nodeSet() {
       return m_nodes;
     }
     /// @brief Get the graph's street map
     /// @return A std::unordered_map containing the graph's streets
-    const std::unordered_map<Id, std::unique_ptr<Street>>& streetSet() const {
+    inline const std::unordered_map<Id, std::unique_ptr<Street>>& streetSet() const {
       return m_streets;
     }
     /// @brief Get the graph's street map
     /// @return A std::unordered_map containing the graph's streets
-    std::unordered_map<Id, std::unique_ptr<Street>>& streetSet() {
+    inline std::unordered_map<Id, std::unique_ptr<Street>>& streetSet() {
       return m_streets;
     }
     /// @brief Get a street from the graph
     /// @param source The source node
     /// @param destination The destination node
     /// @return A std::unique_ptr to the street if it exists, nullptr otherwise
-    const std::unique_ptr<Street>* street(Id source, Id destination) const;
+    inline const std::unique_ptr<Street>* street(Id source, Id destination) const;
     /// @brief Get the opposite street of a street in the graph
     /// @param streetId The id of the street
     /// @throws std::invalid_argument if the street does not exist
     /// @return A std::unique_ptr to the street if it exists, nullptr otherwise
-    const std::unique_ptr<Street>* oppositeStreet(Id streetId) const;
+    inline const std::unique_ptr<Street>* oppositeStreet(Id streetId) const;
 
     /// @brief Get the maximum agent capacity
     /// @return unsigned long long The maximum agent capacity of the graph
-    unsigned long long maxCapacity() const { return m_maxAgentCapacity; }
+    inline unsigned long long maxCapacity() const { return m_maxAgentCapacity; }
 
     /// @brief Get the shortest path between two nodes using dijkstra algorithm
     /// @param source The source node
     /// @param destination The destination node
     /// @return A DijkstraResult object containing the path and the distance
-    std::optional<DijkstraResult> shortestPath(
+    inline std::optional<DijkstraResult> shortestPath(
         const Node& source, const Node& destination) const;
     /// @brief Get the shortest path between two nodes using dijkstra algorithm
     /// @param source The source node id
     /// @param destination The destination node id
     /// @return A DijkstraResult object containing the path and the distance
-    std::optional<DijkstraResult> shortestPath(Id source, Id destination) const;
+    inline std::optional<DijkstraResult> shortestPath(Id source, Id destination) const;
   };
 
   Graph::Graph()

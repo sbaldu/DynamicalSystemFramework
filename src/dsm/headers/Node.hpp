@@ -34,42 +34,43 @@ namespace dsm {
     Size m_capacity;
 
   public:
-    NodeConcept() = default;
+    inline NodeConcept() = default;
     /// @brief Construct a new Node object with capacity 1
     /// @param id The node's id
-    explicit NodeConcept(Id id) : m_id{id}, m_capacity{1} {}
+    inline explicit NodeConcept(Id id) : m_id{id}, m_capacity{1} {}
     /// @brief Construct a new Node object with capacity 1
     /// @param id The node's id
     /// @param coords A std::pair containing the node's coordinates (lat, lon)
-    NodeConcept(Id id, std::pair<double, double> coords)
+    inline NodeConcept(Id id, std::pair<double, double> coords)
         : m_id{id}, m_coords{std::move(coords)}, m_capacity{1} {}
     virtual ~NodeConcept() = default;
 
     /// @brief Set the node's id
     /// @param id The node's id
-    void setId(Id id) { m_id = id; }
+    inline void setId(Id id) { m_id = id; }
     /// @brief Set the node's coordinates
     /// @param coords A std::pair containing the node's coordinates (lat, lon)
-    void setCoords(std::pair<double, double> coords) { m_coords = std::move(coords); }
+    inline void setCoords(std::pair<double, double> coords) { m_coords = std::move(coords); }
     /// @brief Set the node's capacity
     /// @param capacity The node's capacity
-    virtual void setCapacity(Size capacity) { m_capacity = capacity; }
+    inline virtual void setCapacity(Size capacity) { m_capacity = capacity; }
     /// @brief Get the node's id
     /// @return Id The node's id
-    Id id() const { return m_id; }
+    inline Id id() const { return m_id; }
     /// @brief Get the node's coordinates
     /// @return std::optional<std::pair<double, double>> A std::pair containing the node's coordinates
-    const std::optional<std::pair<double, double>>& coords() const { return m_coords; }
+    inline const std::optional<std::pair<double, double>>& coords() const { return m_coords; }
     /// @brief Get the node's capacity
     /// @return Size The node's capacity
-    Size capacity() const { return m_capacity; }
+    inline Size capacity() const { return m_capacity; }
 
-    virtual bool isFull() const = 0;
+    inline virtual bool isFull() const = 0;
 
-    virtual bool isIntersection() const noexcept { return false; }
-    virtual bool isTrafficLight() const noexcept { return false; }
-    virtual bool isRoundabout() const noexcept { return false; }
+    inline virtual bool isIntersection() const noexcept { return false; }
+    inline virtual bool isTrafficLight() const noexcept { return false; }
+    inline virtual bool isRoundabout() const noexcept { return false; }
   };
+
   /// @brief The Node class represents a node in the network.
   /// @tparam Id The type of the node's id. It must be an unsigned integral type.
   class Node : public NodeConcept {
@@ -80,21 +81,21 @@ namespace dsm {
     Size m_agentCounter;
 
   public:
-    Node() = default;
+    inline Node() = default;
     /// @brief Construct a new Node object
     /// @param id The node's id
-    explicit Node(Id id) : NodeConcept{id} {};
+    inline explicit Node(Id id) : NodeConcept{id} {};
     /// @brief Construct a new Node object
     /// @param id The node's id
     /// @param coords A std::pair containing the node's coordinates
-    Node(Id id, std::pair<double, double> coords) : NodeConcept{id, coords} {};
+    inline Node(Id id, std::pair<double, double> coords) : NodeConcept{id, coords} {};
 
     virtual ~Node() = default;
 
     /// @brief Set the node's capacity
     /// @param capacity The node's capacity
     /// @throws std::runtime_error if the capacity is smaller than the current queue size
-    void setCapacity(Size capacity) override;
+    inline void setCapacity(Size capacity) override;
 
     /// @brief Put an agent in the node
     /// @param agent A std::pair containing the agent's angle difference and id
@@ -102,46 +103,46 @@ namespace dsm {
     ///          The agent with the smallest angle difference is the first one to be
     ///          removed from the node.
     /// @throws std::runtime_error if the node is full
-    void addAgent(double angle, Id agentId);
+    inline void addAgent(double angle, Id agentId);
     /// @brief Put an agent in the node
     /// @param agentId The agent's id
     /// @details The agent's angle difference is used to order the agents in the node.
     ///          The agent with the smallest angle difference is the first one to be
     ///          removed from the node.
     /// @throws std::runtime_error if the node is full
-    void addAgent(Id agentId);
+    inline void addAgent(Id agentId);
     /// @brief Removes an agent from the node
     /// @param agentId The agent's id
-    void removeAgent(Id agentId);
+    inline void removeAgent(Id agentId);
     /// @brief Set the node streets with priority
     /// @param streetPriorities A std::set containing the node's street priorities
-    void setStreetPriorities(std::set<Id> streetPriorities) {
+    inline void setStreetPriorities(std::set<Id> streetPriorities) {
       m_streetPriorities = std::move(streetPriorities);
     }
     /// @brief Add a street to the node street priorities
     /// @param streetId The street's id
-    void addStreetPriority(Id streetId) { m_streetPriorities.emplace(streetId); }
+    inline void addStreetPriority(Id streetId) { m_streetPriorities.emplace(streetId); }
 
     /// @brief Returns true if the node is full
     /// @return bool True if the node is full
-    bool isFull() const override { return m_agents.size() == this->m_capacity; }
+    inline bool isFull() const override { return m_agents.size() == this->m_capacity; }
 
     /// @brief Get the node's street priorities
     /// @details This function returns a std::set containing the node's street priorities.
     ///        If a street has priority, it means that the agents that are on that street
     ///        have priority over the agents that are on the other streets.
     /// @return std::set<Id> A std::set containing the node's street priorities
-    virtual const std::set<Id>& streetPriorities() const { return m_streetPriorities; };
+    inline virtual const std::set<Id>& streetPriorities() const { return m_streetPriorities; };
     /// @brief Get the node's agent ids
     /// @return std::set<Id> A std::set containing the node's agent ids
-    std::multimap<int16_t, Id> agents() const { return m_agents; };
+    inline std::multimap<int16_t, Id> agents() const { return m_agents; };
     /// @brief Returns the number of agents that have passed through the node
     /// @return Size The number of agents that have passed through the node
     /// @details This function returns the number of agents that have passed through the node
     ///          since the last time this function was called. It also resets the counter.
-    Size agentCounter();
+    inline Size agentCounter();
 
-    virtual bool isIntersection() const noexcept override final { return true; }
+    inline virtual bool isIntersection() const noexcept override final { return true; }
   };
 
   void Node::setCapacity(Size capacity) {
@@ -216,10 +217,10 @@ namespace dsm {
   public:
     /// @brief Construct a new TrafficLight object
     /// @param id The node's id
-    explicit TrafficLight(Id id) : Node{id}, m_counter{0}, m_phase{0} {};
+    inline explicit TrafficLight(Id id) : Node{id}, m_counter{0}, m_phase{0} {};
     /// @brief Construct a new TrafficLight object
     /// @param node A Node object
-    TrafficLight(const NodeConcept& node);
+    inline TrafficLight(const NodeConcept& node);
 
     /// @brief Set the node's delay
     /// @details This function is used to set the node's delay.
@@ -229,7 +230,7 @@ namespace dsm {
     ///          - if the counter is less than the old green delay but more than the new green delay,
     ///            it will be set to the new green delay minus the difference between the old and the new delay.
     /// @param delay The node's delay
-    void setDelay(Delay delay);
+    inline void setDelay(Delay delay);
     /// @brief Set the node's delay
     /// @details This function is used to set the node's delay.
     ///          If the delay is already set, the function will check the counter:
@@ -238,31 +239,31 @@ namespace dsm {
     ///          - if the counter is less than the old green delay but more than the new green delay,
     ///            it will be set to the new green delay minus the difference between the old and the new delay.
     /// @param delay The node's delay
-    void setDelay(std::pair<Delay, Delay> delay);
+    inline void setDelay(std::pair<Delay, Delay> delay);
     /// @brief Set the node's phase
     /// @param phase The node's phase
     /// @throw std::runtime_error if the delay is not set
-    void setPhase(Delay phase);
+    inline void setPhase(Delay phase);
     /// @brief Increase the node's counter
     /// @details This function is used to increase the node's counter
     ///          when the simulation is running. It automatically resets the counter
     ///          when it reaches the double of the delay value.
     /// @throw std::runtime_error if the delay is not set
-    void increaseCounter();
+    inline void increaseCounter();
 
     /// @brief  Set the phase of the node after the current red-green cycle has passed
     /// @param phase The new node phase
-    void setPhaseAfterCycle(Delay phase);
+    inline void setPhaseAfterCycle(Delay phase);
 
     /// @brief Get the node's delay
     /// @return std::optional<Delay> The node's delay
-    std::optional<std::pair<Delay, Delay>> delay() const { return m_delay; }
-    Delay counter() const { return m_counter; }
+    inline std::optional<std::pair<Delay, Delay>> delay() const { return m_delay; }
+    inline Delay counter() const { return m_counter; }
     /// @brief Returns true if the traffic light is green
     /// @return bool True if the traffic light is green
-    bool isGreen() const;
-    bool isGreen(Id streetId) const;
-    bool isTrafficLight() const noexcept override { return true; }
+    inline bool isGreen() const;
+    inline bool isGreen(Id streetId) const;
+    inline bool isTrafficLight() const noexcept override { return true; }
   };
 
   template <typename Delay>
@@ -382,38 +383,38 @@ namespace dsm {
     dsm::queue<Id> m_agents;
 
   public:
-    Roundabout() = default;
+    inline Roundabout() = default;
     /// @brief Construct a new Roundabout object
     /// @param id The node's id
-    explicit Roundabout(Id id) : NodeConcept{id} {};
+    inline explicit Roundabout(Id id) : NodeConcept{id} {};
     /// @brief Construct a new Roundabout object
     /// @param id The node's id
     /// @param coords A std::pair containing the node's coordinates
-    Roundabout(Id id, std::pair<double, double> coords)
+    inline Roundabout(Id id, std::pair<double, double> coords)
         : NodeConcept{id, coords} {};
     /// @brief Construct a new Roundabout object
     /// @param node A Node object
-    Roundabout(const NodeConcept& node);
+    inline Roundabout(const NodeConcept& node);
 
     virtual ~Roundabout() = default;
 
     /// @brief Put an agent in the node
     /// @param agentId The agent's id
     /// @throws std::runtime_error if the node is full
-    void enqueue(Id agentId);
+    inline void enqueue(Id agentId);
     /// @brief Removes the first agent from the node
     /// @return Id The agent's id
-    Id dequeue();
+    inline Id dequeue();
     /// @brief Get the node's queue
     /// @return dsm::queue<Id> The node's queue
-    const dsm::queue<Id>& agents() const { return m_agents; }
+    inline const dsm::queue<Id>& agents() const { return m_agents; }
 
     /// @brief Returns true if the node is full
     /// @return bool True if the node is full
-    bool isFull() const override { return m_agents.size() == this->m_capacity; }
+    inline bool isFull() const override { return m_agents.size() == this->m_capacity; }
     /// @brief Returns true if the node is a roundabout
     /// @return bool True if the node is a roundabout
-    bool isRoundabout() const noexcept override { return true; }
+    inline bool isRoundabout() const noexcept override { return true; }
   };
 
   Roundabout::Roundabout(const NodeConcept& node)

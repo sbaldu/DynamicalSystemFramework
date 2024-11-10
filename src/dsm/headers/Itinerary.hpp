@@ -28,30 +28,30 @@ namespace dsm {
   public:
     /// @brief Construct a new Itinerary object
     /// @param destination The itinerary's destination
-    Itinerary(Id id, Id destination);
+    inline Itinerary(Id id, Id destination);
     /// @brief Construct a new Itinerary object
     /// @param destination The itinerary's destination
     /// @param path An adjacency matrix made by a SparseMatrix representing the itinerary's path
-    Itinerary(Id id, Id destination, SparseMatrix<bool> path);
+    inline Itinerary(Id id, Id destination, SparseMatrix<bool> path);
 
     /// @brief Set the itinerary's destination
     /// @param destination The itinerary's destination
-    void setDestination(Id destination);
+    inline void setDestination(Id destination);
     /// @brief Set the itinerary's path
     /// @param path An adjacency matrix made by a SparseMatrix representing the itinerary's path
     /// @throw std::invalid_argument, if the itinerary's source or destination is not in the path's
-    void setPath(SparseMatrix<bool> path);
+    inline void setPath(SparseMatrix<bool> path);
 
     /// @brief Get the itinerary's id
     /// @return Id, The itinerary's id
-    Id id() const { return m_id; }
+    inline Id id() const { return m_id; }
     /// @brief Get the itinerary's destination
     /// @return Id, The itinerary's destination
-    Id destination() const { return m_destination; }
+    inline Id destination() const { return m_destination; }
     /// @brief Get the itinerary's path
     /// @return SparseMatrix<Id, bool>, An adjacency matrix made by a SparseMatrix representing the
     /// itinerary's path
-    const SparseMatrix<bool>& path() const { return m_path; }
+    inline const SparseMatrix<bool>& path() const { return m_path; }
   };
 
   Itinerary::Itinerary(Id id, Id destination)
