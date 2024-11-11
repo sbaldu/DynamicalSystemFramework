@@ -105,8 +105,7 @@ namespace dsm {
     /// @brief Evolve the nodes
     /// @details If possible, removes all agents from each node, putting them on the next street.
     /// If the error probability is not zero, the agents can move to a random street.
-    virtual void m_evolveNode(const Id nodeId,
-                              const std::unique_ptr<Node<Id, Size>>& pNode);
+    virtual void m_evolveNode(const std::unique_ptr<Node<Id, Size>>& pNode);
     /// @brief Evolve the agents.
     /// @details Puts all new agents on a street, if possible, decrements all delays
     /// and increments all travel times.
@@ -493,7 +492,7 @@ namespace dsm {
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
              is_numeric_v<Delay>)
   void Dynamics<Id, Size, Delay>::m_evolveNode(
-      const Id nodeId, const std::unique_ptr<Node<Id, Size>>& pNode) {
+      const std::unique_ptr<Node<Id, Size>>& pNode) {
     if (pNode->isIntersection()) {
       auto& intersection = dynamic_cast<Intersection<Id, Size>&>(*pNode);
       for (const auto [angle, agentId] : intersection.agents()) {
@@ -519,8 +518,7 @@ namespace dsm {
       const auto nAgents{roundabout.agents().size()};
       for (size_t i{0}; i < nAgents; ++i) {
         const auto agentId{roundabout.agents().front()};
-        const auto& nextStreet{this->m_graph.streetSet()[m_nextStreetId(
-            agentId, nodeId, m_agents[agentId]->streetId())]};
+        auto const& nextStreet{this->m_graph.streetSet()[m_agentNextStreetId[agentId]]};
         if (!(nextStreet->isFull())) {
           if (m_agents[agentId]->streetId().has_value()) {
             const auto streetId = m_agents[agentId]->streetId().value();
@@ -538,6 +536,7 @@ namespace dsm {
           m_agents[agentId]->incrementDelay(
               std::ceil(nextStreet->length() / m_agents[agentId]->speed()));
           nextStreet->addAgent(agentId);
+          m_agentNextStreetId.erase(agentId);
         } else {
           break;
         }
@@ -793,9 +792,9 @@ namespace dsm {
       }
     }
     // move all the agents from each node, if possible
-    for (const auto& [nodeId, pNode] : m_graph.nodeSet()) {
-      for (auto i = 0; i < pNode->transportCapacity(); ++i) {
-        this->m_evolveNode(nodeId, pNode);
+    for (const auto& pair : m_graph.nodeSet()) {
+      for (auto i = 0; i < pair.second->transportCapacity(); ++i) {
+        this->m_evolveNode(pair.second);
       }
     }
     // cycle over agents and update their times
