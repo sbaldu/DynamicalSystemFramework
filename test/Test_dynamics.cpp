@@ -18,6 +18,7 @@ using Itinerary = dsm::Itinerary;
 using Intersection = dsm::Intersection;
 using TrafficLight = dsm::TrafficLight<uint16_t>;
 using Roundabout = dsm::Roundabout;
+using Measurement = dsm::Measurement<float>;
 
 TEST_CASE("Measurement") {
   SUBCASE("STL vector") {
