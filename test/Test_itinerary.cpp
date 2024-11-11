@@ -4,7 +4,7 @@
 
 #include "doctest.h"
 
-using Itinerary = dsm::Itinerary<uint8_t>;
+using Itinerary = dsm::Itinerary;
 
 TEST_CASE("Itinerary") {
   SUBCASE("Constructors") {
@@ -22,7 +22,7 @@ TEST_CASE("Itinerary") {
     GIVEN("An itinerary id, its destination id and a transition matrix") {
       uint8_t itineraryId{0};
       uint8_t destinationId{2};
-      dsm::SparseMatrix<uint8_t, bool> path{1, 1};
+      dsm::SparseMatrix<bool> path{1, 1};
       WHEN("The Itinerary is constructed") {
         Itinerary itinerary{itineraryId, destinationId, path};
         THEN("The source, destination, and path are set correctly") {
@@ -38,7 +38,7 @@ TEST_CASE("Itinerary") {
     GIVEN("An itinerary id, its destination id and a transition matrix") {
       uint8_t itineraryId{0};
       uint8_t destinationId{2};
-      dsm::SparseMatrix<uint8_t, bool> path{1, 1};
+      dsm::SparseMatrix<bool> path{1, 1};
       Itinerary itinerary{itineraryId, destinationId, path};
       WHEN("The destination is set") {
         uint8_t newDestinationId{3};

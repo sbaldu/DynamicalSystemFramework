@@ -9,9 +9,9 @@
 
 #include "doctest.h"
 
-using Graph = dsm::Graph<uint, uint>;
-using SparseMatrix = dsm::SparseMatrix<uint, bool>;
-using Street = dsm::Street<uint, uint>;
+using Graph = dsm::Graph;
+using SparseMatrix = dsm::SparseMatrix<bool>;
+using Street = dsm::Street;
 using Path = std::vector<uint>;
 
 template <typename T1, typename T2>

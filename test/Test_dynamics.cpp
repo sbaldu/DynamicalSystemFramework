@@ -8,16 +8,16 @@
 
 #include "doctest.h"
 
-using Dynamics = dsm::FirstOrderDynamics<uint16_t, uint16_t, uint16_t>;
-using Graph = dsm::Graph<uint16_t, uint16_t>;
-using SparseMatrix = dsm::SparseMatrix<uint16_t, bool>;
-using Street = dsm::Street<uint16_t, uint16_t>;
-using SpireStreet = dsm::SpireStreet<uint16_t, uint16_t>;
-using Agent = dsm::Agent<uint16_t, uint16_t, uint16_t>;
-using Itinerary = dsm::Itinerary<uint16_t>;
-using Intersection = dsm::Intersection<uint16_t, uint16_t>;
-using TrafficLight = dsm::TrafficLight<uint16_t, uint16_t, uint16_t>;
-using Roundabout = dsm::Roundabout<uint16_t, uint16_t>;
+using Dynamics = dsm::FirstOrderDynamics<uint16_t>;
+using Graph = dsm::Graph;
+using SparseMatrix = dsm::SparseMatrix<bool>;
+using Street = dsm::Street;
+using SpireStreet = dsm::SpireStreet;
+using Agent = dsm::Agent<uint16_t>;
+using Itinerary = dsm::Itinerary;
+using Intersection = dsm::Intersection;
+using TrafficLight = dsm::TrafficLight<uint16_t>;
+using Roundabout = dsm::Roundabout;
 using Measurement = dsm::Measurement<float>;
 
 TEST_CASE("Measurement") {
@@ -100,7 +100,7 @@ TEST_CASE("Dynamics") {
       graph.importMatrix("./data/matrix.dat");
       Dynamics dynamics{graph};
       WHEN("We add a span of destination nodes") {
-        std::array<uint16_t, 3> nodes{0, 1, 2};
+        std::array<uint32_t, 3> nodes{0, 1, 2};
         dynamics.setDestinationNodes(nodes);
         THEN("The destination nodes are added") {
           const auto& itineraries = dynamics.itineraries();
@@ -111,7 +111,7 @@ TEST_CASE("Dynamics") {
         }
       }
       WHEN("We add a span with non existing nodes") {
-        std::array<uint16_t, 3> nodes{0, 1, 169};
+        std::array<uint32_t, 3> nodes{0, 1, 169};
         THEN("An exception is thrown") {
           CHECK_THROWS_AS(dynamics.setDestinationNodes(nodes), std::invalid_argument);
         }
@@ -215,8 +215,8 @@ TEST_CASE("Dynamics") {
       Dynamics dynamics{graph};
       dynamics.setSeed(69);
       WHEN("We add one agent for existing itinerary") {
-        std::unordered_map<uint16_t, double> src{{0, 1.}};
-        std::unordered_map<uint16_t, double> dst{{2, 1.}};
+        std::unordered_map<uint32_t, double> src{{0, 1.}};
+        std::unordered_map<uint32_t, double> dst{{2, 1.}};
         dynamics.addItinerary(Itinerary{0, 2});
         dynamics.addAgentsRandomly(1, src, dst);
         THEN("The agents are correctly set") {
@@ -229,8 +229,8 @@ TEST_CASE("Dynamics") {
         }
       }
       WHEN("We add agents for existing itineraries") {
-        std::unordered_map<uint16_t, double> src{{1, 0.3}, {27, 0.3}, {118, 0.4}};
-        std::unordered_map<uint16_t, double> dst{{14, 0.3}, {102, 0.3}, {107, 0.4}};
+        std::unordered_map<uint32_t, double> src{{1, 0.3}, {27, 0.3}, {118, 0.4}};
+        std::unordered_map<uint32_t, double> dst{{14, 0.3}, {102, 0.3}, {107, 0.4}};
         dynamics.addItinerary(Itinerary{0, 14});
         dynamics.addItinerary(Itinerary{1, 102});
         dynamics.addItinerary(Itinerary{2, 107});
@@ -256,21 +256,11 @@ TEST_CASE("Dynamics") {
       }
       WHEN("We add agents without adding itineraries") {
         THEN("An exception is thrown") {
-          std::unordered_map<uint16_t, double> src{{0, 1.}};
-          std::unordered_map<uint16_t, double> dst{{10, 1.}};
+          std::unordered_map<uint32_t, double> src{{0, 1.}};
+          std::unordered_map<uint32_t, double> dst{{10, 1.}};
           CHECK_THROWS_AS(dynamics.addAgentsRandomly(1, src, dst), std::invalid_argument);
         }
       }
-      // WHEN("We try to add agents with non-normalized node maps") {
-      //   std::unordered_map<uint16_t, double> not_norm_weights{{0, 1.5}, {1, 0.5}};
-      //   std::unordered_map<uint16_t, double> norm_weights{{0, 0.5}, {1, 0.5}};
-      //   THEN("An exception is thrown") {
-      //     CHECK_THROWS_AS(dynamics.addAgentsRandomly(1, not_norm_weights, norm_weights),
-      //                     std::invalid_argument);
-      //     CHECK_THROWS_AS(dynamics.addAgentsRandomly(1, norm_weights, not_norm_weights),
-      //                     std::invalid_argument);
-      //   }
-      // }
     }
   }
   SUBCASE("addAgents") {

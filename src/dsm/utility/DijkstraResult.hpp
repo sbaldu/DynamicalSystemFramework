@@ -6,12 +6,12 @@
 
 #pragma once
 
+#include "Typedef.hpp"
+
 namespace dsm {
 
   /// @brief The DijkstraResult class represents the result of a Dijkstra algorithm.
   /// @tparam Id, The type of the graph's id. Must be an unsigned integral type.
-  template <typename Id>
-    requires(std::unsigned_integral<Id>)
   class DijkstraResult {
   private:
     std::vector<Id> m_path;

@@ -3,10 +3,10 @@
 #include "Agent.hpp"
 #include "Itinerary.hpp"
 
+#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
 
-using Agent = dsm::Agent<uint16_t, uint16_t, uint16_t>;
-using Itinerary = dsm::Itinerary<uint16_t>;
+using Agent = dsm::Agent<uint16_t>;
 
 TEST_CASE("Agent") {
   SUBCASE("Constructors") {

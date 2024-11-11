@@ -21,13 +21,12 @@
 
 #include "../utility/Logger.hpp"
 #include "../utility/queue.hpp"
+#include "../utility/Typedef.hpp"
 
 namespace dsm {
   /// @brief The Node class represents the concept of a node in the network.
   /// @tparam Id The type of the node's id
   /// @tparam Size The type of the node's capacity
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   class Node {
   protected:
     Id m_id;
@@ -49,40 +48,45 @@ namespace dsm {
 
     /// @brief Set the node's id
     /// @param id The node's id
-    void setId(Id id) { m_id = id; }
+    inline void setId(Id id) { m_id = id; }
     /// @brief Set the node's coordinates
     /// @param coords A std::pair containing the node's coordinates (lat, lon)
-    void setCoords(std::pair<double, double> coords) { m_coords = std::move(coords); }
+    inline void setCoords(std::pair<double, double> coords) {
+      m_coords = std::move(coords);
+    }
     /// @brief Set the node's capacity
     /// @param capacity The node's capacity
-    virtual void setCapacity(Size capacity) { m_capacity = capacity; }
+    inline virtual void setCapacity(Size capacity) { m_capacity = capacity; }
     /// @brief Set the node's transport capacity
     /// @param capacity The node's transport capacity
-    virtual void setTransportCapacity(Size capacity) { m_transportCapacity = capacity; }
+    inline virtual void setTransportCapacity(Size capacity) {
+      m_transportCapacity = capacity;
+    }
     /// @brief Get the node's id
     /// @return Id The node's id
-    Id id() const { return m_id; }
+    inline Id id() const { return m_id; }
     /// @brief Get the node's coordinates
     /// @return std::optional<std::pair<double, double>> A std::pair containing the node's coordinates
-    const std::optional<std::pair<double, double>>& coords() const { return m_coords; }
+    inline const std::optional<std::pair<double, double>>& coords() const {
+      return m_coords;
+    }
     /// @brief Get the node's capacity
     /// @return Size The node's capacity
-    Size capacity() const { return m_capacity; }
+    inline Size capacity() const { return m_capacity; }
     /// @brief Get the node's transport capacity
     /// @return Size The node's transport capacity
-    Size transportCapacity() const { return m_transportCapacity; }
+    inline Size transportCapacity() const { return m_transportCapacity; }
 
-    virtual bool isFull() const = 0;
+    inline virtual bool isFull() const = 0;
 
-    virtual bool isIntersection() const noexcept { return false; }
-    virtual bool isTrafficLight() const noexcept { return false; }
-    virtual bool isRoundabout() const noexcept { return false; }
+    inline virtual bool isIntersection() const noexcept { return false; }
+    inline virtual bool isTrafficLight() const noexcept { return false; }
+    inline virtual bool isRoundabout() const noexcept { return false; }
   };
-  /// @brief The Intersection class represents a node in a road network.
+
+  /// @brief The Intersection class represents a node in the network.
   /// @tparam Id The type of the node's id. It must be an unsigned integral type.
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  class Intersection : public Node<Id, Size> {
+  class Intersection : public Node {
   protected:
     std::multimap<int16_t, Id> m_agents;
     std::set<Id>
@@ -93,11 +97,11 @@ namespace dsm {
     Intersection() = default;
     /// @brief Construct a new Intersection object
     /// @param id The node's id
-    explicit Intersection(Id id) : Node<Id, Size>{id} {};
+    explicit Intersection(Id id) : Node{id} {};
     /// @brief Construct a new Intersection object
     /// @param id The node's id
     /// @param coords A std::pair containing the node's coordinates
-    Intersection(Id id, std::pair<double, double> coords) : Node<Id, Size>{id, coords} {};
+    Intersection(Id id, std::pair<double, double> coords) : Node{id, coords} {};
 
     virtual ~Intersection() = default;
 
@@ -125,107 +129,40 @@ namespace dsm {
     void removeAgent(Id agentId);
     /// @brief Set the node streets with priority
     /// @param streetPriorities A std::set containing the node's street priorities
-    void setStreetPriorities(std::set<Id> streetPriorities) {
+    inline void setStreetPriorities(std::set<Id> streetPriorities) {
       m_streetPriorities = std::move(streetPriorities);
     }
     /// @brief Add a street to the node street priorities
     /// @param streetId The street's id
-    void addStreetPriority(Id streetId) { m_streetPriorities.emplace(streetId); }
+    inline void addStreetPriority(Id streetId) { m_streetPriorities.emplace(streetId); }
 
     /// @brief Returns true if the node is full
     /// @return bool True if the node is full
-    bool isFull() const override { return m_agents.size() == this->m_capacity; }
+    inline bool isFull() const override { return m_agents.size() == this->m_capacity; }
 
     /// @brief Get the node's street priorities
     /// @details This function returns a std::set containing the node's street priorities.
     ///        If a street has priority, it means that the agents that are on that street
     ///        have priority over the agents that are on the other streets.
     /// @return std::set<Id> A std::set containing the node's street priorities
-    virtual const std::set<Id>& streetPriorities() const { return m_streetPriorities; };
+    inline virtual const std::set<Id>& streetPriorities() const {
+      return m_streetPriorities;
+    };
     /// @brief Get the node's agent ids
     /// @return std::set<Id> A std::set containing the node's agent ids
-    std::multimap<int16_t, Id> agents() const { return m_agents; };
+    inline std::multimap<int16_t, Id> agents() const { return m_agents; };
     /// @brief Returns the number of agents that have passed through the node
     /// @return Size The number of agents that have passed through the node
     /// @details This function returns the number of agents that have passed through the node
     ///          since the last time this function was called. It also resets the counter.
     Size agentCounter();
 
-    virtual bool isIntersection() const noexcept override final { return true; }
+    inline virtual bool isIntersection() const noexcept override final { return true; }
   };
 
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Intersection<Id, Size>::setCapacity(Size capacity) {
-    if (capacity < m_agents.size()) {
-      throw std::runtime_error(
-          buildLog("Intersection capacity is smaller than the current queue size"));
-    }
-    Node<Id, Size>::setCapacity(capacity);
-  }
-
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Intersection<Id, Size>::addAgent(double angle, Id agentId) {
-    if (m_agents.size() == this->m_capacity) {
-      throw std::runtime_error(buildLog("Intersection is full"));
-    }
-    for (auto const [angle, id] : m_agents) {
-      if (id == agentId) {
-        throw std::runtime_error(
-            buildLog(std::format("Agent with id {} is already on the node.", agentId)));
-      }
-    }
-    auto iAngle{static_cast<int16_t>(angle * 100)};
-    m_agents.emplace(iAngle, agentId);
-    ++m_agentCounter;
-  }
-
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Intersection<Id, Size>::addAgent(Id agentId) {
-    if (m_agents.size() == this->m_capacity) {
-      throw std::runtime_error(buildLog("Intersection is full"));
-    }
-    for (auto const [angle, id] : m_agents) {
-      if (id == agentId) {
-        throw std::runtime_error(
-            buildLog(std::format("Agent with id {} is already on the node.", id)));
-      }
-    }
-    int lastKey{0};
-    if (!m_agents.empty()) {
-      lastKey = m_agents.rbegin()->first + 1;
-    }
-    m_agents.emplace(lastKey, agentId);
-    ++m_agentCounter;
-  }
-
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Intersection<Id, Size>::removeAgent(Id agentId) {
-    for (auto it{m_agents.begin()}; it != m_agents.end(); ++it) {
-      if (it->second == agentId) {
-        m_agents.erase(it);
-        return;
-      }
-    }
-    throw std::runtime_error(
-        buildLog(std::format("Agent with id {} is not on the node", agentId)));
-  }
-
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  Size Intersection<Id, Size>::agentCounter() {
-    Size copy{m_agentCounter};
-    m_agentCounter = 0;
-    return copy;
-  }
-
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             std::unsigned_integral<Delay>)
-  class TrafficLight : public Intersection<Id, Size> {
+  template <typename Delay>
+    requires(std::unsigned_integral<Delay>)
+  class TrafficLight : public Intersection {
   private:
     std::optional<std::pair<Delay, Delay>> m_delay;
     Delay m_counter;
@@ -234,11 +171,10 @@ namespace dsm {
   public:
     /// @brief Construct a new TrafficLight object
     /// @param id The node's id
-    explicit TrafficLight(Id id)
-        : Intersection<Id, Size>{id}, m_counter{0}, m_phase{0} {};
+    explicit TrafficLight(Id id) : Intersection{id}, m_counter{0}, m_phase{0} {};
     /// @brief Construct a new TrafficLight object
-    /// @param node A Intersection object
-    TrafficLight(const Node<Id, Size>& node);
+    /// @param node An Intersection object
+    TrafficLight(const Node& node);
 
     /// @brief Set the node's delay
     /// @details This function is used to set the node's delay.
@@ -284,21 +220,19 @@ namespace dsm {
     bool isTrafficLight() const noexcept override { return true; }
   };
 
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             std::unsigned_integral<Delay>)
-  TrafficLight<Id, Size, Delay>::TrafficLight(const Node<Id, Size>& node)
-      : Intersection<Id, Size>{node.id()}, m_counter{0}, m_phase{0} {
+  template <typename Delay>
+    requires(std::unsigned_integral<Delay>)
+  TrafficLight<Delay>::TrafficLight(const Node& node)
+      : Intersection{node.id()}, m_counter{0}, m_phase{0} {
     if (node.coords().has_value()) {
       this->setCoords(node.coords().value());
     }
     this->setCapacity(node.capacity());
   }
 
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             std::unsigned_integral<Delay>)
-  void TrafficLight<Id, Size, Delay>::setDelay(Delay delay) {
+  template <typename Delay>
+    requires(std::unsigned_integral<Delay>)
+  void TrafficLight<Delay>::setDelay(Delay delay) {
     if (m_delay.has_value()) {
       if (m_counter >= delay + m_delay.value().second) {
         m_counter = delay + m_delay.value().second - 1;
@@ -310,10 +244,10 @@ namespace dsm {
     }
     m_delay = std::make_pair(delay, delay);
   }
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             std::unsigned_integral<Delay>)
-  void TrafficLight<Id, Size, Delay>::setDelay(std::pair<Delay, Delay> delay) {
+
+  template <typename Delay>
+    requires(std::unsigned_integral<Delay>)
+  void TrafficLight<Delay>::setDelay(std::pair<Delay, Delay> delay) {
     if (m_delay.has_value()) {
       if (m_counter >= delay.first + delay.second) {
         m_counter = delay.first + delay.second - 1;
@@ -325,10 +259,10 @@ namespace dsm {
     }
     m_delay = std::move(delay);
   }
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             std::unsigned_integral<Delay>)
-  void TrafficLight<Id, Size, Delay>::setPhase(Delay phase) {
+
+  template <typename Delay>
+    requires(std::unsigned_integral<Delay>)
+  void TrafficLight<Delay>::setPhase(Delay phase) {
     if (!m_delay.has_value()) {
       throw std::runtime_error(buildLog("TrafficLight's delay has not been set."));
     }
@@ -339,20 +273,18 @@ namespace dsm {
     m_phase = 0;
   }
 
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             std::unsigned_integral<Delay>)
-  void TrafficLight<Id, Size, Delay>::setPhaseAfterCycle(Delay phase) {
+  template <typename Delay>
+    requires(std::unsigned_integral<Delay>)
+  void TrafficLight<Delay>::setPhaseAfterCycle(Delay phase) {
     if (phase > m_delay.value().first + m_delay.value().second) {
       phase -= m_delay.value().first + m_delay.value().second;
     }
     m_phase = phase;
   }
 
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             std::unsigned_integral<Delay>)
-  void TrafficLight<Id, Size, Delay>::increaseCounter() {
+  template <typename Delay>
+    requires(std::unsigned_integral<Delay>)
+  void TrafficLight<Delay>::increaseCounter() {
     if (!m_delay.has_value()) {
       throw std::runtime_error(buildLog("TrafficLight's delay has not been set."));
     }
@@ -367,19 +299,18 @@ namespace dsm {
     }
   }
 
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             std::unsigned_integral<Delay>)
-  bool TrafficLight<Id, Size, Delay>::isGreen() const {
+  template <typename Delay>
+    requires(std::unsigned_integral<Delay>)
+  bool TrafficLight<Delay>::isGreen() const {
     if (!m_delay.has_value()) {
       throw std::runtime_error(buildLog("TrafficLight's delay has not been set."));
     }
     return m_counter < m_delay.value().first;
   }
-  template <typename Id, typename Size, typename Delay>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size> &&
-             std::unsigned_integral<Delay>)
-  bool TrafficLight<Id, Size, Delay>::isGreen(Id streetId) const {
+
+  template <typename Delay>
+    requires(std::unsigned_integral<Delay>)
+  bool TrafficLight<Delay>::isGreen(Id streetId) const {
     if (!m_delay.has_value()) {
       throw std::runtime_error(buildLog("TrafficLight's delay has not been set."));
     }
@@ -389,27 +320,26 @@ namespace dsm {
     }
     return !hasPriority;
   }
+
   /// @brief The Roundabout class represents a roundabout node in the network.
   /// @tparam Id The type of the node's id
   /// @tparam Size The type of the node's capacity
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  class Roundabout : public Node<Id, Size> {
+  class Roundabout : public Node {
   protected:
     dsm::queue<Id> m_agents;
 
   public:
-    Roundabout() = default;
+    inline Roundabout() = default;
     /// @brief Construct a new Roundabout object
     /// @param id The node's id
-    explicit Roundabout(Id id) : Node<Id, Size>{id} {};
+    inline explicit Roundabout(Id id) : Node{id} {};
     /// @brief Construct a new Roundabout object
     /// @param id The node's id
     /// @param coords A std::pair containing the node's coordinates
-    Roundabout(Id id, std::pair<double, double> coords) : Node<Id, Size>{id, coords} {};
+    inline Roundabout(Id id, std::pair<double, double> coords) : Node{id, coords} {};
     /// @brief Construct a new Roundabout object
-    /// @param node A Intersection object
-    Roundabout(const Node<Id, Size>& node);
+    /// @param node An Intersection object
+    Roundabout(const Node& node);
 
     virtual ~Roundabout() = default;
 
@@ -422,46 +352,14 @@ namespace dsm {
     Id dequeue();
     /// @brief Get the node's queue
     /// @return dsm::queue<Id> The node's queue
-    const dsm::queue<Id>& agents() const { return m_agents; }
+    inline const dsm::queue<Id>& agents() const { return m_agents; }
 
     /// @brief Returns true if the node is full
     /// @return bool True if the node is full
-    bool isFull() const override { return m_agents.size() == this->m_capacity; }
+    inline bool isFull() const override { return m_agents.size() == this->m_capacity; }
     /// @brief Returns true if the node is a roundabout
     /// @return bool True if the node is a roundabout
-    bool isRoundabout() const noexcept override { return true; }
+    inline bool isRoundabout() const noexcept override { return true; }
   };
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  Roundabout<Id, Size>::Roundabout(const Node<Id, Size>& node)
-      : Node<Id, Size>{node.id()} {
-    if (node.coords().has_value()) {
-      this->setCoords(node.coords().value());
-    }
-    this->setCapacity(node.capacity());
-  }
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  void Roundabout<Id, Size>::enqueue(Id agentId) {
-    if (m_agents.size() == this->m_capacity) {
-      throw std::runtime_error(buildLog("Roundabout is full."));
-    }
-    for (const auto id : m_agents) {
-      if (id == agentId) {
-        throw std::runtime_error(buildLog(
-            std::format("Agent with id {} is already on the roundabout.", agentId)));
-      }
-    }
-    m_agents.push(agentId);
-  }
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
-  Id Roundabout<Id, Size>::dequeue() {
-    if (m_agents.empty()) {
-      throw std::runtime_error(buildLog("Roundabout is empty."));
-    }
-    Id agentId{m_agents.front()};
-    m_agents.pop();
-    return agentId;
-  }
+
 };  // namespace dsm
