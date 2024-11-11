@@ -29,11 +29,11 @@ uint nAgents{450};
 using Unit = unsigned int;
 using Delay = uint8_t;
 
-using Graph = dsm::Graph<Unit, Unit>;
-using Dynamics = dsm::FirstOrderDynamics<Unit, Unit, Delay>;
-using Street = dsm::Street<Unit, Unit>;
-using SpireStreet = dsm::SpireStreet<Unit, Unit>;
-using Roundabout = dsm::Roundabout<Unit, Unit>;
+using Graph = dsm::Graph;
+using Dynamics = dsm::FirstOrderDynamics<Delay>;
+using Street = dsm::Street;
+using SpireStreet = dsm::SpireStreet;
+using Roundabout = dsm::Roundabout;
 
 void printLoadingBar(int const i, int const n) {
   std::cout << "Loading: " << std::setprecision(2) << std::fixed << (i * 100. / n) << "%"
