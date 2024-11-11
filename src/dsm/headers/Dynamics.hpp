@@ -102,9 +102,8 @@ namespace dsm {
     virtual void m_evolveStreet(const Id streetId,
                                 const std::unique_ptr<Street<Id, Size>>& pStreet,
                                 bool reinsert_agents);
-    /// @brief Evolve the nodes
-    /// @details If possible, removes all agents from each node, putting them on the next street.
-    /// If the error probability is not zero, the agents can move to a random street.
+    /// @brief If possible, removes one agent from the node, putting it on the next street.
+    /// @param pNode A std::unique_ptr to the node
     virtual void m_evolveNode(const std::unique_ptr<Node<Id, Size>>& pNode);
     /// @brief Evolve the agents.
     /// @details Puts all new agents on a street, if possible, decrements all delays
@@ -783,7 +782,7 @@ namespace dsm {
         this->m_evolveStreet(streetId, pStreet, reinsert_agents);
       }
     }
-    // move all the agents from each node, if possible
+    // Move transport capacity agents from each node
     for (const auto& pair : m_graph.nodeSet()) {
       for (auto i = 0; i < pair.second->transportCapacity(); ++i) {
         this->m_evolveNode(pair.second);
