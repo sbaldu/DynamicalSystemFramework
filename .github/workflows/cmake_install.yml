@@ -18,7 +18,8 @@ jobs:
       run: |
         mkdir -p build && cd build
         cmake ..
-        sudo cmake --install .
+        cmake --build .
+        sudo make install
 
     - name: Test include
       working-directory: ${{github.workspace}}
