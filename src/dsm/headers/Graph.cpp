@@ -317,19 +317,7 @@ namespace dsm {
   }
 
   void Graph::addNode(const Intersection& node) {
-    m_nodes.emplace(std::make_pair(node.id(), std::make_unique<Node>(node)));
-  }
-
-  template <typename... Tn>
-    requires(is_node_v<std::remove_reference_t<Tn>> && ...)
-  void Graph::addNodes(Tn&&... nodes) {}
-
-  template <typename T1, typename... Tn>
-    requires is_node_v<std::remove_reference_t<T1>> &&
-             (is_node_v<std::remove_reference_t<Tn>> && ...)
-  void Graph::addNodes(T1&& node, Tn&&... nodes) {
-    addNode(std::forward<T1>(node));
-    addNodes(std::forward<Tn>(nodes)...);
+    m_nodes.emplace(std::make_pair(node.id(), std::make_unique<Intersection>(node)));
   }
 
   void Graph::makeRoundabout(Id nodeId) {
@@ -417,8 +405,8 @@ namespace dsm {
     return this->street(nodePair.second, nodePair.first);
   }
 
-  std::optional<DijkstraResult> Graph::shortestPath(const Node& source,
-                                                    const Node& destination) const {
+  std::optional<DijkstraResult> Graph::shortestPath(const Intersection& source,
+                                                    const Intersection& destination) const {
     return this->shortestPath(source.id(), destination.id());
   }
 
