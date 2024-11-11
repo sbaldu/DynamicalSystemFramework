@@ -47,11 +47,11 @@ namespace dsm {
     ///          existing street.
     /// @param Street The existing street
     /// @param id The new street's id
-    inline Street(Id id, const Street&);
+    Street(Id id, const Street&);
     /// @brief Construct a new Street object
     /// @param id The street's id
     /// @param nodePair The street's node pair
-    inline Street(Id id, std::pair<Id, Id> nodePair);
+    Street(Id id, std::pair<Id, Id> nodePair);
     /// @brief Construct a new Street object
     /// @details The default capacity is 1, the default length is 1, and the default speed limit is
     ///          50 km/h, i.e. 13.8888888889 m/s.
@@ -59,7 +59,7 @@ namespace dsm {
     /// @param capacity The street's capacity
     /// @param len The street's length
     /// @param nodePair The street's node pair
-    inline Street(Id id, Size capacity, double len, std::pair<Id, Id> nodePair);
+    Street(Id id, Size capacity, double len, std::pair<Id, Id> nodePair);
     /// @brief Construct a new Street object
     /// @details The default speed limit is 50 km/h, i.e. 13.8888888889 m/s.
     /// @param id The street's id
@@ -67,214 +67,114 @@ namespace dsm {
     /// @param len The street's length
     /// @param maxSpeed The street's speed limit
     /// @param nodePair The street's node pair
-    inline Street(Id id, Size capacity, double len, double maxSpeed, std::pair<Id, Id> nodePair);
+    Street(
+        Id id, Size capacity, double len, double maxSpeed, std::pair<Id, Id> nodePair);
 
     virtual ~Street() = default;
 
     /// @brief Set the street's id
     /// @param id The street's id
-    inline void setId(Id id) { m_id = id; }
+    void setId(Id id) { m_id = id; }
     /// @brief Set the street's capacity
     /// @param capacity The street's capacity
-    inline void setCapacity(Size capacity) { m_capacity = capacity; }
+    void setCapacity(Size capacity) { m_capacity = capacity; }
     /// @brief Set the street's transport capacity
     /// @details The transport capacity is the maximum number of agents that can traverse the street
     ///          in a time step.
     /// @param capacity The street's transport capacity
-    inline void setTransportCapacity(Size capacity) { m_transportCapacity = capacity; }
+    void setTransportCapacity(Size capacity) { m_transportCapacity = capacity; }
     /// @brief Set the street's length
     /// @param len The street's length
     /// @throw std::invalid_argument, If the length is negative
-    inline void setLength(double len);
+    void setLength(double len);
     /// @brief Set the street's queue
     /// @param queue The street's queue
-    inline void setQueue(dsm::queue<Size> queue) { m_exitQueue = std::move(queue); }
+    void setQueue(dsm::queue<Size> queue) { m_exitQueue = std::move(queue); }
     /// @brief Set the street's node pair
     /// @param node1 The source node of the street
     /// @param node2 The destination node of the street
-    inline void setNodePair(Id node1, Id node2) { m_nodePair = std::make_pair(node1, node2); }
+    void setNodePair(Id node1, Id node2) {
+      m_nodePair = std::make_pair(node1, node2);
+    }
     /// @brief Set the street's node pair
     /// @param node1 The source node of the street
     /// @param node2 The destination node of the street
-    inline void setNodePair(const Node& node1, const Node& node2) {
+    void setNodePair(const Node& node1, const Node& node2) {
       m_nodePair = std::make_pair(node1.id(), node2.id());
     }
     /// @brief Set the street's node pair
     /// @param pair The street's node pair
-    inline void setNodePair(std::pair<Id, Id> pair) { m_nodePair = std::move(pair); }
+    void setNodePair(std::pair<Id, Id> pair) { m_nodePair = std::move(pair); }
     /// @brief Set the street's speed limit
     /// @param speed The street's speed limit
     /// @throw std::invalid_argument, If the speed is negative
-    inline void setMaxSpeed(double speed);
+    void setMaxSpeed(double speed);
     /// @brief Set the street's angle
     /// @param srcNode The source node of the street
     /// @param dstNode The destination node of the street
-    inline void setAngle(std::pair<double, double> srcNode, std::pair<double, double> dstNode);
+    void setAngle(std::pair<double, double> srcNode,
+                         std::pair<double, double> dstNode);
     /// @brief Set the street's angle
     /// @param angle The street's angle
     /// @throw std::invalid_argument If the angle is negative or greater than 2 * pi
-    inline void setAngle(double angle);
+    void setAngle(double angle);
 
     /// @brief Get the street's id
     /// @return Id, The street's id
-    inline Id id() const { return m_id; }
+    Id id() const { return m_id; }
     /// @brief Get the street's capacity
     /// @return Size, The street's capacity
-    inline Size capacity() const { return m_capacity; }
+    Size capacity() const { return m_capacity; }
     /// @brief Get the street's transport capacity
     /// @details The transport capacity is the maximum number of agents that can traverse the street
     ///          in a time step.
     /// @return Size, The street's transport capacity
-    inline Size transportCapacity() const { return m_transportCapacity; }
+    Size transportCapacity() const { return m_transportCapacity; }
     /// @brief Get the street's length
     /// @return double, The street's length
-    inline double length() const { return m_len; }
+    double length() const { return m_len; }
     /// @brief Get the street's waiting agents
     /// @return std::set<Id>, The street's waiting agents
-    inline const std::set<Id>& waitingAgents() const { return m_waitingAgents; }
+    const std::set<Id>& waitingAgents() const { return m_waitingAgents; }
     /// @brief Get the street's queue
     /// @return dsm::queue<Size>, The street's queue
-    inline const dsm::queue<Size>& queue() const { return m_exitQueue; }
+    const dsm::queue<Size>& queue() const { return m_exitQueue; }
     /// @brief Get the street's node pair
     /// @return std::pair<Id, Id>, The street's node pair
-    inline const std::pair<Id, Id>& nodePair() const { return m_nodePair; }
+    const std::pair<Id, Id>& nodePair() const { return m_nodePair; }
     /// @brief  Get the number of agents on the street
     /// @return Size, The number of agents on the street
-    inline Size nAgents() const { return m_exitQueue.size() + m_waitingAgents.size(); }
+    Size nAgents() const { return m_exitQueue.size() + m_waitingAgents.size(); }
     /// @brief Get the street's density in \f$m^{-1}\f$
     /// @return double, The street's density
-    inline double density() const { return nAgents() / m_len; }
+    double density() const { return nAgents() / m_len; }
     /// @brief Get the street's normalized density
     /// @return double, The street's normalized density
-    inline double normDensity() const { return nAgents() / static_cast<double>(m_capacity); }
+    double normDensity() const {
+      return nAgents() / static_cast<double>(m_capacity);
+    }
     /// @brief Check if the street is full
     /// @return bool, True if the street is full, false otherwise
-    inline bool isFull() const { return nAgents() == m_capacity; }
+    bool isFull() const { return nAgents() == m_capacity; }
     /// @brief Get the street's speed limit
     /// @return double, The street's speed limit
-    inline double maxSpeed() const { return m_maxSpeed; }
+    double maxSpeed() const { return m_maxSpeed; }
     /// @brief Get the street's angle
     /// @return double The street's angle
-    inline double angle() const { return m_angle; }
+    double angle() const { return m_angle; }
 
-    inline virtual void addAgent(Id agentId);
+    virtual void addAgent(Id agentId);
     /// @brief Add an agent to the street's queue
     /// @param agentId The id of the agent to add to the street's queue
     /// @throw std::runtime_error If the street's queue is full
-    inline void enqueue(Id agentId);
+    void enqueue(Id agentId);
     /// @brief Remove an agent from the street's queue
-    inline virtual std::optional<Id> dequeue();
+    virtual std::optional<Id> dequeue();
     /// @brief Check if the street is a spire
     /// @return bool True if the street is a spire, false otherwise
-    inline virtual bool isSpire() const { return false; };
+    virtual bool isSpire() const { return false; };
   };
 
-  Street::Street(Id id, const Street& street)
-      : m_nodePair{street.nodePair()},
-        m_len{street.length()},
-        m_maxSpeed{street.maxSpeed()},
-        m_angle{street.angle()},
-        m_id{id},
-        m_capacity{street.capacity()},
-        m_transportCapacity{street.transportCapacity()} {}
-
-  Street::Street(Id index, std::pair<Id, Id> pair)
-      : m_nodePair{std::move(pair)},
-        m_len{1.},
-        m_maxSpeed{13.8888888889},
-        m_angle{0.},
-        m_id{index},
-        m_capacity{1},
-        m_transportCapacity{std::numeric_limits<Size>::max()} {}
-
-  Street::Street(Id id, Size capacity, double len, std::pair<Id, Id> nodePair)
-      : m_nodePair{std::move(nodePair)},
-        m_len{len},
-        m_maxSpeed{13.8888888889},
-        m_angle{0.},
-        m_id{id},
-        m_capacity{capacity},
-        m_transportCapacity{std::numeric_limits<Size>::max()} {}
-
-  Street::Street(
-      Id id, Size capacity, double len, double maxSpeed, std::pair<Id, Id> nodePair)
-      : m_nodePair{std::move(nodePair)},
-        m_len{len},
-        m_angle{0.},
-        m_id{id},
-        m_capacity{capacity},
-        m_transportCapacity{std::numeric_limits<Size>::max()} {
-    this->setMaxSpeed(maxSpeed);
-  }
-
-  void Street::setLength(double len) {
-    if (len < 0.) {
-      throw std::invalid_argument(
-          buildLog(std::format("The length of a street ({}) cannot be negative.", len)));
-    }
-    m_len = len;
-  }
-  void Street::setMaxSpeed(double speed) {
-    if (speed < 0.) {
-      throw std::invalid_argument(buildLog(
-          std::format("The maximum speed of a street ({}) cannot be negative.", speed)));
-    }
-    m_maxSpeed = speed;
-  }
-  void Street::setAngle(std::pair<double, double> srcNode,
-                                  std::pair<double, double> dstNode) {
-    // N.B.: lat, lon <==> y, x
-    double delta_y{dstNode.first - srcNode.first};
-    double delta_x{dstNode.second - srcNode.second};
-    double angle{std::atan2(delta_y, delta_x)};
-    if (angle < 0.) {
-      angle += 2 * std::numbers::pi;
-    }
-    this->setAngle(angle);
-  }
-  void Street::setAngle(double angle) {
-    if (std::abs(angle) > 2 * std::numbers::pi) {
-      throw std::invalid_argument(buildLog(std::format(
-          "The angle of a street ({}) must be between - 2 * pi and 2 * pi.", angle)));
-    }
-    m_angle = angle;
-  }
-
-  void Street::addAgent(Id agentId) {
-    if (m_waitingAgents.contains(agentId)) {
-      throw std::runtime_error(
-          buildLog(std::format("Agent with id {} is already on the street.", agentId)));
-    }
-    for (auto const& id : m_exitQueue) {
-      if (id == agentId) {
-        throw std::runtime_error(
-            buildLog(std::format("Agent with id {} is already on the street.", agentId)));
-      }
-    }
-    m_waitingAgents.insert(agentId);
-  }
-  void Street::enqueue(Id agentId) {
-    if (!m_waitingAgents.contains(agentId)) {
-      throw std::runtime_error(
-          buildLog(std::format("Agent with id {} is not on the street.", agentId)));
-    }
-    for (auto const& id : m_exitQueue) {
-      if (id == agentId) {
-        throw std::runtime_error(
-            buildLog(std::format("Agent with id {} is already on the street.", agentId)));
-      }
-    }
-    m_waitingAgents.erase(agentId);
-    m_exitQueue.push(agentId);
-  }
-  std::optional<Id> Street::dequeue() {
-    if (m_exitQueue.empty()) {
-      return std::nullopt;
-    }
-    Id id = m_exitQueue.front();
-    m_exitQueue.pop();
-    return id;
-  }
 
   /// @brief The SpireStreet class represents a street which is able to count agent flows in both input and output.
   /// @tparam Id The type of the street's id
@@ -288,100 +188,47 @@ namespace dsm {
     /// @brief Construct a new SpireStreet object starting from an existing street
     /// @param id The street's id
     /// @param street The existing street
-    inline SpireStreet(Id id, const Street& street);
+    SpireStreet(Id id, const Street& street);
     /// @brief Construct a new SpireStreet object
     /// @param id The street's id
     /// @param capacity The street's capacity
     /// @param len The street's length
     /// @param nodePair The street's node pair
-    inline SpireStreet(Id id, Size capacity, double len, std::pair<Id, Id> nodePair);
+    SpireStreet(Id id, Size capacity, double len, std::pair<Id, Id> nodePair);
     /// @brief Construct a new SpireStreet object
     /// @param id The street's id
     /// @param capacity The street's capacity
     /// @param len The street's length
     /// @param maxSpeed The street's speed limit
     /// @param nodePair The street's node pair
-    inline SpireStreet(
+    SpireStreet(
         Id id, Size capacity, double len, double maxSpeed, std::pair<Id, Id> nodePair);
     ~SpireStreet() = default;
 
     /// @brief Add an agent to the street's queue
     /// @param agentId The id of the agent to add to the street's queue
     /// @throw std::runtime_error If the street's queue is full
-    inline void addAgent(Id agentId) override;
+    void addAgent(Id agentId) override;
 
     /// @brief Get the input counts of the street
     /// @param resetValue If true, the counter is reset to 0 together with the output counter.
     /// @return Size The input counts of the street
-    inline Size inputCounts(bool resetValue = false);
+    Size inputCounts(bool resetValue = false);
     /// @brief Get the output counts of the street
     /// @param resetValue If true, the counter is reset to 0 together with the input counter.
     /// @return Size The output counts of the street
-    inline Size outputCounts(bool resetValue = false);
+    Size outputCounts(bool resetValue = false);
     /// @brief Get the mean flow of the street
     /// @return int The flow of the street, i.e. the difference between input and output flows
     /// @details Once the flow is retrieved, bothh the input and output flows are reset to 0.
     ///     Notice that this flow is positive iff the input flow is greater than the output flow.
-    inline int meanFlow();
+    int meanFlow();
     /// @brief Remove an agent from the street's queue
     /// @return std::optional<Id> The id of the agent removed from the street's queue
-    inline std::optional<Id> dequeue() override;
+    std::optional<Id> dequeue() override;
     /// @brief Check if the street is a spire
     /// @return bool True if the street is a spire, false otherwise
-    inline bool isSpire() const override { return true; };
+    bool isSpire() const override { return true; };
   };
-
-  SpireStreet::SpireStreet(Id id, const Street& street)
-      : Street(id, street), m_agentCounterIn{0}, m_agentCounterOut{0} {}
-
-  SpireStreet::SpireStreet(Id id,
-                                     Size capacity,
-                                     double len,
-                                     std::pair<Id, Id> nodePair)
-      : Street(id, capacity, len, nodePair),
-        m_agentCounterIn{0},
-        m_agentCounterOut{0} {}
-
-  SpireStreet::SpireStreet(
-      Id id, Size capacity, double len, double maxSpeed, std::pair<Id, Id> nodePair)
-      : Street(id, capacity, len, maxSpeed, nodePair),
-        m_agentCounterIn{0},
-        m_agentCounterOut{0} {}
-
-  void SpireStreet::addAgent(Id agentId) {
-    Street::addAgent(agentId);
-    ++m_agentCounterIn;
-  }
-
-  Size SpireStreet::inputCounts(bool resetValue) {
-    if (!resetValue)
-      return m_agentCounterIn;
-    Size flow = m_agentCounterIn;
-    m_agentCounterIn = 0;
-    m_agentCounterOut = 0;
-    return flow;
-  }
-  Size SpireStreet::outputCounts(bool resetValue) {
-    if (!resetValue)
-      return m_agentCounterOut;
-    Size flow = m_agentCounterOut;
-    m_agentCounterIn = 0;
-    m_agentCounterOut = 0;
-    return flow;
-  }
-  int SpireStreet::meanFlow() {
-    int flow = static_cast<int>(m_agentCounterIn) - static_cast<int>(m_agentCounterOut);
-    m_agentCounterIn = 0;
-    m_agentCounterOut = 0;
-    return flow;
-  }
-
-  std::optional<Id> SpireStreet::dequeue() {
-    std::optional<Id> id = Street::dequeue();
-    if (id.has_value()) {
-      ++m_agentCounterOut;
-    }
-    return id;
-  }
-
+  
 };  // namespace dsm
