@@ -41,7 +41,7 @@ namespace dsm {
     Id m_id;
     Size m_capacity;
     int16_t m_transportCapacity;
-    int16_t m_nLanes;  // Max 255 lanes for a street, seems reasonable.
+    int16_t m_nLanes;
 
   public:
     /// @brief Construct a new Street object starting from an existing street
