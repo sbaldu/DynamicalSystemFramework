@@ -3,8 +3,8 @@
 #include "Dynamics.hpp"
 #include "Graph.hpp"
 #include "Node.hpp"
-#include "Street.hpp"
 #include "SparseMatrix.hpp"
+#include "Street.hpp"
 
 #include "doctest.h"
 
@@ -15,9 +15,37 @@ using Street = dsm::Street;
 using SpireStreet = dsm::SpireStreet;
 using Agent = dsm::Agent<uint16_t>;
 using Itinerary = dsm::Itinerary;
-using Node = dsm::Node;
+using Intersection = dsm::Intersection;
 using TrafficLight = dsm::TrafficLight<uint16_t>;
 using Roundabout = dsm::Roundabout;
+
+TEST_CASE("Measurement") {
+  SUBCASE("STL vector") {
+    std::vector<float> data(100);
+    std::iota(data.begin(), data.end(), 0.f);
+
+    Measurement m(data);
+    CHECK_EQ(m.mean, 49.5f);
+    CHECK_EQ(m.std, doctest::Approx(28.8661f));
+  }
+  SUBCASE("STL array") {
+    std::array<float, 100> data;
+    std::iota(data.begin(), data.end(), 0.f);
+
+    Measurement m(data);
+    CHECK_EQ(m.mean, 49.5f);
+    CHECK_EQ(m.std, doctest::Approx(28.8661f));
+  }
+  SUBCASE("STL span") {
+    auto p = std::make_unique_for_overwrite<float[]>(100);
+    std::span<float> data(p.get(), 100);
+    std::iota(data.begin(), data.end(), 0.f);
+
+    Measurement m(data);
+    CHECK_EQ(m.mean, 49.5f);
+    CHECK_EQ(m.std, doctest::Approx(28.8661f));
+  }
+}
 
 TEST_CASE("Dynamics") {
   SUBCASE("Constructor") {
@@ -153,7 +181,8 @@ TEST_CASE("Dynamics") {
       WHEN("We add many agents") {
         dynamics.addAgentsUniformly(3);
         THEN(
-            "The number of agents is 3, the destination and the street is the same as "
+            "The number of agents is 3, the destination and the street is the "
+            "same as "
             "the itinerary") {
           CHECK_EQ(dynamics.agents().size(), 3);
           CHECK_EQ(dynamics.itineraries()
@@ -324,7 +353,8 @@ TEST_CASE("Dynamics") {
         dynamics.addItinerary(itinerary);
         dynamics.updatePaths();
         THEN(
-            "The number of itineraries is 1 and the path is updated and correctly "
+            "The number of itineraries is 1 and the path is updated and "
+            "correctly "
             "formed") {
           CHECK_EQ(dynamics.itineraries().size(), 1);
           CHECK(dynamics.itineraries().at(0)->path()(0, 1));
@@ -343,7 +373,9 @@ TEST_CASE("Dynamics") {
         }
       }
     }
-    GIVEN("A dynamics objects, many streets and many itinearies with same destination") {
+    GIVEN(
+        "A dynamics objects, many streets and many itinearies with same "
+        "destination") {
       Graph graph2{};
       graph2.importMatrix("./data/matrix.dat");
       Itinerary it1{0, 118};
@@ -502,7 +534,9 @@ TEST_CASE("Dynamics") {
     }
   }
   SUBCASE("TrafficLights") {
-    GIVEN("A dynamics object, a network with traffic lights, an itinerary and an agent") {
+    GIVEN(
+        "A dynamics object, a network with traffic lights, an itinerary and "
+        "an agent") {
       TrafficLight tl{1};
       tl.setDelay(2);
       Street s1{1, 1, 30., 15., std::make_pair(0, 1)};
@@ -524,7 +558,8 @@ TEST_CASE("Dynamics") {
       WHEN("We evolve the dynamics") {
         dynamics.evolve(false);
         THEN(
-            "The agent is ready to go through the traffic light at time 3 but the "
+            "The agent is ready to go through the traffic light at time 3 but "
+            "the "
             "traffic light is red"
             " until time 4, so the agent waits until time 4") {
           for (uint8_t i{0}; i < 5; ++i) {
@@ -587,7 +622,8 @@ TEST_CASE("Dynamics") {
         }
       }
       WHEN(
-          "We evolve the dynamics and optimize traffic lights with outgoing streets "
+          "We evolve the dynamics and optimize traffic lights with outgoing "
+          "streets "
           "full") {
         dynamics.addAgents(0, 5, 1);
         dynamics.addAgents(1, 5, 1);
@@ -609,7 +645,8 @@ TEST_CASE("Dynamics") {
   }
   SUBCASE("Roundabout") {
     GIVEN(
-        "A dynamics object with four streets, one agent for each street, two itineraries "
+        "A dynamics object with four streets, one agent for each street, two "
+        "itineraries "
         "and a roundabout") {
       Roundabout roundabout{1};
       roundabout.setCapacity(2);
@@ -631,7 +668,8 @@ TEST_CASE("Dynamics") {
       dynamics.addAgent(Agent(0, 0, 0));
       dynamics.addAgent(Agent(1, 1, 2));
       WHEN(
-          "We evolve the dynamics adding an agent on the path of the agent with "
+          "We evolve the dynamics adding an agent on the path of the agent "
+          "with "
           "priority") {
         dynamics.evolve(false);
         dynamics.addAgent(Agent(2, 0, 1));
@@ -710,10 +748,10 @@ TEST_CASE("Dynamics") {
     meanSpeed /= (dynamics.graph().streetSet().at(1)->queue().size() +
                   dynamics.graph().streetSet().at(1)->waitingAgents().size());
     CHECK_EQ(dynamics.streetMeanSpeed(1), meanSpeed);
-    // I don't think the mean speed of agents should be equal to the street's one...
-    // CHECK_EQ(dynamics.streetMeanSpeed().mean, dynamics.agentMeanSpeed().mean);
-    // CHECK_EQ(dynamics.streetMeanSpeed().std, 0.);
-    // street 1 density should be 0.4 so...
+    // I don't think the mean speed of agents should be equal to the street's
+    // one... CHECK_EQ(dynamics.streetMeanSpeed().mean,
+    // dynamics.agentMeanSpeed().mean); CHECK_EQ(dynamics.streetMeanSpeed().std,
+    // 0.); street 1 density should be 0.4 so...
     CHECK_EQ(dynamics.streetMeanSpeed(0.2, true).mean, meanSpeed);
     CHECK_EQ(dynamics.streetMeanSpeed(0.2, true).std, 0.);
     CHECK_EQ(dynamics.streetMeanSpeed(0.2, false).mean, 15.);
@@ -732,13 +770,13 @@ TEST_CASE("Dynamics") {
     CHECK_EQ(dynamics.graph().streetSet().at(1)->queue().size(), 3);
     CHECK_EQ(dynamics.streetMeanSpeed(1), meanSpeed);
   }
-  SUBCASE("Node priorities") {
+  SUBCASE("Intersection priorities") {
     GIVEN("A dynamics object with five nodes and eight streets") {
-      Node nodeO{0, std::make_pair(0, 0)};
-      Node nodeA{1, std::make_pair(-1, 1)};
-      Node nodeB{2, std::make_pair(1, 1)};
-      Node nodeC{3, std::make_pair(1, -1)};
-      Node nodeD{4, std::make_pair(-1, -1)};
+      Intersection nodeO{0, std::make_pair(0, 0)};
+      Intersection nodeA{1, std::make_pair(-1, 1)};
+      Intersection nodeB{2, std::make_pair(1, 1)};
+      Intersection nodeC{3, std::make_pair(1, -1)};
+      Intersection nodeD{4, std::make_pair(-1, -1)};
       Street sAO{0, 1, 10., 10., std::make_pair(1, 0)};
       Street sBO{1, 1, 10., 10., std::make_pair(2, 0)};
       Street sCO{2, 1, 10., 10., std::make_pair(3, 0)};

@@ -9,6 +9,7 @@
 #pragma once
 
 #include <algorithm>
+#include <cassert>
 #include <concepts>
 #include <vector>
 #include <random>
@@ -34,7 +35,7 @@ namespace dsm {
   using TimePoint = long long unsigned int;
 
   /// @brief The Measurement struct represents the mean of a quantity and its standard deviation
-  /// @tparam T The type of the mean and the standard deviation
+  /// @tparam T The type of the quantity
   /// @param mean The mean
   /// @param std The standard deviation of the sample
   template <typename T>
@@ -43,25 +44,18 @@ namespace dsm {
     T std;
 
     Measurement(T mean, T std) : mean{mean}, std{std} {}
-    Measurement(const std::vector<T>& data) {
-      if (data.size() == 0) {
-        mean = 0.;
-        std = 0.;
-      } else {
-        mean = std::accumulate(data.cbegin(), data.cend(), 0.) / data.size();
-        if (data.size() < 2) {
-          std = 0.;
-        } else {
-          const double cvariance{std::accumulate(data.cbegin(),
-                                                 data.cend(),
-                                                 0.,
-                                                 [this](double sum, const auto& value) {
-                                                   return sum + std::pow(value - mean, 2);
-                                                 }) /
-                                 (data.size() - 1)};
-          std = std::sqrt(cvariance);
-        }
+    Measurement(std::span<T> data) {
+      auto x_mean = T{}, x2_mean = T{};
+      if (data.empty()) {
+        return;
       }
+
+      std::for_each(data.begin(), data.end(), [&x_mean, &x2_mean](auto value) -> void {
+        x_mean += value;
+        x2_mean += value * value;
+      });
+      mean = x_mean / data.size();
+      std = std::sqrt(x2_mean / data.size() - mean * mean);
     }
   };
 
@@ -525,7 +519,7 @@ namespace dsm {
       street->dequeue();
       assert(destinationNode->id() == nextStreet->nodePair().first);
       if (destinationNode->isIntersection()) {
-        auto& intersection = dynamic_cast<Node&>(*destinationNode);
+        auto& intersection = dynamic_cast<Intersection&>(*destinationNode);
         auto delta = nextStreet->angle() - street->angle();
         if (delta > std::numbers::pi) {
           delta -= 2 * std::numbers::pi;
@@ -547,7 +541,7 @@ namespace dsm {
   void Dynamics<Delay>::m_evolveNodes() {
     for (const auto& [nodeId, node] : m_graph.nodeSet()) {
       if (node->isIntersection()) {
-        auto& intersection = dynamic_cast<Node&>(*node);
+        auto& intersection = dynamic_cast<Intersection&>(*node);
         for (const auto [angle, agentId] : intersection.agents()) {
           const auto& nextStreet{m_graph.streetSet()[m_agentNextStreetId[agentId]]};
           if (!(nextStreet->isFull())) {
@@ -631,7 +625,7 @@ namespace dsm {
         }
         assert(srcNode->id() == nextStreet->nodePair().first);
         if (srcNode->isIntersection()) {
-          auto& intersection = dynamic_cast<Node&>(*srcNode);
+          auto& intersection = dynamic_cast<Intersection&>(*srcNode);
           try {
             intersection.addAgent(0., agentId);
             m_agentNextStreetId.emplace(agentId, nextStreet->id());
@@ -813,7 +807,7 @@ namespace dsm {
                       "bounded between 0-1. Inserted value: {}",
                       densityTolerance)));
     }
-    const auto meanDensityGlob = streetMeanDensity().mean;  // Measurement<double>
+    const auto meanDensityGlob = streetMeanDensity().mean;  // Measurement
     for (const auto& [nodeId, node] : m_graph.nodeSet()) {
       if (!node->isTrafficLight()) {
         continue;
@@ -1266,7 +1260,7 @@ namespace dsm {
     for (const auto& [streetId, street] : m_graph.streetSet()) {
       flows.push_back(street->density() * this->streetMeanSpeed(streetId));
     }
-    return Measurement(flows);
+    return Measurement<double>(flows);
   }
 
   template <typename Delay>
@@ -1282,7 +1276,7 @@ namespace dsm {
         flows.push_back(street->density() * this->streetMeanSpeed(streetId));
       }
     }
-    return Measurement(flows);
+    return Measurement<double>(flows);
   }
 
   template <typename Delay>
@@ -1301,7 +1295,7 @@ namespace dsm {
         flows.push_back(static_cast<double>(spire.inputCounts(resetValue)) / deltaTime);
       }
     }
-    return Measurement(flows);
+    return Measurement<double>(flows);
   }
 
   template <typename Delay>
@@ -1320,7 +1314,7 @@ namespace dsm {
         flows.push_back(static_cast<double>(spire.outputCounts(resetValue)) / deltaTime);
       }
     }
-    return Measurement(flows);
+    return Measurement<double>(flows);
   }
 
   template <typename Delay>
@@ -1453,7 +1447,7 @@ namespace dsm {
     }
     const auto& node = this->m_graph.nodeSet().at(street->nodePair().second);
     if (node->isIntersection()) {
-      auto& intersection = dynamic_cast<Node&>(*node);
+      auto& intersection = dynamic_cast<Intersection&>(*node);
       for (const auto& [angle, agentId] : intersection.agents()) {
         const auto& agent{this->m_agents.at(agentId)};
         if (agent->streetId().has_value() && agent->streetId().value() == streetId) {
@@ -1485,7 +1479,7 @@ namespace dsm {
     for (const auto& [streetId, street] : this->m_graph.streetSet()) {
       speeds.push_back(this->streetMeanSpeed(streetId));
     }
-    return Measurement(speeds);
+    return Measurement<double>(speeds);
   }
   template <typename Delay>
     requires(std::unsigned_integral<Delay>)
@@ -1507,7 +1501,7 @@ namespace dsm {
         }
       }
     }
-    return Measurement(speeds);
+    return Measurement<double>(speeds);
   }
 
   /* class SecondOrderDynamics : public Dynamics<double> { */

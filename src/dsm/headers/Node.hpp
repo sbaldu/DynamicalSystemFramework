@@ -24,26 +24,26 @@
 #include "../utility/Typedef.hpp"
 
 namespace dsm {
-  /// @brief The NodeConcept class represents the concept of a node in the network.
+  /// @brief The Node class represents the concept of a node in the network.
   /// @tparam Id The type of the node's id
   /// @tparam Size The type of the node's capacity
-  class NodeConcept {
+  class Node {
   protected:
     Id m_id;
     std::optional<std::pair<double, double>> m_coords;
     Size m_capacity;
 
   public:
-    inline NodeConcept() = default;
+    Node() = default;
     /// @brief Construct a new Node object with capacity 1
     /// @param id The node's id
-    inline explicit NodeConcept(Id id) : m_id{id}, m_capacity{1} {}
+    explicit Node(Id id) : m_id{id}, m_capacity{1} {}
     /// @brief Construct a new Node object with capacity 1
     /// @param id The node's id
     /// @param coords A std::pair containing the node's coordinates (lat, lon)
-    inline NodeConcept(Id id, std::pair<double, double> coords)
+    Node(Id id, std::pair<double, double> coords)
         : m_id{id}, m_coords{std::move(coords)}, m_capacity{1} {}
-    virtual ~NodeConcept() = default;
+    virtual ~Node() = default;
 
     /// @brief Set the node's id
     /// @param id The node's id
@@ -75,9 +75,9 @@ namespace dsm {
     inline virtual bool isRoundabout() const noexcept { return false; }
   };
 
-  /// @brief The Node class represents a node in the network.
+  /// @brief The Intersection class represents a node in the network.
   /// @tparam Id The type of the node's id. It must be an unsigned integral type.
-  class Node : public NodeConcept {
+  class Intersection : public Node {
   protected:
     std::multimap<int16_t, Id> m_agents;
     std::set<Id>
@@ -85,16 +85,16 @@ namespace dsm {
     Size m_agentCounter;
 
   public:
-    inline Node() = default;
-    /// @brief Construct a new Node object
+    Intersection() = default;
+    /// @brief Construct a new Intersection object
     /// @param id The node's id
-    inline explicit Node(Id id) : NodeConcept{id} {};
-    /// @brief Construct a new Node object
+    explicit Intersection(Id id) : Node{id} {};
+    /// @brief Construct a new Intersection object
     /// @param id The node's id
     /// @param coords A std::pair containing the node's coordinates
-    inline Node(Id id, std::pair<double, double> coords) : NodeConcept{id, coords} {};
+    Intersection(Id id, std::pair<double, double> coords) : Node{id, coords} {};
 
-    virtual ~Node() = default;
+    virtual ~Intersection() = default;
 
     /// @brief Set the node's capacity
     /// @param capacity The node's capacity
@@ -153,7 +153,7 @@ namespace dsm {
 
   template <typename Delay>
     requires(std::unsigned_integral<Delay>)
-  class TrafficLight : public Node {
+  class TrafficLight : public Intersection {
   private:
     std::optional<std::pair<Delay, Delay>> m_delay;
     Delay m_counter;
@@ -162,10 +162,10 @@ namespace dsm {
   public:
     /// @brief Construct a new TrafficLight object
     /// @param id The node's id
-    explicit TrafficLight(Id id) : Node{id}, m_counter{0}, m_phase{0} {};
+    explicit TrafficLight(Id id) : Intersection{id}, m_counter{0}, m_phase{0} {};
     /// @brief Construct a new TrafficLight object
-    /// @param node A Node object
-    TrafficLight(const NodeConcept& node);
+    /// @param node An Intersection object
+    TrafficLight(const Node& node);
 
     /// @brief Set the node's delay
     /// @details This function is used to set the node's delay.
@@ -213,8 +213,8 @@ namespace dsm {
 
   template <typename Delay>
     requires(std::unsigned_integral<Delay>)
-  TrafficLight<Delay>::TrafficLight(const NodeConcept& node)
-      : Node{node.id()}, m_counter{0}, m_phase{0} {
+  TrafficLight<Delay>::TrafficLight(const Node& node)
+      : Intersection{node.id()}, m_counter{0}, m_phase{0} {
     if (node.coords().has_value()) {
       this->setCoords(node.coords().value());
     }
@@ -315,7 +315,7 @@ namespace dsm {
   /// @brief The Roundabout class represents a roundabout node in the network.
   /// @tparam Id The type of the node's id
   /// @tparam Size The type of the node's capacity
-  class Roundabout : public NodeConcept {
+  class Roundabout : public Node {
   protected:
     dsm::queue<Id> m_agents;
 
@@ -323,15 +323,15 @@ namespace dsm {
     inline Roundabout() = default;
     /// @brief Construct a new Roundabout object
     /// @param id The node's id
-    inline explicit Roundabout(Id id) : NodeConcept{id} {};
+    inline explicit Roundabout(Id id) : Node{id} {};
     /// @brief Construct a new Roundabout object
     /// @param id The node's id
     /// @param coords A std::pair containing the node's coordinates
     inline Roundabout(Id id, std::pair<double, double> coords)
-        : NodeConcept{id, coords} {};
+        : Node{id, coords} {};
     /// @brief Construct a new Roundabout object
-    /// @param node A Node object
-    Roundabout(const NodeConcept& node);
+    /// @param node An Intersection object
+    Roundabout(const Node& node);
 
     virtual ~Roundabout() = default;
 

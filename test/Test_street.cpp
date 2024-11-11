@@ -10,7 +10,7 @@
 #include "doctest.h"
 
 using Agent = dsm::Agent<double>;
-using Node = dsm::Node;
+using Intersection = dsm::Intersection;
 using Street = dsm::Street;
 using SpireStreet = dsm::SpireStreet;
 
@@ -80,8 +80,8 @@ TEST_CASE("Street") {
     /*This tests the setNodePair method*/
 
     Street street{1, std::make_pair(0, 1)};
-    Node node1{4};
-    Node node2{5};
+    Intersection node1{4};
+    Intersection node2{5};
     street.setNodePair(node1, node2);
     CHECK_EQ(street.nodePair().first, 4);
     CHECK_EQ(street.nodePair().second, 5);

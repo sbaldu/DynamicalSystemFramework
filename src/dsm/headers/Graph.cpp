@@ -15,10 +15,10 @@ namespace dsm {
       const auto srcId{static_cast<Id>(id / n)};
       const auto dstId{static_cast<Id>(id % n)};
       if (!m_nodes.contains(srcId)) {
-        m_nodes.emplace(srcId, std::make_unique<Node>(srcId));
+        m_nodes.emplace(srcId, std::make_unique<Intersection>(srcId));
       }
       if (!m_nodes.contains(dstId)) {
-        m_nodes.emplace(dstId, std::make_unique<Node>(dstId));
+        m_nodes.emplace(dstId, std::make_unique<Intersection>(dstId));
       }
       m_streets.emplace(id, std::make_unique<Street>(id, std::make_pair(srcId, dstId)));
     }
@@ -31,8 +31,8 @@ namespace dsm {
 
       Id node1 = street.second->nodePair().first;
       Id node2 = street.second->nodePair().second;
-      m_nodes.emplace(node1, std::make_unique<Node>(node1));
-      m_nodes.emplace(node2, std::make_unique<Node>(node2));
+      m_nodes.emplace(node1, std::make_unique<Intersection>(node1));
+      m_nodes.emplace(node2, std::make_unique<Intersection>(node2));
     }
 
     buildAdj();
@@ -58,7 +58,7 @@ namespace dsm {
     for (const auto& [nodeId, node] : m_nodes) {
       // This is probably not the best way to do this
       if (node->isIntersection()) {
-        auto& intersection = dynamic_cast<Node&>(*node);
+        auto& intersection = dynamic_cast<Intersection&>(*node);
         const auto& oldStreetPriorities{intersection.streetPriorities()};
         std::set<Id> newStreetPriorities;
         for (const auto streetId : oldStreetPriorities) {
@@ -124,10 +124,10 @@ namespace dsm {
         const auto srcId{static_cast<Id>(index / n)};
         const auto dstId{static_cast<Id>(index % n)};
         if (!m_nodes.contains(srcId)) {
-          m_nodes.emplace(srcId, std::make_unique<Node>(srcId));
+          m_nodes.emplace(srcId, std::make_unique<Intersection>(srcId));
         }
         if (!m_nodes.contains(dstId)) {
-          m_nodes.emplace(dstId, std::make_unique<Node>(dstId));
+          m_nodes.emplace(dstId, std::make_unique<Intersection>(dstId));
         }
         m_streets.emplace(index,
                           std::make_unique<Street>(index, std::make_pair(srcId, dstId)));
@@ -169,10 +169,10 @@ namespace dsm {
           const auto srcId{static_cast<Id>(index / n)};
           const auto dstId{static_cast<Id>(index % n)};
           if (!m_nodes.contains(srcId)) {
-            m_nodes.emplace(srcId, std::make_unique<Node>(srcId));
+            m_nodes.emplace(srcId, std::make_unique<Intersection>(srcId));
           }
           if (!m_nodes.contains(dstId)) {
-            m_nodes.emplace(dstId, std::make_unique<Node>(dstId));
+            m_nodes.emplace(dstId, std::make_unique<Intersection>(dstId));
           }
           m_streets.emplace(
               index, std::make_unique<Street>(index, std::make_pair(srcId, dstId)));
@@ -236,7 +236,7 @@ namespace dsm {
         std::getline(iss, highway, ';');
         Id nodeId{static_cast<Id>(std::stoul(id))};
         m_nodes.emplace(nodeIndex,
-                        std::make_unique<Node>(
+                        std::make_unique<Intersection>(
                             nodeIndex, std::make_pair(std::stod(lat), std::stod(lon))));
         m_nodeMapping.emplace(std::make_pair(nodeId, nodeIndex));
         ++nodeIndex;
@@ -312,11 +312,11 @@ namespace dsm {
     }
   }
 
-  void Graph::addNode(std::unique_ptr<NodeConcept> node) {
+  void Graph::addNode(std::unique_ptr<Node> node) {
     m_nodes.emplace(std::make_pair(node->id(), std::move(node)));
   }
 
-  void Graph::addNode(const Node& node) {
+  void Graph::addNode(const Intersection& node) {
     m_nodes.emplace(std::make_pair(node.id(), std::make_unique<Node>(node)));
   }
 
@@ -357,10 +357,10 @@ namespace dsm {
     const auto srcId{street->nodePair().first};
     const auto dstId{street->nodePair().second};
     if (!m_nodes.contains(srcId)) {
-      m_nodes.emplace(srcId, std::make_unique<Node>(srcId));
+      m_nodes.emplace(srcId, std::make_unique<Intersection>(srcId));
     }
     if (!m_nodes.contains(dstId)) {
-      m_nodes.emplace(dstId, std::make_unique<Node>(dstId));
+      m_nodes.emplace(dstId, std::make_unique<Intersection>(dstId));
     }
     // emplace street
     m_streets.emplace(street->id(), street.get());
@@ -375,10 +375,10 @@ namespace dsm {
     const auto srcId{street.nodePair().first};
     const auto dstId{street.nodePair().second};
     if (!m_nodes.contains(srcId)) {
-      m_nodes.emplace(srcId, std::make_unique<Node>(srcId));
+      m_nodes.emplace(srcId, std::make_unique<Intersection>(srcId));
     }
     if (!m_nodes.contains(dstId)) {
-      m_nodes.emplace(dstId, std::make_unique<Node>(dstId));
+      m_nodes.emplace(dstId, std::make_unique<Intersection>(dstId));
     }
     // emplace street
     m_streets.emplace(std::make_pair(street.id(), std::make_unique<Street>(street)));

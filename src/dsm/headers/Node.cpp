@@ -3,19 +3,19 @@
 
 namespace dsm {
 
-  void Node::setCapacity(Size capacity) {
+  void Intersection::setCapacity(Size capacity) {
     if (capacity < m_agents.size()) {
       throw std::runtime_error(buildLog(
-          std::format("Node capacity ({}) is smaller than the current queue size ({}).",
+          std::format("Intersection capacity ({}) is smaller than the current queue size ({}).",
                       capacity,
                       m_agents.size())));
     }
-    NodeConcept::setCapacity(capacity);
+    Node::setCapacity(capacity);
   }
 
-  void Node::addAgent(double angle, Id agentId) {
+  void Intersection::addAgent(double angle, Id agentId) {
     if (m_agents.size() == this->m_capacity) {
-      throw std::runtime_error(buildLog("Node is full."));
+      throw std::runtime_error(buildLog("Intersection is full."));
     }
     for (auto const [angle, id] : m_agents) {
       if (id == agentId) {
@@ -28,9 +28,9 @@ namespace dsm {
     ++m_agentCounter;
   }
 
-  void Node::addAgent(Id agentId) {
+  void Intersection::addAgent(Id agentId) {
     if (m_agents.size() == this->m_capacity) {
-      throw std::runtime_error(buildLog("Node is full."));
+      throw std::runtime_error(buildLog("Intersection is full."));
     }
     for (auto const [angle, id] : m_agents) {
       if (id == agentId) {
@@ -46,7 +46,7 @@ namespace dsm {
     ++m_agentCounter;
   }
 
-  void Node::removeAgent(Id agentId) {
+  void Intersection::removeAgent(Id agentId) {
     for (auto it{m_agents.begin()}; it != m_agents.end(); ++it) {
       if (it->second == agentId) {
         m_agents.erase(it);
@@ -57,13 +57,13 @@ namespace dsm {
         buildLog(std::format("Agent with id {} is not on the node", agentId)));
   }
 
-  Size Node::agentCounter() {
+  Size Intersection::agentCounter() {
     Size copy{m_agentCounter};
     m_agentCounter = 0;
     return copy;
   }
 
-  Roundabout::Roundabout(const NodeConcept& node) : NodeConcept{node.id()} {
+  Roundabout::Roundabout(const Node& node) : Node{node.id()} {
     if (node.coords().has_value()) {
       this->setCoords(node.coords().value());
     }
