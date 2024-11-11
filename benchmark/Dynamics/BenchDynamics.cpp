@@ -5,9 +5,9 @@
 #include "Dynamics.hpp"
 #include "Bench.hpp"
 
-using Graph = dsm::Graph<uint32_t, uint32_t>;
-using Itinerary = dsm::Itinerary<uint32_t>;
-using Dynamics = dsm::FirstOrderDynamics<uint32_t, uint32_t, uint32_t>;
+using Graph = dsm::Graph;
+using Itinerary = dsm::Itinerary;
+using Dynamics = dsm::FirstOrderDynamics<uint32_t>;
 
 using Bench = sb::Bench<long long int>;
 
