@@ -1147,11 +1147,14 @@ namespace dsm {
       }
       dRand = this->m_uniformDist(this->m_generator);
       sum = 0.;
-      for (const auto& [id, weight] : dst_weights) {
-        sum += weight;
-        if (dRand < sum) {
-          dstId = id;
-          break;
+      dstId = srcId;
+      while (dstId == srcId) {
+        for (const auto& [id, weight] : dst_weights) {
+          sum += weight;
+          if (dRand < sum) {
+            dstId = id;
+            break;
+          }
         }
       }
       // find the itinerary with the given destination as destination
