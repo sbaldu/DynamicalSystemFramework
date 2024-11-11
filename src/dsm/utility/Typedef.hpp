@@ -1,6 +1,8 @@
 
 #pragma once
 
+#include <cstdint>
+
 namespace dsm {
 
   using Id = uint32_t;
