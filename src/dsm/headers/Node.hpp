@@ -327,8 +327,7 @@ namespace dsm {
     /// @brief Construct a new Roundabout object
     /// @param id The node's id
     /// @param coords A std::pair containing the node's coordinates
-    inline Roundabout(Id id, std::pair<double, double> coords)
-        : Node{id, coords} {};
+    inline Roundabout(Id id, std::pair<double, double> coords) : Node{id, coords} {};
     /// @brief Construct a new Roundabout object
     /// @param node An Intersection object
     Roundabout(const Node& node);

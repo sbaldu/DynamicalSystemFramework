@@ -405,8 +405,8 @@ namespace dsm {
     return this->street(nodePair.second, nodePair.first);
   }
 
-  std::optional<DijkstraResult> Graph::shortestPath(const Intersection& source,
-                                                    const Intersection& destination) const {
+  std::optional<DijkstraResult> Graph::shortestPath(
+      const Intersection& source, const Intersection& destination) const {
     return this->shortestPath(source.id(), destination.id());
   }
 

@@ -310,10 +310,7 @@ namespace dsm {
 
   template <typename T>
   SparseMatrix<T>::SparseMatrix(Id index)
-      : _matrix{std::unordered_map<Id, T>()},
-        _rows{index},
-        _cols{1},
-        _defaultReturn{0} {}
+      : _matrix{std::unordered_map<Id, T>()}, _rows{index}, _cols{1}, _defaultReturn{0} {}
 
   template <typename T>
   void SparseMatrix<T>::insert(Id i, Id j, T value) {
@@ -367,8 +364,8 @@ namespace dsm {
   template <typename T>
   void SparseMatrix<T>::erase(Id i, Id j) {
     if (i >= _rows || j >= _cols) {
-      throw std::out_of_range(buildLog(
-          std::format("Id ({}, {}) out of range ({}, {})", i, j, _rows, _cols)));
+      throw std::out_of_range(
+          buildLog(std::format("Id ({}, {}) out of range ({}, {})", i, j, _rows, _cols)));
     }
     if (_matrix.find(i * _cols + j) == _matrix.end()) {
       throw std::runtime_error(
@@ -457,8 +454,8 @@ namespace dsm {
   template <typename T>
   bool SparseMatrix<T>::contains(Id i, Id j) const {
     if (i >= _rows || j >= _cols) {
-      throw std::out_of_range(buildLog(
-          std::format("Id ({}, {}) out of range ({}, {})", i, j, _rows, _cols)));
+      throw std::out_of_range(
+          buildLog(std::format("Id ({}, {}) out of range ({}, {})", i, j, _rows, _cols)));
     }
     return _matrix.contains(i * _cols + j);
   }
@@ -516,8 +513,7 @@ namespace dsm {
   }
 
   template <typename T>
-  SparseMatrix<T> SparseMatrix<T>::getRow(Id index,
-                                                        bool keepId) const {
+  SparseMatrix<T> SparseMatrix<T>::getRow(Id index, bool keepId) const {
     if (index >= _rows) {
       throw std::out_of_range(
           buildLog(std::format("Id {} out of range 0-{}", index, _rows - 1)));
@@ -529,15 +525,14 @@ namespace dsm {
     for (auto& it : _matrix) {
       if (it.first / _cols == index) {
         keepId ? row.insert(it.first, it.second)
-                  : row.insert(it.first % _cols, it.second);
+               : row.insert(it.first % _cols, it.second);
       }
     }
     return row;
   }
 
   template <typename T>
-  SparseMatrix<T> SparseMatrix<T>::getCol(Id index,
-                                                        bool keepId) const {
+  SparseMatrix<T> SparseMatrix<T>::getCol(Id index, bool keepId) const {
     if (index >= _cols) {
       throw std::out_of_range(
           buildLog(std::format("Id {} out of range 0-{}", index, _cols - 1)));
@@ -549,7 +544,7 @@ namespace dsm {
     for (auto& it : _matrix) {
       if (it.first % _cols == index) {
         keepId ? col.insert(it.first, it.second)
-                  : col.insert(it.first / _cols, it.second);
+               : col.insert(it.first / _cols, it.second);
       }
     }
     return col;
@@ -624,8 +619,8 @@ namespace dsm {
   template <typename T>
   const T& SparseMatrix<T>::operator()(Id i, Id j) const {
     if (i >= _rows || j >= _cols) {
-      throw std::out_of_range(buildLog(
-          std::format("Id ({}, {}) out of range ({}, {})", i, j, _rows, _cols)));
+      throw std::out_of_range(
+          buildLog(std::format("Id ({}, {}) out of range ({}, {})", i, j, _rows, _cols)));
     }
     auto const& it = _matrix.find(i * _cols + j);
     return it != _matrix.end() ? it->second : _defaultReturn;
@@ -634,8 +629,8 @@ namespace dsm {
   template <typename T>
   T& SparseMatrix<T>::operator()(Id i, Id j) {
     if (i >= _rows || j >= _cols) {
-      throw std::out_of_range(buildLog(
-          std::format("Id ({}, {}) out of range ({}, {})", i, j, _rows, _cols)));
+      throw std::out_of_range(
+          buildLog(std::format("Id ({}, {}) out of range ({}, {})", i, j, _rows, _cols)));
     }
     auto const& it = _matrix.find(i * _cols + j);
     return it != _matrix.end() ? it->second : _defaultReturn;
@@ -672,8 +667,7 @@ namespace dsm {
 
   template <typename T>
   template <typename U>
-  SparseMatrix<T>& SparseMatrix<T>::operator+=(
-      const SparseMatrix<U>& other) {
+  SparseMatrix<T>& SparseMatrix<T>::operator+=(const SparseMatrix<U>& other) {
     if (this->_rows != other._rows || this->_cols != other._cols) {
       throw std::runtime_error(
           buildLog(std::format("Dimensions ({}, {}) and ({}, {}) do not match",
@@ -692,8 +686,7 @@ namespace dsm {
 
   template <typename T>
   template <typename U>
-  SparseMatrix<T>& SparseMatrix<T>::operator-=(
-      const SparseMatrix<U>& other) {
+  SparseMatrix<T>& SparseMatrix<T>::operator-=(const SparseMatrix<U>& other) {
     if (this->_rows != other._rows || this->_cols != other._cols) {
       throw std::runtime_error(
           buildLog(std::format("Dimensions ({}, {}) and ({}, {}) do not match",

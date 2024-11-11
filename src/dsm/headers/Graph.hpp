@@ -191,9 +191,7 @@ namespace dsm {
     }
     /// @brief Get the graph's node map
     /// @return A std::unordered_map containing the graph's nodes
-    inline std::unordered_map<Id, std::unique_ptr<Node>>& nodeSet() {
-      return m_nodes;
-    }
+    inline std::unordered_map<Id, std::unique_ptr<Node>>& nodeSet() { return m_nodes; }
     /// @brief Get the graph's street map
     /// @return A std::unordered_map containing the graph's streets
     inline const std::unordered_map<Id, std::unique_ptr<Street>>& streetSet() const {

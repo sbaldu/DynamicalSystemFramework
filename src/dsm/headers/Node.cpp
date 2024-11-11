@@ -5,10 +5,10 @@ namespace dsm {
 
   void Intersection::setCapacity(Size capacity) {
     if (capacity < m_agents.size()) {
-      throw std::runtime_error(buildLog(
-          std::format("Intersection capacity ({}) is smaller than the current queue size ({}).",
-                      capacity,
-                      m_agents.size())));
+      throw std::runtime_error(buildLog(std::format(
+          "Intersection capacity ({}) is smaller than the current queue size ({}).",
+          capacity,
+          m_agents.size())));
     }
     Node::setCapacity(capacity);
   }
