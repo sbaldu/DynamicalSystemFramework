@@ -809,9 +809,10 @@ namespace dsm {
     }
     // Move transport capacity agents from each node
     for (const auto& pair : m_graph.nodeSet()) {
-      for (auto i = 0; i < pair.second->transportCapacity(); ++i) {
-        this->m_evolveNode(pair.second);
-      }
+      this->m_evolveNode(pair.second);
+      // for (auto i = 0; i < pair.second->transportCapacity(); ++i) {
+      //   this->m_evolveNode(pair.second);
+      // }
     }
     // cycle over agents and update their times
     this->m_evolveAgents();
