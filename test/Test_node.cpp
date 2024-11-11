@@ -3,9 +3,10 @@
 #include "Node.hpp"
 
 #include "doctest.h"
+#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 
-using Intersection = dsm::Intersection<uint16_t, uint16_t>;
-using TrafficLight = dsm::TrafficLight<uint16_t, uint16_t, uint16_t>;
+using Intersection = dsm::Intersection;
+using TrafficLight = dsm::TrafficLight<uint32_t>;
 
 TEST_CASE("Intersection") {
   SUBCASE("Constructor") {

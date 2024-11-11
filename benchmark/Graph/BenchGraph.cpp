@@ -7,10 +7,10 @@
 
 #include "Graph.hpp"
 
-using Graph = dsm::Graph<uint32_t, uint32_t>;
-using Intersection = dsm::Intersection<uint32_t, uint32_t>;
-using Street = dsm::Street<uint32_t, uint32_t>;
-using SparseMatrix = dsm::SparseMatrix<uint32_t, bool>;
+using Graph = dsm::Graph;
+using Intersection = dsm::Intersection;
+using Street = dsm::Street;
+using SparseMatrix = dsm::SparseMatrix<bool>;
 
 using Bench = sb::Bench<long long int>;
 

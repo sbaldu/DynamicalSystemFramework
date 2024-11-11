@@ -1,7 +1,6 @@
 
 #include "SparseMatrix.hpp"
 
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
 
 using namespace dsm;
@@ -15,7 +14,7 @@ TEST_CASE("Boolean Matrix") {
     WHEN: the matrix is created
     THEN: the matrix should have 0 rows and 0 columns and a max size of 0
     */
-    SparseMatrix<uint32_t, bool> m;
+    SparseMatrix<bool> m;
     // Check the dimensions
     CHECK(m.getRowDim() == 0);
     CHECK(m.getColDim() == 0);
@@ -29,7 +28,7 @@ TEST_CASE("Boolean Matrix") {
     WHEN: the matrix is created
     THEN: the matrix should have 3 rows and 4 columns and a max size of 12
     */
-    SparseMatrix<uint32_t, bool> m(3, 4);
+    SparseMatrix<bool> m(3, 4);
     // Check the dimensions
     CHECK(m.getRowDim() == 3);
     CHECK(m.getColDim() == 4);
@@ -42,7 +41,7 @@ TEST_CASE("Boolean Matrix") {
     WHEN: the matrix is created
     THEN: the matrix should have 3 rows and 1 column and a max size of 3
     */
-    SparseMatrix<uint32_t, bool> m(3);
+    SparseMatrix<bool> m(3);
     // Check the dimensions
     CHECK(m.getRowDim() == 3);
     CHECK(m.getColDim() == 1);
@@ -57,7 +56,7 @@ TEST_CASE("Boolean Matrix") {
     THEN: the function should throw an exception if the inserted element is out
     of range
     */
-    SparseMatrix<uint32_t, bool> m(3, 3);
+    SparseMatrix<bool> m(3, 3);
     // Check that an exception is thrown if the element is out of range
     CHECK_THROWS(m.insert_or_assign(3, 2, true));
   }
@@ -68,7 +67,7 @@ TEST_CASE("Boolean Matrix") {
     WHEN: the function is called on a matrix
     THEN: the function should insert a value in the matrix
     */
-    SparseMatrix<uint32_t, bool> m(3, 3);
+    SparseMatrix<bool> m(3, 3);
     // Insert a true value
     m.insert(0, 0, true);
     m.insert(5, true);
@@ -89,7 +88,7 @@ TEST_CASE("Boolean Matrix") {
     WHEN: the function is called on a matrix
     THEN: the function should insert a value in the matrix
     */
-    SparseMatrix<uint32_t, int> m(4, 3);
+    SparseMatrix<int> m(4, 3);
     // Insert a true value
     m.insert_or_assign(1, 2, 10);
     CHECK(m(1, 2) == 10);
@@ -103,7 +102,7 @@ TEST_CASE("Boolean Matrix") {
     WHEN: the function is called on a matrix
     THEN: the function should throw an exception if the element is out of range
     */
-    SparseMatrix<uint32_t, bool> m(3, 3);
+    SparseMatrix<bool> m(3, 3);
     // Check that an exception is thrown if the element is out of range
     CHECK_THROWS(m.erase(-1, -2));
     CHECK_THROWS(m.erase(3, 2));
@@ -115,7 +114,7 @@ TEST_CASE("Boolean Matrix") {
     WHEN: the function is called on a matrix
     THEN: the function should delete a value in the matrix
     */
-    SparseMatrix<uint32_t, bool> m(3, 3);
+    SparseMatrix<bool> m(3, 3);
     m.insert(0, 0, true);
     m.erase(0, 0);
     // Check if the value has been deleted
@@ -130,7 +129,7 @@ TEST_CASE("Boolean Matrix") {
     THEN: the function should delete all the elements and dimensions in the
     matrix
     */
-    SparseMatrix<uint32_t, bool> m(3, 3);
+    SparseMatrix<bool> m(3, 3);
     m.insert(0, 0, true);
     m.clear();
     // Check if the matrix is empty
@@ -145,7 +144,7 @@ TEST_CASE("Boolean Matrix") {
     WHEN: the function is called on a matrix
     THEN: the function should throw an exception if the element is out of range
     */
-    SparseMatrix<uint32_t, bool> m(3, 3);
+    SparseMatrix<bool> m(3, 3);
     CHECK_THROWS(m.contains(-2, -1));
     CHECK_THROWS(m.contains(-1));
   }
@@ -156,7 +155,7 @@ TEST_CASE("Boolean Matrix") {
     WHEN: the function is called
     THEN: the function should return true
     */
-    SparseMatrix<uint32_t, bool> m(3, 3);
+    SparseMatrix<bool> m(3, 3);
     m.insert(0, 0, true);
     m.insert(2, 1, true);
     CHECK(m.contains(0, 0));
@@ -169,7 +168,7 @@ TEST_CASE("Boolean Matrix") {
     WHEN: the function is called on a matrix
     THEN: the function should throw an exception if the row is out of range
     */
-    SparseMatrix<uint32_t, bool> m(4, 3);
+    SparseMatrix<bool> m(4, 3);
     CHECK_THROWS(m.getRow(-1));
     CHECK_THROWS(m.getRow(4));
   }
@@ -182,7 +181,7 @@ TEST_CASE("Boolean Matrix") {
     THEN: the function should return a vector (SparseMatrix) containing the
     elements of the row
     */
-    SparseMatrix<uint32_t, bool> m(3, 3);
+    SparseMatrix<bool> m(3, 3);
     // Create a row
     m.insert(0, 0, true);
     m.insert(0, 2, true);
@@ -202,7 +201,7 @@ TEST_CASE("Boolean Matrix") {
     THEN: the function should return a vector (SparseMatrix) containing the
     elements of the row
     */
-    SparseMatrix<uint32_t, bool> m(3, 3);
+    SparseMatrix<bool> m(3, 3);
     // Create a row
     m.insert(0, 0, true);
     m.insert(0, 2, true);
@@ -221,7 +220,7 @@ TEST_CASE("Boolean Matrix") {
     WHEN: the function is called on a matrix
     THEN: the function should throw an exception if the column is out of range
     */
-    SparseMatrix<uint32_t, bool> m(3, 6);
+    SparseMatrix<bool> m(3, 6);
     CHECK_THROWS(m.getCol(6));
   }
   SUBCASE("getCol") {
@@ -233,7 +232,7 @@ TEST_CASE("Boolean Matrix") {
     THEN: the function should return a vector (SparseMatrix) containingthe
     elements of the column
     */
-    SparseMatrix<uint32_t, bool> m(3, 3);
+    SparseMatrix<bool> m(3, 3);
     // Create a column
     m.insert(0, 0, true);
     m.insert(2, 0, true);
@@ -253,7 +252,7 @@ TEST_CASE("Boolean Matrix") {
     THEN: the function should return a vector (SparseMatrix) containingthe
     elements of the column
     */
-    SparseMatrix<uint32_t, bool> m(3, 3);
+    SparseMatrix<bool> m(3, 3);
     // Create a column
     m.insert(0, 0, true);
     m.insert(2, 0, true);
@@ -271,7 +270,7 @@ TEST_CASE("Boolean Matrix") {
     WHEN: the function is called on a matrix
     THEN: the function should return the number of rows in the matrix
     */
-    SparseMatrix<uint32_t, bool> m(7, 3);
+    SparseMatrix<bool> m(7, 3);
     CHECK(m.getRowDim() == 7);
   }
   SUBCASE("Get column dimension") {
@@ -281,7 +280,7 @@ TEST_CASE("Boolean Matrix") {
     WHEN: the function is called on a matrix
     THEN: the function should return the number of columns in the matrix
     */
-    SparseMatrix<uint32_t, bool> m(3, 10);
+    SparseMatrix<bool> m(3, 10);
     CHECK(m.getColDim() == 10);
   }
   SUBCASE("Get max_size") {
@@ -293,7 +292,7 @@ TEST_CASE("Boolean Matrix") {
     THEN: the function should return the maximum number of elements that can be
     stored in the matrix
     */
-    SparseMatrix<uint32_t, bool> m(3, 5);
+    SparseMatrix<bool> m(3, 5);
     CHECK(m.max_size() == 15);
   }
   SUBCASE("Get size") {
@@ -304,7 +303,7 @@ TEST_CASE("Boolean Matrix") {
     WHEN: the function is called on a matrix
     THEN: the function should return the number of elements in the matrix
     */
-    SparseMatrix<uint32_t, bool> m(3, 3);
+    SparseMatrix<bool> m(3, 3);
     m.insert(0, 0, true);
     m.insert(0, 1, true);
     m.insert(0, 2, true);
@@ -319,7 +318,7 @@ TEST_CASE("Boolean Matrix") {
     WHEN: the function is called on a matrix
     THEN: the function should throw an exception if the row is out of range
     */
-    SparseMatrix<uint32_t, bool> m(5, 3);
+    SparseMatrix<bool> m(5, 3);
     CHECK_THROWS(m.eraseRow(5));
   }
   SUBCASE("Erase row") {
@@ -330,7 +329,7 @@ TEST_CASE("Boolean Matrix") {
     WHEN: the function is called on a matrix
     THEN: the function should delete all the elements in the row
     */
-    SparseMatrix<uint32_t, bool> d(3, 3);
+    SparseMatrix<bool> d(3, 3);
     // Create a row
     d.insert(0, 0, true);
     d.insert(1, 2, true);
@@ -362,7 +361,7 @@ TEST_CASE("Boolean Matrix") {
     WHEN: the function is called on a matrix
     THEN: the function should throw an exception if the column is out of range
     */
-    SparseMatrix<uint32_t, bool> m(3, 5);
+    SparseMatrix<bool> m(3, 5);
     CHECK_THROWS(m.eraseColumn(5));
   }
   SUBCASE("Erase column") {
@@ -373,7 +372,7 @@ TEST_CASE("Boolean Matrix") {
     WHEN: the function is called on a matrix
     THEN: the function should delete all the elements in the column
     */
-    SparseMatrix<uint32_t, bool> d(3, 3);
+    SparseMatrix<bool> d(3, 3);
     d.insert(0, 0, true);
     d.insert(1, 2, true);
     d.insert(2, 1, true);
@@ -400,8 +399,8 @@ TEST_CASE("Boolean Matrix") {
     WHEN: the function is called on a matrix
     THEN: the function should throw an exception if the matrix is empty
     */
-    SparseMatrix<uint32_t, bool> m(1, 5);
-    SparseMatrix<uint32_t, bool> m2(3, 6);
+    SparseMatrix<bool> m(1, 5);
+    SparseMatrix<bool> m2(3, 6);
     CHECK_THROWS(m.getDegreeVector());
     CHECK_THROWS(m2.getDegreeVector());
   }
@@ -413,7 +412,7 @@ TEST_CASE("Boolean Matrix") {
     WHEN: the function is called on a matrix
     THEN: the function should return a vector containing the degree of each row
     */
-    SparseMatrix<uint32_t, bool> m(3, 3);
+    SparseMatrix<bool> m(3, 3);
     m.insert(0, 0, true);
     m.insert(0, 1, true);
     m.insert(1, 2, true);
@@ -434,7 +433,7 @@ TEST_CASE("Boolean Matrix") {
     WHEN: the function is called on a matrix
     THEN: the function should return a matrix containing the normalized rows
     */
-    SparseMatrix<uint32_t, bool> m(3, 3);
+    SparseMatrix<bool> m(3, 3);
     // Create a row
     m.insert(0, 0, true);
     m.insert(0, 1, true);
@@ -460,7 +459,7 @@ TEST_CASE("Boolean Matrix") {
     WHEN: the function is called on a matrix
     THEN: the function should return a matrix containing the normalized columns
     */
-    SparseMatrix<uint32_t, bool> m(3, 3);
+    SparseMatrix<bool> m(3, 3);
     m.insert(0, 0, true);
     m.insert(0, 1, true);
     m.insert(0, 2, true);
@@ -484,7 +483,7 @@ TEST_CASE("Boolean Matrix") {
     WHEN: the function is called on a matrix
     THEN: the function should symmetrize the matrix
     */
-    SparseMatrix<uint32_t, bool> m(3, 3);
+    SparseMatrix<bool> m(3, 3);
     m.insert(0, 0, true);
     m.insert(0, 1, true);
     m.insert(1, 2, true);
@@ -506,8 +505,8 @@ TEST_CASE("Boolean Matrix") {
     THEN: the function should throw an exception if the matrices have different
     dimensions
     */
-    SparseMatrix<uint32_t, bool> m(3, 3);
-    SparseMatrix<uint32_t, bool> m2(3, 4);
+    SparseMatrix<bool> m(3, 3);
+    SparseMatrix<bool> m2(3, 4);
     CHECK_THROWS(m + m2);
   }
   SUBCASE("+ operator") {
@@ -517,11 +516,11 @@ TEST_CASE("Boolean Matrix") {
     WHEN: the function is called on two matrices
     THEN: the function should sum the two matrices
     */
-    SparseMatrix<uint32_t, bool> m(3, 3);
+    SparseMatrix<bool> m(3, 3);
     m.insert(0, 0, true);
     m.insert(0, 1, true);
     m.insert(1, 2, true);
-    SparseMatrix<uint32_t, bool> m2(3, 3);
+    SparseMatrix<bool> m2(3, 3);
     m2.insert(0, 0, true);
     m2.insert(1, 0, true);
     m2.insert(2, 1, true);
@@ -542,8 +541,8 @@ TEST_CASE("Boolean Matrix") {
     THEN: the function should throw an exception if the matrices have different
     dimensions
     */
-    SparseMatrix<uint32_t, bool> m(3, 3);
-    SparseMatrix<uint32_t, bool> m2(3, 4);
+    SparseMatrix<bool> m(3, 3);
+    SparseMatrix<bool> m2(3, 4);
     CHECK_THROWS(m += m2);
   }
   SUBCASE("+= operator") {
@@ -553,11 +552,11 @@ TEST_CASE("Boolean Matrix") {
     WHEN: the function is called on two matrices
     THEN: the function should sum the two matrices
     */
-    SparseMatrix<uint32_t, bool> m(3, 3);
+    SparseMatrix<bool> m(3, 3);
     m.insert(0, 0, true);
     m.insert(0, 1, true);
     m.insert(1, 2, true);
-    SparseMatrix<uint32_t, bool> m2(3, 3);
+    SparseMatrix<bool> m2(3, 3);
     m2.insert(0, 0, true);
     m2.insert(1, 0, true);
     m2.insert(2, 1, true);
@@ -578,8 +577,8 @@ TEST_CASE("Boolean Matrix") {
     THEN: the function should throw an exception if the matrices have different
     dimensions
     */
-    SparseMatrix<uint32_t, bool> m(3, 3);
-    SparseMatrix<uint32_t, bool> m2(3, 4);
+    SparseMatrix<bool> m(3, 3);
+    SparseMatrix<bool> m2(3, 4);
     CHECK_THROWS(m - m2);
   }
   SUBCASE("- operator") {
@@ -589,11 +588,11 @@ TEST_CASE("Boolean Matrix") {
     WHEN: the function is called on two matrices
     THEN: the function should subtract the two matrices
     */
-    SparseMatrix<uint32_t, int> m(3, 3);
+    SparseMatrix<int> m(3, 3);
     m.insert(0, 0, 1);
     m.insert(0, 1, 2);
     m.insert(1, 2, 3);
-    SparseMatrix<uint32_t, int> m2(3, 3);
+    SparseMatrix<int> m2(3, 3);
     m2.insert(0, 0, 1);
     m2.insert(1, 0, 2);
     m2.insert(2, 1, 3);
@@ -614,8 +613,8 @@ TEST_CASE("Boolean Matrix") {
     THEN: the function should throw an exception if the matrices have different
     dimensions
     */
-    SparseMatrix<uint32_t, bool> m(3, 3);
-    SparseMatrix<uint32_t, bool> m2(3, 4);
+    SparseMatrix<bool> m(3, 3);
+    SparseMatrix<bool> m2(3, 4);
     CHECK_THROWS(m -= m2);
   }
   SUBCASE("-= operator") {
@@ -625,11 +624,11 @@ TEST_CASE("Boolean Matrix") {
     WHEN: the function is called on two matrices
     THEN: the function should subtract the two matrices
     */
-    SparseMatrix<uint32_t, int> m(3, 3);
+    SparseMatrix<int> m(3, 3);
     m.insert(0, 0, 1);
     m.insert(0, 1, 2);
     m.insert(1, 2, 3);
-    SparseMatrix<uint32_t, int> m2(3, 3);
+    SparseMatrix<int> m2(3, 3);
     m2.insert(0, 0, 1);
     m2.insert(1, 0, 2);
     m2.insert(2, 1, 3);
@@ -649,8 +648,8 @@ TEST_CASE("Boolean Matrix") {
     WHEN: the function is called on a non-square matrix
     THEN: the function should throw an exception
     */
-    SparseMatrix<uint32_t, double> m(4, 3);
-    SparseMatrix<uint32_t, double> m2(3, 4);
+    SparseMatrix<double> m(4, 3);
+    SparseMatrix<double> m2(3, 4);
     CHECK_THROWS(m.getStrengthVector());
     CHECK_THROWS(m2.getStrengthVector());
   }
@@ -662,7 +661,7 @@ TEST_CASE("Boolean Matrix") {
     WHEN: the function is called on a street with 1 vehicle and length 10
     THEN: the function should return a vector with 0.1
     */
-    SparseMatrix<uint32_t, double> m(3, 3);
+    SparseMatrix<double> m(3, 3);
     m.insert(0, 0, 0.3);
     m.insert(0, 1, 0.3);
     m.insert(0, 2, 0.1);
@@ -682,7 +681,7 @@ TEST_CASE("Boolean Matrix") {
     WHEN: the function is called on a non-square matrix
     THEN: the function should throw an exception
     */
-    SparseMatrix<uint32_t, double> m(4, 3);
+    SparseMatrix<double> m(4, 3);
     CHECK_THROWS(m.getLaplacian());
   }
   SUBCASE("getLaplacian") {
@@ -692,7 +691,7 @@ TEST_CASE("Boolean Matrix") {
     WHEN: the function is called on a matrix
     THEN: the function should return the Laplacian matrix of the matrix
     */
-    SparseMatrix<uint32_t, bool> m(3, 3);
+    SparseMatrix<bool> m(3, 3);
     m.insert(0, 0, true);
     m.insert(0, 1, true);
     m.insert(1, 2, true);
@@ -711,7 +710,7 @@ TEST_CASE("Boolean Matrix") {
     WHEN: the function is called on a matrix
     THEN: the function should reshape the matrix
     */
-    SparseMatrix<uint16_t, bool> m(3, 3);
+    SparseMatrix<bool> m(3, 3);
     m.insert(0, 0, true);
     m.insert(0, 1, true);
     m.insert(1, 2, true);
@@ -728,7 +727,7 @@ TEST_CASE("Boolean Matrix") {
     WHEN: the function is called on a matrix
     THEN: the function should reshape the matrix
     */
-    SparseMatrix<uint16_t, bool> m(3, 3);
+    SparseMatrix<bool> m(3, 3);
     m.insert(0, 0, true);
     m.insert(0, 1, true);
     m.insert(1, 2, true);
@@ -745,7 +744,7 @@ TEST_CASE("Boolean Matrix") {
     WHEN: the function is called on a matrix
     THEN: the function should reshape the matrix
     */
-    SparseMatrix<uint16_t, bool> m(3, 3);
+    SparseMatrix<bool> m(3, 3);
     m.insert(0, 0, true);
     m.insert(0, 1, true);
     m.insert(1, 2, true);
@@ -762,7 +761,7 @@ TEST_CASE("Boolean Matrix") {
     WHEN: the function is called on a matrix
     THEN: the function should insert a value in the matrix and expanding it
     */
-    SparseMatrix<uint16_t, bool> m(3, 3);
+    SparseMatrix<bool> m(3, 3);
     m.insert(0, 0, true);
     m.insert(1, 2, true);
     m.insert_and_expand(3, 4, true);

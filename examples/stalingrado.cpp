@@ -19,12 +19,12 @@ std::atomic<unsigned int> progress{0};
 using Unit = unsigned int;
 using Delay = uint8_t;
 
-using Graph = dsm::Graph<Unit, Unit>;
-using Itinerary = dsm::Itinerary<Unit>;
-using Dynamics = dsm::FirstOrderDynamics<Unit, Unit, Delay>;
-using Street = dsm::Street<Unit, Unit>;
-using SpireStreet = dsm::SpireStreet<Unit, Unit>;
-using TrafficLight = dsm::TrafficLight<Unit, Unit, Delay>;
+using Graph = dsm::Graph;
+using Itinerary = dsm::Itinerary;
+using Dynamics = dsm::FirstOrderDynamics<Delay>;
+using Street = dsm::Street;
+using SpireStreet = dsm::SpireStreet;
+using TrafficLight = dsm::TrafficLight<Delay>;
 
 void printLoadingBar(int const i, int const n) {
   std::cout << "Loading: " << std::setprecision(2) << std::fixed << (i * 100. / n) << "%"
