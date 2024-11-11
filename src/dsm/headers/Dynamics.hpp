@@ -517,7 +517,7 @@ namespace dsm {
       auto& roundabout = dynamic_cast<Roundabout<Id, Size>&>(*pNode);
       const auto nAgents{roundabout.agents().size()};
       for (size_t i{0}; i < nAgents; ++i) {
-        const auto agentId{roundabout.agents().front()};
+        auto const agentId{roundabout.agents().front()};
         auto const& nextStreet{this->m_graph.streetSet()[m_agentNextStreetId[agentId]]};
         if (!(nextStreet->isFull())) {
           if (m_agents[agentId]->streetId().has_value()) {
@@ -614,20 +614,12 @@ namespace dsm {
         assert(srcNode->id() == nextStreet->nodePair().first);
         if (srcNode->isIntersection()) {
           auto& intersection = dynamic_cast<Intersection<Id, Size>&>(*srcNode);
-          try {
-            intersection.addAgent(0., agentId);
-            m_agentNextStreetId.emplace(agentId, nextStreet->id());
-          } catch (...) {
-            continue;
-          }
+          intersection.addAgent(0., agentId);
         } else if (srcNode->isRoundabout()) {
           auto& roundabout = dynamic_cast<Roundabout<Id, Size>&>(*srcNode);
-          try {
-            roundabout.enqueue(agentId);
-          } catch (...) {
-            continue;
-          }
+          roundabout.enqueue(agentId);
         }
+        m_agentNextStreetId.emplace(agentId, nextStreet->id());
       } else if (agent->delay() == 0) {
         agent->setSpeed(0.);
       }
