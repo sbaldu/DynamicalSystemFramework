@@ -20,6 +20,7 @@
 #include <cassert>
 #include <format>
 #include <thread>
+#include <exception>
 
 #include "Agent.hpp"
 #include "Itinerary.hpp"
