@@ -11,8 +11,7 @@ namespace dsm {
   class Intersection;
 
   template <typename Delay>
-    requires(
-             std::unsigned_integral<Delay>)
+    requires(std::unsigned_integral<Delay>)
   class TrafficLight;
 
   class Roundabout;

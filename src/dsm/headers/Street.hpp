@@ -67,8 +67,7 @@ namespace dsm {
     /// @param len The street's length
     /// @param maxSpeed The street's speed limit
     /// @param nodePair The street's node pair
-    Street(
-        Id id, Size capacity, double len, double maxSpeed, std::pair<Id, Id> nodePair);
+    Street(Id id, Size capacity, double len, double maxSpeed, std::pair<Id, Id> nodePair);
 
     virtual ~Street() = default;
 
@@ -93,9 +92,7 @@ namespace dsm {
     /// @brief Set the street's node pair
     /// @param node1 The source node of the street
     /// @param node2 The destination node of the street
-    void setNodePair(Id node1, Id node2) {
-      m_nodePair = std::make_pair(node1, node2);
-    }
+    void setNodePair(Id node1, Id node2) { m_nodePair = std::make_pair(node1, node2); }
     /// @brief Set the street's node pair
     /// @param node1 The source node of the street
     /// @param node2 The destination node of the street
@@ -112,8 +109,7 @@ namespace dsm {
     /// @brief Set the street's angle
     /// @param srcNode The source node of the street
     /// @param dstNode The destination node of the street
-    void setAngle(std::pair<double, double> srcNode,
-                         std::pair<double, double> dstNode);
+    void setAngle(std::pair<double, double> srcNode, std::pair<double, double> dstNode);
     /// @brief Set the street's angle
     /// @param angle The street's angle
     /// @throw std::invalid_argument If the angle is negative or greater than 2 * pi
@@ -150,9 +146,7 @@ namespace dsm {
     double density() const { return nAgents() / m_len; }
     /// @brief Get the street's normalized density
     /// @return double, The street's normalized density
-    double normDensity() const {
-      return nAgents() / static_cast<double>(m_capacity);
-    }
+    double normDensity() const { return nAgents() / static_cast<double>(m_capacity); }
     /// @brief Check if the street is full
     /// @return bool, True if the street is full, false otherwise
     bool isFull() const { return nAgents() == m_capacity; }
@@ -174,7 +168,6 @@ namespace dsm {
     /// @return bool True if the street is a spire, false otherwise
     virtual bool isSpire() const { return false; };
   };
-
 
   /// @brief The SpireStreet class represents a street which is able to count agent flows in both input and output.
   /// @tparam Id The type of the street's id
@@ -230,5 +223,5 @@ namespace dsm {
     /// @return bool True if the street is a spire, false otherwise
     bool isSpire() const override { return true; };
   };
-  
+
 };  // namespace dsm
