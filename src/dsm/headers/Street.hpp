@@ -357,14 +357,10 @@ namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Street<Id, Size>::addAgent(Id agentId) {
-    assert((void(std::format("Agent with id {} is not on the street.", agentId)),
-            !m_waitingAgents.contains(agentId)));
+    assert((void("Agent is already on the street."), !m_waitingAgents.contains(agentId)));
     for (auto const& queue : m_exitQueues) {
       for (auto const& id : queue) {
-        if (id == agentId) {
-          throw std::runtime_error(buildLog(
-              std::format("Agent with id {} is already on the street.", agentId)));
-        }
+        assert((void("Agent is already in queue."), id != agentId));
       }
     }
     m_waitingAgents.insert(agentId);
@@ -372,14 +368,10 @@ namespace dsm {
   template <typename Id, typename Size>
     requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   void Street<Id, Size>::enqueue(Id agentId, size_t index) {
-    assert((void(std::format("Agent with id {} is not on the street.", agentId)),
-            m_waitingAgents.contains(agentId)));
+    assert((void("Agent is not on the street."), m_waitingAgents.contains(agentId)));
     for (auto const& queue : m_exitQueues) {
       for (auto const& id : queue) {
-        if (id == agentId) {
-          throw std::runtime_error(buildLog(
-              std::format("Agent with id {} is already on the queue.", agentId)));
-        }
+        assert((void("Agent is already in queue."), id != agentId));
       }
     }
     m_waitingAgents.erase(agentId);
