@@ -1146,10 +1146,10 @@ namespace dsm {
           break;
         }
       }
-      dRand = this->m_uniformDist(this->m_generator);
-      sum = 0.;
       dstId = srcId;
       while (dstId == srcId) {
+        dRand = this->m_uniformDist(this->m_generator);
+        sum = 0.;
         for (const auto& [id, weight] : dst_weights) {
           sum += weight;
           if (dRand < sum) {
