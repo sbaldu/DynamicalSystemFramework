@@ -43,75 +43,75 @@ namespace dsm {
     /// @brief Construct a new Agent object
     /// @param id The agent's id
     /// @param itineraryId The agent's itinerary
-    inline Agent(Id id, Id itineraryId);
+    Agent(Id id, Id itineraryId);
     /// @brief Construct a new Agent object
     /// @param id The agent's id
     /// @param itineraryId The agent's itinerary
     /// @param srcNodeId The id of the source node of the agent
-    inline Agent(Id id, Id itineraryId, Id srcNodeId);
+    Agent(Id id, Id itineraryId, Id srcNodeId);
     /// @brief Set the street occupied by the agent
     /// @param streetId The id of the street currently occupied by the agent
-    inline void setStreetId(Id streetId) { m_streetId = streetId; }
+    void setStreetId(Id streetId) { m_streetId = streetId; }
     /// @brief Set the source node id of the agent
     /// @param srcNodeId The id of the source node of the agent
-    inline void setSourceNodeId(Id srcNodeId) { m_srcNodeId = srcNodeId; }
+    void setSourceNodeId(Id srcNodeId) { m_srcNodeId = srcNodeId; }
     /// @brief Set the agent's itinerary
     /// @param itineraryId The agent's itinerary
-    inline void setItineraryId(Id itineraryId) { m_itineraryId = itineraryId; }
+    void setItineraryId(Id itineraryId) { m_itineraryId = itineraryId; }
     /// @brief Set the agent's speed
     /// @param speed, The agent's speed
     /// @throw std::invalid_argument, if speed is negative
-    inline void setSpeed(double speed);
+    void setSpeed(double speed);
     /// @brief Increment the agent's delay by 1
     /// @throw std::overflow_error, if delay has reached its maximum value
-    inline void incrementDelay();
+    void incrementDelay();
     /// @brief Set the agent's delay
     /// @param delay The agent's delay
     /// @throw std::overflow_error, if delay has reached its maximum value
-    inline void incrementDelay(Delay delay);
+    void incrementDelay(Delay delay);
     /// @brief Decrement the agent's delay by 1
     /// @throw std::underflow_error, if delay has reached its minimum value
-    inline void decrementDelay();
+    void decrementDelay();
     /// @brief Increment the agent's distance by its speed * 1 second
-    inline void incrementDistance() { m_distance += m_speed; }
+    void incrementDistance() { m_distance += m_speed; }
     /// @brief Increment the agent's distance by a given value
     /// @param distance The value to increment the agent's distance byù
     /// @throw std::invalid_argument, if distance is negative
-    inline void incrementDistance(double distance);
+    void incrementDistance(double distance);
     /// @brief Increment the agent's time by 1
     /// @throw std::overflow_error, if time has reached its maximum value
-    inline void incrementTime();
+    void incrementTime();
     /// @brief Increment the agent's time by a given value
     /// @param time The value to increment the agent's time by
     /// @throw std::overflow_error, if time has reached its maximum value
-    inline void incrementTime(unsigned int time);
+    void incrementTime(unsigned int time);
     /// @brief Reset the agent's time to 0
-    inline void resetTime() { m_time = 0; }
+    void resetTime() { m_time = 0; }
 
     /// @brief Get the agent's id
     /// @return The agent's id
-    inline Id id() const { return m_id; }
+    Id id() const { return m_id; }
     /// @brief Get the agent's itinerary
     /// @return The agent's itinerary
-    inline Id itineraryId() const { return m_itineraryId; }
+    Id itineraryId() const { return m_itineraryId; }
     /// @brief Get the id of the street currently occupied by the agent
     /// @return The id of the street currently occupied by the agent
-    inline std::optional<Id> streetId() const { return m_streetId; }
+    std::optional<Id> streetId() const { return m_streetId; }
     /// @brief Get the id of the source node of the agent
     /// @return The id of the source node of the agent
-    inline std::optional<Id> srcNodeId() const { return m_srcNodeId; }
+    std::optional<Id> srcNodeId() const { return m_srcNodeId; }
     /// @brief Get the agent's speed
     /// @return The agent's speed
-    inline double speed() const { return m_speed; }
+    double speed() const { return m_speed; }
     /// @brief Get the agent's delay
     /// @return	The agent's delay
-    inline Delay delay() const { return m_delay; }
+    Delay delay() const { return m_delay; }
     /// @brief Get the agent's travelled distance
     /// @return The agent's travelled distance
-    inline double distance() const { return m_distance; }
+    double distance() const { return m_distance; }
     /// @brief Get the agent's travel time
     /// @return The agent's travel time
-    inline unsigned int time() const { return m_time; }
+    unsigned int time() const { return m_time; }
   };
 
   template <typename Delay>
