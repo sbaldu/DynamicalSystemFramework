@@ -165,13 +165,33 @@ TEST_CASE("Graph") {
     CHECK_THROWS(graph.importMatrix("./data/not_found.dsm"));
   }
   SUBCASE("importOSMNodes and importOSMEdges") {
-    Graph graph{};
-    graph.importOSMNodes("./data/nodes.csv");
-    CHECK_EQ(graph.nodeSet().size(), 25);
-    graph.importOSMEdges("./data/edges.csv");
-    CHECK_EQ(graph.streetSet().size(), 60);
-    graph.buildAdj();
-    CHECK_EQ(graph.adjMatrix().size(), 60);
+    GIVEN("A graph object") {
+      Graph graph{};
+      WHEN("We import nodes and edges from OSM") {
+        graph.importOSMNodes("./data/nodes.csv");
+        graph.importOSMEdges("./data/edges.csv");
+        THEN("Sizes are correct") {
+          CHECK_EQ(graph.nodeSet().size(), 25);
+          CHECK_EQ(graph.streetSet().size(), 60);
+        }
+        THEN("We are able to build the adjacency matrix") {
+          graph.buildAdj();
+          CHECK_EQ(graph.adjMatrix().size(), 60);
+        }
+      }
+      WHEN("We import many nodes and edges from OSM") {
+        graph.importOSMNodes("./data/nodes_big.csv");
+        graph.importOSMEdges("./data/edges_big.csv");
+        THEN("Sizes are correct") {
+          CHECK_EQ(graph.nodeSet().size(), 4077);
+          CHECK_EQ(graph.streetSet().size(), 8875);
+        }
+        THEN("We are able to build the adjacency matrix") {
+          graph.buildAdj();
+          CHECK_EQ(graph.adjMatrix().size(), 8875);
+        }
+      }
+    }
   }
   SUBCASE("street") {
     /// GIVEN: a graph
