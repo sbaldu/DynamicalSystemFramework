@@ -29,7 +29,9 @@ if(NOT doctest_POPULATED)
 endif()
 
 # add as executable all cpp files into '.' folder
-file(GLOB SOURCES "*.cpp")
+file(GLOB TEST_SOURCES "*.cpp")
+file(GLOB SRC_SOURCES "../src/dsm/headers/*.cpp")
+list(APPEND SOURCES ${TEST_SOURCES} ${SRC_SOURCES})
 
 # Define the executable
 add_executable(dsm_tests.out ${SOURCES})
