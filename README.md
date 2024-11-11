@@ -16,12 +16,12 @@ pip install -r ./requirements.txt
 ## Installation
 The library can be installed using CMake. To do this build it with the commands:
 ```shell
-mkdir -p build && cd build
-cmake ..
+cmake -B build -DCMAKE_INSTALL_PREFIX=/path/to/install
+cmake --build build
 ```
 and then install it with:
 ```shell
-sudo make install
+cmake --install build
 ```
 
 ## Testing

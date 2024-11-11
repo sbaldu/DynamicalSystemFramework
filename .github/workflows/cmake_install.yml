@@ -18,6 +18,7 @@ jobs:
       run: |
         mkdir -p build && cd build
         cmake ..
+        cmake --build .
         sudo cmake --install .
 
     - name: Test include
