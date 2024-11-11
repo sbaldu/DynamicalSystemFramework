@@ -234,12 +234,12 @@ namespace dsm {
 
   template <typename... Tn>
     requires(is_node_v<std::remove_reference_t<Tn>> && ...)
-  void Graph<Id, Size>::addNodes(Tn&&... nodes) {}
+  void Graph::addNodes(Tn&&... nodes) {}
 
   template <typename T1, typename... Tn>
     requires is_node_v<std::remove_reference_t<T1>> &&
              (is_node_v<std::remove_reference_t<Tn>> && ...)
-  void Graph<Id, Size>::addNodes(T1&& node, Tn&&... nodes) {
+  void Graph::addNodes(T1&& node, Tn&&... nodes) {
     addNode(std::forward<T1>(node));
     addNodes(std::forward<Tn>(nodes)...);
   }
