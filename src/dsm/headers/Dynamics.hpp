@@ -390,15 +390,9 @@ namespace dsm {
       m_turnCounts.emplace(streetId, std::array<unsigned long long, 4>{0, 0, 0, 0});
       // fill turn mapping as [streetId, [left street Id, straight street Id, right street Id, U self street Id]]
       m_turnMapping.emplace(streetId, std::array<long, 4>{-1, -1, -1, -1});
-    }
-    for (const auto& [streetId, street] : m_graph.streetSet()) {
+      // Turn mappings
       const auto& srcNodeId = street->nodePair().second;
       for (const auto& [ss, _] : m_graph.adjMatrix().getRow(srcNodeId, true)) {
-        // const auto& nextStreet = m_graph.streetSet()[ss];
-        // if (nextStreet == nullptr) {
-        //   std::cout << "Street " << ss << " not found\n";
-        //   continue;
-        // }
         const auto& delta = street->angle() - m_graph.streetSet()[ss]->angle();
         if (std::abs(delta) < std::numbers::pi) {
           if (delta < 0.) {
