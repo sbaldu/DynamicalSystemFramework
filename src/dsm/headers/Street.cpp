@@ -9,7 +9,12 @@ namespace dsm {
         m_angle{street.angle()},
         m_id{id},
         m_capacity{street.capacity()},
-        m_transportCapacity{street.transportCapacity()} {}
+        m_transportCapacity{street.transportCapacity()},
+        m_nLanes{street.nLanes()} {
+    for (auto i{0}; i < street.nLanes(); ++i) {
+      m_exitQueues.push_back(dsm::queue<Size>());
+    }
+  }
 
   Street::Street(Id index, std::pair<Id, Id> pair)
       : m_nodePair{std::move(pair)},
@@ -18,7 +23,10 @@ namespace dsm {
         m_angle{0.},
         m_id{index},
         m_capacity{1},
-        m_transportCapacity{std::numeric_limits<Size>::max()} {}
+        m_transportCapacity{1},
+        m_nLanes{1} {
+    m_exitQueues.push_back(dsm::queue<Size>());
+  }
 
   Street::Street(Id id, Size capacity, double len, std::pair<Id, Id> nodePair)
       : m_nodePair{std::move(nodePair)},
@@ -27,7 +35,10 @@ namespace dsm {
         m_angle{0.},
         m_id{id},
         m_capacity{capacity},
-        m_transportCapacity{std::numeric_limits<Size>::max()} {}
+        m_transportCapacity{1},
+        m_nLanes{1} {
+    m_exitQueues.push_back(dsm::queue<Size>());
+  }
 
   Street::Street(
       Id id, Size capacity, double len, double maxSpeed, std::pair<Id, Id> nodePair)
@@ -36,8 +47,33 @@ namespace dsm {
         m_angle{0.},
         m_id{id},
         m_capacity{capacity},
-        m_transportCapacity{std::numeric_limits<Size>::max()} {
+        m_transportCapacity{1},
+        m_nLanes{1} {
     this->setMaxSpeed(maxSpeed);
+    m_exitQueues.push_back(dsm::queue<Size>());
+  }
+
+  Street::Street(Id id,
+                 Size capacity,
+                 double len,
+                 double maxSpeed,
+                 std::pair<Id, Id> nodePair,
+                 int16_t nLanes)
+      : m_nodePair{std::move(nodePair)},
+        m_len{len},
+        m_angle{0.},
+        m_id{id},
+        m_capacity{capacity},
+        m_transportCapacity{1}
+
+  {
+    this->setMaxSpeed(maxSpeed);
+    this->setCapacity(capacity);
+    this->setNLanes(nLanes);
+    m_exitQueues.resize(nLanes);
+    for (auto i{0}; i < nLanes; ++i) {
+      m_exitQueues.push_back(dsm::queue<Size>());
+    }
   }
 
   void Street::setLength(double len) {
@@ -72,41 +108,57 @@ namespace dsm {
     }
     m_angle = angle;
   }
+  void Street::setNLanes(const int16_t nLanes) {
+    assert(
+        (void(std::format("The number of lanes of the street {} must be greater than 0",
+                          static_cast<int>(m_id))),
+         nLanes > 0));
+    m_nLanes = nLanes;
+  }
 
   void Street::addAgent(Id agentId) {
-    if (m_waitingAgents.contains(agentId)) {
-      throw std::runtime_error(
-          buildLog(std::format("Agent with id {} is already on the street.", agentId)));
-    }
-    for (auto const& id : m_exitQueue) {
-      if (id == agentId) {
-        throw std::runtime_error(
-            buildLog(std::format("Agent with id {} is already on the street.", agentId)));
+    assert((void("Agent is already on the street."), !m_waitingAgents.contains(agentId)));
+    for (auto const& queue : m_exitQueues) {
+      for (auto const& id : queue) {
+        assert((void("Agent is already in queue."), id != agentId));
       }
     }
     m_waitingAgents.insert(agentId);
+    ;
   }
-  void Street::enqueue(Id agentId) {
-    if (!m_waitingAgents.contains(agentId)) {
-      throw std::runtime_error(
-          buildLog(std::format("Agent with id {} is not on the street.", agentId)));
-    }
-    for (auto const& id : m_exitQueue) {
-      if (id == agentId) {
-        throw std::runtime_error(
-            buildLog(std::format("Agent with id {} is already on the street.", agentId)));
+  void Street::enqueue(Id agentId, size_t index) {
+    assert((void("Agent is not on the street."), m_waitingAgents.contains(agentId)));
+    for (auto const& queue : m_exitQueues) {
+      for (auto const& id : queue) {
+        assert((void("Agent is already in queue."), id != agentId));
       }
     }
     m_waitingAgents.erase(agentId);
-    m_exitQueue.push(agentId);
+    m_exitQueues[index].push(agentId);
   }
-  std::optional<Id> Street::dequeue() {
-    if (m_exitQueue.empty()) {
+  std::optional<Id> Street::dequeue(size_t index) {
+    if (m_exitQueues[index].empty()) {
       return std::nullopt;
     }
-    Id id = m_exitQueue.front();
-    m_exitQueue.pop();
+    Id id = m_exitQueues[index].front();
+    m_exitQueues[index].pop();
     return id;
+  }
+
+  Size Street::nAgents() const {
+    Size nAgents{static_cast<Size>(m_waitingAgents.size())};
+    for (const auto& queue : m_exitQueues) {
+      nAgents += queue.size();
+    }
+    return nAgents;
+  }
+
+  Size Street::nExitingAgents() const {
+    Size nAgents{0};
+    for (const auto& queue : m_exitQueues) {
+      nAgents += queue.size();
+    }
+    return nAgents;
   }
 
   SpireStreet::SpireStreet(Id id, const Street& street)
@@ -149,8 +201,8 @@ namespace dsm {
     return flow;
   }
 
-  std::optional<Id> SpireStreet::dequeue() {
-    std::optional<Id> id = Street::dequeue();
+  std::optional<Id> SpireStreet::dequeue(size_t index) {
+    std::optional<Id> id = Street::dequeue(index);
     if (id.has_value()) {
       ++m_agentCounterOut;
     }

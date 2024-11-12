@@ -165,13 +165,33 @@ TEST_CASE("Graph") {
     CHECK_THROWS(graph.importMatrix("./data/not_found.dsm"));
   }
   SUBCASE("importOSMNodes and importOSMEdges") {
-    Graph graph{};
-    graph.importOSMNodes("./data/nodes.csv");
-    CHECK_EQ(graph.nodeSet().size(), 25);
-    graph.importOSMEdges("./data/edges.csv");
-    CHECK_EQ(graph.streetSet().size(), 60);
-    graph.buildAdj();
-    CHECK_EQ(graph.adjMatrix().size(), 60);
+    GIVEN("A graph object") {
+      Graph graph{};
+      WHEN("We import nodes and edges from OSM") {
+        graph.importOSMNodes("./data/nodes.csv");
+        graph.importOSMEdges("./data/edges.csv");
+        THEN("Sizes are correct") {
+          CHECK_EQ(graph.nodeSet().size(), 25);
+          CHECK_EQ(graph.streetSet().size(), 60);
+        }
+        THEN("We are able to build the adjacency matrix") {
+          graph.buildAdj();
+          CHECK_EQ(graph.adjMatrix().size(), 60);
+        }
+      }
+      WHEN("We import many nodes and edges from OSM") {
+        graph.importOSMNodes("./data/nodes_big.csv");
+        graph.importOSMEdges("./data/edges_big.csv");
+        THEN("Sizes are correct") {
+          CHECK_EQ(graph.nodeSet().size(), 4077);
+          CHECK_EQ(graph.streetSet().size(), 8875);
+        }
+        THEN("We are able to build the adjacency matrix") {
+          graph.buildAdj();
+          CHECK_EQ(graph.adjMatrix().size(), 8875);
+        }
+      }
+    }
   }
   SUBCASE("street") {
     /// GIVEN: a graph
@@ -514,5 +534,44 @@ TEST_CASE("Dijkstra") {
 
     auto result = graph.shortestPath(46, 118);
     CHECK(result.has_value());
+  }
+  SUBCASE("adjustNodeCapacities and normalizeStreetCapacities") {
+    GIVEN("A graph composed of three streets with a different lane number") {
+      Street s1(0, 1, 10., 30., std::make_pair(0, 1), 1);
+      Street s2(1, 1, 40., 30., std::make_pair(1, 2), 2);
+      Street s3(2, 1, 75., 30., std::make_pair(3, 1), 3);
+      Street s4(3, 1, 55., 30., std::make_pair(1, 4), 1);
+      Graph graph{};
+      graph.addStreets(s1, s2, s3, s4);
+      graph.buildAdj();
+      WHEN("We adjust node capacities") {
+        graph.adjustNodeCapacities();
+        auto const& nodes = graph.nodeSet();
+        THEN("The node capacities are correct") {
+          CHECK_EQ(nodes.at(0)->capacity(), 1);
+          CHECK_EQ(nodes.at(1)->capacity(), 4);
+          CHECK_EQ(nodes.at(2)->capacity(), 2);
+          CHECK_EQ(nodes.at(3)->capacity(), 3);
+          CHECK_EQ(nodes.at(4)->capacity(), 1);
+        }
+        THEN("The transport capacities are correct") {
+          CHECK_EQ(nodes.at(0)->transportCapacity(), 1);
+          CHECK_EQ(nodes.at(1)->transportCapacity(), 3);
+          CHECK_EQ(nodes.at(2)->transportCapacity(), 0);
+          CHECK_EQ(nodes.at(3)->transportCapacity(), 3);
+          CHECK_EQ(nodes.at(4)->transportCapacity(), 0);
+        }
+      }
+      WHEN("We normalize street capacities") {
+        graph.normalizeStreetCapacities();
+        auto const& streets = graph.streetSet();
+        THEN("The street capacities are correct") {
+          CHECK_EQ(streets.at(1)->capacity(), 2);
+          CHECK_EQ(streets.at(7)->capacity(), 16);
+          CHECK_EQ(streets.at(16)->capacity(), 45);
+          CHECK_EQ(streets.at(9)->capacity(), 11);
+        }
+      }
+    }
   }
 }

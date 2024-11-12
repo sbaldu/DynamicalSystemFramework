@@ -32,17 +32,18 @@ namespace dsm {
     Id m_id;
     std::optional<std::pair<double, double>> m_coords;
     Size m_capacity;
+    Size m_transportCapacity;
 
   public:
     Node() = default;
     /// @brief Construct a new Node object with capacity 1
     /// @param id The node's id
-    explicit Node(Id id) : m_id{id}, m_capacity{1} {}
+    explicit Node(Id id) : m_id{id}, m_capacity{1}, m_transportCapacity{1} {}
     /// @brief Construct a new Node object with capacity 1
     /// @param id The node's id
     /// @param coords A std::pair containing the node's coordinates (lat, lon)
     Node(Id id, std::pair<double, double> coords)
-        : m_id{id}, m_coords{std::move(coords)}, m_capacity{1} {}
+        : m_id{id}, m_coords{std::move(coords)}, m_capacity{1}, m_transportCapacity{1} {}
     virtual ~Node() = default;
 
     /// @brief Set the node's id
@@ -56,6 +57,11 @@ namespace dsm {
     /// @brief Set the node's capacity
     /// @param capacity The node's capacity
     inline virtual void setCapacity(Size capacity) { m_capacity = capacity; }
+    /// @brief Set the node's transport capacity
+    /// @param capacity The node's transport capacity
+    inline virtual void setTransportCapacity(Size capacity) {
+      m_transportCapacity = capacity;
+    }
     /// @brief Get the node's id
     /// @return Id The node's id
     inline Id id() const { return m_id; }
@@ -67,6 +73,9 @@ namespace dsm {
     /// @brief Get the node's capacity
     /// @return Size The node's capacity
     inline Size capacity() const { return m_capacity; }
+    /// @brief Get the node's transport capacity
+    /// @return Size The node's transport capacity
+    inline Size transportCapacity() const { return m_transportCapacity; }
 
     inline virtual bool isFull() const = 0;
 
@@ -141,7 +150,7 @@ namespace dsm {
     };
     /// @brief Get the node's agent ids
     /// @return std::set<Id> A std::set containing the node's agent ids
-    inline std::multimap<int16_t, Id> agents() const { return m_agents; };
+    inline const std::multimap<int16_t, Id>& agents() { return m_agents; };
     /// @brief Returns the number of agents that have passed through the node
     /// @return Size The number of agents that have passed through the node
     /// @details This function returns the number of agents that have passed through the node

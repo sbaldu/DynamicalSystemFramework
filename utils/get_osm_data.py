@@ -31,8 +31,10 @@ if __name__ == "__main__":
     gdf_edges.reset_index(inplace=True)
 
     gdf_nodes = gdf_nodes[["osmid", "x", "y", "highway"]]
+    if "lanes" not in gdf_edges.columns:
+        gdf_edges["lanes"] = None
     gdf_edges = gdf_edges[
-        ["u", "v", "length", "oneway", "highway", "maxspeed", "bridge"]
+        ["u", "v", "length", "oneway", "lanes", "highway", "maxspeed", "bridge"]
     ]
 
     gdf_nodes.to_csv("nodes.csv", sep=";", index=False)

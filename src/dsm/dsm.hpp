@@ -5,17 +5,17 @@
 #include <format>
 
 static constexpr uint8_t DSM_VERSION_MAJOR = 2;
-static constexpr uint8_t DSM_VERSION_MINOR = 0;
+static constexpr uint8_t DSM_VERSION_MINOR = 1;
 static constexpr uint8_t DSM_VERSION_PATCH = 0;
 
-namespace dsm {
-  constexpr const char* version();
-}
+#define DSM_VERSION \
+  std::format("{}.{}.{}", DSM_VERSION_MAJOR, DSM_VERSION_MINOR, DSM_VERSION_PATCH)
 
-constexpr const char* dsm::version() {
-  return std::format("{}.{}.{}", DSM_VERSION_MAJOR, DSM_VERSION_MINOR, DSM_VERSION_PATCH)
-      .c_str();
-}
+namespace dsm {
+  /// @brief Returns the version of the DSM library
+  /// @return The version of the DSM library
+  constexpr auto version() { return DSM_VERSION; };
+}  // namespace dsm
 
 #include "headers/Agent.hpp"
 #include "headers/Graph.hpp"

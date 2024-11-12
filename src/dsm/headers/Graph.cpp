@@ -100,6 +100,35 @@ namespace dsm {
     }
   }
 
+  void Graph::adjustNodeCapacities() {
+    int16_t value;
+    for (Id nodeId = 0; nodeId < m_nodes.size(); ++nodeId) {
+      value = 0;
+      for (const auto& [streetId, _] : m_adjacency.getCol(nodeId, true)) {
+        value += m_streets[streetId]->nLanes() * m_streets[streetId]->transportCapacity();
+      }
+      m_nodes[nodeId]->setCapacity(value);
+      value = 0;
+      for (const auto& [streetId, _] : m_adjacency.getRow(nodeId, true)) {
+        value += m_streets[streetId]->nLanes() * m_streets[streetId]->transportCapacity();
+      }
+      m_nodes[nodeId]->setTransportCapacity(value);
+      if (m_nodes[nodeId]->capacity() == 0) {
+        m_nodes[nodeId]->setCapacity(value);
+      }
+    }
+  }
+
+  void Graph::normalizeStreetCapacities(double meanVehicleLength) {
+    m_maxAgentCapacity = 0;
+    for (const auto& [_, street] : m_streets) {
+      auto const maxCapacity{
+          static_cast<Size>(street->length() * street->nLanes() / meanVehicleLength)};
+      m_maxAgentCapacity += maxCapacity;
+      street->setCapacity(maxCapacity);
+    }
+  }
+
   void Graph::importMatrix(const std::string& fileName, bool isAdj) {
     // check the file extension
     std::string fileExt = fileName.substr(fileName.find_last_of(".") + 1);
@@ -263,12 +292,13 @@ namespace dsm {
           continue;
         }
         std::istringstream iss{line};
-        std::string sourceId, targetId, length, oneway, highway, maxspeed, bridge;
+        std::string sourceId, targetId, length, oneway, lanes, highway, maxspeed, bridge;
         // u;v;length;oneway;highway;maxspeed;bridge
         std::getline(iss, sourceId, ';');
         std::getline(iss, targetId, ';');
         std::getline(iss, length, ';');
         std::getline(iss, oneway, ';');
+        std::getline(iss, lanes, ';');
         std::getline(iss, highway, ';');
         std::getline(iss, maxspeed, ';');
         std::getline(iss, bridge, ';');
@@ -277,15 +307,34 @@ namespace dsm {
         } catch (const std::invalid_argument& e) {
           maxspeed = "30";
         }
+
+        uint8_t numLanes;
+        if (lanes.empty()) {
+          numLanes = 1;  // Default to 1 lane if no value is provided
+        } else {
+          try {
+            // Convert lanes to a double first, then cast to uint8_t
+            double lanesVal = std::stod(lanes);
+            if (lanesVal < 1 || std::isnan(lanesVal)) {
+              numLanes = 1;  // Default to 1 if lanes is invalid
+            } else {
+              numLanes = static_cast<uint8_t>(lanesVal);  // Cast to uint8_t
+            }
+          } catch (const std::invalid_argument&) {
+            numLanes = 1;  // Default to 1 if conversion fails
+          }
+        }
+
         Id streetId = std::stoul(sourceId) + std::stoul(targetId) * m_nodes.size();
-        m_streets.emplace(streetId,
-                          std::make_unique<Street>(
-                              streetId,
-                              1,
-                              std::stod(maxspeed),
-                              std::stod(length),
-                              std::make_pair(m_nodeMapping[std::stoul(sourceId)],
-                                             m_nodeMapping[std::stoul(targetId)])));
+        m_streets.emplace(
+            streetId,
+            std::make_unique<Street>(streetId,
+                                     1,
+                                     std::stod(maxspeed),
+                                     std::stod(length),
+                                     std::make_pair(m_nodeMapping[std::stoul(sourceId)],
+                                                    m_nodeMapping[std::stoul(targetId)]),
+                                     numLanes));
       }
     } else {
       std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +

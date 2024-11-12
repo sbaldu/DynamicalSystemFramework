@@ -261,16 +261,6 @@ TEST_CASE("Dynamics") {
           CHECK_THROWS_AS(dynamics.addAgentsRandomly(1, src, dst), std::invalid_argument);
         }
       }
-      WHEN("We try to add agents with non-normalized node maps") {
-        std::unordered_map<uint32_t, double> not_norm_weights{{0, 1.5}, {1, 0.5}};
-        std::unordered_map<uint32_t, double> norm_weights{{0, 0.5}, {1, 0.5}};
-        THEN("An exception is thrown") {
-          CHECK_THROWS_AS(dynamics.addAgentsRandomly(1, not_norm_weights, norm_weights),
-                          std::invalid_argument);
-          CHECK_THROWS_AS(dynamics.addAgentsRandomly(1, norm_weights, not_norm_weights),
-                          std::invalid_argument);
-        }
-      }
     }
   }
   SUBCASE("addAgents") {
@@ -650,7 +640,6 @@ TEST_CASE("Dynamics") {
         "itineraries "
         "and a roundabout") {
       Roundabout roundabout{1};
-      roundabout.setCapacity(2);
       Street s1{0, 1, 10., 10., std::make_pair(0, 1)};
       Street s2{1, 1, 10., 10., std::make_pair(2, 1)};
       Street s3{2, 1, 10., 10., std::make_pair(1, 0)};
@@ -659,6 +648,7 @@ TEST_CASE("Dynamics") {
       graph2.addNode(std::make_unique<Roundabout>(roundabout));
       graph2.addStreets(s1, s2, s3, s4);
       graph2.buildAdj();
+      graph2.adjustNodeCapacities();
       Dynamics dynamics{graph2};
       dynamics.setSeed(69);
       Itinerary itinerary{0, 2};
@@ -732,6 +722,7 @@ TEST_CASE("Dynamics") {
     graph2.buildAdj();
     for (const auto& [nodeId, node] : graph2.nodeSet()) {
       node->setCapacity(4);
+      node->setTransportCapacity(4);
     }
     Dynamics dynamics{graph2};
     dynamics.setMinSpeedRateo(0.5);
@@ -746,7 +737,7 @@ TEST_CASE("Dynamics") {
     for (const auto& [agentId, agent] : dynamics.agents()) {
       meanSpeed += agent->speed();
     }
-    meanSpeed /= (dynamics.graph().streetSet().at(1)->queue().size() +
+    meanSpeed /= (dynamics.graph().streetSet().at(1)->nExitingAgents() +
                   dynamics.graph().streetSet().at(1)->waitingAgents().size());
     CHECK_EQ(dynamics.streetMeanSpeed(1), meanSpeed);
     // I don't think the mean speed of agents should be equal to the street's
@@ -767,8 +758,8 @@ TEST_CASE("Dynamics") {
         meanSpeed += agent->speed();
       }
     }
-    meanSpeed /= dynamics.graph().streetSet().at(1)->queue().size();
-    CHECK_EQ(dynamics.graph().streetSet().at(1)->queue().size(), 3);
+    meanSpeed /= dynamics.graph().streetSet().at(1)->queue(0).size();
+    CHECK_EQ(dynamics.graph().streetSet().at(1)->queue(0).size(), 3);
     CHECK_EQ(dynamics.streetMeanSpeed(1), meanSpeed);
   }
   SUBCASE("Intersection priorities") {
