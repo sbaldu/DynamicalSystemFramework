@@ -360,10 +360,11 @@ namespace dsm {
       }
     } else {
       if (hasPriority) {
-        return m_counter < pair.first * m_leftTurnRatio.value().first;
+        return m_counter < pair.first * (1. - m_leftTurnRatio.value().first);
       } else {
         return m_counter > pair.first &&
-               m_counter < pair.first + pair.second * m_leftTurnRatio.value().second;
+               m_counter <
+                   pair.first + pair.second * (1. - m_leftTurnRatio.value().second);
       }
     }
   }
