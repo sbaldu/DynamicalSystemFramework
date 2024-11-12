@@ -1,6 +1,8 @@
 
 #include "Node.hpp"
 
+#include <cassert>
+
 namespace dsm {
 
   void Intersection::setCapacity(Size capacity) {
@@ -47,14 +49,10 @@ namespace dsm {
   }
 
   void Intersection::removeAgent(Id agentId) {
-    for (auto it{m_agents.begin()}; it != m_agents.end(); ++it) {
-      if (it->second == agentId) {
-        m_agents.erase(it);
-        return;
-      }
-    }
-    throw std::runtime_error(
-        buildLog(std::format("Agent with id {} is not on the node", agentId)));
+    assert((void("Trying to remove an agent not on the node"),
+            std::erase_if(m_agents, [agentId](const auto& p) {
+              return p.second == agentId;
+            }) == 1));
   }
 
   Size Intersection::agentCounter() {

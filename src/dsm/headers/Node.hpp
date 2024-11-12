@@ -150,7 +150,7 @@ namespace dsm {
     };
     /// @brief Get the node's agent ids
     /// @return std::set<Id> A std::set containing the node's agent ids
-    inline std::multimap<int16_t, Id> agents() const { return m_agents; };
+    inline const std::multimap<int16_t, Id>& agents() { return m_agents; };
     /// @brief Returns the number of agents that have passed through the node
     /// @return Size The number of agents that have passed through the node
     /// @details This function returns the number of agents that have passed through the node
