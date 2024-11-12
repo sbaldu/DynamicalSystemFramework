@@ -475,7 +475,20 @@ namespace dsm {
       }
       if (destinationNode->isTrafficLight()) {
         auto& tl = dynamic_cast<TrafficLight<Delay>&>(*destinationNode);
-        if (!tl.isGreen(streetId)) {
+        if (tl.leftTurnRatio().has_value()) {
+          auto it = m_agentNextStreetId.find(agentId);
+          if (it == m_agentNextStreetId.end()) {
+            if (!tl.isGreen(streetId, 0.)) {
+              continue;
+            }
+          } else {
+            auto const& nextStreet{m_graph.streetSet()[m_agentNextStreetId[agentId]]};
+            auto const delta{nextStreet->deltaAngle(pStreet->angle())};
+            if (!tl.isGreen(streetId, delta)) {
+              continue;
+            }
+          }
+        } else if (!tl.isGreen(streetId)) {
           continue;
         }
       }
@@ -498,7 +511,7 @@ namespace dsm {
         }
         return;
       }
-      const auto& nextStreet{m_graph.streetSet()[m_agentNextStreetId[agentId]]};
+      auto const& nextStreet{m_graph.streetSet()[m_agentNextStreetId[agentId]]};
       if (nextStreet->isFull()) {
         continue;
       }
@@ -506,12 +519,7 @@ namespace dsm {
       assert(destinationNode->id() == nextStreet->nodePair().first);
       if (destinationNode->isIntersection()) {
         auto& intersection = dynamic_cast<Intersection&>(*destinationNode);
-        auto delta = nextStreet->angle() - pStreet->angle();
-        if (delta > std::numbers::pi) {
-          delta -= 2 * std::numbers::pi;
-        } else if (delta < -std::numbers::pi) {
-          delta += 2 * std::numbers::pi;
-        }
+        auto const delta{nextStreet->deltaAngle(pStreet->angle())};
         m_increaseTurnCounts(streetId, delta);
         intersection.addAgent(delta, agentId);
       } else if (destinationNode->isRoundabout()) {
@@ -606,12 +614,7 @@ namespace dsm {
             if (nLanes == 1) {
               street->enqueue(agentId, 0);
             } else {
-              double deltaAngle{pNextStreet->angle() - street->angle()};
-              if (deltaAngle > std::numbers::pi) {
-                deltaAngle -= 2 * std::numbers::pi;
-              } else if (deltaAngle < -std::numbers::pi) {
-                deltaAngle += 2 * std::numbers::pi;
-              }
+              auto const deltaAngle{pNextStreet->deltaAngle(street->angle())};
               if (std::abs(deltaAngle) < std::numbers::pi) {
                 // Lanes are counted as 0 is the far right lane
                 if (deltaAngle < 0.) {                   // Right

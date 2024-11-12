@@ -195,6 +195,10 @@ namespace dsm {
     /// @brief Get the number of agents on all queues
     /// @return Size The number of agents on all queues
     Size nExitingAgents() const;
+    /// @brief Get the delta angle between the street and the previous street, normalized between -pi and pi
+    /// @param previousStreetAngle The angle of the previous street
+    /// @return double The delta angle between the street and the previous street
+    double deltaAngle(double const previousStreetAngle) const;
 
     virtual void addAgent(Id agentId);
     /// @brief Add an agent to the street's queue

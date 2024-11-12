@@ -18,6 +18,7 @@
 #include <set>
 #include <map>
 #include <format>
+#include <cassert>
 
 #include "../utility/Logger.hpp"
 #include "../utility/queue.hpp"
@@ -92,6 +93,7 @@ namespace dsm {
     std::set<Id>
         m_streetPriorities;  // A set containing the street ids that have priority - like main roads
     Size m_agentCounter;
+    std::optional<std::pair<double, double>> m_leftTurnRatio;
 
   public:
     Intersection() = default;
@@ -135,6 +137,20 @@ namespace dsm {
     /// @brief Add a street to the node street priorities
     /// @param streetId The street's id
     inline void addStreetPriority(Id streetId) { m_streetPriorities.emplace(streetId); }
+    /// @brief Set the node's left turn ratio
+    /// @param ratio A std::pair containing the left turn ratio
+    /// @details ratio.first * greentime is the green time for left turns while ratio.second * redtime is the red time for left turns
+    /// This is useful for traffic lights when the input street has many lanes and, for example, one resevred for left turns.
+    void setLeftTurnRatio(std::pair<double, double> ratio);
+    /// @brief Set the node's left turn ratio
+    /// @param first The first component of the left turn ratio
+    /// @param second The second component of the left turn ratio
+    inline void setLeftTurnRatio(double const first, double const second) {
+      setLeftTurnRatio(std::make_pair(first, second));
+    }
+    inline void setLeftTurnRatio(double const ratio) {
+      setLeftTurnRatio(std::make_pair(ratio, ratio));
+    }
 
     /// @brief Returns true if the node is full
     /// @return bool True if the node is full
@@ -156,6 +172,10 @@ namespace dsm {
     /// @details This function returns the number of agents that have passed through the node
     ///          since the last time this function was called. It also resets the counter.
     Size agentCounter();
+
+    inline std::optional<std::pair<double, double>> leftTurnRatio() const {
+      return m_leftTurnRatio;
+    }
 
     inline virtual bool isIntersection() const noexcept override final { return true; }
   };
@@ -217,6 +237,7 @@ namespace dsm {
     /// @return bool True if the traffic light is green
     bool isGreen() const;
     bool isGreen(Id streetId) const;
+    bool isGreen(Id streetId, double angle) const;
     bool isTrafficLight() const noexcept override { return true; }
   };
 
@@ -319,6 +340,32 @@ namespace dsm {
       return hasPriority;
     }
     return !hasPriority;
+  }
+
+  template <typename Delay>
+    requires(std::unsigned_integral<Delay>)
+  bool TrafficLight<Delay>::isGreen(Id streetId, double angle) const {
+    assert((void("TrafficLight's delay has not been set."), m_delay.has_value()));
+    assert((void("TrafficLight's left turn ratio has not been set."),
+            m_leftTurnRatio.has_value()));
+    bool const hasPriority{this->streetPriorities().contains(streetId)};
+    auto const pair{m_delay.value()};
+    if (angle > 0.) {
+      if (hasPriority) {
+        return m_counter > pair.first * (1. - m_leftTurnRatio.value().first) &&
+               m_counter < pair.first;
+      } else {
+        return m_counter >
+               pair.first + pair.second * (1. - m_leftTurnRatio.value().second);
+      }
+    } else {
+      if (hasPriority) {
+        return m_counter < pair.first * m_leftTurnRatio.value().first;
+      } else {
+        return m_counter > pair.first &&
+               m_counter < pair.first + pair.second * m_leftTurnRatio.value().second;
+      }
+    }
   }
 
   /// @brief The Roundabout class represents a roundabout node in the network.

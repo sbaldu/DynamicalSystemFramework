@@ -48,6 +48,13 @@ namespace dsm {
     ++m_agentCounter;
   }
 
+  void Intersection::setLeftTurnRatio(std::pair<double, double> ratio) {
+    assert((void("Left turn ratio components must be between 0 and 1."),
+            ratio.first >= 0. && ratio.first <= 1. && ratio.second >= 0. &&
+                ratio.second <= 1.));
+    m_leftTurnRatio = std::move(ratio);
+  }
+
   void Intersection::removeAgent(Id agentId) {
     assert((void("Trying to remove an agent not on the node"),
             std::erase_if(m_agents, [agentId](const auto& p) {
