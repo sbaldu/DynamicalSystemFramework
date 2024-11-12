@@ -758,9 +758,9 @@ namespace dsm {
       }
     }
     // Move transport capacity agents from each node
-    for (auto& [nodeId, pNode] : m_graph.nodeSet()) {
+    for (const auto& [nodeId, pNode] : m_graph.nodeSet()) {
       for (auto i = 0; i < pNode->transportCapacity(); ++i) {
-        if (!this->m_evolveNode(this->m_graph.nodeSet()[nodeId])) {
+        if (!this->m_evolveNode(pNode)) {
           break;
         }
       }
