@@ -18,6 +18,7 @@
 #include <set>
 #include <map>
 #include <format>
+#include <cassert>
 
 #include "../utility/Logger.hpp"
 #include "../utility/queue.hpp"
@@ -164,6 +165,7 @@ namespace dsm {
     requires(std::unsigned_integral<Delay>)
   class TrafficLight : public Intersection {
   private:
+    std::optional<std::pair<double, double>> m_leftTurnRatio;
     std::optional<std::pair<Delay, Delay>> m_delay;
     Delay m_counter;
     Delay m_phase;
@@ -198,6 +200,22 @@ namespace dsm {
     /// @param phase The node's phase
     /// @throw std::runtime_error if the delay is not set
     void setPhase(Delay phase);
+    /// @brief Set the node's left turn ratio
+    /// @param ratio A std::pair containing the left turn ratio
+    /// @details ratio.first * greentime is the green time for left turns while ratio.second * redtime is the red time for left turns
+    /// This is useful for traffic lights when the input street has many lanes and, for example, one resevred for left turns.
+    void setLeftTurnRatio(std::pair<double, double> ratio);
+    /// @brief Set the node's left turn ratio
+    /// @param first The first component of the left turn ratio
+    /// @param second The second component of the left turn ratio
+    inline void setLeftTurnRatio(double const first, double const second) {
+      setLeftTurnRatio(std::make_pair(first, second));
+    }
+    /// @brief Set the node's left turn ratio as std::pair(ratio, ratio)
+    /// @param ratio The left turn ratio
+    inline void setLeftTurnRatio(double const ratio) {
+      setLeftTurnRatio(std::make_pair(ratio, ratio));
+    }
     /// @brief Increase the node's counter
     /// @details This function is used to increase the node's counter
     ///          when the simulation is running. It automatically resets the counter
@@ -213,10 +231,16 @@ namespace dsm {
     /// @return std::optional<Delay> The node's delay
     std::optional<std::pair<Delay, Delay>> delay() const { return m_delay; }
     Delay counter() const { return m_counter; }
+    /// @brief Get the node's left turn ratio
+    /// @return std::optional<std::pair<double, double>> The node's left turn ratio
+    inline std::optional<std::pair<double, double>> leftTurnRatio() const {
+      return m_leftTurnRatio;
+    }
     /// @brief Returns true if the traffic light is green
     /// @return bool True if the traffic light is green
     bool isGreen() const;
     bool isGreen(Id streetId) const;
+    bool isGreen(Id streetId, double angle) const;
     bool isTrafficLight() const noexcept override { return true; }
   };
 
@@ -284,6 +308,15 @@ namespace dsm {
 
   template <typename Delay>
     requires(std::unsigned_integral<Delay>)
+  void TrafficLight<Delay>::setLeftTurnRatio(std::pair<double, double> ratio) {
+    assert((void("Left turn ratio components must be between 0 and 1."),
+            ratio.first >= 0. && ratio.first <= 1. && ratio.second >= 0. &&
+                ratio.second <= 1.));
+    m_leftTurnRatio = std::move(ratio);
+  }
+
+  template <typename Delay>
+    requires(std::unsigned_integral<Delay>)
   void TrafficLight<Delay>::increaseCounter() {
     if (!m_delay.has_value()) {
       throw std::runtime_error(buildLog("TrafficLight's delay has not been set."));
@@ -319,6 +352,33 @@ namespace dsm {
       return hasPriority;
     }
     return !hasPriority;
+  }
+
+  template <typename Delay>
+    requires(std::unsigned_integral<Delay>)
+  bool TrafficLight<Delay>::isGreen(Id streetId, double angle) const {
+    assert((void("TrafficLight's delay has not been set."), m_delay.has_value()));
+    assert((void("TrafficLight's left turn ratio has not been set."),
+            m_leftTurnRatio.has_value()));
+    bool const hasPriority{this->streetPriorities().contains(streetId)};
+    auto const pair{m_delay.value()};
+    if (angle > 0.) {
+      if (hasPriority) {
+        return m_counter > pair.first * (1. - m_leftTurnRatio.value().first) &&
+               m_counter < pair.first;
+      } else {
+        return m_counter >
+               pair.first + pair.second * (1. - m_leftTurnRatio.value().second);
+      }
+    } else {
+      if (hasPriority) {
+        return m_counter < pair.first * (1. - m_leftTurnRatio.value().first);
+      } else {
+        return m_counter > pair.first &&
+               m_counter <
+                   pair.first + pair.second * (1. - m_leftTurnRatio.value().second);
+      }
+    }
   }
 
   /// @brief The Roundabout class represents a roundabout node in the network.
