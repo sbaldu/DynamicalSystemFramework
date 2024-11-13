@@ -93,7 +93,6 @@ namespace dsm {
     std::set<Id>
         m_streetPriorities;  // A set containing the street ids that have priority - like main roads
     Size m_agentCounter;
-    std::optional<std::pair<double, double>> m_leftTurnRatio;
 
   public:
     Intersection() = default;
@@ -137,20 +136,6 @@ namespace dsm {
     /// @brief Add a street to the node street priorities
     /// @param streetId The street's id
     inline void addStreetPriority(Id streetId) { m_streetPriorities.emplace(streetId); }
-    /// @brief Set the node's left turn ratio
-    /// @param ratio A std::pair containing the left turn ratio
-    /// @details ratio.first * greentime is the green time for left turns while ratio.second * redtime is the red time for left turns
-    /// This is useful for traffic lights when the input street has many lanes and, for example, one resevred for left turns.
-    void setLeftTurnRatio(std::pair<double, double> ratio);
-    /// @brief Set the node's left turn ratio
-    /// @param first The first component of the left turn ratio
-    /// @param second The second component of the left turn ratio
-    inline void setLeftTurnRatio(double const first, double const second) {
-      setLeftTurnRatio(std::make_pair(first, second));
-    }
-    inline void setLeftTurnRatio(double const ratio) {
-      setLeftTurnRatio(std::make_pair(ratio, ratio));
-    }
 
     /// @brief Returns true if the node is full
     /// @return bool True if the node is full
@@ -173,10 +158,6 @@ namespace dsm {
     ///          since the last time this function was called. It also resets the counter.
     Size agentCounter();
 
-    inline std::optional<std::pair<double, double>> leftTurnRatio() const {
-      return m_leftTurnRatio;
-    }
-
     inline virtual bool isIntersection() const noexcept override final { return true; }
   };
 
@@ -184,6 +165,7 @@ namespace dsm {
     requires(std::unsigned_integral<Delay>)
   class TrafficLight : public Intersection {
   private:
+    std::optional<std::pair<double, double>> m_leftTurnRatio;
     std::optional<std::pair<Delay, Delay>> m_delay;
     Delay m_counter;
     Delay m_phase;
@@ -218,6 +200,22 @@ namespace dsm {
     /// @param phase The node's phase
     /// @throw std::runtime_error if the delay is not set
     void setPhase(Delay phase);
+    /// @brief Set the node's left turn ratio
+    /// @param ratio A std::pair containing the left turn ratio
+    /// @details ratio.first * greentime is the green time for left turns while ratio.second * redtime is the red time for left turns
+    /// This is useful for traffic lights when the input street has many lanes and, for example, one resevred for left turns.
+    void setLeftTurnRatio(std::pair<double, double> ratio);
+    /// @brief Set the node's left turn ratio
+    /// @param first The first component of the left turn ratio
+    /// @param second The second component of the left turn ratio
+    inline void setLeftTurnRatio(double const first, double const second) {
+      setLeftTurnRatio(std::make_pair(first, second));
+    }
+    /// @brief Set the node's left turn ratio as std::pair(ratio, ratio)
+    /// @param ratio The left turn ratio
+    inline void setLeftTurnRatio(double const ratio) {
+      setLeftTurnRatio(std::make_pair(ratio, ratio));
+    }
     /// @brief Increase the node's counter
     /// @details This function is used to increase the node's counter
     ///          when the simulation is running. It automatically resets the counter
@@ -233,6 +231,11 @@ namespace dsm {
     /// @return std::optional<Delay> The node's delay
     std::optional<std::pair<Delay, Delay>> delay() const { return m_delay; }
     Delay counter() const { return m_counter; }
+    /// @brief Get the node's left turn ratio
+    /// @return std::optional<std::pair<double, double>> The node's left turn ratio
+    inline std::optional<std::pair<double, double>> leftTurnRatio() const {
+      return m_leftTurnRatio;
+    }
     /// @brief Returns true if the traffic light is green
     /// @return bool True if the traffic light is green
     bool isGreen() const;
@@ -301,6 +304,15 @@ namespace dsm {
       phase -= m_delay.value().first + m_delay.value().second;
     }
     m_phase = phase;
+  }
+
+  template <typename Delay>
+    requires(std::unsigned_integral<Delay>)
+  void TrafficLight<Delay>::setLeftTurnRatio(std::pair<double, double> ratio) {
+    assert((void("Left turn ratio components must be between 0 and 1."),
+            ratio.first >= 0. && ratio.first <= 1. && ratio.second >= 0. &&
+                ratio.second <= 1.));
+    m_leftTurnRatio = std::move(ratio);
   }
 
   template <typename Delay>
