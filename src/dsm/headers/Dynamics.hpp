@@ -1128,10 +1128,7 @@ namespace dsm {
   template <typename Delay>
     requires(is_numeric_v<Delay>)
   void Dynamics<Delay>::removeAgent(Size agentId) {
-    assert((void("Trying to remove an agent that does not exist"),
-            std::erase_if(m_agents, [agentId](const auto& agent) {
-              return agent.first == agentId;
-            }) == 1));
+    m_agents.erase(agentId);
   }
 
   template <typename Delay>
