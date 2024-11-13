@@ -72,6 +72,7 @@ namespace dsm {
     /// @return Size The node's transport capacity
     Size transportCapacity() const { return m_transportCapacity; }
 
+    virtual double density() const = 0;
     virtual bool isFull() const = 0;
 
     virtual bool isIntersection() const noexcept { return false; }
@@ -130,7 +131,11 @@ namespace dsm {
     /// @brief Add a street to the node street priorities
     /// @param streetId The street's id
     void addStreetPriority(Id streetId) { m_streetPriorities.emplace(streetId); }
-
+    /// @brief Returns the node's density
+    /// @return double The node's density
+    double density() const override {
+      return static_cast<double>(m_agents.size()) / m_capacity;
+    }
     /// @brief Returns true if the node is full
     /// @return bool True if the node is full
     bool isFull() const override { return m_agents.size() == this->m_capacity; }
@@ -405,7 +410,11 @@ namespace dsm {
     /// @brief Get the node's queue
     /// @return dsm::queue<Id> The node's queue
     const dsm::queue<Id>& agents() const { return m_agents; }
-
+    /// @brief Returns the node's density
+    /// @return double The node's density
+    double density() const override {
+      return static_cast<double>(m_agents.size()) / m_capacity;
+    }
     /// @brief Returns true if the node is full
     /// @return bool True if the node is full
     bool isFull() const override { return m_agents.size() == this->m_capacity; }
