@@ -49,40 +49,40 @@ namespace dsm {
 
     /// @brief Set the node's id
     /// @param id The node's id
-    inline void setId(Id id) { m_id = id; }
+    void setId(Id id) { m_id = id; }
     /// @brief Set the node's coordinates
     /// @param coords A std::pair containing the node's coordinates (lat, lon)
-    inline void setCoords(std::pair<double, double> coords) {
+    void setCoords(std::pair<double, double> coords) {
       m_coords = std::move(coords);
     }
     /// @brief Set the node's capacity
     /// @param capacity The node's capacity
-    inline virtual void setCapacity(Size capacity) { m_capacity = capacity; }
+    virtual void setCapacity(Size capacity) { m_capacity = capacity; }
     /// @brief Set the node's transport capacity
     /// @param capacity The node's transport capacity
-    inline virtual void setTransportCapacity(Size capacity) {
+    virtual void setTransportCapacity(Size capacity) {
       m_transportCapacity = capacity;
     }
     /// @brief Get the node's id
     /// @return Id The node's id
-    inline Id id() const { return m_id; }
+    Id id() const { return m_id; }
     /// @brief Get the node's coordinates
     /// @return std::optional<std::pair<double, double>> A std::pair containing the node's coordinates
-    inline const std::optional<std::pair<double, double>>& coords() const {
+    const std::optional<std::pair<double, double>>& coords() const {
       return m_coords;
     }
     /// @brief Get the node's capacity
     /// @return Size The node's capacity
-    inline Size capacity() const { return m_capacity; }
+    Size capacity() const { return m_capacity; }
     /// @brief Get the node's transport capacity
     /// @return Size The node's transport capacity
-    inline Size transportCapacity() const { return m_transportCapacity; }
+    Size transportCapacity() const { return m_transportCapacity; }
 
-    inline virtual bool isFull() const = 0;
+    virtual bool isFull() const = 0;
 
-    inline virtual bool isIntersection() const noexcept { return false; }
-    inline virtual bool isTrafficLight() const noexcept { return false; }
-    inline virtual bool isRoundabout() const noexcept { return false; }
+    virtual bool isIntersection() const noexcept { return false; }
+    virtual bool isTrafficLight() const noexcept { return false; }
+    virtual bool isRoundabout() const noexcept { return false; }
   };
 
   /// @brief The Intersection class represents a node in the network.
@@ -130,35 +130,35 @@ namespace dsm {
     void removeAgent(Id agentId);
     /// @brief Set the node streets with priority
     /// @param streetPriorities A std::set containing the node's street priorities
-    inline void setStreetPriorities(std::set<Id> streetPriorities) {
+    void setStreetPriorities(std::set<Id> streetPriorities) {
       m_streetPriorities = std::move(streetPriorities);
     }
     /// @brief Add a street to the node street priorities
     /// @param streetId The street's id
-    inline void addStreetPriority(Id streetId) { m_streetPriorities.emplace(streetId); }
+    void addStreetPriority(Id streetId) { m_streetPriorities.emplace(streetId); }
 
     /// @brief Returns true if the node is full
     /// @return bool True if the node is full
-    inline bool isFull() const override { return m_agents.size() == this->m_capacity; }
+    bool isFull() const override { return m_agents.size() == this->m_capacity; }
 
     /// @brief Get the node's street priorities
     /// @details This function returns a std::set containing the node's street priorities.
     ///        If a street has priority, it means that the agents that are on that street
     ///        have priority over the agents that are on the other streets.
     /// @return std::set<Id> A std::set containing the node's street priorities
-    inline virtual const std::set<Id>& streetPriorities() const {
+    virtual const std::set<Id>& streetPriorities() const {
       return m_streetPriorities;
     };
     /// @brief Get the node's agent ids
     /// @return std::set<Id> A std::set containing the node's agent ids
-    inline const std::multimap<int16_t, Id>& agents() { return m_agents; };
+    const std::multimap<int16_t, Id>& agents() { return m_agents; };
     /// @brief Returns the number of agents that have passed through the node
     /// @return Size The number of agents that have passed through the node
     /// @details This function returns the number of agents that have passed through the node
     ///          since the last time this function was called. It also resets the counter.
     Size agentCounter();
 
-    inline virtual bool isIntersection() const noexcept override final { return true; }
+    virtual bool isIntersection() const noexcept override final { return true; }
   };
 
   template <typename Delay>
@@ -208,12 +208,12 @@ namespace dsm {
     /// @brief Set the node's left turn ratio
     /// @param first The first component of the left turn ratio
     /// @param second The second component of the left turn ratio
-    inline void setLeftTurnRatio(double const first, double const second) {
+    void setLeftTurnRatio(double const first, double const second) {
       setLeftTurnRatio(std::make_pair(first, second));
     }
     /// @brief Set the node's left turn ratio as std::pair(ratio, ratio)
     /// @param ratio The left turn ratio
-    inline void setLeftTurnRatio(double const ratio) {
+    void setLeftTurnRatio(double const ratio) {
       setLeftTurnRatio(std::make_pair(ratio, ratio));
     }
     /// @brief Increase the node's counter
@@ -233,7 +233,7 @@ namespace dsm {
     Delay counter() const { return m_counter; }
     /// @brief Get the node's left turn ratio
     /// @return std::optional<std::pair<double, double>> The node's left turn ratio
-    inline std::optional<std::pair<double, double>> leftTurnRatio() const {
+    std::optional<std::pair<double, double>> leftTurnRatio() const {
       return m_leftTurnRatio;
     }
     /// @brief Returns true if the traffic light is green
@@ -389,14 +389,14 @@ namespace dsm {
     dsm::queue<Id> m_agents;
 
   public:
-    inline Roundabout() = default;
+    Roundabout() = default;
     /// @brief Construct a new Roundabout object
     /// @param id The node's id
-    inline explicit Roundabout(Id id) : Node{id} {};
+    explicit Roundabout(Id id) : Node{id} {};
     /// @brief Construct a new Roundabout object
     /// @param id The node's id
     /// @param coords A std::pair containing the node's coordinates
-    inline Roundabout(Id id, std::pair<double, double> coords) : Node{id, coords} {};
+    Roundabout(Id id, std::pair<double, double> coords) : Node{id, coords} {};
     /// @brief Construct a new Roundabout object
     /// @param node An Intersection object
     Roundabout(const Node& node);
@@ -412,14 +412,14 @@ namespace dsm {
     Id dequeue();
     /// @brief Get the node's queue
     /// @return dsm::queue<Id> The node's queue
-    inline const dsm::queue<Id>& agents() const { return m_agents; }
+    const dsm::queue<Id>& agents() const { return m_agents; }
 
     /// @brief Returns true if the node is full
     /// @return bool True if the node is full
-    inline bool isFull() const override { return m_agents.size() == this->m_capacity; }
+    bool isFull() const override { return m_agents.size() == this->m_capacity; }
     /// @brief Returns true if the node is a roundabout
     /// @return bool True if the node is a roundabout
-    inline bool isRoundabout() const noexcept override { return true; }
+    bool isRoundabout() const noexcept override { return true; }
   };
 
 };  // namespace dsm

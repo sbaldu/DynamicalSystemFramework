@@ -104,24 +104,24 @@ namespace dsm {
     void setLength(double len);
     /// @brief Set the street's queue
     /// @param queue The street's queue
-    inline void setQueue(dsm::queue<Size> queue, size_t index) {
+    void setQueue(dsm::queue<Size> queue, size_t index) {
       m_exitQueues[index] = std::move(queue);
     }
     /// @brief Set the street's node pair
     /// @param node1 The source node of the street
     /// @param node2 The destination node of the street
-    inline void setNodePair(Id node1, Id node2) {
+    void setNodePair(Id node1, Id node2) {
       m_nodePair = std::make_pair(node1, node2);
     }
     /// @brief Set the street's node pair
     /// @param node1 The source node of the street
     /// @param node2 The destination node of the street
-    inline void setNodePair(const Node& node1, const Node& node2) {
+    void setNodePair(const Node& node1, const Node& node2) {
       m_nodePair = std::make_pair(node1.id(), node2.id());
     }
     /// @brief Set the street's node pair
     /// @param pair The street's node pair
-    inline void setNodePair(std::pair<Id, Id> pair) { m_nodePair = std::move(pair); }
+    void setNodePair(std::pair<Id, Id> pair) { m_nodePair = std::move(pair); }
     /// @brief Set the street's speed limit
     /// @param speed The street's speed limit
     /// @throw std::invalid_argument, If the speed is negative
@@ -141,43 +141,43 @@ namespace dsm {
 
     /// @brief Get the street's id
     /// @return Id, The street's id
-    inline Id id() const { return m_id; }
+    Id id() const { return m_id; }
     /// @brief Get the street's capacity
     /// @return Size, The street's capacity
-    inline Size capacity() const { return m_capacity; }
+    Size capacity() const { return m_capacity; }
     /// @brief Get the street's transport capacity
     /// @details The transport capacity is the maximum number of agents that can traverse the street
     ///          in a time step.
     /// @return Size, The street's transport capacity
-    inline int16_t transportCapacity() const { return m_transportCapacity; }
+    int16_t transportCapacity() const { return m_transportCapacity; }
     /// @brief Get the street's length
     /// @return double, The street's length
-    inline double length() const { return m_len; }
+    double length() const { return m_len; }
     /// @brief Get the street's waiting agents
     /// @return std::set<Id>, The street's waiting agents
-    inline const std::set<Id>& waitingAgents() const { return m_waitingAgents; }
+    const std::set<Id>& waitingAgents() const { return m_waitingAgents; }
     /// @brief Get the street's queue
     /// @return dsm::queue<Size>, The street's queue
-    inline const dsm::queue<Size>& queue(size_t index) const {
+    const dsm::queue<Size>& queue(size_t index) const {
       return m_exitQueues[index];
     }
     /// @brief Get the street's queues
     /// @return std::vector<dsm::queue<Size>> The street's queues
-    inline const std::vector<dsm::queue<Size>>& exitQueues() const {
+    const std::vector<dsm::queue<Size>>& exitQueues() const {
       return m_exitQueues;
     }
     /// @brief Get the street's node pair
     /// @return std::pair<Id, Id>, The street's node pair
-    inline const std::pair<Id, Id>& nodePair() const { return m_nodePair; }
+    const std::pair<Id, Id>& nodePair() const { return m_nodePair; }
     /// @brief  Get the number of agents on the street
     /// @return Size, The number of agents on the street
     Size nAgents() const;
     /// @brief Get the street's density in \f$m^{-1}\f$
     /// @return double, The street's density
-    inline double density() const { return nAgents() / (m_len * m_nLanes); }
+    double density() const { return nAgents() / (m_len * m_nLanes); }
     /// @brief Get the street's normalized density
     /// @return double, The street's normalized density
-    inline double normDensity() const {
+    double normDensity() const {
       return nAgents() / static_cast<double>(m_capacity);
     }
     /// @brief Check if the street is full
@@ -185,13 +185,13 @@ namespace dsm {
     bool isFull() const { return nAgents() == m_capacity; }
     /// @brief Get the street's speed limit
     /// @return double, The street's speed limit
-    inline double maxSpeed() const { return m_maxSpeed; }
+    double maxSpeed() const { return m_maxSpeed; }
     /// @brief Get the street's angle
     /// @return double The street's angle
-    inline double angle() const { return m_angle; }
+    double angle() const { return m_angle; }
     /// @brief Get the street's number of lanes
     /// @return int16_t The street's number of lanes
-    inline int16_t nLanes() const { return m_nLanes; }
+    int16_t nLanes() const { return m_nLanes; }
     /// @brief Get the number of agents on all queues
     /// @return Size The number of agents on all queues
     Size nExitingAgents() const;
@@ -209,7 +209,7 @@ namespace dsm {
     virtual std::optional<Id> dequeue(size_t index);
     /// @brief Check if the street is a spire
     /// @return bool True if the street is a spire, false otherwise
-    inline virtual bool isSpire() const { return false; };
+    virtual bool isSpire() const { return false; };
   };
 
   /// @brief The SpireStreet class represents a street which is able to count agent flows in both input and output.
@@ -264,7 +264,7 @@ namespace dsm {
     std::optional<Id> dequeue(size_t index) override;
     /// @brief Check if the street is a spire
     /// @return bool True if the street is a spire, false otherwise
-    inline bool isSpire() const final { return true; };
+    bool isSpire() const final { return true; };
   };
 
 };  // namespace dsm

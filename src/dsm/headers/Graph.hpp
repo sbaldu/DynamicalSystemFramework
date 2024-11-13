@@ -51,10 +51,10 @@ namespace dsm {
     /// @brief Reassign the street ids using the max node id
     /// @details The street ids are reassigned using the max node id, i.e.
     /// newStreetId = srcId * n + dstId, where n is the max node id.
-    inline void m_reassignIds();
+    void m_reassignIds();
     /// @brief If every node has coordinates, set the street angles
     /// @details The street angles are set using the node's coordinates.
-    inline void m_setStreetAngles();
+    void m_setStreetAngles();
 
   public:
     Graph();
@@ -65,7 +65,7 @@ namespace dsm {
     /// @param streetSet A map of streets representing the graph's streets
     Graph(const std::unordered_map<Id, std::unique_ptr<Street>>& streetSet);
 
-    inline Graph(const Graph& other) {
+    Graph(const Graph& other) {
       std::for_each(other.m_nodes.begin(), other.m_nodes.end(), [this](const auto& pair) {
         this->m_nodes.emplace(pair.first, pair.second.get());
       });
@@ -77,7 +77,7 @@ namespace dsm {
       m_adjacency = other.m_adjacency;
     }
 
-    inline Graph& operator=(const Graph& other) {
+    Graph& operator=(const Graph& other) {
       std::for_each(other.m_nodes.begin(), other.m_nodes.end(), [this](const auto& pair) {
         this->m_nodes.insert_or_assign(pair.first,
                                        std::unique_ptr<Node>(pair.second.get()));
@@ -93,8 +93,8 @@ namespace dsm {
       return *this;
     }
 
-    inline Graph(Graph&&) = default;
-    inline Graph& operator=(Graph&&) = default;
+    Graph(Graph&&) = default;
+    Graph& operator=(Graph&&) = default;
 
     /// @brief Build the graph's adjacency matrix and computes max capacity
     /// @details The adjacency matrix is built using the graph's streets and nodes. N.B.: The street ids
@@ -191,23 +191,23 @@ namespace dsm {
 
     /// @brief Get the graph's adjacency matrix
     /// @return A std::shared_ptr to the graph's adjacency matrix
-    inline const SparseMatrix<bool>& adjMatrix() const { return m_adjacency; }
+    const SparseMatrix<bool>& adjMatrix() const { return m_adjacency; }
     /// @brief Get the graph's node map
     /// @return A std::unordered_map containing the graph's nodes
-    inline const std::unordered_map<Id, std::unique_ptr<Node>>& nodeSet() const {
+    const std::unordered_map<Id, std::unique_ptr<Node>>& nodeSet() const {
       return m_nodes;
     }
     /// @brief Get the graph's node map
     /// @return A std::unordered_map containing the graph's nodes
-    inline std::unordered_map<Id, std::unique_ptr<Node>>& nodeSet() { return m_nodes; }
+    std::unordered_map<Id, std::unique_ptr<Node>>& nodeSet() { return m_nodes; }
     /// @brief Get the graph's street map
     /// @return A std::unordered_map containing the graph's streets
-    inline const std::unordered_map<Id, std::unique_ptr<Street>>& streetSet() const {
+    const std::unordered_map<Id, std::unique_ptr<Street>>& streetSet() const {
       return m_streets;
     }
     /// @brief Get the graph's street map
     /// @return A std::unordered_map containing the graph's streets
-    inline std::unordered_map<Id, std::unique_ptr<Street>>& streetSet() {
+    std::unordered_map<Id, std::unique_ptr<Street>>& streetSet() {
       return m_streets;
     }
     /// @brief Get a street from the graph
