@@ -369,20 +369,22 @@ namespace dsm {
     m_nodes.emplace(std::make_pair(node.id(), std::make_unique<Intersection>(node)));
   }
 
-  void Graph::makeRoundabout(Id nodeId) {
+  Roundabout& Graph::makeRoundabout(Id nodeId) {
     if (!m_nodes.contains(nodeId)) {
       throw std::invalid_argument(buildLog("Node does not exist."));
     }
     auto& pNode = m_nodes[nodeId];
     pNode = std::make_unique<Roundabout>(*pNode);
+    return dynamic_cast<Roundabout&>(*pNode);
   }
-  void Graph::makeSpireStreet(Id streetId) {
+  SpireStreet& Graph::makeSpireStreet(Id streetId) {
     if (!m_streets.contains(streetId)) {
       throw std::invalid_argument(
           buildLog(std::format("Street with id {} does not exist.", streetId)));
     }
     auto& pStreet = m_streets[streetId];
     pStreet = std::make_unique<SpireStreet>(pStreet->id(), *pStreet);
+    return dynamic_cast<SpireStreet&>(*pStreet);
   }
 
   void Graph::addStreet(std::shared_ptr<Street> street) {

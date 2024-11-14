@@ -583,13 +583,12 @@ TEST_CASE("Dynamics") {
       Street s1_4{9, 1, 30., 15., std::make_pair(1, 4)};
 
       Graph graph2;
-      graph2.addNode(std::make_unique<TrafficLight>(1));
       graph2.addStreets(s0_1, s1_0, s1_2, s2_1, s3_1, s1_3, s4_1, s1_4);
       graph2.buildAdj();
+      auto& tl = graph2.makeTrafficLight<uint16_t>(1);
       graph2.adjustNodeCapacities();
       graph2.normalizeStreetCapacities();
       auto const& nodes = graph2.nodeSet();
-      auto& tl = dynamic_cast<TrafficLight&>(*nodes.at(1));
       tl.setDelay(3);
       tl.setLeftTurnRatio(0.3);
       tl.setPhase(2);
@@ -648,13 +647,12 @@ TEST_CASE("Dynamics") {
       Street s1_4{9, 1, 30., 15., std::make_pair(1, 4)};
 
       Graph graph2;
-      graph2.addNode(std::make_unique<TrafficLight>(1));
       graph2.addStreets(s0_1, s1_0, s1_2, s2_1, s3_1, s1_3, s4_1, s1_4);
       graph2.buildAdj();
+      auto& tl = graph2.makeTrafficLight<uint16_t>(1);
       graph2.adjustNodeCapacities();
       graph2.normalizeStreetCapacities();
       auto const& nodes = graph2.nodeSet();
-      auto& tl = dynamic_cast<TrafficLight&>(*nodes.at(1));
       tl.setDelay(3);
       tl.setLeftTurnRatio(0.3);
       // NO! Now testing red light
@@ -703,9 +701,6 @@ TEST_CASE("Dynamics") {
   }
   SUBCASE("Traffic Lights optimization algorithm") {
     GIVEN("A dynamics object with a traffic light intersection") {
-      TrafficLight tl{1};
-      tl.setDelay(4);
-      tl.setPhase(3);
       double length{90.}, max_speed{15.};
       Street s_01{1, 10, length, max_speed, std::make_pair(0, 1)};
       Street s_10{5, 10, length, max_speed, std::make_pair(1, 0)};
@@ -715,12 +710,14 @@ TEST_CASE("Dynamics") {
       Street s_31{16, 10, length, max_speed, std::make_pair(3, 1)};
       Street s_14{9, 10, length, max_speed, std::make_pair(1, 4)};
       Street s_41{21, 10, length, max_speed, std::make_pair(4, 1)};
-      tl.addStreetPriority(1);
-      tl.addStreetPriority(11);
       Graph graph2;
-      graph2.addNode(std::make_unique<TrafficLight>(tl));
       graph2.addStreets(s_01, s_10, s_12, s_21, s_13, s_31, s_14, s_41);
       graph2.buildAdj();
+      auto& tl = graph2.makeTrafficLight<uint16_t>(1);
+      tl.setDelay(4);
+      tl.setPhase(3);
+      tl.addStreetPriority(1);
+      tl.addStreetPriority(11);
       Dynamics dynamics{graph2};
       Itinerary it_0{0, 0}, it_1{1, 2}, it_2{2, 3}, it_3{3, 4};
       dynamics.addItinerary(it_0);
@@ -737,10 +734,7 @@ TEST_CASE("Dynamics") {
         }
         dynamics.optimizeTrafficLights(2, 0.1, 0.);
         THEN("Green and red time are different") {
-          const auto timing =
-              dynamic_cast<TrafficLight&>(*dynamics.graph().nodeSet().at(1))
-                  .delay()
-                  .value();
+          const auto timing = tl.delay().value();
           CHECK(timing.first > timing.second);
         }
       }
@@ -757,10 +751,7 @@ TEST_CASE("Dynamics") {
         }
         dynamics.optimizeTrafficLights(2, 0.1, 0.);
         THEN("Green and red time are equal") {
-          const auto timing =
-              dynamic_cast<TrafficLight&>(*dynamics.graph().nodeSet().at(1))
-                  .delay()
-                  .value();
+          const auto timing = tl.delay().value();
           CHECK_EQ(timing.first, timing.second);
         }
       }
@@ -771,15 +762,14 @@ TEST_CASE("Dynamics") {
         "A dynamics object with four streets, one agent for each street, two "
         "itineraries "
         "and a roundabout") {
-      Roundabout roundabout{1};
       Street s1{0, 1, 10., 10., std::make_pair(0, 1)};
       Street s2{1, 1, 10., 10., std::make_pair(2, 1)};
       Street s3{2, 1, 10., 10., std::make_pair(1, 0)};
       Street s4{3, 1, 10., 10., std::make_pair(1, 2)};
       Graph graph2;
-      graph2.addNode(std::make_unique<Roundabout>(roundabout));
       graph2.addStreets(s1, s2, s3, s4);
       graph2.buildAdj();
+      auto& rb = graph2.makeRoundabout(1);
       graph2.adjustNodeCapacities();
       Dynamics dynamics{graph2};
       dynamics.setSeed(69);
@@ -799,7 +789,6 @@ TEST_CASE("Dynamics") {
         dynamics.evolve(false);
         dynamics.evolve(false);
         THEN("The agents are trapped into the roundabout") {
-          auto& rb = dynamic_cast<Roundabout&>(*dynamics.graph().nodeSet().at(1));
           CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 1);
           CHECK_EQ(dynamics.agents().at(1)->streetId().value(), 7);
           CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 5);
@@ -807,7 +796,6 @@ TEST_CASE("Dynamics") {
         }
         dynamics.evolve(false);
         THEN("The agent with priority leaves the roundabout") {
-          auto& rb = dynamic_cast<Roundabout&>(*dynamics.graph().nodeSet().at(1));
           CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 5);
           CHECK_EQ(dynamics.agents().at(1)->streetId().value(), 3);
           CHECK_EQ(rb.agents().size(), 0);
