@@ -136,10 +136,13 @@ namespace dsm {
     void importOSMEdges(const std::string& fileName);
 
     /// @brief Export the graph's adjacency matrix to a file
-    /// @param path The path to the file to export the adjacency matrix to.
+    /// @param path The path to the file to export the adjacency matrix to (default: ./matrix.dsm)
     /// @param isAdj A boolean value indicating if the file contains the adjacency matrix or the distance matrix.
     /// @throws std::invalid_argument if the file is not found or invalid
     void exportMatrix(std::string path = "./matrix.dsm", bool isAdj = true);
+    /// @brief Export the nodes' coordinates to a file
+    /// @param path The path to the file to export the nodes' coordinates to (default: ./nodes.dsm)
+    void exportCoordinates(std::string const& path = "./coordinates.csv");
 
     /// @brief Add a node to the graph
     /// @param node A std::unique_ptr to the node to add

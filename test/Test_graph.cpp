@@ -128,15 +128,31 @@ TEST_CASE("Graph") {
     CHECK(graph2.nodeSet().size() == 3);
     CHECK(graph2.streetSet().size() == 4);
   }
-  SUBCASE("importCoordinates") {
-    Graph graph{};
-    CHECK_THROWS(graph.importCoordinates("./data/coords.txt"));
-    graph.importMatrix("./data/matrix.dsm");
-    graph.importCoordinates("./data/coords.dsm");
-    const auto& nodes = graph.nodeSet();
-    CHECK_EQ(nodes.at(0)->coords(), std::make_pair(0., 0.));
-    CHECK_EQ(nodes.at(1)->coords(), std::make_pair(1., 0.));
-    CHECK_EQ(nodes.at(2)->coords(), std::make_pair(2., 0.));
+  SUBCASE("Coordinates import/export") {
+    GIVEN("A Graph object with the adj matrix imported") {
+      Graph graph{};
+      graph.importMatrix("./data/matrix.dsm");
+      auto const& nodes = graph.nodeSet();
+      WHEN("We import the coordinates in dsm format") {
+        graph.importCoordinates("./data/coords.dsm");
+        THEN("The coordinates are correctly imported") {
+          CHECK_EQ(nodes.at(0)->coords(), std::make_pair(0., 0.));
+          CHECK_EQ(nodes.at(1)->coords(), std::make_pair(1., 0.));
+          CHECK_EQ(nodes.at(2)->coords(), std::make_pair(2., 0.));
+        }
+        THEN("We are able to save coordinates in csv format") {
+          graph.exportCoordinates("./data/coordinates.csv");
+        }
+      }
+      WHEN("We import the coordinates in csv format") {
+        graph.importCoordinates("./data/coordinates.csv");
+        THEN("The coordinates are correctly imported") {
+          CHECK_EQ(nodes.at(0)->coords(), std::make_pair(0., 0.));
+          CHECK_EQ(nodes.at(1)->coords(), std::make_pair(1., 0.));
+          CHECK_EQ(nodes.at(2)->coords(), std::make_pair(2., 0.));
+        }
+      }
+    }
   }
   SUBCASE("importMatrix - raw matrix") {
     Graph graph{};
