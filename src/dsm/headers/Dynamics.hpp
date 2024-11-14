@@ -373,6 +373,8 @@ namespace dsm {
     std::unordered_map<Id, std::array<long, 4>> turnMapping() const {
       return m_turnMapping;
     }
+
+    Size nActiveAgents() const;
   };
 
   template <typename Delay>
@@ -910,7 +912,7 @@ namespace dsm {
   template <typename Delay>
     requires(is_numeric_v<Delay>)
   void Dynamics<Delay>::addAgent(const Agent<Delay>& agent) {
-    if (this->m_agents.size() + 1 > this->m_graph.maxCapacity()) {
+    if (this->nActiveAgents() + 1 > this->m_graph.maxCapacity()) {
       throw std::overflow_error(buildLog(
           std::format("Graph is already holding the max possible number of agents ({})",
                       this->m_graph.maxCapacity())));
@@ -924,7 +926,7 @@ namespace dsm {
   template <typename Delay>
     requires(is_numeric_v<Delay>)
   void Dynamics<Delay>::addAgent(std::unique_ptr<Agent<Delay>> agent) {
-    if (this->m_agents.size() + 1 > this->m_graph.maxCapacity()) {
+    if (this->nActiveAgents() + 1 > this->m_graph.maxCapacity()) {
       throw std::overflow_error(buildLog(
           std::format("Graph is already holding the max possible number of agents ({})",
                       this->m_graph.maxCapacity())));
@@ -938,7 +940,7 @@ namespace dsm {
   template <typename Delay>
     requires(is_numeric_v<Delay>)
   void Dynamics<Delay>::addAgent(Id srcNodeId, Id itineraryId) {
-    if (this->m_agents.size() + 1 > this->m_graph.maxCapacity()) {
+    if (this->nActiveAgents() + 1 > this->m_graph.maxCapacity()) {
       throw std::overflow_error(buildLog(
           std::format("Graph its already holding the max possible number of agents ({})",
                       this->m_graph.maxCapacity())));
@@ -962,7 +964,7 @@ namespace dsm {
   void Dynamics<Delay>::addAgents(Id itineraryId,
                                   Size nAgents,
                                   std::optional<Id> srcNodeId) {
-    if (this->m_agents.size() + nAgents > this->m_graph.maxCapacity()) {
+    if (this->nActiveAgents() + nAgents > this->m_graph.maxCapacity()) {
       throw std::overflow_error(buildLog(
           std::format("Graph its already holding the max possible number of agents ({})",
                       this->m_graph.maxCapacity())));
@@ -1002,7 +1004,7 @@ namespace dsm {
   template <typename Delay>
     requires(is_numeric_v<Delay>)
   void Dynamics<Delay>::addAgents(std::span<Agent<Delay>> agents) {
-    if (this->m_agents.size() + agents.size() > this->m_graph.maxCapacity()) {
+    if (this->nActiveAgents() + agents.size() > this->m_graph.maxCapacity()) {
       throw std::overflow_error(buildLog(
           std::format("Graph its already holding the max possible number of agents ({})",
                       this->m_graph.maxCapacity())));
@@ -1015,7 +1017,7 @@ namespace dsm {
   template <typename Delay>
     requires(is_numeric_v<Delay>)
   void Dynamics<Delay>::addAgentsUniformly(Size nAgents, std::optional<Id> itineraryId) {
-    if (this->m_agents.size() + nAgents > this->m_graph.maxCapacity()) {
+    if (this->nActiveAgents() + nAgents > this->m_graph.maxCapacity()) {
       throw std::overflow_error(buildLog(
           std::format("Graph its already holding the max possible number of agents ({})",
                       this->m_graph.maxCapacity())));
@@ -1322,6 +1324,14 @@ namespace dsm {
       }
     }
     return res;
+  }
+
+  template <typename Delay>
+    requires(is_numeric_v<Delay>)
+  Size Dynamics<Delay>::nActiveAgents() const {
+    return std::count_if(m_agents.cbegin(), m_agents.cend(), [](const auto& agent) {
+      return agent.second->streetId().has_value();
+    });
   }
 
   template <typename Delay>
