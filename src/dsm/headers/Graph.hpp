@@ -42,7 +42,7 @@ namespace dsm {
   /// @tparam Size, The type of the graph's capacity. It must be an unsigned integral type.
   class Graph {
   private:
-    std::unordered_map<Id, std::unique_ptr<Node>> m_nodes;
+    std::vector<std::unique_ptr<Node>> m_nodes;
     std::unordered_map<Id, std::unique_ptr<Street>> m_streets;
     std::unordered_map<Id, Id> m_nodeMapping;
     SparseMatrix<bool> m_adjacency;
@@ -143,6 +143,12 @@ namespace dsm {
     /// @brief Export the nodes' coordinates to a file
     /// @param path The path to the file to export the nodes' coordinates to (default: ./nodes.dsm)
     void exportCoordinates(std::string const& path = "./coordinates.csv");
+    /// @brief Export the graph's nodes to a file
+    /// @param path The path to the file to export the nodes to (default: ./nodes.csv)
+    void exportOSMNodes(std::string const& path = "./nodes.csv");
+    /// @brief Export the graph's streets to a file
+    /// @param path The path to the file to export the streets to (default: ./edges.csv)
+    void exportOSMEdges(std::string const& path = "./edges.csv");
 
     /// @brief Add a node to the graph
     /// @param node A std::unique_ptr to the node to add
@@ -200,12 +206,12 @@ namespace dsm {
     const SparseMatrix<bool>& adjMatrix() const { return m_adjacency; }
     /// @brief Get the graph's node map
     /// @return A std::unordered_map containing the graph's nodes
-    const std::unordered_map<Id, std::unique_ptr<Node>>& nodeSet() const {
+    const std::vector<std::unique_ptr<Node>>& nodeSet() const {
       return m_nodes;
     }
     /// @brief Get the graph's node map
     /// @return A std::unordered_map containing the graph's nodes
-    std::unordered_map<Id, std::unique_ptr<Node>>& nodeSet() { return m_nodes; }
+    std::vector<std::unique_ptr<Node>>& nodeSet() { return m_nodes; }
     /// @brief Get the graph's street map
     /// @return A std::unordered_map containing the graph's streets
     const std::unordered_map<Id, std::unique_ptr<Street>>& streetSet() const {

@@ -14,11 +14,17 @@ namespace dsm {
     for (const auto& [id, value] : adj) {
       const auto srcId{static_cast<Id>(id / n)};
       const auto dstId{static_cast<Id>(id % n)};
-      if (!m_nodes.contains(srcId)) {
-        m_nodes.emplace(srcId, std::make_unique<Intersection>(srcId));
+      auto const& srcIt = std::find_if(m_nodes.begin(), m_nodes.end(), [srcId](const auto& node) {
+        return node->id() == srcId;
+      });
+      if (srcIt == m_nodes.end()) {
+        m_nodes.emplace_back(std::make_unique<Intersection>(srcId));
       }
-      if (!m_nodes.contains(dstId)) {
-        m_nodes.emplace(dstId, std::make_unique<Intersection>(dstId));
+      auto const& dstIt = std::find_if(m_nodes.begin(), m_nodes.end(), [dstId](const auto& node) {
+        return node->id() == dstId;
+      });
+      if (dstIt == m_nodes.end()) {
+        m_nodes.emplace_back(std::make_unique<Intersection>(dstId));
       }
       m_streets.emplace(id, std::make_unique<Street>(id, std::make_pair(srcId, dstId)));
     }
@@ -31,8 +37,8 @@ namespace dsm {
 
       Id node1 = street.second->nodePair().first;
       Id node2 = street.second->nodePair().second;
-      m_nodes.emplace(node1, std::make_unique<Intersection>(node1));
-      m_nodes.emplace(node2, std::make_unique<Intersection>(node2));
+      m_nodes.emplace_back(std::make_unique<Intersection>(node1));
+      m_nodes.emplace_back(std::make_unique<Intersection>(node2));
     }
 
     buildAdj();
@@ -55,7 +61,7 @@ namespace dsm {
       m_streets.emplace(newStreetId, std::make_unique<Street>(newStreet));
       newStreetIds.emplace(streetId, newStreetId);
     }
-    for (const auto& [nodeId, node] : m_nodes) {
+    for (const auto& node : m_nodes) {
       // This is probably not the best way to do this
       if (node->isIntersection()) {
         auto& intersection = dynamic_cast<Intersection&>(*node);
@@ -289,9 +295,8 @@ namespace dsm {
         std::getline(iss, lon, ';');
         std::getline(iss, highway, ';');
         Id nodeId{static_cast<Id>(std::stoul(id))};
-        m_nodes.emplace(nodeIndex,
-                        std::make_unique<Intersection>(
-                            nodeIndex, std::make_pair(std::stod(lat), std::stod(lon))));
+        m_nodes.emplace_back(std::make_unique<Intersection>(
+                            nodeId, std::make_pair(std::stod(lat), std::stod(lon))));
         m_nodeMapping.emplace(std::make_pair(nodeId, nodeIndex));
         ++nodeIndex;
       }
@@ -310,7 +315,9 @@ namespace dsm {
         throw std::invalid_argument(errrorMsg);
       }
       std::string line;
-      std::getline(file, line);  // skip first line
+      std::getline(file, line);
+      assert((void("Invalid file format."),
+              line == "u;v;length;oneway;lanes;highway;maxspeed;bridge"));
       while (!file.eof()) {
         std::getline(file, line);
         if (line.empty()) {
@@ -318,7 +325,6 @@ namespace dsm {
         }
         std::istringstream iss{line};
         std::string sourceId, targetId, length, oneway, lanes, highway, maxspeed, bridge;
-        // u;v;length;oneway;highway;maxspeed;bridge
         std::getline(iss, sourceId, ';');
         std::getline(iss, targetId, ';');
         std::getline(iss, length, ';');
@@ -393,8 +399,8 @@ namespace dsm {
     std::ofstream file{path};
     // Column names
     file << "nodeId;lat;lon\n";
-    for (const auto& [id, node] : m_nodes) {
-      file << id << ';';
+    for (const auto& node : m_nodes) {
+      file << node->id() << ';';
       if (node->coords().has_value()) {
         file << node->coords().value().first << ';' << node->coords().value().second;
       } else {
@@ -405,18 +411,49 @@ namespace dsm {
     file.close();
   }
 
+  void Graph::exportOSMNodes(std::string const& path) {
+    // assert that path ends with ".csv"
+    assert((void("Only csv export is supported."),
+            path.substr(path.find_last_of(".")) == ".csv"));
+    std::ofstream file{path};
+    // Column names
+    file << "osmid;x;y;highway\n";
+    for (const auto& node : m_nodes) {
+      file << node->id() << ';' << node->coords().value().second << ';'
+           << node->coords().value().first << ';' /*<< "Nan"*/ << '\n';
+    }
+    file.close();
+  }
+
+  void Graph::exportOSMEdges(std::string const& path) {
+    // assert that path ends with ".csv"
+    assert((void("Only csv export is supported."),
+            path.substr(path.find_last_of(".")) == ".csv"));
+    std::ofstream file{path};
+    // Column names
+    file << "u;v;length;oneway;lanes;highway;maxspeed;bridge\n";
+    for (const auto& [id, street] : m_streets) {
+      file << street->nodePair().first << ';' << street->nodePair().second << ';'
+           << street->length() << ';' << "True" << ';' << street->nLanes()
+           << ';'
+           /*<< "residential"*/
+           << ';' << street->maxSpeed() << ';' /*<< "False"*/ << '\n';
+    }
+    file.close();
+  }
+
   void Graph::addNode(std::unique_ptr<Node> node) {
-    m_nodes.emplace(std::make_pair(node->id(), std::move(node)));
+    m_nodes.emplace_back(std::move(node));
   }
 
   void Graph::addNode(const Intersection& node) {
-    m_nodes.emplace(std::make_pair(node.id(), std::make_unique<Intersection>(node)));
+    m_nodes.emplace_back(std::make_unique<Intersection>(node));
   }
 
   Roundabout& Graph::makeRoundabout(Id nodeId) {
-    if (!m_nodes.contains(nodeId)) {
-      throw std::invalid_argument(buildLog("Node does not exist."));
-    }
+    // if (!m_nodes.contains(nodeId)) {
+    //   throw std::invalid_argument(buildLog("Node does not exist."));
+    // }
     auto& pNode = m_nodes[nodeId];
     pNode = std::make_unique<Roundabout>(*pNode);
     return dynamic_cast<Roundabout&>(*pNode);
@@ -439,11 +476,17 @@ namespace dsm {
     // emplace nodes
     const auto srcId{street->nodePair().first};
     const auto dstId{street->nodePair().second};
-    if (!m_nodes.contains(srcId)) {
-      m_nodes.emplace(srcId, std::make_unique<Intersection>(srcId));
+    auto const& srcIt = std::find_if(m_nodes.begin(), m_nodes.end(), [srcId](const auto& node) {
+      return node->id() == srcId;
+    });
+    if (srcIt == m_nodes.end()) {
+      m_nodes.emplace_back(std::make_unique<Intersection>(srcId));
     }
-    if (!m_nodes.contains(dstId)) {
-      m_nodes.emplace(dstId, std::make_unique<Intersection>(dstId));
+    auto const& dstIt = std::find_if(m_nodes.begin(), m_nodes.end(), [dstId](const auto& node) {
+      return node->id() == dstId;
+    });
+    if (dstIt == m_nodes.end()) {
+      m_nodes.emplace_back(std::make_unique<Intersection>(dstId));
     }
     // emplace street
     m_streets.emplace(street->id(), street.get());
@@ -457,11 +500,17 @@ namespace dsm {
     // emplace nodes
     const auto srcId{street.nodePair().first};
     const auto dstId{street.nodePair().second};
-    if (!m_nodes.contains(srcId)) {
-      m_nodes.emplace(srcId, std::make_unique<Intersection>(srcId));
+    auto const& srcIt = std::find_if(m_nodes.begin(), m_nodes.end(), [srcId](const auto& node) {
+      return node->id() == srcId;
+    });
+    if (srcIt == m_nodes.end()) {
+      m_nodes.emplace_back(std::make_unique<Intersection>(srcId));
     }
-    if (!m_nodes.contains(dstId)) {
-      m_nodes.emplace(dstId, std::make_unique<Intersection>(dstId));
+    auto const& dstIt = std::find_if(m_nodes.begin(), m_nodes.end(), [dstId](const auto& node) {
+      return node->id() == dstId;
+    });
+    if (dstIt == m_nodes.end()) {
+      m_nodes.emplace_back(std::make_unique<Intersection>(dstId));
     }
     // emplace street
     m_streets.emplace(std::make_pair(street.id(), std::make_unique<Street>(street)));
