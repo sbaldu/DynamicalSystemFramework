@@ -30,3 +30,5 @@ examples/*.csv
 # Utils generated folders
 __pycache__
 images
+examples/debug
+examples/release
