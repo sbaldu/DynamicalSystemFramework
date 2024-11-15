@@ -150,7 +150,7 @@ if __name__ == "__main__":
     # check if the temp_img folder exists, if not create it
     pathlib.Path("./temp_img").mkdir(parents=True, exist_ok=True)
 
-    with mp.Pool(1) as pool:
+    with mp.Pool() as pool:
         frames = []
         jobs = []
 
