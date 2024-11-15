@@ -16,8 +16,8 @@ from tqdm import tqdm
 from PIL import Image, ImageFont
 import pandas as pd
 import geopandas as gpd
-from functions import create_graph_from_adj
 import contextily as ctx
+from functions import create_graph_from_adj
 
 # Constants
 TIME_BEGIN = None  # None to take the last frames
@@ -57,17 +57,24 @@ def create_image(__df, __time, _graph, _pos, _edges, _n, _gdf):
     colors = [_graph[u][v]["color"] for u, v in _edges]
     # draw graph
     _, ax = plt.subplots()
-    nx.draw(
+    if _gdf is not None:
+        limits = _gdf.total_bounds + np.array([-0.001, -0.001, 0.001, 0.001])
+        ax.set_xlim(limits[0], limits[2])
+        ax.set_ylim(limits[1], limits[3])
+    nx.draw_networkx_edges(
         _graph,
         _pos,
+        edgelist=_edges,
         edge_color=colors,
-        with_labels=True,
         ax=ax,
-        node_size=15,
-        width=0.69,
-        font_size=5,
+        connectionstyle="arc3,rad=0.05",
+        arrowsize=5,
+        arrowstyle="->",
     )
+    nx.draw_networkx_nodes(_graph, _pos, ax=ax, node_size=69)
+    nx.draw_networkx_labels(_graph, _pos, ax=ax, font_size=5)
     if _gdf is not None:
+        # _gdf.plot(ax=ax)
         ctx.add_basemap(
             ax, crs=_gdf.crs.to_string(), source=ctx.providers.OpenStreetMap.Mapnik
         )
@@ -134,10 +141,10 @@ if __name__ == "__main__":
             title="Select the input densities file",
             filetypes=[("CSV files", "*.csv")],
         )
-    gdf = None
+    GDF = None
     if args.use_basemap:
         # draw city map
-        gdf = gpd.GeoDataFrame(
+        GDF = gpd.GeoDataFrame(
             coord, geometry=gpd.points_from_xy(coord.lon, coord.lat), crs="EPSG:4326"
         )
 
@@ -178,7 +185,7 @@ if __name__ == "__main__":
                         pos,
                         edges,
                         n,
-                        gdf,
+                        GDF,
                     ),
                 )
             )
@@ -186,7 +193,6 @@ if __name__ == "__main__":
         # use tqdm and take results:
         results = [job.get() for job in tqdm(jobs)]
         results = sorted(results, key=lambda x: x[0])
-        # frames = [result[1] for result in results]
         frames = [Image.open(result[1]) for result in tqdm(results)]
 
         # if NFRAMES is 1, save a png image
