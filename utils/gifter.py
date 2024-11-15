@@ -62,7 +62,7 @@ def create_image(__df, __time, _graph, _pos, _edges, _n, _gdf):
         ctx.add_basemap(ax, crs=_gdf.crs.to_string(), source=ctx.providers.OpenStreetMap.Mapnik)
     plt.box(False)
     h_time = f"{(__time / 3600):.2f}"
-    plt.title(f"Time: ${(__time / 3600):.2f} \\ h$")
+    plt.title(f"Time: {(__time // 3600):02d}:{(__time % 3600) // 60:02d} (hh:mm)")
     plt.savefig(f"./temp_img/{h_time}.png", dpi=300, bbox_inches="tight")
     return (__time, f"./temp_img/{h_time}.png")
 
