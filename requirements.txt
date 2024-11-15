@@ -1,3 +1,5 @@
+contextily
+geopandas
 matplotlib
 networkx
 numpy

@@ -232,6 +232,18 @@ if __name__ == "__main__":
     # Load data
     ############################################
 
+    adj = np.loadtxt("../examples/data/matrix.dat", skiprows=1)
+    n = len(adj)
+    # read the coordinates
+    coord = pd.read_csv("../examples/data/coordinates.csv", sep=";")
+    coord = coord.set_index("nodeId")
+    # create a directed graph
+    G, edges, pos = create_graph_from_adj(adj, coord)
+
+    # Draws the graph for debugging
+    nx.draw(G, pos, with_labels=True, node_size=100, node_color="skyblue", font_size=8)
+    plt.show()
+
     df_array = []
     df_den_array = []
 
@@ -270,13 +282,6 @@ if __name__ == "__main__":
     ############################################
     # Load densities
     ############################################
-
-    adj = np.loadtxt("../examples/data/matrix.dat", skiprows=1)
-    n = len(adj)
-    # read the coordinates
-    coord = np.loadtxt("../examples/data/coordinates.dsm", skiprows=1)
-    # create a directed graph
-    G, edges, pos = create_graph_from_adj(adj, coord)
 
     # compute mean density for each row
     mean_density = DF_DEN.mean(axis=1)

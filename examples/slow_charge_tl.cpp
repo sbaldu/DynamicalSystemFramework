@@ -174,6 +174,7 @@ int main(int argc, char** argv) {
   for (const auto& [nodeId, node] : graph.nodeSet()) {
     auto& tl = dynamic_cast<TrafficLight&>(*node);
     tl.setCapacity(degreeVector(nodeId));
+    tl.setTransportCapacity(degreeVector(nodeId));
     double value = -1.;
     while (value < 0.) {
       value = random();
@@ -292,7 +293,7 @@ int main(int argc, char** argv) {
   // std::vector<int> deltas;
 
   // lauch progress bar
-  std::thread t([]() {
+  std::jthread t([]() {
     while (progress < MAX_TIME && !bExitFlag) {
       printLoadingBar(progress, MAX_TIME);
       std::this_thread::sleep_for(std::chrono::milliseconds(1500));
@@ -449,7 +450,6 @@ int main(int argc, char** argv) {
   //   std::cout << "Probability of turning " << std::quoted(turnNames[i]) << ": " << value * 100 << "%\n";
   //   ++i;
   // }
-  t.join();
   std::cout << '\n';
   std::cout << "Done." << std::endl;
 
