@@ -114,6 +114,7 @@ int main(int argc, char** argv) {
   for (const auto& [nodeId, node] : graph.nodeSet()) {
     auto& rb = dynamic_cast<Roundabout&>(*node);
     rb.setCapacity(degreeVector(nodeId));
+    rb.setTransportCapacity(degreeVector(nodeId));
   }
   std::cout << "Done." << std::endl;
 
@@ -189,7 +190,7 @@ int main(int argc, char** argv) {
   // std::vector<int> deltas;
 
   // lauch progress bar
-  std::thread t([]() {
+  std::jthread t([]() {
     while (progress < MAX_TIME && !bExitFlag) {
       printLoadingBar(progress, MAX_TIME);
       std::this_thread::sleep_for(std::chrono::milliseconds(1500));
@@ -302,7 +303,6 @@ int main(int argc, char** argv) {
   //   std::cout << "Probability of turning " << std::quoted(turnNames[i]) << ": " << value * 100 << "%\n";
   //   ++i;
   // }
-  t.join();
   std::cout << '\n';
   std::cout << "Done." << std::endl;
 

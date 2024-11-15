@@ -94,7 +94,7 @@ int main() {
   auto& spire = dynamic_cast<SpireStreet&>(*dynamics.graph().streetSet().at(19));
 
   // lauch progress bar
-  std::thread t([MAX_TIME]() {
+  std::jthread t([MAX_TIME]() {
     while (progress < MAX_TIME) {
       printLoadingBar(progress, MAX_TIME);
       std::this_thread::sleep_for(std::chrono::milliseconds(1500));
@@ -118,7 +118,6 @@ int main() {
     dynamics.evolve(false);
     ++progress;
   }
-  t.join();
 
   return 0;
 }
