@@ -35,7 +35,7 @@ elif platform.system() == "Darwin":  # MAC OS
     FONT_PATH = "/System/Library/Fonts/Supplemental/Arial.ttf"
 
 
-def create_image(__df, __time, _graph, _pos, _n, _gdf):
+def create_image(__df, __time, _graph, _pos, _edges, _n, _gdf):
     """
     Generates and saves an image of a graph with edges colored based on density.
 
@@ -54,14 +54,14 @@ def create_image(__df, __time, _graph, _pos, _n, _gdf):
         # set color of edge based on density using a colormap from green to red
         _graph[src][dst]["color"] = COLORMAP(density)
         # draw graph with colors
-    colors = [_graph[u][v]["color"] for u, v in edges]
+    colors = [_graph[u][v]["color"] for u, v in _edges]
     # draw graph
     _, ax = plt.subplots(figsize=(15, 15))
     # nx.draw(_graph, _pos, edge_color=colors, with_labels=True, ax=ax)
     nx.draw_networkx(_graph, _pos, edge_color=colors, with_labels=False, ax=ax)
     if _gdf is not None:
         _gdf.plot(ax=ax, color="black", alpha=0.5)
-        ctx.add_basemap(ax, crs=_gdf.crs.to_string(), source=ctx.providers.OpenStreetMap.Mapnik)
+        ctx.add_basemap(ax, crs=_gdf.crs.to_string(), source=ctx.providers.OpenStreetMap.Mapnik, zoom=15)
     plt.box(False)
     h_time = f"{(__time / 3600):.2f}"
     plt.title(f"Time: ${(__time / 3600):.2f} \\ h$")
@@ -165,6 +165,7 @@ if __name__ == "__main__":
                         time,
                         G,
                         pos,
+                        edges,
                         n,
                         gdf,
                     ),
