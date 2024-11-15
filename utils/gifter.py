@@ -57,9 +57,20 @@ def create_image(__df, __time, _graph, _pos, _edges, _n, _gdf):
     colors = [_graph[u][v]["color"] for u, v in _edges]
     # draw graph
     _, ax = plt.subplots()
-    nx.draw(_graph, _pos, edge_color=colors, with_labels=True, ax=ax, node_size=15, width=0.69, font_size=5)
+    nx.draw(
+        _graph,
+        _pos,
+        edge_color=colors,
+        with_labels=True,
+        ax=ax,
+        node_size=15,
+        width=0.69,
+        font_size=5,
+    )
     if _gdf is not None:
-        ctx.add_basemap(ax, crs=_gdf.crs.to_string(), source=ctx.providers.OpenStreetMap.Mapnik)
+        ctx.add_basemap(
+            ax, crs=_gdf.crs.to_string(), source=ctx.providers.OpenStreetMap.Mapnik
+        )
     plt.box(False)
     h_time = f"{(__time / 3600):.2f}"
     plt.title(f"Time: {(__time // 3600):02d}:{(__time % 3600) // 60:02d} (hh:mm)")
@@ -126,7 +137,9 @@ if __name__ == "__main__":
     gdf = None
     if args.use_basemap:
         # draw city map
-        gdf = gpd.GeoDataFrame(coord, geometry=gpd.points_from_xy(coord.lon, coord.lat), crs="EPSG:4326")
+        gdf = gpd.GeoDataFrame(
+            coord, geometry=gpd.points_from_xy(coord.lon, coord.lat), crs="EPSG:4326"
+        )
 
     G, edges, pos = create_graph_from_adj(adj, coord)
 
