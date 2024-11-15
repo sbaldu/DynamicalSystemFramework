@@ -1209,7 +1209,7 @@ namespace dsm {
     std::vector<double> densities;
     densities.reserve(m_graph.streetSet().size());
     for (const auto& [streetId, street] : m_graph.streetSet()) {
-      densities.push_back(normalized ? street->normDensity() : street->density());
+      densities.push_back(street->density(normalized));
     }
     return Measurement<double>(densities);
   }
@@ -1232,9 +1232,9 @@ namespace dsm {
     std::vector<double> flows;
     flows.reserve(m_graph.streetSet().size());
     for (const auto& [streetId, street] : m_graph.streetSet()) {
-      if (above and (street->normDensity() > threshold)) {
+      if (above && (street->density(true) > threshold)) {
         flows.push_back(street->density() * this->streetMeanSpeed(streetId));
-      } else if (!above and (street->normDensity() < threshold)) {
+      } else if (!above && (street->density(true) < threshold)) {
         flows.push_back(street->density() * this->streetMeanSpeed(streetId));
       }
     }
@@ -1364,7 +1364,7 @@ namespace dsm {
     const auto& agent{this->m_agents[agentId]};
     const auto& street{this->m_graph.streetSet()[agent->streetId().value()]};
     double speed{street->maxSpeed() *
-                 (1. - this->m_minSpeedRateo * street->normDensity())};
+                 (1. - this->m_minSpeedRateo * street->density(true))};
     if (this->m_speedFluctuationSTD > 0.) {
       std::normal_distribution<double> speedDist{speed,
                                                  speed * this->m_speedFluctuationSTD};
@@ -1456,11 +1456,11 @@ namespace dsm {
     speeds.reserve(this->m_graph.streetSet().size());
     for (const auto& [streetId, street] : this->m_graph.streetSet()) {
       if (above) {
-        if (street->normDensity() > threshold) {
+        if (street->density(true) > threshold) {
           speeds.push_back(this->streetMeanSpeed(streetId));
         }
       } else {
-        if (street->normDensity() < threshold) {
+        if (street->density(true) < threshold) {
           speeds.push_back(this->streetMeanSpeed(streetId));
         }
       }
