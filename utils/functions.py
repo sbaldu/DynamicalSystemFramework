@@ -15,7 +15,6 @@ def create_graph_from_adj(adj: list, coord: pd.DataFrame):
         for j in range(n):
             if adj[i, j] > 0:
                 graph.add_edge(i, j, color="g", weight=adj[i, j])
-                graph.add_edge(j, i, color="g", weight=adj[j, i])
     edges = graph.edges()
     pos = {}
     # coord has id as index with lat, lon columns
