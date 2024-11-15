@@ -237,7 +237,6 @@ namespace dsm {
     /// @return bool True if the traffic light is green
     bool isGreen() const;
     bool isGreen(Id streetId) const;
-    bool isGreen(Id streetId, double angle) const;
     bool isTrafficLight() const noexcept override { return true; }
   };
 
@@ -349,33 +348,6 @@ namespace dsm {
       return hasPriority;
     }
     return !hasPriority;
-  }
-
-  template <typename Delay>
-    requires(std::unsigned_integral<Delay>)
-  bool TrafficLight<Delay>::isGreen(Id streetId, double angle) const {
-    assert((void("TrafficLight's delay has not been set."), m_delay.has_value()));
-    assert((void("TrafficLight's left turn ratio has not been set."),
-            m_leftTurnRatio.has_value()));
-    bool const hasPriority{this->streetPriorities().contains(streetId)};
-    auto const pair{m_delay.value()};
-    if (angle > 0.) {
-      if (hasPriority) {
-        return m_counter > pair.first * (1. - m_leftTurnRatio.value().first) &&
-               m_counter < pair.first;
-      } else {
-        return m_counter >
-               pair.first + pair.second * (1. - m_leftTurnRatio.value().second);
-      }
-    } else {
-      if (hasPriority) {
-        return m_counter < pair.first * (1. - m_leftTurnRatio.value().first);
-      } else {
-        return m_counter > pair.first &&
-               m_counter <
-                   pair.first + pair.second * (1. - m_leftTurnRatio.value().second);
-      }
-    }
   }
 
   /// @brief The Roundabout class represents a roundabout node in the network.

@@ -686,7 +686,6 @@ TEST_CASE("Dynamics") {
         }
         dynamics.evolve(false);
         dynamics.evolve(false);
-        dynamics.evolve(false);
         THEN("The agent 0 passes and agent 1 waits") {
           CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 7);
           CHECK_EQ(dynamics.agents().at(1)->streetId().value(), 1);

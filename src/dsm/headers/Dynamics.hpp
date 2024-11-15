@@ -459,7 +459,8 @@ namespace dsm {
   void Dynamics<Delay>::m_evolveStreet(const Id streetId,
                                        const std::unique_ptr<Street>& pStreet,
                                        bool reinsert_agents) {
-    for (auto queueIndex = 0; queueIndex < pStreet->nLanes(); ++queueIndex) {
+    auto const nLanes = pStreet->nLanes();
+    for (auto queueIndex = 0; queueIndex < nLanes; ++queueIndex) {
       if (m_uniformDist(m_generator) > m_maxFlowPercentage ||
           pStreet->queue(queueIndex).empty()) {
         continue;
@@ -475,18 +476,16 @@ namespace dsm {
       }
       if (destinationNode->isTrafficLight()) {
         auto& tl = dynamic_cast<TrafficLight<Delay>&>(*destinationNode);
-        if (tl.leftTurnRatio().has_value()) {
-          auto it = m_agentNextStreetId.find(agentId);
-          if (it == m_agentNextStreetId.end()) {
-            if (!tl.isGreen(streetId, 0.)) {
-              continue;
-            }
-          } else {
-            auto const& nextStreet{m_graph.streetSet()[m_agentNextStreetId[agentId]]};
-            auto const delta{nextStreet->deltaAngle(pStreet->angle())};
-            if (!tl.isGreen(streetId, delta)) {
-              continue;
-            }
+        if (tl.leftTurnRatio().has_value() && nLanes > 1 && queueIndex == nLanes - 1) {
+          if (tl.isGreen(streetId) &&
+              tl.counter() >
+                  tl.delay().value().first * (1. - tl.leftTurnRatio().value().first)) {
+            continue;
+          } else if (!tl.isGreen(streetId) &&
+                     tl.counter() > tl.delay().value().first +
+                                        tl.delay().value().second *
+                                            (1. - tl.leftTurnRatio().value().second)) {
+            continue;
           }
         } else if (!tl.isGreen(streetId)) {
           continue;
