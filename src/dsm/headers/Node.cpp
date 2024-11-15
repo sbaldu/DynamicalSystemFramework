@@ -48,7 +48,10 @@ namespace dsm {
     ++m_agentCounter;
   }
 
-  void Intersection::removeAgent(Id agentId) { m_agents.erase(agentId); }
+  void Intersection::removeAgent(Id agentId) {
+    std::erase_if(m_agents,
+                  [agentId](const auto& pair) { return pair.second == agentId; });
+  }
 
   Size Intersection::agentCounter() {
     Size copy{m_agentCounter};
