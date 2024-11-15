@@ -39,6 +39,11 @@ def create_image(__df, __time, _graph, _pos, _edges, _n, _gdf):
     Parameters:
     __df (DataFrame): A pandas DataFrame containing the data.
     __time (int): The specific time (in seconds) for which the graph is to be generated.
+    _graph (Graph): A networkx Graph object.
+    _pos (dict): A dictionary containing the positions of the nodes.
+    _edges (list): A list containing the edges.
+    _n (int): The number of nodes in the graph.
+    _gdf (GeoDataFrame): A geopandas GeoDataFrame containing the coordinates of the nodes.
 
     Returns:
     tuple: A tuple containing the time in seconds and the path to the saved image.
