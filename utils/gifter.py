@@ -68,7 +68,7 @@ if __name__ == "__main__":
         description="Script to generate a road network evolution GIF."
     )
     parser.add_argument(
-        "--adj_matrix",
+        "--adj-matrix",
         type=str,
         default=None,
         required=False,
@@ -82,7 +82,7 @@ if __name__ == "__main__":
         help="Path to the coordinates file.",
     )
     parser.add_argument(
-        "--input_densities",
+        "--densities",
         type=str,
         default=None,
         required=False,
@@ -106,7 +106,7 @@ if __name__ == "__main__":
         )
     coord = pd.read_csv(RESPONSE, sep=";")
     coord = coord.set_index("nodeId")
-    RESPONSE = args.input_densities
+    RESPONSE = args.densities
     if RESPONSE is None:
         RESPONSE = askopenfilename(
             title="Select the input densities file",
