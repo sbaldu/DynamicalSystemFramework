@@ -166,12 +166,10 @@ namespace dsm {
     /// @brief  Get the number of agents on the street
     /// @return Size, The number of agents on the street
     Size nAgents() const;
-    /// @brief Get the street's density in \f$m^{-1}\f$
+    /// @brief Get the street's density in \f$m^{-1}\f$ or in \f$a.u.\f$, if normalized
+    /// @param normalized If true, the street's density is normalized by the street's capacity
     /// @return double, The street's density
-    double density() const { return nAgents() / (m_len * m_nLanes); }
-    /// @brief Get the street's normalized density
-    /// @return double, The street's normalized density
-    double normDensity() const { return nAgents() / static_cast<double>(m_capacity); }
+    double density(bool normalized = false) const;
     /// @brief Check if the street is full
     /// @return bool, True if the street is full, false otherwise
     bool isFull() const { return nAgents() == m_capacity; }

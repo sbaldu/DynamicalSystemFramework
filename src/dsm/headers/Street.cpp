@@ -153,6 +153,11 @@ namespace dsm {
     return nAgents;
   }
 
+  double Street::density(bool normalized) const {
+    return normalized ? nAgents() / static_cast<double>(m_capacity)
+                      : nAgents() / (m_len * m_nLanes);
+  }
+
   Size Street::nExitingAgents() const {
     Size nAgents{0};
     for (const auto& queue : m_exitQueues) {
