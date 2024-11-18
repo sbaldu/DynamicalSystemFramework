@@ -35,6 +35,11 @@ namespace dsm {
 
   using TimePoint = long long unsigned int;
 
+  template <typename T>
+  std::unique_ptr<T> clone(const std::unique_ptr<T>& ptr) {
+    return std::make_unique<T>(*ptr);
+  }
+
   /// @brief The Measurement struct represents the mean of a quantity and its standard deviation
   /// @tparam T The type of the quantity
   /// @param mean The mean
@@ -415,7 +420,7 @@ namespace dsm {
     requires(is_numeric_v<Delay>)
   Id Dynamics<Delay>::m_nextStreetId(Id agentId, Id nodeId, std::optional<Id> streetId) {
     auto possibleMoves = m_graph.adjMatrix().getRow(nodeId, true);
-    if (this->m_itineraries.size() > 0 &&
+    if (!this->m_itineraries.empty() &&
         this->m_uniformDist(this->m_generator) > this->m_errorProbability) {
       const auto& it = this->m_itineraries[this->m_agents[agentId]->itineraryId()];
       if (it->destination() != nodeId) {
@@ -663,9 +668,10 @@ namespace dsm {
   template <typename Delay>
     requires(is_numeric_v<Delay>)
   void Dynamics<Delay>::setItineraries(std::span<Itinerary> itineraries) {
-    std::ranges::for_each(itineraries, [this](const auto& itinerary) {
-      this->m_itineraries.insert(std::make_unique<Itinerary>(itinerary));
-    });
+    std::transform(itineraries.cbegin(),
+                   itineraries.cend(),
+                   m_itineraries.begin(),
+                   [this](const auto& pItinerary) { return clone(pItinerary); });
   }
 
   template <typename Delay>
@@ -703,15 +709,17 @@ namespace dsm {
     requires(is_numeric_v<Delay>)
   void Dynamics<Delay>::setDestinationNodes(const std::span<Id>& destinationNodes,
                                             bool updatePaths) {
-    m_itineraries.clear();
-    m_itineraries.reserve(destinationNodes.size());
-    for (const auto& nodeId : destinationNodes) {
-      if (!m_graph.nodeSet().contains(nodeId)) {
-        throw std::invalid_argument(
-            buildLog(std::format("Node with id {} not found", nodeId)));
-      }
-      this->addItinerary(Itinerary{nodeId});
-    }
+    m_itineraries.resize(destinationNodes.size());
+    std::transform(
+        destinationNodes.cbegin(),
+        destinationNodes.cend(),
+        m_itineraries.begin()[m_graph](auto nodeId) {
+          if (!m_graph.nodeSet().contains(nodeId)) {
+            throw std::invalid_argument(
+                buildLog(std::format("Node with id {} not found", nodeId)));
+          }
+          this->addItinerary(Itinerary{nodeId});
+        });
     if (updatePaths) {
       this->updatePaths();
     }
@@ -720,12 +728,12 @@ namespace dsm {
   template <typename Delay>
     requires(is_numeric_v<Delay>)
   const std::unique_ptr<Itinerary>& Dynamics<Delay>::itinerary(Id destination) const {
-    for (auto const& pItinerary : m_itineraries) {
-      if (pItinerary->destination() == destination) {
-        return pItinerary;
-      }
-    }
-    return nullptr;
+    auto foundIt = std::find_if(m_itineraries.begin(),
+                                m_itineraries.end(),
+                                [destination](const auto& pItinerary) {
+                                  pItinerary->destination() == destination;
+                                });
+    return (foundIt == m_itineraries.end()) ? nullptr : *foundIt;
   }
 
   template <typename Delay>
@@ -1153,13 +1161,13 @@ namespace dsm {
   template <typename Delay>
     requires(is_numeric_v<Delay>)
   void Dynamics<Delay>::addItinerary(const Itinerary& itinerary) {
-    m_itineraries.emplace_back(std::make_unique<Itinerary>(itinerary));
+    m_itineraries.push_back(std::make_unique<Itinerary>(itinerary));
   }
 
   template <typename Delay>
     requires(is_numeric_v<Delay>)
   void Dynamics<Delay>::addItinerary(std::unique_ptr<Itinerary> itinerary) {
-    m_itineraries.emplace_back(std::move(itinerary));
+    m_itineraries.push_back(std::move(itinerary));
   }
 
   template <typename Delay>
@@ -1174,7 +1182,7 @@ namespace dsm {
     requires(is_numeric_v<Delay>)
   void Dynamics<Delay>::addItineraries(std::span<Itinerary> itineraries) {
     std::ranges::for_each(itineraries, [this](const auto& itinerary) -> void {
-      this->m_itineraries.insert(std::make_unique<Itinerary>(itinerary));
+      this->m_itineraries.push_back(std::make_unique<Itinerary>(itinerary));
     });
   }
 
