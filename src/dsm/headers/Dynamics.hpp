@@ -667,8 +667,8 @@ namespace dsm {
   template <typename Delay>
     requires(is_numeric_v<Delay>)
   void Dynamics<Delay>::setItineraries(std::span<Itinerary> itineraries) {
-    std::transform(itineraries.cbegin(),
-                   itineraries.cend(),
+    std::transform(itineraries.begin(),
+                   itineraries.end(),
                    m_itineraries.begin(),
                    [this](const auto& pItinerary) { return clone(pItinerary); });
   }
@@ -709,8 +709,8 @@ namespace dsm {
   void Dynamics<Delay>::setDestinationNodes(std::span<Id> destinationNodes,
                                             bool updatePaths) {
     m_itineraries.resize(destinationNodes.size());
-    std::transform(destinationNodes.cbegin(),
-                   destinationNodes.cend(),
+    std::transform(destinationNodes.begin(),
+                   destinationNodes.end(),
                    m_itineraries.begin(),
                    [this](auto nodeId) {
                      if (!this->m_graph.nodeSet().contains(nodeId)) {
