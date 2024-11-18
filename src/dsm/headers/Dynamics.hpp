@@ -237,7 +237,7 @@ namespace dsm {
     /// @return const Graph&, The graph
     const Graph& graph() const { return m_graph; };
 
-    const std::unique_ptr<Itinerary>& itinerary(Id destination) const;
+    const Itinerary* itinerary(Id destination) const;
     /// @brief Get the itineraries
     /// @return const std::unordered_map<Id, Itinerary>&, The itineraries
     const std::vector<std::unique_ptr<Itinerary>>& itineraries() const {
@@ -727,13 +727,13 @@ namespace dsm {
 
   template <typename Delay>
     requires(is_numeric_v<Delay>)
-  const std::unique_ptr<Itinerary>& Dynamics<Delay>::itinerary(Id destination) const {
+  const Itinerary* Dynamics<Delay>::itinerary(Id destination) const {
     auto foundIt = std::find_if(m_itineraries.begin(),
                                 m_itineraries.end(),
                                 [destination](const auto& pItinerary) {
                                   pItinerary->destination() == destination;
                                 });
-    return (foundIt == m_itineraries.end()) ? nullptr : *foundIt;
+    return (foundIt == m_itineraries.end()) ? nullptr : (*foundIt).get();
   }
 
   template <typename Delay>
@@ -777,7 +777,7 @@ namespace dsm {
     }
     // Move transport capacity agents from each node
     for (const auto& [nodeId, pNode] : m_graph.nodeSet()) {
-      for (auto i = 0; i < pNode->transportCapacity(); ++i) {
+      for (auto i = 0u; i < pNode->transportCapacity(); ++i) {
         if (!this->m_evolveNode(pNode)) {
           break;
         }
