@@ -710,16 +710,16 @@ namespace dsm {
   void Dynamics<Delay>::setDestinationNodes(const std::span<Id>& destinationNodes,
                                             bool updatePaths) {
     m_itineraries.resize(destinationNodes.size());
-    std::transform(
-        destinationNodes.cbegin(),
-        destinationNodes.cend(),
-        m_itineraries.begin()[m_graph](auto nodeId) {
-          if (!m_graph.nodeSet().contains(nodeId)) {
-            throw std::invalid_argument(
-                buildLog(std::format("Node with id {} not found", nodeId)));
-          }
-          this->addItinerary(Itinerary{nodeId});
-        });
+    std::transform(destinationNodes.cbegin(),
+                   destinationNodes.cend(),
+                   m_itineraries.begin(),
+                   [m_graph](auto nodeId) {
+                     if (!m_graph.nodeSet().contains(nodeId)) {
+                       throw std::invalid_argument(
+                           buildLog(std::format("Node with id {} not found", nodeId)));
+                     }
+                     this->addItinerary(Itinerary{nodeId});
+                   });
     if (updatePaths) {
       this->updatePaths();
     }
