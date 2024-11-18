@@ -718,7 +718,7 @@ namespace dsm {
                        throw std::invalid_argument(
                            buildLog(std::format("Node with id {} not found", nodeId)));
                      }
-                     this->addItinerary(Itinerary{nodeId});
+					 return std::make_unique<Itinerary>(nodeId);
                    });
     if (updatePaths) {
       this->updatePaths();
@@ -731,7 +731,7 @@ namespace dsm {
     auto foundIt = std::find_if(m_itineraries.begin(),
                                 m_itineraries.end(),
                                 [destination](const auto& pItinerary) {
-                                  pItinerary->destination() == destination;
+                                  return pItinerary->destination() == destination;
                                 });
     return (foundIt == m_itineraries.end()) ? nullptr : (*foundIt).get();
   }
