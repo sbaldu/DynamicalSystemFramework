@@ -194,8 +194,7 @@ namespace dsm {
     /// @param destinationNodes The destination nodes
     /// @param updatePaths If true, the paths are updated
     /// @throws std::invalid_argument Ifone or more destination nodes do not exist
-    void setDestinationNodes(std::span<Id> destinationNodes,
-                             bool updatePaths = true);
+    void setDestinationNodes(std::span<Id> destinationNodes, bool updatePaths = true);
     /// @brief Set the speed of an agent
     /// @details This is a pure-virtual function, it must be implemented in the derived classes
     /// @param agentId The id of the agent
@@ -718,7 +717,7 @@ namespace dsm {
                        throw std::invalid_argument(
                            buildLog(std::format("Node with id {} not found", nodeId)));
                      }
-					 return std::make_unique<Itinerary>(nodeId);
+                     return std::make_unique<Itinerary>(nodeId);
                    });
     if (updatePaths) {
       this->updatePaths();
