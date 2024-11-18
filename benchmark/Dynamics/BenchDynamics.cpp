@@ -18,10 +18,10 @@ int main() {
     street->setMaxSpeed(13.9);
   }
 
-  Itinerary it1{0, 118};
-  Itinerary it2{4, 115};
-  Itinerary it3{8, 112};
-  Itinerary it4{12, 109};
+  Itinerary it1{118};
+  Itinerary it2{115};
+  Itinerary it3{112};
+  Itinerary it4{109};
 
   Dynamics dynamics{graph};
   dynamics.addItinerary(it1);
