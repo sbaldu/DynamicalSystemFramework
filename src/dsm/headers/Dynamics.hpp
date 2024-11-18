@@ -421,7 +421,10 @@ namespace dsm {
     auto possibleMoves = m_graph.adjMatrix().getRow(nodeId, true);
     if (!this->m_itineraries.empty() &&
         this->m_uniformDist(this->m_generator) > this->m_errorProbability) {
-      const auto& it = this->m_itineraries[this->m_agents[agentId]->itineraryId()];
+      const auto& it =
+          *std::ranges::find_if(m_itineraries, [this, agentId](const auto& ptr) {
+            return ptr->destination() == m_agents[agentId]->itineraryId();
+          });
       if (it->destination() != nodeId) {
         possibleMoves = it->path().getRow(nodeId, true);
       }
@@ -497,7 +500,9 @@ namespace dsm {
         }
       }
       if (destinationNode->id() ==
-          m_itineraries[m_agents[agentId]->itineraryId()]->destination()) {
+          (*std::ranges::find_if(m_itineraries, [this, agentId](const auto& ptr) {
+            return m_agents[agentId]->itineraryId() == ptr->destination();
+          }))->destination()) {
         pStreet->dequeue(queueIndex);
         m_travelTimes.push_back(m_agents[agentId]->time());
         if (reinsert_agents) {
@@ -605,8 +610,10 @@ namespace dsm {
         agent->decrementDelay();
         if (agent->delay() == 0) {
           auto const nLanes = street->nLanes();
-          if (this->m_itineraries[agent->itineraryId()]->destination() ==
-              street->nodePair().second) {
+
+          if ((*std::ranges::find_if(m_itineraries, [&agent](const auto& ptr) {
+                return ptr->destination() == agent->itineraryId();
+              }))->destination() == street->nodePair().second) {
             std::uniform_int_distribution<size_t> laneDist{
                 0, static_cast<size_t>(nLanes - 1)};
             street->enqueue(agentId, laneDist(m_generator));
@@ -1054,7 +1061,10 @@ namespace dsm {
         0, static_cast<Size>(this->m_graph.streetSet().size() - 1)};
     for (Size i{0}; i < nAgents; ++i) {
       if (randomItinerary) {
-        itineraryId = m_itineraries[itineraryDist(m_generator)]->destination();
+        itineraryId =
+            (*std::ranges::find_if(m_itineraries, [this, &itineraryDist](const auto& ptr) {
+              return ptr->destination() == itineraryDist(m_generator);
+            }))->destination();
       }
       Id agentId{0};
       if (!this->m_agents.empty()) {
