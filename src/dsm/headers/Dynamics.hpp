@@ -194,7 +194,7 @@ namespace dsm {
     /// @param destinationNodes The destination nodes
     /// @param updatePaths If true, the paths are updated
     /// @throws std::invalid_argument Ifone or more destination nodes do not exist
-    void setDestinationNodes(const std::span<Id>& destinationNodes,
+    void setDestinationNodes(std::span<Id> destinationNodes,
                              bool updatePaths = true);
     /// @brief Set the speed of an agent
     /// @details This is a pure-virtual function, it must be implemented in the derived classes
@@ -707,7 +707,7 @@ namespace dsm {
 
   template <typename Delay>
     requires(is_numeric_v<Delay>)
-  void Dynamics<Delay>::setDestinationNodes(const std::span<Id>& destinationNodes,
+  void Dynamics<Delay>::setDestinationNodes(std::span<Id> destinationNodes,
                                             bool updatePaths) {
     m_itineraries.resize(destinationNodes.size());
     std::transform(destinationNodes.cbegin(),
