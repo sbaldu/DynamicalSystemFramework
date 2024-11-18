@@ -10,7 +10,8 @@ namespace dsm {
         m_id{id},
         m_capacity{street.capacity()},
         m_transportCapacity{street.transportCapacity()},
-        m_nLanes{street.nLanes()} {
+        m_nLanes{street.nLanes()},
+        m_name{street.name()} {
     for (auto i{0}; i < street.nLanes(); ++i) {
       m_exitQueues.push_back(dsm::queue<Size>());
     }
@@ -58,13 +59,15 @@ namespace dsm {
                  double len,
                  double maxSpeed,
                  std::pair<Id, Id> nodePair,
-                 int16_t nLanes)
+                 int16_t nLanes,
+                 std::string const& name)
       : m_nodePair{std::move(nodePair)},
         m_len{len},
         m_angle{0.},
         m_id{id},
         m_capacity{capacity},
-        m_transportCapacity{1}
+        m_transportCapacity{1},
+        m_name{name}
 
   {
     this->setMaxSpeed(maxSpeed);

@@ -18,6 +18,7 @@
 #include <set>
 #include <format>
 #include <cassert>
+#include <string>
 
 #include "Agent.hpp"
 #include "Node.hpp"
@@ -39,6 +40,7 @@ namespace dsm {
     double m_maxSpeed;
     double m_angle;
     Id m_id;
+    std::string m_name;
     Size m_capacity;
     int16_t m_transportCapacity;
     int16_t m_nLanes;
@@ -78,12 +80,14 @@ namespace dsm {
     /// @param lanes The street's number of lanes
     /// @param maxSpeed The street's speed limit
     /// @param nodePair The street's node pair
+    /// @param name The street's name (default is "")
     Street(Id id,
            Size capacity,
            double len,
            double maxSpeed,
            std::pair<Id, Id> nodePair,
-           int16_t nLanes);
+           int16_t nLanes,
+           std::string const& name = std::string());
 
     virtual ~Street() = default;
 
@@ -182,6 +186,9 @@ namespace dsm {
     /// @brief Get the street's number of lanes
     /// @return int16_t The street's number of lanes
     int16_t nLanes() const { return m_nLanes; }
+    /// @brief Get the street's name
+    /// @return std::string_view The street's name
+    std::string_view name() const { return m_name; }
     /// @brief Get the number of agents on all queues
     /// @return Size The number of agents on all queues
     Size nExitingAgents() const;
