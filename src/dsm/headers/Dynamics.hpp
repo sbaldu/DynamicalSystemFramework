@@ -713,8 +713,8 @@ namespace dsm {
     std::transform(destinationNodes.cbegin(),
                    destinationNodes.cend(),
                    m_itineraries.begin(),
-                   [m_graph](auto nodeId) {
-                     if (!m_graph.nodeSet().contains(nodeId)) {
+                   [this](auto nodeId) {
+                     if (!this->m_graph.nodeSet().contains(nodeId)) {
                        throw std::invalid_argument(
                            buildLog(std::format("Node with id {} not found", nodeId)));
                      }
