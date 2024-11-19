@@ -37,7 +37,6 @@ def create_image(__row: pd.Series, __graph, __pos, __edges, __n, __gdf, __day):
 
     Parameters:
     __row (Series): A pandas DataFrame containing the data.
-    __time (int): The specific time (in seconds) for which the graph is to be generated.
     __graph (Graph): A networkx Graph object.
     __pos (dict): A dictionary containing the positions of the nodes.
     __edges (list): A list containing the edges.
@@ -47,7 +46,6 @@ def create_image(__row: pd.Series, __graph, __pos, __edges, __n, __gdf, __day):
     Returns:
     tuple: A tuple containing the time in seconds and the path to the saved image.
     """
-    time = __row.name
     for col in __row.index:
         index = int(col)
         density = __row[col]
@@ -81,11 +79,14 @@ def create_image(__row: pd.Series, __graph, __pos, __edges, __n, __gdf, __day):
             ax, crs=__gdf.crs.to_string(), source=ctx.providers.OpenStreetMap.Mapnik
         )
     plt.box(False)
-    h_time = f"{(time / 3600):.2f}"
-    plt.title(f"Time: {(time // 3600):02d}:{(time % 3600) // 60:02d} {__day}")
-    plt.savefig(f"./temp_img/{h_time}.png", dpi=300, bbox_inches="tight")
+    plt.title(
+        f"Time: {(__row.name // 3600):02d}:{(__row.name % 3600) // 60:02d} {__day}"
+    )
+    plt.savefig(
+        f"./temp_img/{(__row.name / 3600):.2f}.png", dpi=300, bbox_inches="tight"
+    )
     plt.close()
-    return (time, f"./temp_img/{h_time}.png")
+    return (__row.name, f"./temp_img/{(__row.name / 3600):.2f}.png")
 
 
 if __name__ == "__main__":
@@ -201,8 +202,6 @@ if __name__ == "__main__":
 
     df = pd.read_csv(RESPONSE, sep=";")
     df = df.set_index("time")
-    # remove last column
-    df = df.iloc[:, :-1]
 
     # take only rows with index % 300 == 0
     df = df[df.index % args.time_granularity == 0]

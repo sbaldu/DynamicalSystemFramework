@@ -258,8 +258,6 @@ if __name__ == "__main__":
                 INPUT_FOLDER + "/" + folder + "/" + "densities.csv", sep=";"
             )
             temp = temp.set_index("time")
-            # remove last column
-            temp = temp.iloc[:, :-1]
             temp = temp * 1000
 
             # take only rows with index % 300 == 0

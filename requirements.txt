@@ -8,3 +8,4 @@ pandas
 Pillow
 seaborn
 tqdm
+opencv-python

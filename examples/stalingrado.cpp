@@ -104,14 +104,14 @@ int main() {
   auto it = vehiclesToInsert.begin();
   std::ofstream ofs{"./stalingrado_output.csv"};
   // print two columns, time and vehicles
-  ofs << "time;vehicle_flux;" << '\n';
+  ofs << "time;vehicle_flux" << '\n';
   while (progress < MAX_TIME) {
     if (progress % 60 == 0) {
       if (progress != 0) {
         ++it;
       }
       if (progress % 300 == 0) {
-        ofs << progress << ";" << spire.outputCounts(true) << std::endl;
+        ofs << progress << ';' << spire.outputCounts(true) << std::endl;
       }
       dynamics.addAgents(0, *it / 2, 0);
     }

@@ -150,17 +150,17 @@ int main(int argc, char** argv) {
          "spires;mean_flow_spires_err\n";
 #ifdef PRINT_DENSITIES
   std::ofstream streetDensity(OUT_FOLDER + "densities.csv");
-  streetDensity << "time;";
+  streetDensity << "time";
   for (const auto& [id, street] : dynamics.graph().streetSet()) {
-    streetDensity << id << ';';
+    streetDensity << ';' << id;
   }
   streetDensity << '\n';
 #endif
 #ifdef PRINT_FLOWS
   std::ofstream streetFlow(OUT_FOLDER + "flows.csv");
-  streetFlow << "time;";
+  streetFlow << "time";
   for (const auto& [id, street] : dynamics.graph().streetSet()) {
-    streetFlow << id << ';';
+    streetFlow << ';' << id;
   }
   streetFlow << '\n';
 #endif
@@ -168,18 +168,18 @@ int main(int argc, char** argv) {
   std::ofstream streetSpeed(OUT_FOLDER + "speeds.csv");
   streetSpeed << "time;";
   for (const auto& [id, street] : dynamics.graph().streetSet()) {
-    streetSpeed << id << ';';
+    streetSpeed << ';' << id;
   }
   streetSpeed << '\n';
 #endif
 #ifdef PRINT_OUT_SPIRES
   std::ofstream outSpires(OUT_FOLDER + "out_spires.csv");
   std::ofstream inSpires(OUT_FOLDER + "in_spires.csv");
-  outSpires << "time;";
-  inSpires << "time;";
+  outSpires << "time";
+  inSpires << "time";
   for (const auto& [id, street] : dynamics.graph().streetSet()) {
-    outSpires << id << ';';
-    inSpires << id << ';';
+    outSpires << ';' << id;
+    inSpires << ';' << id;
   }
   outSpires << '\n';
   inSpires << '\n';
@@ -223,12 +223,12 @@ int main(int argc, char** argv) {
 
     if (dynamics.time() % 300 == 0) {
 #ifdef PRINT_OUT_SPIRES
-      outSpires << dynamics.time() << ';';
-      inSpires << dynamics.time() << ';';
+      outSpires << dynamics.time();
+      inSpires << dynamics.time();
       for (const auto& [id, street] : dynamics.graph().streetSet()) {
         auto& spire = dynamic_cast<SpireStreet&>(*street);
-        outSpires << spire.outputCounts(false) << ';';
-        inSpires << spire.inputCounts(false) << ';';
+        outSpires << ';' << spire.outputCounts(false);
+        inSpires << ';' << spire.inputCounts(false);
       }
       outSpires << std::endl;
       inSpires << std::endl;
@@ -248,32 +248,32 @@ int main(int argc, char** argv) {
     }
     if (dynamics.time() % 10 == 0) {
 #ifdef PRINT_DENSITIES
-      streetDensity << dynamics.time() << ';';
+      streetDensity << dynamics.time();
       for (const auto& [id, street] : dynamics.graph().streetSet()) {
-        streetDensity << street->density() << ';';
+        streetDensity << ';' << street->density();
       }
       streetDensity << std::endl;
 #endif
 #ifdef PRINT_FLOWS
-      streetFlow << dynamics.time() << ';';
+      streetFlow << dynamics.time();
       for (const auto& [id, street] : dynamics.graph().streetSet()) {
         const auto& meanSpeed = dynamics.streetMeanSpeed(id);
         if (meanSpeed.has_value()) {
-          streetFlow << meanSpeed.value() * street->density() << ';';
+          streetFlow << ';' << meanSpeed.value() * street->density();
         } else {
-          streetFlow << 0 << ';';
+          streetFlow << ';';
         }
       }
       streetFlow << std::endl;
 #endif
 #ifdef PRINT_SPEEDS
-      streetSpeed << dynamics.time() << ';';
+      streetSpeed << dynamics.time();
       for (const auto& [id, street] : dynamics.graph().streetSet()) {
         const auto& meanSpeed = dynamics.streetMeanSpeed(id);
         if (meanSpeed.has_value()) {
-          streetSpeed << meanSpeed.value() << ';';
+          streetSpeed << ';' << meanSpeed.value();
         } else {
-          streetSpeed << 0 << ';';
+          streetSpeed << ';';
         }
       }
       streetSpeed << std::endl;
