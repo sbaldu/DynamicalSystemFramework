@@ -32,7 +32,7 @@ elif platform.system() == "Darwin":  # MAC OS
     FONT_PATH = "/System/Library/Fonts/Supplemental/Arial.ttf"
 
 
-def create_image(__df, __time, _graph, _pos, _edges, _n, _gdf):
+def create_image(__df, __time, _graph, _pos, _edges, _n, _gdf, _day):
     """
     Generates and saves an image of a graph with edges colored based on density.
 
@@ -82,7 +82,7 @@ def create_image(__df, __time, _graph, _pos, _edges, _n, _gdf):
         )
     plt.box(False)
     h_time = f"{(__time / 3600):.2f}"
-    plt.title(f"Time: {(__time // 3600):02d}:{(__time % 3600) // 60:02d} (hh:mm)")
+    plt.title(f"Time: {(__time // 3600):02d}:{(__time % 3600) // 60:02d} {_day}")
     plt.savefig(f"./temp_img/{h_time}.png", dpi=300, bbox_inches="tight")
     return (__time, f"./temp_img/{h_time}.png")
 
@@ -140,6 +140,13 @@ if __name__ == "__main__":
         required=False,
         help="Number of frames to generate.",
     )
+    parser.add_argument(
+        "--day",
+        type=str,
+        default=None,
+        required=False,
+        help="Day to plot.",
+    )
     args = parser.parse_args()
     # Load the graph
     # read the adjacency matrix discarding the first line
@@ -170,6 +177,8 @@ if __name__ == "__main__":
         GDF = gpd.GeoDataFrame(
             coord, geometry=gpd.points_from_xy(coord.lon, coord.lat), crs="EPSG:4326"
         )
+    if args.day is None:
+        args.day = "(hh:mm)"
 
     G, edges, pos = create_graph_from_adj(adj, coord)
 
@@ -209,6 +218,7 @@ if __name__ == "__main__":
                         edges,
                         n,
                         GDF,
+                        args.day,
                     ),
                 )
             )
