@@ -13,16 +13,15 @@ import matplotlib.pyplot as plt
 from matplotlib import colormaps
 import numpy as np
 from tqdm import tqdm
-from PIL import Image, ImageFont
+from PIL import ImageFont
 import pandas as pd
 import geopandas as gpd
 import contextily as ctx
 from functions import create_graph_from_adj
+import cv2
 
 # Constants
 COLORMAP = colormaps["RdYlGn_r"]
-
-OUTPUT_FILE_NAME = "evolution.gif"
 
 # if on wsl
 FONT_PATH = ""
@@ -32,59 +31,61 @@ elif platform.system() == "Darwin":  # MAC OS
     FONT_PATH = "/System/Library/Fonts/Supplemental/Arial.ttf"
 
 
-def create_image(__df, __time, _graph, _pos, _edges, _n, _gdf, _day):
+def create_image(__row: pd.Series, __graph, __pos, __edges, __n, __gdf, __day):
     """
     Generates and saves an image of a graph with edges colored based on density.
 
     Parameters:
-    __df (DataFrame): A pandas DataFrame containing the data.
+    __row (Series): A pandas DataFrame containing the data.
     __time (int): The specific time (in seconds) for which the graph is to be generated.
-    _graph (Graph): A networkx Graph object.
-    _pos (dict): A dictionary containing the positions of the nodes.
-    _edges (list): A list containing the edges.
-    _n (int): The number of nodes in the graph.
-    _gdf (GeoDataFrame): A geopandas GeoDataFrame containing the coordinates of the nodes.
+    __graph (Graph): A networkx Graph object.
+    __pos (dict): A dictionary containing the positions of the nodes.
+    __edges (list): A list containing the edges.
+    __n (int): The number of nodes in the graph.
+    __gdf (GeoDataFrame): A geopandas GeoDataFrame containing the coordinates of the nodes.
 
     Returns:
     tuple: A tuple containing the time in seconds and the path to the saved image.
     """
-    for col in __df.columns:
+    time = __row.name
+    for col in __row.index:
         index = int(col)
-        density = __df.loc[__time][col]  # / (225 / 2000)
-        src = index // _n
-        dst = index % _n
+        density = __row[col]
+        src = index // __n
+        dst = index % __n
         # set color of edge based on density using a colormap from green to red
-        _graph[src][dst]["color"] = COLORMAP(density)
+        __graph[src][dst]["color"] = COLORMAP(density)
         # draw graph with colors
-    colors = [_graph[u][v]["color"] for u, v in _edges]
+    colors = [__graph[u][v]["color"] for u, v in __edges]
     # draw graph
     _, ax = plt.subplots()
-    if _gdf is not None:
-        limits = _gdf.total_bounds + np.array([-0.001, -0.001, 0.001, 0.001])
+    if __gdf is not None:
+        limits = __gdf.total_bounds + np.array([-0.001, -0.001, 0.001, 0.001])
         ax.set_xlim(limits[0], limits[2])
         ax.set_ylim(limits[1], limits[3])
     nx.draw_networkx_edges(
-        _graph,
-        _pos,
-        edgelist=_edges,
+        __graph,
+        __pos,
+        edgelist=__edges,
         edge_color=colors,
         ax=ax,
         connectionstyle="arc3,rad=0.05",
         arrowsize=5,
         arrowstyle="->",
     )
-    nx.draw_networkx_nodes(_graph, _pos, ax=ax, node_size=69)
-    nx.draw_networkx_labels(_graph, _pos, ax=ax, font_size=5)
-    if _gdf is not None:
+    nx.draw_networkx_nodes(__graph, __pos, ax=ax, node_size=69)
+    nx.draw_networkx_labels(__graph, __pos, ax=ax, font_size=5)
+    if __gdf is not None:
         # _gdf.plot(ax=ax)
         ctx.add_basemap(
-            ax, crs=_gdf.crs.to_string(), source=ctx.providers.OpenStreetMap.Mapnik
+            ax, crs=__gdf.crs.to_string(), source=ctx.providers.OpenStreetMap.Mapnik
         )
     plt.box(False)
-    h_time = f"{(__time / 3600):.2f}"
-    plt.title(f"Time: {(__time // 3600):02d}:{(__time % 3600) // 60:02d} {_day}")
+    h_time = f"{(time / 3600):.2f}"
+    plt.title(f"Time: {(time // 3600):02d}:{(time % 3600) // 60:02d} {__day}")
     plt.savefig(f"./temp_img/{h_time}.png", dpi=300, bbox_inches="tight")
-    return (__time, f"./temp_img/{h_time}.png")
+    plt.close()
+    return (time, f"./temp_img/{h_time}.png")
 
 
 if __name__ == "__main__":
@@ -136,7 +137,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--n-frames",
         type=int,
-        default=10,
+        default=None,
         required=False,
         help="Number of frames to generate.",
     )
@@ -146,6 +147,20 @@ if __name__ == "__main__":
         default=None,
         required=False,
         help="Day to plot.",
+    )
+    parser.add_argument(
+        "--fps",
+        type=int,
+        default=1,
+        required=False,
+        help="Frames per second for the output video.",
+    )
+    parser.add_argument(
+        "--output-file",
+        type=str,
+        default="evolution.mp4",
+        required=False,
+        help="Output file name for the video.",
     )
     args = parser.parse_args()
     # Load the graph
@@ -193,17 +208,22 @@ if __name__ == "__main__":
     df = df[df.index % args.time_granularity == 0]
     if args.time_begin is not None:
         df = df[df.index > args.time_begin]
-        # take N_FRAMES from the beginning
-        df = df.head(args.n_frames)
-    else:
+        if args.n_frames is not None:
+            # take N_FRAMES from the beginning
+            df = df.head(args.n_frames)
+    elif args.n_frames is not None:
         # take the last N_FRAMES
         df = df.tail(args.n_frames)
 
     # check if the temp_img folder exists, if not create it
-    pathlib.Path("./temp_img").mkdir(parents=True, exist_ok=True)
+    # force delete the folder if it exists
+    if pathlib.Path("./temp_img").exists():
+        for file in pathlib.Path("./temp_img").iterdir():
+            file.unlink()
+    else:
+        pathlib.Path("./temp_img").mkdir(parents=True, exist_ok=True)
 
     with mp.Pool() as pool:
-        frames = []
         jobs = []
 
         for time in df.index:
@@ -211,8 +231,7 @@ if __name__ == "__main__":
                 pool.apply_async(
                     create_image,
                     (
-                        df,
-                        time,
+                        df.loc[time],
                         G,
                         pos,
                         edges,
@@ -225,19 +244,23 @@ if __name__ == "__main__":
 
         # use tqdm and take results:
         results = [job.get() for job in tqdm(jobs)]
-        results = sorted(results, key=lambda x: x[0])
-        frames = [Image.open(result[1]) for result in tqdm(results)]
 
-        # if NFRAMES is 1, save a png image
-        if args.n_frames == 1:
-            frames[0].save(OUTPUT_FILE_NAME.replace(".gif", ".png"), format="PNG")
-        else:
-            # Save into a GIF file that loops forever
-            frames[0].save(
-                OUTPUT_FILE_NAME,
-                format="GIF",
-                append_images=frames[1:],
-                save_all=True,
-                duration=300,
-                loop=0,
-            )
+    results = sorted(results, key=lambda x: x[0])
+
+    # Get the dimensions of the first frame
+    first_frame_path = results[0][1]
+    frame = cv2.imread(first_frame_path)
+    frame_height, frame_width, _ = frame.shape
+
+    # Create video writer
+    fourcc = cv2.VideoWriter_fourcc(*"mp4v")
+    video_writer = cv2.VideoWriter(
+        args.output_file, fourcc, args.fps, (frame_width, frame_height)
+    )
+
+    for file_path in tqdm(results):
+        frame = cv2.imread(file_path[1])
+        video_writer.write(frame)
+
+    video_writer.release()
+    print(f"MP4 video saved to: {args.output_file}")
