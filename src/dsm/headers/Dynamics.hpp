@@ -155,10 +155,10 @@ namespace dsm {
               path.insert(nodeId, nextNodeId, true);
             }
           } else if ((nextNodeId != destinationID)) {
-            pFileLogger->warn("WARNING: No path found from node {} to node {}",
+            pFileLogger->warn("No path found from node {} to node {}",
                               nextNodeId,
                               destinationID);
-            pConsoleLogger->warn("WARNING: No path found from node {} to node {}",
+            pConsoleLogger->warn("No path found from node {} to node {}",
                                  nextNodeId,
                                  destinationID);
           }
