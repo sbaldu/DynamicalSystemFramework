@@ -31,6 +31,10 @@
 #include "../utility/Logger.hpp"
 #include "../utility/Typedef.hpp"
 
+#include <spdlog/spdlog.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/sinks/basic_file_sink.h>
+
 namespace dsm {
 
   using TimePoint = long long unsigned int;
@@ -67,6 +71,12 @@ namespace dsm {
     requires(is_numeric_v<Delay>)
   class Dynamics {
   protected:
+    inline static auto const pFileLogger{
+        spdlog::basic_logger_mt("DSM_DYNAMICS_FILE_LOGGER",
+                                std::format("{}{}", DSM_LOG_FOLDER, DSM_LOG_FILE),
+                                true)};
+    inline static auto const pConsoleLogger{
+        spdlog::stdout_color_mt("DSM_DYNAMICS_CONSOLE_LOGGER")};
     std::unordered_map<Id, std::unique_ptr<Itinerary>> m_itineraries;
     std::map<Id, std::unique_ptr<Agent<Delay>>> m_agents;
     TimePoint m_time, m_previousSpireTime;
@@ -145,10 +155,12 @@ namespace dsm {
               path.insert(nodeId, nextNodeId, true);
             }
           } else if ((nextNodeId != destinationID)) {
-            std::cerr << std::format("WARNING: No path found from node {} to node {}",
-                                     nextNodeId,
-                                     destinationID)
-                      << std::endl;
+            pFileLogger->warn("WARNING: No path found from node {} to node {}",
+                              nextNodeId,
+                              destinationID);
+            pConsoleLogger->warn("WARNING: No path found from node {} to node {}",
+                                 nextNodeId,
+                                 destinationID);
           }
         }
       }
@@ -408,6 +420,13 @@ namespace dsm {
         }
       }
     }
+#ifdef NDEBUG
+    pFileLogger->set_level(spdlog::level::info);
+    pConsoleLogger->set_level(spdlog::level::info);
+#else
+    pFileLogger->set_level(spdlog::level::debug);
+    pConsoleLogger->set_level(spdlog::level::debug);
+#endif
   }
 
   template <typename Delay>
@@ -459,6 +478,7 @@ namespace dsm {
   void Dynamics<Delay>::m_evolveStreet(const Id streetId,
                                        const std::unique_ptr<Street>& pStreet,
                                        bool reinsert_agents) {
+    pFileLogger->debug("Evolving street {}...", streetId);
     auto const nLanes = pStreet->nLanes();
     for (auto queueIndex = 0; queueIndex < nLanes; ++queueIndex) {
       if (m_uniformDist(m_generator) > m_maxFlowPercentage ||
@@ -531,6 +551,7 @@ namespace dsm {
   template <typename Delay>
     requires(is_numeric_v<Delay>)
   bool Dynamics<Delay>::m_evolveNode(const std::unique_ptr<Node>& pNode) {
+    pFileLogger->debug("Evolving node {}...", pNode->id());
     if (pNode->isIntersection()) {
       auto& intersection = dynamic_cast<Intersection&>(*pNode);
       if (intersection.agents().empty()) {
@@ -585,6 +606,7 @@ namespace dsm {
     requires(is_numeric_v<Delay>)
   void Dynamics<Delay>::m_evolveAgents() {
     for (const auto& [agentId, agent] : this->m_agents) {
+      pFileLogger->debug("Evolving agent {}...", agentId);
       if (agent->delay() > 0) {
         const auto& street{m_graph.streetSet()[agent->streetId().value()]};
         if (agent->delay() > 1) {
@@ -741,6 +763,7 @@ namespace dsm {
   template <typename Delay>
     requires(is_numeric_v<Delay>)
   void Dynamics<Delay>::evolve(bool reinsert_agents) {
+    pFileLogger->debug("Init evolving step {}", m_time);
     // move the first agent of each street queue, if possible, putting it in the next node
     if (m_dataUpdatePeriod.has_value() && m_time % m_dataUpdatePeriod.value() == 0) {
       for (const auto& [streetId, pStreet] : m_graph.streetSet()) {
@@ -767,6 +790,7 @@ namespace dsm {
     }
     // cycle over agents and update their times
     this->m_evolveAgents();
+    pFileLogger->debug("End evolving step {}", m_time);
     // increment time simulation
     ++this->m_time;
   }

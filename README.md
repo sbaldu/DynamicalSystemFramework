@@ -15,19 +15,14 @@ pip install -r ./requirements.txt
 ```
 
 ## Installation
-The library can be installed using CMake. To build and install the project in the default folder run:
+The library can be installed using CMake. Firstly, configure vpkg:
 ```shell
-cmake -B build && cmake --build build
-sudo cmake --install build
+cmake --preset=default
 ```
-Otherwise, it is possible to customize the installation path:
-```shell
-cmake -B build -DCMAKE_INSTALL_PREFIX=/path/to/install
-```
-then building and installing it (eventually in sudo mode) with:
+To build and install the project in the default folder run:
 ```shell
 cmake --build build
-cmake --install build
+sudo cmake --install build
 ```
 
 ## Testing

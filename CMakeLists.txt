@@ -7,14 +7,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# Fetch spdlog
-include(FetchContent)
-FetchContent_Declare(
-	spdlog
-	GIT_REPOSITORY https://github.com/gabime/spdlog.git
-	GIT_TAG v1.15.0
-)
-FetchContent_MakeAvailable(spdlog)
+find_package(spdlog CONFIG REQUIRED)
 
 file(GLOB SOURCES "src/dsm/headers/*.cpp")
 
@@ -27,7 +20,7 @@ target_include_directories(dsm PUBLIC
     $<INSTALL_INTERFACE:include>
 )
 
-install(TARGETS dsm spdlog
+install(TARGETS dsm
 		EXPORT dsmConfig
 		ARCHIVE DESTINATION lib
 		LIBRARY DESTINATION lib
