@@ -1,5 +1,6 @@
 # DynamicalSystemFramework
-[![codecov](https://codecov.io/github/sbaldu/DynamicalSystemFramework/graph/badge.svg?token=JV53J6IUJ3)](https://codecov.io/github/sbaldu/DynamicalSystemFramework)
+<!-- [![codecov](https://codecov.io/github/sbaldu/DynamicalSystemFramework/graph/badge.svg?token=JV53J6IUJ3)](https://codecov.io/github/sbaldu/DynamicalSystemFramework) -->
+[![Standard](https://img.shields.io/badge/c%2B%2B-20/23-blue.svg)](https://en.wikipedia.org/wiki/C%2B%2B#Standardization)
 
 The aim of this project is to rework the original [Traffic Flow Dynamics Model](https://github.com/Grufoony/TrafficFlowDynamicsModel).
 This rework consists of a full code rewriting, in order to implement more features (like *intersections*) and get advantage from the latest C++ updates.
@@ -14,18 +15,25 @@ pip install -r ./requirements.txt
 ```
 
 ## Installation
-The library can be installed using CMake. To do this build it with the commands:
+The library can be installed using CMake. To build and install the project in the default folder run:
+```shell
+cmake -B build && cmake --build build
+sudo cmake --install build
+```
+Otherwise, it is possible to customize the installation path:
 ```shell
 cmake -B build -DCMAKE_INSTALL_PREFIX=/path/to/install
-cmake --build build
 ```
-and then install it with:
+then building and installing it (eventually in sudo mode) with:
 ```shell
+cmake --build build
 cmake --install build
 ```
 
 ## Testing
-To compile tests one can run:
+This project uses [Doctest](https://github.com/doctest/doctest) for testing.
+
+To compile tests run:
 ```shell
 cd test
 cmake -B build && make -C build
