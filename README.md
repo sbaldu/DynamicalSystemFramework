@@ -64,8 +64,8 @@ for f in ./*.out ; do ./$f ; done
   author = {Berselli, Gregorio and Balducci, Simone},
   title = {Framework for modelling dynamical complex systems.},
   year = {2023},
-  url = {https://github.com/sbaldu/DynamicalSystemFramework},
+  url = {https://github.com/physycom/DynamicalSystemFramework},
   publisher = {GitHub},
-  howpublished = {\url{https://github.com/sbaldu/DynamicalSystemFramework}}
+  howpublished = {\url{https://github.com/physycom/DynamicalSystemFramework}}
 }
 ```
