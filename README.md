@@ -7,7 +7,10 @@ This rework consists of a full code rewriting, in order to implement more featur
 
 ## Requirements
 
-The project only requires `C++20` or greater and `cmake`.
+This project requieres:
+- A compiler whith full support for `C++20` or greater
+- `cmake`
+- `vcpkg`, which can be installed following points 1 and 2 in [this tutorial](https://learn.microsoft.com/en-us/vcpkg/get_started/get-started?pivots=shell-bash)
 
 Utilities are written in python. To install their dependencies:
 ```shell
