@@ -8,14 +8,14 @@
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
 // ~/Library/Application Support/dsm/logs/
-static auto const DSM_LOG_FOLDER =
+inline static auto const DSM_LOG_FOLDER =
     std::format("{}/Library/Application Support/dsm/logs/", std::getenv("HOME"));
 #elif __APPLE__
 // %appdata%/dsm/logs
-static auto const DSM_LOG_FOLDER = std::format("{}\\dsm\\logs\\", std::getenv("APPDATA"));
+inline static auto const DSM_LOG_FOLDER = std::format("{}\\dsm\\logs\\", std::getenv("APPDATA"));
 #else  // Linux
 // ~/.local/dsm/logs/
-static auto const DSM_LOG_FOLDER =
+inline static auto const DSM_LOG_FOLDER =
     std::format("{}/.local/dsm/logs/", std::getenv("HOME"));
 #endif
 
