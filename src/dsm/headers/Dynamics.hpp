@@ -1061,10 +1061,8 @@ namespace dsm {
         0, static_cast<Size>(this->m_graph.streetSet().size() - 1)};
     for (Size i{0}; i < nAgents; ++i) {
       if (randomItinerary) {
-        itineraryId =
-            (*std::ranges::find_if(m_itineraries, [this, &itineraryDist](const auto& ptr) {
-              return ptr->destination() == itineraryDist(m_generator);
-            }))->destination();
+		auto randomItinerary = itineraryDist(this->m_generator);
+        itineraryId = m_itineraries[randomItinerary]->destination();
       }
       Id agentId{0};
       if (!this->m_agents.empty()) {
