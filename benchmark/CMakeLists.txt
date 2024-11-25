@@ -9,6 +9,15 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 include_directories(../extern/benchmark/)
 
+include(FetchContent)
+# Get spdlog
+FetchContent_Declare(
+    spdlog
+    GIT_REPOSITORY https://github.com/gabime/spdlog.git
+    GIT_TAG v1.15.0
+)
+FetchContent_MakeAvailable(spdlog)
+
 # add subdirectories
 add_subdirectory(Graph)
 add_subdirectory(Street)
