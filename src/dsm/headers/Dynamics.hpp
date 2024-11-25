@@ -742,14 +742,13 @@ namespace dsm {
     requires(is_numeric_v<Delay>)
   void Dynamics<Delay>::evolve(bool reinsert_agents) {
     // move the first agent of each street queue, if possible, putting it in the next node
-    if (m_dataUpdatePeriod.has_value() && m_time % m_dataUpdatePeriod.value() == 0) {
-      for (const auto& [streetId, pStreet] : m_graph.streetSet()) {
+    bool const bUpdateData =
+        m_dataUpdatePeriod.has_value() && m_time % m_dataUpdatePeriod.value() == 0;
+    for (const auto& [streetId, pStreet] : m_graph.streetSet()) {
+      if (bUpdateData) {
         m_streetTails[streetId] += pStreet->nExitingAgents();
-        // m_streetTails[streetId] += pStreet->waitingAgents().size();
-        this->m_evolveStreet(streetId, pStreet, reinsert_agents);
       }
-    } else {
-      for (const auto& [streetId, pStreet] : m_graph.streetSet()) {
+      for (auto i = 0; i < pStreet->transportCapacity(); ++i) {
         this->m_evolveStreet(streetId, pStreet, reinsert_agents);
       }
     }
