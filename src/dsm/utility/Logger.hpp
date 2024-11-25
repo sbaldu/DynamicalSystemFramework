@@ -12,7 +12,8 @@ inline static auto const DSM_LOG_FOLDER =
     std::format("{}/Library/Application Support/dsm/logs/", std::getenv("HOME"));
 #elif __APPLE__
 // %appdata%/dsm/logs
-inline static auto const DSM_LOG_FOLDER = std::format("{}\\dsm\\logs\\", std::getenv("APPDATA"));
+inline static auto const DSM_LOG_FOLDER =
+    std::format("{}\\dsm\\logs\\", std::getenv("APPDATA"));
 #else  // Linux
 // ~/.local/dsm/logs/
 inline static auto const DSM_LOG_FOLDER =
