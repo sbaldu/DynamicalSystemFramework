@@ -156,12 +156,10 @@ namespace dsm {
               path.insert(nodeId, nextNodeId, true);
             }
           } else if ((nextNodeId != destinationID)) {
-            pFileLogger->warn("No path found from node {} to node {}",
-                              nextNodeId,
-                              destinationID);
-            pConsoleLogger->warn("No path found from node {} to node {}",
-                                 nextNodeId,
-                                 destinationID);
+            pFileLogger->warn(
+                "No path found from node {} to node {}", nextNodeId, destinationID);
+            pConsoleLogger->warn(
+                "No path found from node {} to node {}", nextNodeId, destinationID);
           }
         }
       }
@@ -556,9 +554,14 @@ namespace dsm {
       if (intersection.agents().empty()) {
         return false;
       }
-      auto const [angle, agentId] = *(intersection.agents().begin());
-      const auto& nextStreet{m_graph.streetSet()[m_agentNextStreetId[agentId]]};
-      if (!(nextStreet->isFull())) {
+      for (auto const [angle, agentId] : intersection.agents()) {
+        auto const& nextStreet{m_graph.streetSet()[m_agentNextStreetId[agentId]]};
+        if (nextStreet->isFull()) {
+          if (m_forcePriorities) {
+            return false;
+          }
+          continue;
+        }
         intersection.removeAgent(agentId);
         m_agents[agentId]->setStreetId(nextStreet->id());
         this->setAgentSpeed(agentId);
@@ -566,9 +569,9 @@ namespace dsm {
             std::ceil(nextStreet->length() / m_agents[agentId]->speed()));
         nextStreet->addAgent(agentId);
         m_agentNextStreetId.erase(agentId);
-      } else if (m_forcePriorities) {
-        return false;
+        return true;
       }
+      return false;
     } else if (pNode->isRoundabout()) {
       auto& roundabout = dynamic_cast<Roundabout&>(*pNode);
       if (roundabout.agents().empty()) {
@@ -656,13 +659,15 @@ namespace dsm {
         assert(agent->srcNodeId().has_value());
         const auto& srcNode{this->m_graph.nodeSet()[agent->srcNodeId().value()]};
         if (srcNode->isFull()) {
-          pFileLogger->debug("Agent {} is not able to enter full node {}.", agentId, srcNode->id());
+          pFileLogger->debug(
+              "Agent {} is not able to enter full node {}.", agentId, srcNode->id());
           continue;
         }
         const auto& nextStreet{
             m_graph.streetSet()[this->m_nextStreetId(agentId, srcNode->id())]};
         if (nextStreet->isFull()) {
-          pFileLogger->debug("Agent {} is not able to enter full street {}.", agentId, nextStreet->id());
+          pFileLogger->debug(
+              "Agent {} is not able to enter full street {}.", agentId, nextStreet->id());
           continue;
         }
         assert(srcNode->id() == nextStreet->nodePair().first);
@@ -767,14 +772,13 @@ namespace dsm {
 
     pFileLogger->debug("Evolving streets...");
     // move the first agent of each street queue, if possible, putting it in the next node
-    if (m_dataUpdatePeriod.has_value() && m_time % m_dataUpdatePeriod.value() == 0) {
-      for (const auto& [streetId, pStreet] : m_graph.streetSet()) {
+    bool const updateData =
+        m_dataUpdatePeriod.has_value() && m_time % m_dataUpdatePeriod.value() == 0;
+    for (const auto& [streetId, pStreet] : m_graph.streetSet()) {
+      if (updateData) {
         m_streetTails[streetId] += pStreet->nExitingAgents();
-        // m_streetTails[streetId] += pStreet->waitingAgents().size();
-        this->m_evolveStreet(streetId, pStreet, reinsert_agents);
       }
-    } else {
-      for (const auto& [streetId, pStreet] : m_graph.streetSet()) {
+      for (auto i = 0; i < pStreet->transportCapacity(); ++i) {
         this->m_evolveStreet(streetId, pStreet, reinsert_agents);
       }
     }
@@ -946,23 +950,12 @@ namespace dsm {
       throw std::invalid_argument(
           buildLog(std::format("Agent with id {} already exists.", agent.id())));
     }
-    pFileLogger->debug("Adding agent with id {} and destination node {}", agent.id(), agent.itineraryId());
+    pFileLogger->debug("Adding agent with id {} and destination node {}",
+                       agent.id(),
+                       agent.itineraryId());
     this->m_agents.emplace(agent.id(), std::make_unique<Agent<Delay>>(agent));
   }
-  // template <typename Delay>
-  //   requires(is_numeric_v<Delay>)
-  // void Dynamics<Delay>::addAgent(std::unique_ptr<Agent<Delay>> agent) {
-  //   if (this->m_agents.size() + 1 > this->m_graph.maxCapacity()) {
-  //     throw std::overflow_error(buildLog(
-  //         std::format("Graph is already holding the max possible number of agents ({})",
-  //                     this->m_graph.maxCapacity())));
-  //   }
-  //   if (this->m_agents.contains(agent->id())) {
-  //     throw std::invalid_argument(
-  //         buildLog(std::format("Agent with id {} already exists.", agent->id())));
-  //   }
-  //   this->m_agents.emplace(agent->id(), std::move(agent));
-  // }
+
   template <typename Delay>
     requires(is_numeric_v<Delay>)
   void Dynamics<Delay>::addAgent(Id srcNodeId, Id itineraryId) {
@@ -1108,7 +1101,7 @@ namespace dsm {
       if (std::abs(sum - 1.) > std::numeric_limits<double>::epsilon()) {
         pFileLogger->critical("The source weights are not normalized. Sum: {}", sum);
         pConsoleLogger->critical("The source weights are not normalized. Sum: {}", sum);
-        std::abort();
+        // std::abort();
       }
     }
     {
@@ -1119,8 +1112,9 @@ namespace dsm {
           [](double sum, const std::pair<Id, double>& p) { return sum + p.second; })};
       if (std::abs(sum - 1.) > std::numeric_limits<double>::epsilon()) {
         pFileLogger->critical("The destination weights are not normalized. Sum: {}", sum);
-        pConsoleLogger->critical("The destination weights are not normalized. Sum: {}", sum);
-        std::abort();
+        pConsoleLogger->critical("The destination weights are not normalized. Sum: {}",
+                                 sum);
+        // std::abort();
       }
     }
     std::uniform_real_distribution<double> uniformDist{0., 1.};
@@ -1140,9 +1134,12 @@ namespace dsm {
         dRand = uniformDist(m_generator);
         sum = 0.;
         for (const auto& [id, weight] : dst_weights) {
-          if (std::abs(weight - 1.) < std::numeric_limits<double>::epsilon() && id == srcId) {
-            pFileLogger->error("The only possible destination node (id: {}) is also a source node.", id);
-            pConsoleLogger->error("The only possible destination node (id: {}) is also a source node.", id);
+          if (std::abs(weight - 1.) < std::numeric_limits<double>::epsilon() &&
+              id == srcId) {
+            pFileLogger->error(
+                "The only possible destination node (id: {}) is also a source node.", id);
+            pConsoleLogger->error(
+                "The only possible destination node (id: {}) is also a source node.", id);
             std::abort();
           }
           dstId = id;
@@ -1171,7 +1168,9 @@ namespace dsm {
   template <typename Delay>
     requires(is_numeric_v<Delay>)
   void Dynamics<Delay>::removeAgent(Size agentId) {
-    pFileLogger->debug("Removing agent with id {} and destination node {}", agentId, m_agents[agentId]->itineraryId());
+    pFileLogger->debug("Removing agent with id {} and destination node {}",
+                       agentId,
+                       m_agents[agentId]->itineraryId());
     m_agents.erase(agentId);
   }
 
