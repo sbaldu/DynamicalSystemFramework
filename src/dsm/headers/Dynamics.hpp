@@ -772,10 +772,10 @@ namespace dsm {
 
     pFileLogger->debug("Evolving streets...");
     // move the first agent of each street queue, if possible, putting it in the next node
-    bool const updateData =
+    bool const bUpdateData =
         m_dataUpdatePeriod.has_value() && m_time % m_dataUpdatePeriod.value() == 0;
     for (const auto& [streetId, pStreet] : m_graph.streetSet()) {
-      if (updateData) {
+      if (bUpdateData) {
         m_streetTails[streetId] += pStreet->nExitingAgents();
       }
       for (auto i = 0; i < pStreet->transportCapacity(); ++i) {
