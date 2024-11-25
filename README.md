@@ -7,10 +7,8 @@ This rework consists of a full code rewriting, in order to implement more featur
 
 ## Requirements
 
-This project requieres:
-- A compiler whith full support for `C++20` or greater
-- `cmake`
-- `vcpkg`, which can be installed following points 1 and 2 in [this tutorial](https://learn.microsoft.com/en-us/vcpkg/get_started/get-started?pivots=shell-bash)
+This project requieres a compiler whith full support for `C++20` or greater and `cmake`.
+It also depends on [spdlog](https://github.com/gabime/spdlog).
 
 Utilities are written in python. To install their dependencies:
 ```shell
@@ -18,13 +16,10 @@ pip install -r ./requirements.txt
 ```
 
 ## Installation
-The library can be installed using CMake. Firstly, configure vpkg:
-```shell
-cmake --preset=default
-```
+The library can be installed using CMake.
 To build and install the project in the default folder run:
 ```shell
-cmake --build build
+cmake -B build && make -C build
 sudo cmake --install build
 ```
 
