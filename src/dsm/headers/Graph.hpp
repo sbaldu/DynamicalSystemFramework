@@ -104,7 +104,7 @@ namespace dsm {
     void buildStreetAngles();
     /// @brief Adjust the nodes' transport capacity
     /// @details The nodes' capacity is adjusted using the graph's streets transport capacity, which may vary basing on the number of lanes. The node capacity will be set to the sum of the incoming streets' transport capacity.
-    void adjustNodeCapacities(int const multiplicationFactor = 1);
+    void adjustNodeCapacities();
     /// @brief Normalize the streets' capacities
     /// @param meanVehicleLength The mean vehicle length
     /// @details The streets' capacities are normalized using the mean vehicle length following the formula:
