@@ -23,17 +23,21 @@ FetchContent_Declare(doctest
   GIT_REPOSITORY https://github.com/doctest/doctest.git
   GIT_TAG v2.4.11
 )
-FetchContent_GetProperties(doctest)
-if(NOT doctest_POPULATED)
-  FetchContent_Populate(doctest)
-endif()
+FetchContent_MakeAvailable(doctest)
+# Get spdlog
+FetchContent_Declare(
+    spdlog
+    GIT_REPOSITORY https://github.com/gabime/spdlog.git
+    GIT_TAG v1.15.0
+)
+FetchContent_MakeAvailable(spdlog)
 
 # add as executable all cpp files into '.' folder
 file(GLOB TEST_SOURCES "*.cpp")
 file(GLOB SRC_SOURCES "../src/dsm/headers/*.cpp")
-list(APPEND SOURCES ${TEST_SOURCES} ${SRC_SOURCES})
+list(APPEND SOURCES ${TEST_SOURCES} ${SRC_SOURCES} )
 
 # Define the executable
 add_executable(dsm_tests.out ${SOURCES})
 target_include_directories(dsm_tests.out PRIVATE ../src/dsm/headers/ ../src/dsm/utility/TypeTraits/)
-target_include_directories(dsm_tests.out SYSTEM PRIVATE ${doctest_SOURCE_DIR}/doctest)
+target_include_directories(dsm_tests.out SYSTEM PRIVATE ${doctest_SOURCE_DIR}/doctest ${spdlog_SOURCE_DIR}/include)
