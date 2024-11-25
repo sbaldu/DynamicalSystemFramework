@@ -1,2 +1,2 @@
 [MAIN]
-generated-members=cv2
+generated-members=cv2, osmnx
