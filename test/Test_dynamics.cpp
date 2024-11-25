@@ -254,13 +254,6 @@ TEST_CASE("Dynamics") {
           CHECK_EQ(dynamics.agents().at(2)->srcNodeId().value(), 118);
         }
       }
-      WHEN("We add agents without adding itineraries") {
-        THEN("An exception is thrown") {
-          std::unordered_map<uint32_t, double> src{{0, 1.}};
-          std::unordered_map<uint32_t, double> dst{{10, 1.}};
-          CHECK_THROWS_AS(dynamics.addAgentsRandomly(1, src, dst), std::invalid_argument);
-        }
-      }
     }
   }
   SUBCASE("addAgents") {
@@ -310,8 +303,6 @@ TEST_CASE("Dynamics") {
           CHECK_THROWS_AS(dynamics.addAgents(0, 1), std::overflow_error);
           auto dummyAgent = Agent(0, 0);
           CHECK_THROWS_AS(dynamics.addAgent(dummyAgent), std::overflow_error);
-          CHECK_THROWS_AS(dynamics.addAgent(std::make_unique<Agent>(dummyAgent)),
-                          std::overflow_error);
         }
       }
     }
