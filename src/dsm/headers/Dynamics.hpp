@@ -536,9 +536,14 @@ namespace dsm {
       if (intersection.agents().empty()) {
         return false;
       }
-      auto const [angle, agentId] = *(intersection.agents().begin());
-      const auto& nextStreet{m_graph.streetSet()[m_agentNextStreetId[agentId]]};
-      if (!(nextStreet->isFull())) {
+      for (auto const [angle, agentId] : intersection.agents()) {
+        auto const& nextStreet{m_graph.streetSet()[m_agentNextStreetId[agentId]]};
+        if (nextStreet->isFull()) {
+          if (m_forcePriorities) {
+            return false;
+          }
+          continue;
+        }
         intersection.removeAgent(agentId);
         m_agents[agentId]->setStreetId(nextStreet->id());
         this->setAgentSpeed(agentId);
@@ -546,9 +551,9 @@ namespace dsm {
             std::ceil(nextStreet->length() / m_agents[agentId]->speed()));
         nextStreet->addAgent(agentId);
         m_agentNextStreetId.erase(agentId);
-      } else if (m_forcePriorities) {
-        return false;
+        return true;
       }
+      return false;
     } else if (pNode->isRoundabout()) {
       auto& roundabout = dynamic_cast<Roundabout&>(*pNode);
       if (roundabout.agents().empty()) {
