@@ -83,7 +83,7 @@ namespace dsm {
     void incrementTime();
     /// @brief Increment the agent's time by a given value.
     /// @param time The value to increment the agent's time by
-    void incrementTime(Delay const time);
+    void incrementTime(unsigned int const time);
     /// @brief Reset the agent's time to 0
     void resetTime() { m_time = 0; }
 
@@ -183,7 +183,7 @@ namespace dsm {
   template <typename Delay>
     requires(is_numeric_v<Delay>)
   void Agent<Delay>::incrementTime() {
-    if (m_time == std::numeric_limits<Delay>::max()) {
+    if (m_time == std::numeric_limits<unsigned int>::max()) {
       pConsoleLogger->critical(
           "Agent {} time has reached its maximum value ({}).", m_id, m_time);
       std::abort();
@@ -192,7 +192,7 @@ namespace dsm {
   }
   template <typename Delay>
     requires(is_numeric_v<Delay>)
-  void Agent<Delay>::incrementTime(Delay const time) {
+  void Agent<Delay>::incrementTime(unsigned int const time) {
     if (m_time + time < m_time) {
       pConsoleLogger->critical(
           "Agent {} time has reached its maximum value ({}).", m_id, m_time);
