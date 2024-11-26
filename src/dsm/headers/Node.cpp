@@ -7,22 +7,24 @@ namespace dsm {
 
   void Intersection::setCapacity(Size capacity) {
     if (capacity < m_agents.size()) {
-      throw std::runtime_error(buildLog(std::format(
-          "Intersection capacity ({}) is smaller than the current queue size ({}).",
+      pConsoleLogger->critical(
+          "New capacity ({}) is smaller than the current agent size ({}).",
           capacity,
-          m_agents.size())));
+          m_agents.size());
+      std::abort();
     }
     Node::setCapacity(capacity);
   }
 
   void Intersection::addAgent(double angle, Id agentId) {
-    if (m_agents.size() == this->m_capacity) {
-      throw std::runtime_error(buildLog("Intersection is full."));
+    if (isFull()) {
+      pConsoleLogger->critical("Intersection is full.");
+      std::abort();
     }
     for (auto const [angle, id] : m_agents) {
       if (id == agentId) {
-        throw std::runtime_error(
-            buildLog(std::format("Agent with id {} is already on the node.", agentId)));
+        pConsoleLogger->critical("Agent with id {} is already on the node.", agentId);
+        std::abort();
       }
     }
     auto iAngle{static_cast<int16_t>(angle * 100)};
@@ -31,21 +33,11 @@ namespace dsm {
   }
 
   void Intersection::addAgent(Id agentId) {
-    if (m_agents.size() == this->m_capacity) {
-      throw std::runtime_error(buildLog("Intersection is full."));
-    }
-    for (auto const [angle, id] : m_agents) {
-      if (id == agentId) {
-        throw std::runtime_error(
-            buildLog(std::format("Agent with id {} is already on the node.", id)));
-      }
-    }
-    int lastKey{0};
+    int16_t lastKey{0};
     if (!m_agents.empty()) {
       lastKey = m_agents.rbegin()->first + 1;
     }
-    m_agents.emplace(lastKey, agentId);
-    ++m_agentCounter;
+    addAgent(lastKey, agentId);
   }
 
   void Intersection::removeAgent(Id agentId) {
@@ -67,13 +59,15 @@ namespace dsm {
   }
 
   void Roundabout::enqueue(Id agentId) {
-    if (m_agents.size() == this->m_capacity) {
-      throw std::runtime_error(buildLog("Roundabout is full."));
+    if (isFull()) {
+      pConsoleLogger->critical("Roundabout is full.");
+      std::abort();
     }
     for (const auto id : m_agents) {
       if (id == agentId) {
-        throw std::runtime_error(buildLog(
-            std::format("Agent with id {} is already on the roundabout.", agentId)));
+        pConsoleLogger->critical("Agent with id {} is already on the roundabout.",
+                                 agentId);
+        std::abort();
       }
     }
     m_agents.push(agentId);
@@ -81,7 +75,8 @@ namespace dsm {
 
   Id Roundabout::dequeue() {
     if (m_agents.empty()) {
-      throw std::runtime_error(buildLog("Roundabout is empty."));
+      pConsoleLogger->critical("Roundabout is empty.");
+      std::abort();
     }
     Id agentId{m_agents.front()};
     m_agents.pop();

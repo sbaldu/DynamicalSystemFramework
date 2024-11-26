@@ -35,6 +35,10 @@
 #include "../utility/TypeTraits/is_node.hpp"
 #include "../utility/TypeTraits/is_street.hpp"
 
+#include <spdlog/spdlog.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/sinks/basic_file_sink.h>
+
 namespace dsm {
 
   /// @brief The Graph class represents a graph in the network.
