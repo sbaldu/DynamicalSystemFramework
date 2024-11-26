@@ -559,7 +559,9 @@ namespace dsm {
       for (auto& it : row) {
         sum += std::abs(it.second);
       }
-      sum < std::numeric_limits<double>::epsilon() ? sum = 1. : sum = sum;
+      if (sum < std::numeric_limits<double>::epsilon()) {
+        sum = 1.;
+      }
       for (auto& it : row) {
         normRows.insert(it.first, it.second / sum);
       }
@@ -576,7 +578,9 @@ namespace dsm {
       for (auto& it : col) {
         sum += std::abs(it.second);
       }
-      sum < std::numeric_limits<double>::epsilon() ? sum = 1. : sum = sum;
+      if (sum < std::numeric_limits<double>::epsilon()) {
+        sum = 1.;
+      }
       for (auto& it : col) {
         normCols.insert(it.first, it.second / sum);
       }

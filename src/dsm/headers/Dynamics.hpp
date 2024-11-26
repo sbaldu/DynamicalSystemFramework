@@ -558,7 +558,7 @@ namespace dsm {
       if (intersection.agents().empty()) {
         return false;
       }
-      for (auto const [angle, agentId] : intersection.agents()) {
+      for (auto const& [angle, agentId] : intersection.agents()) {
         auto const& nextStreet{m_graph.streetSet()[m_agentNextStreetId[agentId]]};
         if (nextStreet->isFull()) {
           if (m_forcePriorities) {
