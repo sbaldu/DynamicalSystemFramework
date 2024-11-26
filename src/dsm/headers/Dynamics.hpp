@@ -72,12 +72,10 @@ namespace dsm {
     requires(is_numeric_v<Delay>)
   class Dynamics {
   protected:
-    inline static auto const pFileLogger{
-        spdlog::basic_logger_mt("DSM_DYNAMICS_FILE_LOGGER",
-                                std::format("{}{}", DSM_LOG_FOLDER, DSM_LOG_FILE),
-                                true)};
+    inline static auto const pFileLogger{spdlog::basic_logger_mt(
+        "DSM_DYNAMICS_FILE", std::format("{}{}", DSM_LOG_FOLDER, DSM_LOG_FILE), true)};
     inline static auto const pConsoleLogger{
-        spdlog::stdout_color_mt("DSM_DYNAMICS_CONSOLE_LOGGER")};
+        spdlog::stdout_color_mt("DSM_DYNAMICS_CONSOLE")};
     std::unordered_map<Id, std::unique_ptr<Itinerary>> m_itineraries;
     std::map<Id, std::unique_ptr<Agent<Delay>>> m_agents;
     TimePoint m_time, m_previousSpireTime;

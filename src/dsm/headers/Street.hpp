@@ -27,12 +27,18 @@
 #include "../utility/Logger.hpp"
 #include "../utility/Typedef.hpp"
 
+#include <spdlog/spdlog.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/sinks/basic_file_sink.h>
+
 namespace dsm {
   /// @brief The Street class represents a street in the network.
   /// @tparam Id, The type of the street's id. It must be an unsigned integral type.
   /// @tparam Size, The type of the street's capacity. It must be an unsigned integral type.
   class Street {
   private:
+    inline static auto const pConsoleLogger{
+        spdlog::stdout_color_mt("DSM_STREET_CONSOLE")};
     std::vector<dsm::queue<Size>> m_exitQueues;
     std::set<Id> m_waitingAgents;
     std::pair<Id, Id> m_nodePair;

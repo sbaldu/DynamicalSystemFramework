@@ -120,20 +120,21 @@ namespace dsm {
   }
 
   void Street::addAgent(Id agentId) {
-    assert((void("Agent is already on the street."), !m_waitingAgents.contains(agentId)));
-    for (auto const& queue : m_exitQueues) {
-      for (auto const& id : queue) {
-        assert((void("Agent is already in queue."), id != agentId));
-      }
+    if (m_waitingAgents.contains(agentId)) {
+      pConsoleLogger->critical("Agent {} is already on the street {}.", agentId, m_id);
+      std::abort();
     }
     m_waitingAgents.insert(agentId);
-    ;
   }
   void Street::enqueue(Id agentId, size_t index) {
     assert((void("Agent is not on the street."), m_waitingAgents.contains(agentId)));
     for (auto const& queue : m_exitQueues) {
       for (auto const& id : queue) {
-        assert((void("Agent is already in queue."), id != agentId));
+        if (id == agentId) {
+          pConsoleLogger->critical(
+              "Agent {} is already in queue on street {}.", agentId, m_id);
+          std::abort();
+        }
       }
     }
     m_waitingAgents.erase(agentId);
