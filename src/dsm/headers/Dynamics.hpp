@@ -1095,6 +1095,15 @@ namespace dsm {
   void Dynamics<Delay>::addAgentsRandomly(Size nAgents,
                                           const TContainer& src_weights,
                                           const TContainer& dst_weights) {
+    if (src_weights.size() == 1 && dst_weights.size() == 1 &&
+        src_weights.begin()->first == dst_weights.begin()->first) {
+      pFileLogger->critical("The only source node {} is also the only destination node.",
+                            src_weights.begin()->first);
+      pConsoleLogger->critical(
+          "The only source node {} is also the only destination node.",
+          src_weights.begin()->first);
+      std::abort();
+    }
     auto const srcSum{std::accumulate(
         src_weights.begin(),
         src_weights.end(),
@@ -1127,28 +1136,30 @@ namespace dsm {
     std::uniform_real_distribution<double> dstUniformDist{0., dstSum};
     while (nAgents > 0) {
       Id srcId{0}, dstId{0};
-      double dRand{srcUniformDist(m_generator)}, sum{0.};
-      for (const auto& [id, weight] : src_weights) {
-        srcId = id;
-        sum += weight;
-        if (dRand < sum) {
-          break;
+      if (dst_weights.size() == 1) {
+        dstId = dst_weights.begin()->first;
+        srcId = dstId;
+      }
+      double dRand, sum;
+      while (srcId == dstId) {
+        dRand = srcUniformDist(m_generator);
+        sum = 0.;
+        for (const auto& [id, weight] : src_weights) {
+          srcId = id;
+          sum += weight;
+          if (dRand < sum) {
+            break;
+          }
         }
       }
-      dstId = srcId;
+      if (src_weights.size() > 1) {
+        dstId = srcId;
+      }
       pFileLogger->debug("Entering loop to randomly pick destination node.");
       while (dstId == srcId) {
         dRand = dstUniformDist(m_generator);
         sum = 0.;
         for (const auto& [id, weight] : dst_weights) {
-          if (std::abs(weight - 1.) < std::numeric_limits<double>::epsilon() &&
-              id == srcId) {
-            pFileLogger->critical(
-                "The only possible destination node (id: {}) is also a source node.", id);
-            pConsoleLogger->critical(
-                "The only possible destination node (id: {}) is also a source node.", id);
-            std::abort();
-          }
           dstId = id;
           sum += weight;
           if (dRand < sum) {
