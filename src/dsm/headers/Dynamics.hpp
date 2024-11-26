@@ -292,6 +292,12 @@ namespace dsm {
     /// @throw std::runtime_error If there are no itineraries
     virtual void addAgentsUniformly(Size nAgents,
                                     std::optional<Id> itineraryId = std::nullopt);
+    /// @brief Add nAgents agents to the simulation, randomly choosing the source and destination nodes
+    /// @param nAgents The number of agents to add
+    /// @param src_weights A map <nodeId, weight> representing the weights of the source nodes
+    /// @param dst_weights A map <nodeId, weight> representing the weights of the destination nodes
+    /// @details The weights are used to randomly choose the source and destination nodes. It is not
+    ///          necessary that the sum of the weights is 1, but they must be all positive.
     template <typename TContainer>
       requires(std::is_same_v<TContainer, std::unordered_map<Id, double>> ||
                std::is_same_v<TContainer, std::map<Id, double>>)
@@ -1089,36 +1095,39 @@ namespace dsm {
   void Dynamics<Delay>::addAgentsRandomly(Size nAgents,
                                           const TContainer& src_weights,
                                           const TContainer& dst_weights) {
-    // Check if the weights are normalized
-    {
-      auto const sum{std::accumulate(
-          src_weights.begin(),
-          src_weights.end(),
-          0.,
-          [](double sum, const std::pair<Id, double>& p) { return sum + p.second; })};
-      if (std::abs(sum - 1.) > std::numeric_limits<double>::epsilon()) {
-        pFileLogger->critical("The source weights are not normalized. Sum: {}", sum);
-        pConsoleLogger->critical("The source weights are not normalized. Sum: {}", sum);
-        // std::abort();
-      }
-    }
-    {
-      auto const sum{std::accumulate(
-          dst_weights.begin(),
-          dst_weights.end(),
-          0.,
-          [](double sum, const std::pair<Id, double>& p) { return sum + p.second; })};
-      if (std::abs(sum - 1.) > std::numeric_limits<double>::epsilon()) {
-        pFileLogger->critical("The destination weights are not normalized. Sum: {}", sum);
-        pConsoleLogger->critical("The destination weights are not normalized. Sum: {}",
-                                 sum);
-        // std::abort();
-      }
-    }
-    std::uniform_real_distribution<double> uniformDist{0., 1.};
+    auto const srcSum{std::accumulate(
+        src_weights.begin(),
+        src_weights.end(),
+        0.,
+        [](double sum, const std::pair<Id, double>& p) {
+          if (p.second < 0.) {
+            pFileLogger->critical(
+                "Negative weight ({}) for source node {}.", p.second, p.first);
+            pConsoleLogger->critical(
+                "Negative weight ({}) for source node {}.", p.second, p.first);
+            std::abort();
+          }
+          return sum + p.second;
+        })};
+    auto const dstSum{std::accumulate(
+        dst_weights.begin(),
+        dst_weights.end(),
+        0.,
+        [](double sum, const std::pair<Id, double>& p) {
+          if (p.second < 0.) {
+            pFileLogger->critical(
+                "Negative weight ({}) for destination node {}.", p.second, p.first);
+            pConsoleLogger->critical(
+                "Negative weight ({}) for destination node {}.", p.second, p.first);
+            std::abort();
+          }
+          return sum + p.second;
+        })};
+    std::uniform_real_distribution<double> srcUniformDist{0., srcSum};
+    std::uniform_real_distribution<double> dstUniformDist{0., dstSum};
     while (nAgents > 0) {
       Id srcId{0}, dstId{0};
-      double dRand{uniformDist(m_generator)}, sum{0.};
+      double dRand{srcUniformDist(m_generator)}, sum{0.};
       for (const auto& [id, weight] : src_weights) {
         srcId = id;
         sum += weight;
@@ -1129,14 +1138,14 @@ namespace dsm {
       dstId = srcId;
       pFileLogger->debug("Entering loop to randomly pick destination node.");
       while (dstId == srcId) {
-        dRand = uniformDist(m_generator);
+        dRand = dstUniformDist(m_generator);
         sum = 0.;
         for (const auto& [id, weight] : dst_weights) {
           if (std::abs(weight - 1.) < std::numeric_limits<double>::epsilon() &&
               id == srcId) {
-            pFileLogger->error(
+            pFileLogger->critical(
                 "The only possible destination node (id: {}) is also a source node.", id);
-            pConsoleLogger->error(
+            pConsoleLogger->critical(
                 "The only possible destination node (id: {}) is also a source node.", id);
             std::abort();
           }
