@@ -42,6 +42,7 @@ namespace dsm {
   /// @tparam Size, The type of the graph's capacity. It must be an unsigned integral type.
   class Graph {
   private:
+    inline static auto const pConsoleLogger{spdlog::stdout_color_mt("DSM_GRAPH_CONSOLE")};
     std::unordered_map<Id, std::unique_ptr<Node>> m_nodes;
     std::unordered_map<Id, std::unique_ptr<Street>> m_streets;
     std::unordered_map<Id, Id> m_nodeMapping;
@@ -164,19 +165,16 @@ namespace dsm {
     /// @tparam Delay The type of the traffic light's delay
     /// @param nodeId The id of the node to convert to a traffic light
     /// @return A reference to the traffic light
-    /// @throws std::invalid_argument if the node does not exist
     template <typename Delay>
       requires(std::unsigned_integral<Delay>)
-    TrafficLight<Delay>& makeTrafficLight(Id nodeId);
+    TrafficLight<Delay>& makeTrafficLight(Id const nodeId);
     /// @brief Convert an existing node into a roundabout
     /// @param nodeId The id of the node to convert to a roundabout
     /// @return A reference to the roundabout
-    /// @throws std::invalid_argument if the node does not exist
     Roundabout& makeRoundabout(Id nodeId);
     /// @brief Convert an existing street into a spire street
     /// @param streetId The id of the street to convert to a spire street
     /// @return A reference to the spire street
-    /// @throws std::invalid_argument if the street does not exist
     SpireStreet& makeSpireStreet(Id streetId);
 
     /// @brief Add a street to the graph
@@ -221,7 +219,6 @@ namespace dsm {
     const std::unique_ptr<Street>* street(Id source, Id destination) const;
     /// @brief Get the opposite street of a street in the graph
     /// @param streetId The id of the street
-    /// @throws std::invalid_argument if the street does not exist
     /// @return A std::unique_ptr to the street if it exists, nullptr otherwise
     const std::unique_ptr<Street>* oppositeStreet(Id streetId) const;
 
@@ -284,9 +281,10 @@ namespace dsm {
 
   template <typename Delay>
     requires(std::unsigned_integral<Delay>)
-  TrafficLight<Delay>& Graph::makeTrafficLight(Id nodeId) {
+  TrafficLight<Delay>& Graph::makeTrafficLight(Id const nodeId) {
     if (!m_nodes.contains(nodeId)) {
-      throw std::invalid_argument(buildLog("Node does not exist."));
+      pConsoleLogger->error("Node {} does not exist in graph.", nodeId);
+      std::abort();
     }
     auto& pNode = m_nodes[nodeId];
     pNode = std::make_unique<TrafficLight<Delay>>(*pNode);
