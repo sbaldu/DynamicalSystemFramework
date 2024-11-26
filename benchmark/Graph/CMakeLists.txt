@@ -13,6 +13,7 @@ set(EXECUTABLE_OUTPUT_PATH ../../)
 
 include_directories(../../src/dsm/headers/)
 include_directories(../../src/dsm/utility/)
+include_directories(${spdlog_SOURCE_DIR}/include)
 
 file(GLOB SOURCES "../../src/dsm/headers/*.cpp")
 
