@@ -3,7 +3,7 @@ This script is used to get the OSM data of a place and save it in a csv file.
 The place is passed as a command line argument.
 
 Example:
-python3 get_osm_data.py postua, vercelli, italy
+python get_osm_data.py --place "postua, vercelli, italy"
 
 The output files are:
 - nodes.csv
@@ -12,17 +12,21 @@ The output files are:
 The files are saved in the current directory.
 """
 
-import sys
+from argparse import ArgumentParser
 import osmnx as ox
 
 if __name__ == "__main__":
-    ox.config(use_cache=True, log_console=True)
-
-    place = sys.argv[1]
+    parser = ArgumentParser("Script to get the OSM data of a place.")
+    parser.add_argument(
+        "--place",
+        required=True,
+        help="Place to get the OSM data in the format: city, province, country",
+    )
+    parser = parser.parse_args()
 
     # get the street network for San Cesario sul Panaro
-    G = ox.graph_from_place(place, network_type="drive")
-    fig, ax = ox.plot_graph(G)
+    G = ox.graph_from_place(parser.place, network_type="drive")
+    ox.plot_graph(G)
 
     gdf_nodes, gdf_edges = ox.graph_to_gdfs(G)
 
