@@ -127,7 +127,10 @@ namespace dsm {
     m_waitingAgents.insert(agentId);
   }
   void Street::enqueue(Id agentId, size_t index) {
-    assert((void("Agent is not on the street."), m_waitingAgents.contains(agentId)));
+    if (!m_waitingAgents.contains(agentId)) {
+      pConsoleLogger->critical("Agent {} is not on the street {}.", agentId, m_id);
+      std::abort();
+    }
     for (auto const& queue : m_exitQueues) {
       for (auto const& id : queue) {
         if (id == agentId) {
