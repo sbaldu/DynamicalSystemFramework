@@ -65,10 +65,10 @@ namespace dsm {
     /// @brief Increment the agent's delay by 1
     /// @throw std::overflow_error, if delay has reached its maximum value
     void incrementDelay();
-    /// @brief Set the agent's delay
+    /// @brief Increment the agent's delay by a given value
     /// @param delay The agent's delay
     /// @throw std::overflow_error, if delay has reached its maximum value
-    void incrementDelay(Delay delay);
+    void incrementDelay(Delay const delay);
     /// @brief Decrement the agent's delay by 1
     /// @throw std::underflow_error, if delay has reached its minimum value
     void decrementDelay();
@@ -84,7 +84,7 @@ namespace dsm {
     /// @brief Increment the agent's time by a given value
     /// @param time The value to increment the agent's time by
     /// @throw std::overflow_error, if time has reached its maximum value
-    void incrementTime(unsigned int time);
+    void incrementTime(unsigned int const time);
     /// @brief Reset the agent's time to 0
     void resetTime() { m_time = 0; }
 
@@ -153,11 +153,11 @@ namespace dsm {
   }
   template <typename Delay>
     requires(is_numeric_v<Delay>)
-  void Agent<Delay>::incrementDelay(Delay delay) {
+  void Agent<Delay>::incrementDelay(Delay const delay) {
     if (m_delay + delay < m_delay) {
       throw std::overflow_error(buildLog("Delay has reached its maximum value"));
     }
-    m_delay = delay;
+    m_delay += delay;
   }
   template <typename Delay>
     requires(is_numeric_v<Delay>)
@@ -187,7 +187,7 @@ namespace dsm {
   }
   template <typename Delay>
     requires(is_numeric_v<Delay>)
-  void Agent<Delay>::incrementTime(unsigned int time) {
+  void Agent<Delay>::incrementTime(unsigned int const time) {
     if (m_time + time < m_time) {
       throw std::overflow_error(buildLog("Time has reached its maximum value"));
     }

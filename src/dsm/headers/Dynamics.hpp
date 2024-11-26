@@ -508,7 +508,7 @@ namespace dsm {
         } else {
           this->removeAgent(agentId);
         }
-        return;
+        continue;
       }
       auto const& nextStreet{m_graph.streetSet()[m_agentNextStreetId[agentId]]};
       if (nextStreet->isFull()) {
@@ -1073,43 +1073,64 @@ namespace dsm {
   void Dynamics<Delay>::addAgentsRandomly(Size nAgents,
                                           const TContainer& src_weights,
                                           const TContainer& dst_weights) {
-    // Check if the weights are normalized
-    {
-      auto const sum{std::accumulate(
-          src_weights.begin(),
-          src_weights.end(),
-          0.,
-          [](double sum, const std::pair<Id, double>& p) { return sum + p.second; })};
-      assert((void("The source weights are not normalized"),
-              std::abs(sum - 1.) < std::numeric_limits<double>::epsilon()));
+    if (src_weights.size() == 1 && dst_weights.size() == 1 &&
+        src_weights.begin()->first == dst_weights.begin()->first) {
+      throw std::invalid_argument(buildLog(
+          std::format("The only source node {} is also the only destination node.",
+                      src_weights.begin()->first)));
     }
-    {
-      auto const sum{std::accumulate(
-          dst_weights.begin(),
-          dst_weights.end(),
-          0.,
-          [](double sum, const std::pair<Id, double>& p) { return sum + p.second; })};
-      assert((void("The destination weights are not normalized"),
-              std::abs(sum - 1.) < std::numeric_limits<double>::epsilon()));
-    }
+    auto const srcSum{std::accumulate(
+        src_weights.begin(),
+        src_weights.end(),
+        0.,
+        [](double sum, const std::pair<Id, double>& p) {
+          if (p.second < 0.) {
+            throw std::invalid_argument(buildLog(std::format(
+                "Negative weight ({}) for source node {}.", p.second, p.first)));
+          }
+          return sum + p.second;
+        })};
+    auto const dstSum{std::accumulate(
+        dst_weights.begin(),
+        dst_weights.end(),
+        0.,
+        [](double sum, const std::pair<Id, double>& p) {
+          if (p.second < 0.) {
+            throw std::invalid_argument(buildLog(std::format(
+                "Negative weight ({}) for destination node {}.", p.second, p.first)));
+          }
+          return sum + p.second;
+        })};
+    std::uniform_real_distribution<double> srcUniformDist{0., srcSum};
+    std::uniform_real_distribution<double> dstUniformDist{0., dstSum};
     while (nAgents > 0) {
       Id srcId{0}, dstId{0};
-      double dRand{this->m_uniformDist(this->m_generator)}, sum{0.};
-      for (const auto& [id, weight] : src_weights) {
-        sum += weight;
-        if (dRand < sum) {
-          srcId = id;
-          break;
-        }
+      if (dst_weights.size() == 1) {
+        dstId = dst_weights.begin()->first;
+        srcId = dstId;
       }
-      dstId = srcId;
-      while (dstId == srcId) {
-        dRand = this->m_uniformDist(this->m_generator);
+      double dRand, sum;
+      while (srcId == dstId) {
+        dRand = srcUniformDist(m_generator);
         sum = 0.;
-        for (const auto& [id, weight] : dst_weights) {
+        for (const auto& [id, weight] : src_weights) {
+          srcId = id;
           sum += weight;
           if (dRand < sum) {
-            dstId = id;
+            break;
+          }
+        }
+      }
+      if (src_weights.size() > 1) {
+        dstId = srcId;
+      }
+      while (dstId == srcId) {
+        dRand = dstUniformDist(m_generator);
+        sum = 0.;
+        for (const auto& [id, weight] : dst_weights) {
+          dstId = id;
+          sum += weight;
+          if (dRand < sum) {
             break;
           }
         }

@@ -16,7 +16,7 @@ namespace dsm {
   }
 
   void Intersection::addAgent(double angle, Id agentId) {
-    if (m_agents.size() == this->m_capacity) {
+    if (isFull()) {
       throw std::runtime_error(buildLog("Intersection is full."));
     }
     for (auto const [angle, id] : m_agents) {
@@ -31,21 +31,11 @@ namespace dsm {
   }
 
   void Intersection::addAgent(Id agentId) {
-    if (m_agents.size() == this->m_capacity) {
-      throw std::runtime_error(buildLog("Intersection is full."));
-    }
-    for (auto const [angle, id] : m_agents) {
-      if (id == agentId) {
-        throw std::runtime_error(
-            buildLog(std::format("Agent with id {} is already on the node.", id)));
-      }
-    }
     int lastKey{0};
     if (!m_agents.empty()) {
       lastKey = m_agents.rbegin()->first + 1;
     }
-    m_agents.emplace(lastKey, agentId);
-    ++m_agentCounter;
+    addAgent(static_cast<double>(lastKey), agentId);
   }
 
   void Intersection::removeAgent(Id agentId) {
@@ -67,7 +57,7 @@ namespace dsm {
   }
 
   void Roundabout::enqueue(Id agentId) {
-    if (m_agents.size() == this->m_capacity) {
+    if (isFull()) {
       throw std::runtime_error(buildLog("Roundabout is full."));
     }
     for (const auto id : m_agents) {
