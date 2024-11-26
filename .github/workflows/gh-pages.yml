@@ -24,6 +24,8 @@ jobs:
 
       - name: Doxygen Action
         uses: mattnotmitt/doxygen-action@edge
+        with:
+          enable-latex: true
 
       - name: Set up git
         run: |
