@@ -15,6 +15,7 @@ namespace dsm {
     for (auto i{0}; i < street.nLanes(); ++i) {
       m_exitQueues.push_back(dsm::queue<Size>());
     }
+    m_laneMapping = street.laneMapping();
   }
 
   Street::Street(Id index, std::pair<Id, Id> pair)
@@ -27,6 +28,7 @@ namespace dsm {
         m_transportCapacity{1},
         m_nLanes{1} {
     m_exitQueues.push_back(dsm::queue<Size>());
+    m_laneMapping.emplace_back(Direction::ANY);
   }
 
   Street::Street(Id id, Size capacity, double len, std::pair<Id, Id> nodePair)
@@ -39,6 +41,7 @@ namespace dsm {
         m_transportCapacity{1},
         m_nLanes{1} {
     m_exitQueues.push_back(dsm::queue<Size>());
+    m_laneMapping.emplace_back(Direction::ANY);
   }
 
   Street::Street(
@@ -52,6 +55,7 @@ namespace dsm {
         m_nLanes{1} {
     this->setMaxSpeed(maxSpeed);
     m_exitQueues.push_back(dsm::queue<Size>());
+    m_laneMapping.emplace_back(Direction::ANY);
   }
 
   Street::Street(Id id,
@@ -76,6 +80,27 @@ namespace dsm {
     m_exitQueues.resize(nLanes);
     for (auto i{0}; i < nLanes; ++i) {
       m_exitQueues.push_back(dsm::queue<Size>());
+    }
+    switch (nLanes) {
+      case 1:
+        m_laneMapping.emplace_back(Direction::ANY);
+        break;
+      case 2:
+        m_laneMapping.emplace_back(Direction::RIGHTANDSTRAIGHT);
+        m_laneMapping.emplace_back(Direction::LEFT);
+        break;
+      case 3:
+        m_laneMapping.emplace_back(Direction::RIGHT);
+        m_laneMapping.emplace_back(Direction::STRAIGHT);
+        m_laneMapping.emplace_back(Direction::LEFT);
+        break;
+      default:
+        m_laneMapping.emplace_back(Direction::RIGHT);
+        for (auto i{1}; i < nLanes - 1; ++i) {
+          m_laneMapping.emplace_back(Direction::STRAIGHT);
+        }
+        m_laneMapping.emplace_back(Direction::LEFT);
+        break;
     }
   }
 

@@ -230,9 +230,13 @@ TEST_CASE("Graph") {
       graph.addStreet(Street{1, 1, 1., std::make_pair(0, 1)});
       graph.buildAdj();
       WHEN("We make node 0 a traffic light") {
-        graph.makeTrafficLight<uint8_t>(0);
+        auto& tl = graph.makeTrafficLight(0, 60);
         THEN("The node 0 is a traffic light") {
           CHECK(graph.nodeSet().at(0)->isTrafficLight());
+        }
+        THEN("The traffic light has the correct parameters") {
+          CHECK_EQ(tl.id(), 0);
+          CHECK_EQ(tl.cycleTime(), 60);
         }
       }
     }

@@ -34,6 +34,7 @@ namespace dsm {
   class Street {
   private:
     std::vector<dsm::queue<Size>> m_exitQueues;
+    std::vector<Direction> m_laneMapping;
     std::set<Id> m_waitingAgents;
     std::pair<Id, Id> m_nodePair;
     double m_len;
@@ -108,7 +109,7 @@ namespace dsm {
     void setLength(double len);
     /// @brief Set the street's queue
     /// @param queue The street's queue
-    void setQueue(dsm::queue<Size> queue, size_t index) {
+    inline void setQueue(dsm::queue<Size> queue, size_t index) {
       m_exitQueues[index] = std::move(queue);
     }
     /// @brief Set the street's node pair
@@ -196,6 +197,8 @@ namespace dsm {
     /// @param previousStreetAngle The angle of the previous street
     /// @return double The delta angle between the street and the previous street
     double deltaAngle(double const previousStreetAngle) const;
+
+    inline std::vector<Direction> const& laneMapping() const { return m_laneMapping; }
 
     virtual void addAgent(Id agentId);
     /// @brief Add an agent to the street's queue

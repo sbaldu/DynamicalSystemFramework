@@ -49,6 +49,60 @@ namespace dsm {
     return copy;
   }
 
+  bool TrafficLightCycle::isGreen(Delay const cycleTime, Delay const counter) const {
+    auto const rest{(m_phase + m_greenTime) / cycleTime};
+    if (rest) {
+      return (counter < rest) || (counter >= m_phase);
+    }
+    return (counter >= m_phase) && (counter < m_phase + m_greenTime);
+  }
+
+  void TrafficLight::setCycle(Id const streetId,
+                              Direction direction,
+                              TrafficLightCycle const& cycle) {
+    if (!(cycle.greenTime() < m_cycleTime)) {
+      throw std::invalid_argument(
+          buildLog("Green time must be less than the cycle time."));
+    }
+    if (!(cycle.phase() < m_cycleTime)) {
+      throw std::invalid_argument(buildLog("Phase must be less than the cycle time."));
+    }
+    if (direction == Direction::UTURN) {
+      direction = Direction::LEFT;
+    }
+    if (!m_cycles.contains(streetId)) {
+      TrafficLightCycle defaultCycle(m_cycleTime, 0);
+      std::vector<TrafficLightCycle> cycles{defaultCycle, defaultCycle, defaultCycle};
+      m_cycles.emplace(streetId, cycles);
+    }
+    m_cycles[streetId][direction] = cycle;
+  }
+
+  bool TrafficLight::isGreen(Id const streetId, Direction direction) const {
+    if (!m_cycles.contains(streetId)) {
+      throw std::invalid_argument(buildLog("Street id does not exist."));
+    }
+    switch (direction) {
+      case Direction::UTURN:
+        direction = Direction::LEFT;
+        break;
+      case Direction::RIGHTANDSTRAIGHT:
+        return m_cycles.at(streetId)[Direction::RIGHT].isGreen(m_cycleTime, m_counter) &&
+               m_cycles.at(streetId)[Direction::STRAIGHT].isGreen(m_cycleTime, m_counter);
+      case Direction::LEFTANDSTRAIGHT:
+        return m_cycles.at(streetId)[Direction::LEFT].isGreen(m_cycleTime, m_counter) &&
+               m_cycles.at(streetId)[Direction::STRAIGHT].isGreen(m_cycleTime, m_counter);
+      case Direction::ANY:
+        return m_cycles.at(streetId)[Direction::RIGHT].isGreen(m_cycleTime, m_counter) &&
+               m_cycles.at(streetId)[Direction::STRAIGHT].isGreen(m_cycleTime,
+                                                                  m_counter) &&
+               m_cycles.at(streetId)[Direction::LEFT].isGreen(m_cycleTime, m_counter);
+      default:
+        break;
+    }
+    return m_cycles.at(streetId)[direction].isGreen(m_cycleTime, m_counter);
+  }
+
   Roundabout::Roundabout(const Node& node) : Node{node.id()} {
     if (node.coords().has_value()) {
       this->setCoords(node.coords().value());

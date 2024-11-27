@@ -419,6 +419,15 @@ namespace dsm {
     m_nodes.emplace(std::make_pair(node.id(), std::make_unique<Intersection>(node)));
   }
 
+  TrafficLight& Graph::makeTrafficLight(Id const nodeId, Delay const cycleTime) {
+    if (!m_nodes.contains(nodeId)) {
+      throw std::invalid_argument(buildLog("Node does not exist."));
+    }
+    auto& pNode = m_nodes[nodeId];
+    pNode = std::make_unique<TrafficLight>(*pNode, cycleTime);
+    return dynamic_cast<TrafficLight&>(*pNode);
+  }
+
   Roundabout& Graph::makeRoundabout(Id nodeId) {
     if (!m_nodes.contains(nodeId)) {
       throw std::invalid_argument(buildLog("Node does not exist."));
