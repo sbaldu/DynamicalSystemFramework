@@ -75,7 +75,33 @@ namespace dsm {
       std::vector<TrafficLightCycle> cycles{defaultCycle, defaultCycle, defaultCycle};
       m_cycles.emplace(streetId, cycles);
     }
-    m_cycles[streetId][direction] = cycle;
+    switch (direction) {
+      case Direction::RIGHTANDSTRAIGHT:
+        m_cycles[streetId][Direction::RIGHT] = cycle;
+        m_cycles[streetId][Direction::STRAIGHT] = cycle;
+        break;
+      case Direction::LEFTANDSTRAIGHT:
+        m_cycles[streetId][Direction::LEFT] = cycle;
+        m_cycles[streetId][Direction::STRAIGHT] = cycle;
+        break;
+      case Direction::ANY:
+        m_cycles[streetId][Direction::RIGHT] = cycle;
+        m_cycles[streetId][Direction::STRAIGHT] = cycle;
+        m_cycles[streetId][Direction::LEFT] = cycle;
+        break;
+      default:
+        m_cycles[streetId][direction] = cycle;
+        break;
+    }
+  }
+
+  void TrafficLight::moveCycle(Id const oldStreetId, Id const newStreetId) {
+    if (!m_cycles.contains(oldStreetId)) {
+      throw std::invalid_argument(buildLog("Old street id does not exist."));
+    }
+    auto handler{m_cycles.extract(oldStreetId)};
+    handler.key() = newStreetId;
+    m_cycles.insert(std::move(handler));
   }
 
   bool TrafficLight::isGreen(Id const streetId, Direction direction) const {

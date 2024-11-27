@@ -211,6 +211,12 @@ namespace dsm {
 
     void setCycle(Id const streetId, Direction direction, TrafficLightCycle const& cycle);
 
+    void moveCycle(Id const oldStreetId, Id const newStreetId);
+
+    inline std::unordered_map<Id, std::vector<TrafficLightCycle>> const& cycles() const {
+      return m_cycles;
+    }
+
     bool isGreen(Id const streetId, Direction direction) const;
 
     inline bool isTrafficLight() const noexcept final { return true; }

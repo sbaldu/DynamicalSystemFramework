@@ -72,6 +72,15 @@ namespace dsm {
         }
         intersection.setStreetPriorities(newStreetPriorities);
       }
+      if (node->isTrafficLight()) {
+        auto& trafficLight = dynamic_cast<TrafficLight&>(*node);
+        for (auto const& pair : trafficLight.cycles()) {
+          if (pair.first == newStreetIds[pair.first]) {
+            continue;
+          }
+          trafficLight.moveCycle(pair.first, newStreetIds[pair.first]);
+        }
+      }
     }
   }
 

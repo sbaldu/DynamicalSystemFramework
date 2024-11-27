@@ -92,13 +92,11 @@ namespace dsm {
     /// @brief Increase the turn counts
     virtual void m_increaseTurnCounts(Id streetId, double delta);
     /// @brief Evolve a street
-    /// @param streetId The id of the street
     /// @param pStreet A std::unique_ptr to the street
     /// @param reinsert_agents If true, the agents are reinserted in the simulation after they reach their destination
     /// @details If possible, removes the first agent of the street's queue, putting it in the destination node.
     /// If the agent is going into the destination node, it is removed from the simulation (and then reinserted if reinsert_agents is true)
-    virtual void m_evolveStreet(const Id streetId,
-                                const std::unique_ptr<Street>& pStreet,
+    virtual void m_evolveStreet(const std::unique_ptr<Street>& pStreet,
                                 bool reinsert_agents);
     /// @brief If possible, removes one agent from the node, putting it on the next street.
     /// @param pNode A std::unique_ptr to the node
@@ -457,8 +455,7 @@ namespace dsm {
 
   template <typename delay_t>
     requires(is_numeric_v<delay_t>)
-  void Dynamics<delay_t>::m_evolveStreet(const Id streetId,
-                                         const std::unique_ptr<Street>& pStreet,
+  void Dynamics<delay_t>::m_evolveStreet(const std::unique_ptr<Street>& pStreet,
                                          bool reinsert_agents) {
     auto const nLanes = pStreet->nLanes();
     for (auto queueIndex = 0; queueIndex < nLanes; ++queueIndex) {
@@ -477,8 +474,8 @@ namespace dsm {
       }
       if (destinationNode->isTrafficLight()) {
         auto& tl = dynamic_cast<TrafficLight&>(*destinationNode);
-        auto const direction{pStreet->laneMapping()[queueIndex]};
-        if (!tl.isGreen(streetId, direction)) {
+        auto const direction{pStreet->laneMapping().at(queueIndex)};
+        if (!tl.isGreen(pStreet->id(), direction)) {
           continue;
         }
       }
@@ -510,7 +507,7 @@ namespace dsm {
       if (destinationNode->isIntersection()) {
         auto& intersection = dynamic_cast<Intersection&>(*destinationNode);
         auto const delta{nextStreet->deltaAngle(pStreet->angle())};
-        m_increaseTurnCounts(streetId, delta);
+        m_increaseTurnCounts(pStreet->id(), delta);
         intersection.addAgent(delta, agentId);
       } else if (destinationNode->isRoundabout()) {
         auto& roundabout = dynamic_cast<Roundabout&>(*destinationNode);
@@ -745,7 +742,7 @@ namespace dsm {
         m_streetTails[streetId] += pStreet->nExitingAgents();
       }
       for (auto i = 0; i < pStreet->transportCapacity(); ++i) {
-        this->m_evolveStreet(streetId, pStreet, reinsert_agents);
+        this->m_evolveStreet(pStreet, reinsert_agents);
       }
     }
     // Move transport capacity agents from each node
