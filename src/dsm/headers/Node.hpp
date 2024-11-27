@@ -206,17 +206,36 @@ namespace dsm {
       m_counter = (m_counter + 1) % m_cycleTime;
       return *this;
     }
-
+    /// @brief Get the traffic light's total cycle time
+    /// @return Delay The traffic light's cycle time
     inline Delay cycleTime() const { return m_cycleTime; }
-
+    /// @brief Set the cycle for a street and a direction
+    /// @param streetId The street's id
+    /// @param direction The direction
+    /// @param cycle The traffic light cycle
     void setCycle(Id const streetId, Direction direction, TrafficLightCycle const& cycle);
-
+    /// @brief Set the complementary cycle for a street
+    /// @param streetId Id, The street's id
+    /// @param existingCycle Id, The street's id associated with the existing cycle
+    /// @throws std::invalid_argument if the street id does not exist
+    /// @throws std::invalid_argument if the cycle does not exist
+    /// @details The complementary cycle is a cycle that has as green time the total cycle time minus
+    ///          the green time of the existing cycle. The phase is the total cycle time minus the
+    ///          green time of the existing cycle, plus the phase of the existing cycle.
+    void setComplementaryCycle(Id const streetId, Id const existingCycle);
+    /// @brief Move a cycle from one street to another
+    /// @param oldStreetId Id, the old street id
+    /// @param newStreetId Id, the new street id
     void moveCycle(Id const oldStreetId, Id const newStreetId);
-
+    /// @brief Get the traffic light's cycles
+    /// @return std::unordered_map<Id, std::vector<TrafficLightCycle>> const& The traffic light's cycles
     inline std::unordered_map<Id, std::vector<TrafficLightCycle>> const& cycles() const {
       return m_cycles;
     }
-
+    /// @brief Returns true if the traffic light is green for a street and a direction
+    /// @param streetId Id, the street's id
+    /// @param direction Direction, the direction
+    /// @return true if the traffic light is green for the street and direction
     bool isGreen(Id const streetId, Direction direction) const;
 
     inline bool isTrafficLight() const noexcept final { return true; }

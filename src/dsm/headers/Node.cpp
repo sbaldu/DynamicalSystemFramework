@@ -95,6 +95,20 @@ namespace dsm {
     }
   }
 
+  void TrafficLight::setComplementaryCycle(Id const streetId, Id const existingCycle) {
+    if (m_cycles.contains(streetId)) {
+      throw std::invalid_argument(buildLog("Street id already exists."));
+    }
+    if (!m_cycles.contains(existingCycle)) {
+      throw std::invalid_argument(buildLog("Cycle does not exist."));
+    }
+    m_cycles.emplace(streetId, m_cycles.at(existingCycle));
+    for (auto& cycle : m_cycles.at(streetId)) {
+      cycle = TrafficLightCycle(m_cycleTime - cycle.greenTime(),
+                                cycle.phase() + m_cycleTime - cycle.greenTime());
+    }
+  }
+
   void TrafficLight::moveCycle(Id const oldStreetId, Id const newStreetId) {
     if (!m_cycles.contains(oldStreetId)) {
       throw std::invalid_argument(buildLog("Old street id does not exist."));

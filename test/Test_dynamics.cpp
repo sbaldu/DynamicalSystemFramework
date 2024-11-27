@@ -590,8 +590,8 @@ TEST_CASE("Dynamics") {
         tl.setCycle(1, dsm::Direction::RIGHTANDSTRAIGHT, {2, 2});
         tl.setCycle(1, dsm::Direction::LEFT, {1, 4});
         tl.setCycle(11, dsm::Direction::ANY, {3, 2});
-        tl.setCycle(8, dsm::Direction::ANY, {3, 5});
-        tl.setCycle(21, dsm::Direction::ANY, {3, 5});
+        tl.setComplementaryCycle(8, 11);
+        tl.setComplementaryCycle(21, 11);
         tl.setCoords({0., 0.});
 
         graph2.addNode(std::make_unique<TrafficLight>(tl));
@@ -662,8 +662,8 @@ TEST_CASE("Dynamics") {
         tl.setCycle(1, dsm::Direction::RIGHTANDSTRAIGHT, {2, 0});
         tl.setCycle(1, dsm::Direction::LEFT, {1, 2});
         tl.setCycle(11, dsm::Direction::ANY, {3, 0});
-        tl.setCycle(8, dsm::Direction::ANY, {3, 3});
-        tl.setCycle(21, dsm::Direction::ANY, {3, 3});
+        tl.setComplementaryCycle(8, 11);
+        tl.setComplementaryCycle(21, 11);
         tl.setCoords({0., 0.});
 
         graph2.addNode(std::make_unique<TrafficLight>(tl));
