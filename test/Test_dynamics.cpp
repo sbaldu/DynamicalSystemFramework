@@ -641,72 +641,81 @@ TEST_CASE("Dynamics") {
         }
       }
     }
-    //   GIVEN(
-    //       "A traffic light managing an intersection with 4 3-lanes streets and 4 1-lane "
-    //       "streets") {
-    //     // Streets
-    //     Street s0_1{1, 1, 30., 15., std::make_pair(0, 1), 3};
-    //     Street s1_0{5, 1, 30., 15., std::make_pair(1, 0), 3};
-    //     Street s1_2{7, 1, 30., 15., std::make_pair(1, 2), 3};
-    //     Street s2_1{11, 1, 30., 15., std::make_pair(2, 1), 3};
+    GIVEN(
+        "A traffic light managing an intersection with 4 3-lanes streets and 4 1-lane "
+        "streets") {
+      // Streets
+      Street s0_1{1, 1, 30., 15., std::make_pair(0, 1), 3};
+      Street s1_0{5, 1, 30., 15., std::make_pair(1, 0), 3};
+      Street s1_2{7, 1, 30., 15., std::make_pair(1, 2), 3};
+      Street s2_1{11, 1, 30., 15., std::make_pair(2, 1), 3};
 
-    //     Street s3_1{8, 1, 30., 15., std::make_pair(3, 1)};
-    //     Street s1_3{16, 1, 30., 15., std::make_pair(1, 3)};
-    //     Street s4_1{21, 1, 30., 15., std::make_pair(4, 1)};
-    //     Street s1_4{9, 1, 30., 15., std::make_pair(1, 4)};
+      Street s3_1{8, 1, 30., 15., std::make_pair(3, 1)};
+      Street s1_3{16, 1, 30., 15., std::make_pair(1, 3)};
+      Street s4_1{21, 1, 30., 15., std::make_pair(4, 1)};
+      Street s1_4{9, 1, 30., 15., std::make_pair(1, 4)};
 
-    //     Graph graph2;
-    //     graph2.addStreets(s0_1, s1_0, s1_2, s2_1, s3_1, s1_3, s4_1, s1_4);
-    //     graph2.buildAdj();
-    //     auto& tl = graph2.makeTrafficLight<uint16_t>(1);
-    //     graph2.adjustNodeCapacities();
-    //     graph2.normalizeStreetCapacities();
-    //     auto const& nodes = graph2.nodeSet();
-    //     tl.setDelay(3);
-    //     tl.setLeftTurnRatio(0.3);
-    //     // NO! Now testing red light
-    //     // tl.setPhase(2);
-    //     tl.addStreetPriority(21);
-    //     tl.addStreetPriority(8);
-    //     tl.setCoords({0., 0.});
-    //     nodes.at(0)->setCoords({-1., 0.});
-    //     nodes.at(2)->setCoords({1., 0.});
-    //     nodes.at(3)->setCoords({0., -1.});
-    //     nodes.at(4)->setCoords({0., 1.});
-    //     graph2.buildStreetAngles();
+      Graph graph2;
+      {
+        auto tl = TrafficLight{1, 6};
+        // Now testing red light = NO PHASE
+        tl.setCycle(1, dsm::Direction::RIGHTANDSTRAIGHT, {2, 0});
+        tl.setCycle(1, dsm::Direction::LEFT, {1, 2});
+        tl.setCycle(11, dsm::Direction::ANY, {3, 0});
+        tl.setCycle(8, dsm::Direction::ANY, {3, 3});
+        tl.setCycle(21, dsm::Direction::ANY, {3, 3});
+        tl.setCoords({0., 0.});
 
-    //     Dynamics dynamics{graph2};
-    //     dynamics.setSeed(69);
+        graph2.addNode(std::make_unique<TrafficLight>(tl));
+      }
+      graph2.addStreets(s0_1, s1_0, s1_2, s2_1, s3_1, s1_3, s4_1, s1_4);
+      graph2.buildAdj();
+      graph2.adjustNodeCapacities();
+      graph2.normalizeStreetCapacities();
+      auto const& nodes = graph2.nodeSet();
+      auto& tl = dynamic_cast<TrafficLight&>(*nodes.at(1));
+      nodes.at(0)->setCoords({0., -1.});
+      nodes.at(2)->setCoords({0., 1.});
+      nodes.at(3)->setCoords({-1., 0.});
+      nodes.at(4)->setCoords({1., 0.});
+      graph2.buildStreetAngles();
 
-    //     std::vector<uint32_t> destinationNodes{0, 2, 3, 4};
-    //     dynamics.setDestinationNodes(destinationNodes);
+      Dynamics dynamics{graph2};
+      dynamics.setSeed(69);
 
-    //     CHECK(tl.leftTurnRatio().has_value());
+      std::vector<uint32_t> destinationNodes{0, 2, 3, 4};
+      dynamics.setDestinationNodes(destinationNodes);
 
-    //     WHEN("We add agents and make the system evolve") {
-    //       Agent agent1{0, 2, 0};
-    //       Agent agent2{1, 4, 0};
-    //       dynamics.addAgents(agent1, agent2);
-    //       dynamics.evolve(false);
-    //       dynamics.evolve(false);
-    //       THEN("The agents are correctly placed") {
-    //         CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 1);
-    //         CHECK_EQ(dynamics.agents().at(1)->streetId().value(), 1);
-    //       }
-    //       dynamics.evolve(false);
-    //       dynamics.evolve(false);
-    //       THEN("The agent 0 passes and agent 1 waits") {
-    //         CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 7);
-    //         CHECK_EQ(dynamics.agents().at(1)->streetId().value(), 1);
-    //       }
-    //       dynamics.evolve(false);
-    //       THEN("The agent 1 passes") {
-    //         CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 7);
-    //         CHECK_EQ(dynamics.agents().at(1)->streetId().value(), 9);
-    //       }
-    //     }
-    //   }
-    // }
+      WHEN("We add agents and make the system evolve") {
+        Agent agent1{0, 2, 0};
+        Agent agent2{1, 4, 0};
+        dynamics.addAgents(agent1, agent2);
+        dynamics.evolve(false);  // Counter 0
+        dynamics.evolve(false);  // Counter 1
+        THEN("The agents are correctly placed") {
+          CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 1);
+          CHECK_EQ(dynamics.agents().at(1)->streetId().value(), 1);
+        }
+        dynamics.evolve(false);  // Counter 2
+        dynamics.evolve(false);  // Counter 3
+        THEN("The agents are still") {
+          CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 1);
+          CHECK_EQ(dynamics.agents().at(1)->streetId().value(), 1);
+        }
+        dynamics.evolve(false);  // Counter 4
+        dynamics.evolve(false);  // Counter 5
+        dynamics.evolve(false);  // Counter 0
+        THEN("The agent 0 passes and agent 1 waits") {
+          CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 7);
+          CHECK_EQ(dynamics.agents().at(1)->streetId().value(), 1);
+        }
+        dynamics.evolve(false);  // Counter 1
+        dynamics.evolve(false);  // Counter 2
+        THEN("The agent 1 passes") {
+          CHECK_EQ(dynamics.agents().at(1)->streetId().value(), 9);
+        }
+      }
+    }
     // SUBCASE("Traffic Lights optimization algorithm") {
     //   GIVEN("A dynamics object with a traffic light intersection") {
     //     double length{90.}, max_speed{15.};
