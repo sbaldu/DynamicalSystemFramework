@@ -60,9 +60,8 @@ namespace dsm {
   void TrafficLight::setCycle(Id const streetId,
                               Direction direction,
                               TrafficLightCycle const& cycle) {
-    if (!(cycle.greenTime() < m_cycleTime)) {
-      throw std::invalid_argument(
-          buildLog("Green time must be less than the cycle time."));
+    if ((cycle.greenTime() > m_cycleTime)) {
+      throw std::invalid_argument(buildLog("Green time must not exceed the cycle time."));
     }
     if (!(cycle.phase() < m_cycleTime)) {
       throw std::invalid_argument(buildLog("Phase must be less than the cycle time."));
