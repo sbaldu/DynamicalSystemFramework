@@ -214,6 +214,10 @@ namespace dsm {
     /// @param direction The direction
     /// @param cycle The traffic light cycle
     void setCycle(Id const streetId, Direction direction, TrafficLightCycle const& cycle);
+
+    inline void setCycles(std::unordered_map<Id, std::vector<TrafficLightCycle>> cycles) {
+      m_cycles = std::move(cycles);
+    }
     /// @brief Set the complementary cycle for a street
     /// @param streetId Id, The street's id
     /// @param existingCycle Id, The street's id associated with the existing cycle

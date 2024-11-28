@@ -119,7 +119,8 @@ namespace dsm {
 
   bool TrafficLight::isGreen(Id const streetId, Direction direction) const {
     if (!m_cycles.contains(streetId)) {
-      throw std::invalid_argument(buildLog("Street id does not exist."));
+      throw std::invalid_argument(buildLog(
+          std::format("Street id {} is not valid for node {}.", streetId, id())));
     }
     switch (direction) {
       case Direction::UTURN:

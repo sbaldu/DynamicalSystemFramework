@@ -63,23 +63,22 @@ namespace dsm {
     }
     for (const auto& [nodeId, node] : m_nodes) {
       // This is probably not the best way to do this
-      if (node->isIntersection()) {
-        auto& intersection = dynamic_cast<Intersection&>(*node);
-        const auto& oldStreetPriorities{intersection.streetPriorities()};
-        std::set<Id> newStreetPriorities;
-        for (const auto streetId : oldStreetPriorities) {
-          newStreetPriorities.emplace(newStreetIds[streetId]);
-        }
-        intersection.setStreetPriorities(newStreetPriorities);
-      }
+      // if (node->isIntersection()) {
+      //   auto& intersection = dynamic_cast<Intersection&>(*node);
+      //   const auto& oldStreetPriorities{intersection.streetPriorities()};
+      //   std::set<Id> newStreetPriorities;
+      //   for (const auto streetId : oldStreetPriorities) {
+      //     newStreetPriorities.emplace(newStreetIds[streetId]);
+      //   }
+      //   intersection.setStreetPriorities(newStreetPriorities);
+      // }
       if (node->isTrafficLight()) {
         auto& trafficLight = dynamic_cast<TrafficLight&>(*node);
-        for (auto const& pair : trafficLight.cycles()) {
-          if (pair.first == newStreetIds[pair.first]) {
-            continue;
-          }
-          trafficLight.moveCycle(pair.first, newStreetIds[pair.first]);
+        std::unordered_map<Id, std::vector<TrafficLightCycle>> newCycles;
+        for (auto const& [streetId, cycles] : trafficLight.cycles()) {
+          newCycles.emplace(newStreetIds[streetId], std::move(cycles));
         }
+        trafficLight.setCycles(newCycles);
       }
     }
   }
