@@ -1155,6 +1155,20 @@ namespace dsm {
       if (src_weights.size() > 1) {
         dstId = srcId;
       }
+      while (dstId == srcId) {
+        dRand = dstUniformDist(m_generator);
+        sum = 0.;
+        for (const auto& [id, weight] : dst_weights) {
+          dstId = id;
+          sum += weight;
+          if (dRand < sum) {
+            break;
+          }
+        }
+      }
+      if (src_weights.size() > 1) {
+        dstId = srcId;
+      }
       pFileLogger->debug("Entering loop to randomly pick destination node.");
       while (dstId == srcId) {
         dRand = dstUniformDist(m_generator);

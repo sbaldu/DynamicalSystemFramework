@@ -33,11 +33,11 @@ namespace dsm {
   }
 
   void Intersection::addAgent(Id agentId) {
-    int16_t lastKey{0};
+    int lastKey{0};
     if (!m_agents.empty()) {
       lastKey = m_agents.rbegin()->first + 1;
     }
-    addAgent(lastKey, agentId);
+    addAgent(static_cast<double>(lastKey), agentId);
   }
 
   void Intersection::removeAgent(Id agentId) {

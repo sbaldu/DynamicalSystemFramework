@@ -3,7 +3,7 @@ This script is used to get the OSM data of a place and save it in a csv file.
 The place is passed as a command line argument.
 
 Example:
-python3 get_osm_data.py postua, vercelli, italy
+python get_osm_data.py --place "postua, vercelli, italy"
 
 The output files are:
 - nodes.csv
@@ -12,11 +12,11 @@ The output files are:
 The files are saved in the current directory.
 """
 
-import argparse
+from argparse import ArgumentParser
 import osmnx as ox
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
+    parser = ArgumentParser("Script to get the OSM data of a place.")
     parser.add_argument(
         "--place",
         required=True,
