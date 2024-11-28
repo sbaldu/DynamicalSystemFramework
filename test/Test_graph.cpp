@@ -524,11 +524,6 @@ TEST_CASE("Dijkstra") {
         auto result = graph.street(1, 2);
         THEN("The street is not found") { CHECK_FALSE(result); }
       }
-      WHEN("We search for the opposite of a not existing street") {
-        THEN("It throws an exception") {
-          CHECK_THROWS_AS(graph.oppositeStreet(3), std::invalid_argument);
-        }
-      }
     }
   }
 

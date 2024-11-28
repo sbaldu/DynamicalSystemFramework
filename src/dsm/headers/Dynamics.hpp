@@ -21,6 +21,7 @@
 #include <format>
 #include <thread>
 #include <exception>
+#include <cstdlib>
 
 #include "Agent.hpp"
 #include "Itinerary.hpp"
@@ -30,6 +31,10 @@
 #include "../utility/TypeTraits/is_itinerary.hpp"
 #include "../utility/Logger.hpp"
 #include "../utility/Typedef.hpp"
+
+#include <spdlog/spdlog.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/sinks/basic_file_sink.h>
 
 namespace dsm {
 
@@ -67,6 +72,10 @@ namespace dsm {
     requires(is_numeric_v<Delay>)
   class Dynamics {
   protected:
+    inline static auto const pFileLogger{spdlog::basic_logger_mt(
+        "DSM_DYNAMICS_FILE", std::format("{}{}", DSM_LOG_FOLDER, DSM_LOG_FILE), true)};
+    inline static auto const pConsoleLogger{
+        spdlog::stdout_color_mt("DSM_DYNAMICS_CONSOLE")};
     std::unordered_map<Id, std::unique_ptr<Itinerary>> m_itineraries;
     std::map<Id, std::unique_ptr<Agent<Delay>>> m_agents;
     TimePoint m_time, m_previousSpireTime;
@@ -145,10 +154,10 @@ namespace dsm {
               path.insert(nodeId, nextNodeId, true);
             }
           } else if ((nextNodeId != destinationID)) {
-            std::cerr << std::format("WARNING: No path found from node {} to node {}",
-                                     nextNodeId,
-                                     destinationID)
-                      << std::endl;
+            pFileLogger->warn(
+                "No path found from node {} to node {}", nextNodeId, destinationID);
+            pConsoleLogger->warn(
+                "No path found from node {} to node {}", nextNodeId, destinationID);
           }
         }
       }
@@ -249,7 +258,7 @@ namespace dsm {
     void addAgent(const Agent<Delay>& agent);
     /// @brief Add an agent to the simulation
     /// @param agent std::unique_ptr to the agent
-    void addAgent(std::unique_ptr<Agent<Delay>> agent);
+    // void addAgent(std::unique_ptr<Agent<Delay>> agent);
     /// @brief Add an agent with given source node and itinerary
     /// @param srcNodeId The id of the source node
     /// @param itineraryId The id of the itinerary
@@ -283,6 +292,12 @@ namespace dsm {
     /// @throw std::runtime_error If there are no itineraries
     virtual void addAgentsUniformly(Size nAgents,
                                     std::optional<Id> itineraryId = std::nullopt);
+    /// @brief Add nAgents agents to the simulation, randomly choosing the source and destination nodes
+    /// @param nAgents The number of agents to add
+    /// @param src_weights A map <nodeId, weight> representing the weights of the source nodes
+    /// @param dst_weights A map <nodeId, weight> representing the weights of the destination nodes
+    /// @details The weights are used to randomly choose the source and destination nodes. It is not
+    ///          necessary that the sum of the weights is 1, but they must be all positive.
     template <typename TContainer>
       requires(std::is_same_v<TContainer, std::unordered_map<Id, double>> ||
                std::is_same_v<TContainer, std::map<Id, double>>)
@@ -408,6 +423,11 @@ namespace dsm {
         }
       }
     }
+#ifndef NDEBUG
+    spdlog::flush_every(std::chrono::milliseconds(100));
+    pFileLogger->set_level(spdlog::level::debug);
+    pConsoleLogger->set_level(spdlog::level::debug);
+#endif
   }
 
   template <typename Delay>
@@ -427,6 +447,7 @@ namespace dsm {
     uint8_t p{0};
     auto iterator = possibleMoves.begin();
     // while loop to avoid U turns in non-roundabout junctions
+    pFileLogger->debug("Entering loop to avoid U-turns");
     do {
       p = moveDist(this->m_generator);
       iterator = possibleMoves.begin();
@@ -435,6 +456,7 @@ namespace dsm {
              (m_graph.streetSet()[iterator->first]->nodePair().second ==
               m_graph.streetSet()[streetId.value()]->nodePair().first) and
              (possibleMoves.size() > 1));
+    pFileLogger->debug("Exiting loop to avoid U-turns");
     return iterator->first;
   }
 
@@ -536,7 +558,7 @@ namespace dsm {
       if (intersection.agents().empty()) {
         return false;
       }
-      for (auto const [angle, agentId] : intersection.agents()) {
+      for (auto const& [angle, agentId] : intersection.agents()) {
         auto const& nextStreet{m_graph.streetSet()[m_agentNextStreetId[agentId]]};
         if (nextStreet->isFull()) {
           if (m_forcePriorities) {
@@ -641,11 +663,15 @@ namespace dsm {
         assert(agent->srcNodeId().has_value());
         const auto& srcNode{this->m_graph.nodeSet()[agent->srcNodeId().value()]};
         if (srcNode->isFull()) {
+          pFileLogger->debug(
+              "Agent {} is not able to enter full node {}.", agentId, srcNode->id());
           continue;
         }
         const auto& nextStreet{
             m_graph.streetSet()[this->m_nextStreetId(agentId, srcNode->id())]};
         if (nextStreet->isFull()) {
+          pFileLogger->debug(
+              "Agent {} is not able to enter full street {}.", agentId, nextStreet->id());
           continue;
         }
         assert(srcNode->id() == nextStreet->nodePair().first);
@@ -746,6 +772,9 @@ namespace dsm {
   template <typename Delay>
     requires(is_numeric_v<Delay>)
   void Dynamics<Delay>::evolve(bool reinsert_agents) {
+    pFileLogger->debug("Init evolving step {}", m_time);
+
+    pFileLogger->debug("Evolving streets...");
     // move the first agent of each street queue, if possible, putting it in the next node
     bool const bUpdateData =
         m_dataUpdatePeriod.has_value() && m_time % m_dataUpdatePeriod.value() == 0;
@@ -757,6 +786,7 @@ namespace dsm {
         this->m_evolveStreet(streetId, pStreet, reinsert_agents);
       }
     }
+    pFileLogger->debug("Evolving junctions...");
     // Move transport capacity agents from each node
     for (const auto& [nodeId, pNode] : m_graph.nodeSet()) {
       for (auto i = 0; i < pNode->transportCapacity(); ++i) {
@@ -769,8 +799,10 @@ namespace dsm {
         tl.increaseCounter();
       }
     }
+    pFileLogger->debug("Evolving vehicles...");
     // cycle over agents and update their times
     this->m_evolveAgents();
+    pFileLogger->debug("End evolving step {}", m_time);
     // increment time simulation
     ++this->m_time;
   }
@@ -922,22 +954,12 @@ namespace dsm {
       throw std::invalid_argument(
           buildLog(std::format("Agent with id {} already exists.", agent.id())));
     }
+    pFileLogger->debug("Adding agent with id {} and destination node {}",
+                       agent.id(),
+                       agent.itineraryId());
     this->m_agents.emplace(agent.id(), std::make_unique<Agent<Delay>>(agent));
   }
-  template <typename Delay>
-    requires(is_numeric_v<Delay>)
-  void Dynamics<Delay>::addAgent(std::unique_ptr<Agent<Delay>> agent) {
-    if (this->m_agents.size() + 1 > this->m_graph.maxCapacity()) {
-      throw std::overflow_error(buildLog(
-          std::format("Graph is already holding the max possible number of agents ({})",
-                      this->m_graph.maxCapacity())));
-    }
-    if (this->m_agents.contains(agent->id())) {
-      throw std::invalid_argument(
-          buildLog(std::format("Agent with id {} already exists.", agent->id())));
-    }
-    this->m_agents.emplace(agent->id(), std::move(agent));
-  }
+
   template <typename Delay>
     requires(is_numeric_v<Delay>)
   void Dynamics<Delay>::addAgent(Id srcNodeId, Id itineraryId) {
@@ -1075,9 +1097,12 @@ namespace dsm {
                                           const TContainer& dst_weights) {
     if (src_weights.size() == 1 && dst_weights.size() == 1 &&
         src_weights.begin()->first == dst_weights.begin()->first) {
-      throw std::invalid_argument(buildLog(
-          std::format("The only source node {} is also the only destination node.",
-                      src_weights.begin()->first)));
+      pFileLogger->critical("The only source node {} is also the only destination node.",
+                            src_weights.begin()->first);
+      pConsoleLogger->critical(
+          "The only source node {} is also the only destination node.",
+          src_weights.begin()->first);
+      std::abort();
     }
     auto const srcSum{std::accumulate(
         src_weights.begin(),
@@ -1085,8 +1110,11 @@ namespace dsm {
         0.,
         [](double sum, const std::pair<Id, double>& p) {
           if (p.second < 0.) {
-            throw std::invalid_argument(buildLog(std::format(
-                "Negative weight ({}) for source node {}.", p.second, p.first)));
+            pFileLogger->critical(
+                "Negative weight ({}) for source node {}.", p.second, p.first);
+            pConsoleLogger->critical(
+                "Negative weight ({}) for source node {}.", p.second, p.first);
+            std::abort();
           }
           return sum + p.second;
         })};
@@ -1096,8 +1124,11 @@ namespace dsm {
         0.,
         [](double sum, const std::pair<Id, double>& p) {
           if (p.second < 0.) {
-            throw std::invalid_argument(buildLog(std::format(
-                "Negative weight ({}) for destination node {}.", p.second, p.first)));
+            pFileLogger->critical(
+                "Negative weight ({}) for destination node {}.", p.second, p.first);
+            pConsoleLogger->critical(
+                "Negative weight ({}) for destination node {}.", p.second, p.first);
+            std::abort();
           }
           return sum + p.second;
         })};
@@ -1135,14 +1166,31 @@ namespace dsm {
           }
         }
       }
+      if (src_weights.size() > 1) {
+        dstId = srcId;
+      }
+      pFileLogger->debug("Entering loop to randomly pick destination node.");
+      while (dstId == srcId) {
+        dRand = dstUniformDist(m_generator);
+        sum = 0.;
+        for (const auto& [id, weight] : dst_weights) {
+          dstId = id;
+          sum += weight;
+          if (dRand < sum) {
+            break;
+          }
+        }
+      }
+      pFileLogger->debug("Exiting loop to randomly pick destination node.");
       // find the itinerary with the given destination as destination
       auto itineraryIt{std::find_if(
           m_itineraries.begin(), m_itineraries.end(), [dstId](const auto& itinerary) {
             return itinerary.second->destination() == dstId;
           })};
       if (itineraryIt == m_itineraries.end()) {
-        throw std::invalid_argument(
-            buildLog(std::format("Itinerary with destination {} not found.", dstId)));
+        pFileLogger->critical("Itinerary with destination {} not found.", dstId);
+        pConsoleLogger->critical("Itinerary with destination {} not found.", dstId);
+        std::abort();
       }
       this->addAgent(srcId, itineraryIt->first);
       --nAgents;
@@ -1152,6 +1200,9 @@ namespace dsm {
   template <typename Delay>
     requires(is_numeric_v<Delay>)
   void Dynamics<Delay>::removeAgent(Size agentId) {
+    pFileLogger->debug("Removing agent with id {} and destination node {}",
+                       agentId,
+                       m_agents[agentId]->itineraryId());
     m_agents.erase(agentId);
   }
 

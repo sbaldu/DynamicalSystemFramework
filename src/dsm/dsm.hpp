@@ -1,5 +1,4 @@
-#ifndef dsm_hpp
-#define dsm_hpp
+#pragma once
 
 #include <cstdint>
 #include <format>
@@ -27,5 +26,3 @@ namespace dsm {
 #include "utility/TypeTraits/is_node.hpp"
 #include "utility/TypeTraits/is_street.hpp"
 #include "utility/TypeTraits/is_numeric.hpp"
-
-#endif

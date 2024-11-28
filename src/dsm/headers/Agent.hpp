@@ -21,15 +21,18 @@
 #include <limits>
 #include <optional>
 
+#include <spdlog/spdlog.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/sinks/basic_file_sink.h>
+
 namespace dsm {
   /// @brief The Agent class represents an agent in the network.
-  /// @tparam Id, The type of the agent's id. It must be an unsigned integral type.
-  /// @tparam Size, The type of the size of a street. It must be an unsigned integral type.
   /// @tparam Delay, The type of the agent's delay. It must be a numeric type (see utility/TypeTraits/is_numeric.hpp).
   template <typename Delay>
     requires(is_numeric_v<Delay>)
   class Agent {
   private:
+    inline static auto const pConsoleLogger{spdlog::stdout_color_mt("DSM_AGENT_CONSOLE")};
     Id m_id;
     Id m_itineraryId;
     std::optional<Id> m_streetId;
@@ -63,11 +66,9 @@ namespace dsm {
     /// @throw std::invalid_argument, if speed is negative
     void setSpeed(double speed);
     /// @brief Increment the agent's delay by 1
-    /// @throw std::overflow_error, if delay has reached its maximum value
     void incrementDelay();
     /// @brief Increment the agent's delay by a given value
     /// @param delay The agent's delay
-    /// @throw std::overflow_error, if delay has reached its maximum value
     void incrementDelay(Delay const delay);
     /// @brief Decrement the agent's delay by 1
     /// @throw std::underflow_error, if delay has reached its minimum value
@@ -78,12 +79,10 @@ namespace dsm {
     /// @param distance The value to increment the agent's distance byù
     /// @throw std::invalid_argument, if distance is negative
     void incrementDistance(double distance);
-    /// @brief Increment the agent's time by 1
-    /// @throw std::overflow_error, if time has reached its maximum value
+    /// @brief Increment the agent's time by 1.
     void incrementTime();
-    /// @brief Increment the agent's time by a given value
+    /// @brief Increment the agent's time by a given value.
     /// @param time The value to increment the agent's time by
-    /// @throw std::overflow_error, if time has reached its maximum value
     void incrementTime(unsigned int const time);
     /// @brief Reset the agent's time to 0
     void resetTime() { m_time = 0; }
@@ -147,7 +146,9 @@ namespace dsm {
     requires(is_numeric_v<Delay>)
   void Agent<Delay>::incrementDelay() {
     if (m_delay == std::numeric_limits<Delay>::max()) {
-      throw std::overflow_error(buildLog("Delay has reached its maximum value"));
+      pConsoleLogger->critical(
+          "Agent {} delay has reached its maximum value ({}).", m_id, m_delay);
+      std::abort();
     }
     ++m_delay;
   }
@@ -155,7 +156,9 @@ namespace dsm {
     requires(is_numeric_v<Delay>)
   void Agent<Delay>::incrementDelay(Delay const delay) {
     if (m_delay + delay < m_delay) {
-      throw std::overflow_error(buildLog("Delay has reached its maximum value"));
+      pConsoleLogger->critical(
+          "Agent {} delay has reached its maximum value ({}).", m_id, m_delay);
+      std::abort();
     }
     m_delay += delay;
   }
@@ -181,7 +184,9 @@ namespace dsm {
     requires(is_numeric_v<Delay>)
   void Agent<Delay>::incrementTime() {
     if (m_time == std::numeric_limits<unsigned int>::max()) {
-      throw std::overflow_error(buildLog("Time has reached its maximum value"));
+      pConsoleLogger->critical(
+          "Agent {} time has reached its maximum value ({}).", m_id, m_time);
+      std::abort();
     }
     ++m_time;
   }
@@ -189,7 +194,9 @@ namespace dsm {
     requires(is_numeric_v<Delay>)
   void Agent<Delay>::incrementTime(unsigned int const time) {
     if (m_time + time < m_time) {
-      throw std::overflow_error(buildLog("Time has reached its maximum value"));
+      pConsoleLogger->critical(
+          "Agent {} time has reached its maximum value ({}).", m_id, m_time);
+      std::abort();
     }
     m_time += time;
   }

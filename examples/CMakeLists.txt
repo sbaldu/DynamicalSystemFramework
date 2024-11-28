@@ -17,6 +17,15 @@ endif()
 # Set the folder for the executable
 set(EXECUTABLE_OUTPUT_PATH ../)
 
+include(FetchContent)
+# Get spdlog
+FetchContent_Declare(
+    spdlog
+    GIT_REPOSITORY https://github.com/gabime/spdlog.git
+    GIT_TAG v1.15.0
+)
+FetchContent_MakeAvailable(spdlog)
+
 # add as executable all cpp files into '.' folder
 file(GLOB SOURCES "*.cpp")
 file(GLOB SRC_SOURCES "../src/dsm/headers/*.cpp")
@@ -25,5 +34,5 @@ file(GLOB SRC_SOURCES "../src/dsm/headers/*.cpp")
 foreach(SOURCE ${SOURCES})
     get_filename_component(EXE_NAME ${SOURCE} NAME_WE)
 	add_executable(${EXE_NAME}.out ${SOURCE} ${SRC_SOURCES})
-    target_include_directories(${EXE_NAME}.out PRIVATE ../src/dsm/headers/ ../src/dsm/utility/TypeTraits/)
+    target_include_directories(${EXE_NAME}.out PRIVATE ../src/dsm/headers/ ../src/dsm/utility/TypeTraits/ ${spdlog_SOURCE_DIR}/include)
 endforeach()

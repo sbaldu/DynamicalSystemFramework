@@ -9,23 +9,25 @@ namespace dsm {
 
   void Itinerary::setDestination(Id destination) {
     m_destination = destination;
-    this->m_path.clear();
+    m_path.clear();
   }
 
   void Itinerary::setPath(SparseMatrix<bool> path) {
     if (path.getRowDim() != path.getColDim()) {
-      throw std::invalid_argument(buildLog(
-          std::format("The path's row ({}) and column ({}) dimensions must be equal.",
-                      path.getRowDim(),
-                      path.getColDim())));
+      pConsoleLogger->critical(
+          "The path's row ({}) and column ({}) dimensions must be equal.",
+          path.getRowDim(),
+          path.getColDim());
+      std::abort();
     }
     if (path.getRowDim() < m_destination) {
-      throw std::invalid_argument(
-          buildLog(std::format("The path's row ({}) and column ({}) dimensions must be "
-                               "greater than the itinerary's destination ({}).",
-                               path.getRowDim(),
-                               path.getColDim(),
-                               m_destination)));
+      pConsoleLogger->critical(
+          "The path's row ({}) and column ({}) dimensions must be greater than the "
+          "itinerary's destination ({}).",
+          path.getRowDim(),
+          path.getColDim(),
+          m_destination);
+      std::abort();
     }
     m_path = std::move(path);
   }

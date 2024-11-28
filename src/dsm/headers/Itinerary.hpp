@@ -16,11 +16,17 @@
 #include <string>
 #include <format>
 
+#include <spdlog/spdlog.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/sinks/basic_file_sink.h>
+
 namespace dsm {
   /// @brief The Itinerary class represents an itinerary in the network.
   /// @tparam Id The type of the itinerary's id. It must be an unsigned integral type.
   class Itinerary {
   private:
+    inline static auto const pConsoleLogger{
+        spdlog::stdout_color_mt("DSM_ITINERARY_CONSOLE")};
     Id m_id;
     SparseMatrix<bool> m_path;
     Id m_destination;
@@ -39,7 +45,6 @@ namespace dsm {
     void setDestination(Id destination);
     /// @brief Set the itinerary's path
     /// @param path An adjacency matrix made by a SparseMatrix representing the itinerary's path
-    /// @throw std::invalid_argument, if the itinerary's source or destination is not in the path's
     void setPath(SparseMatrix<bool> path);
 
     /// @brief Get the itinerary's id

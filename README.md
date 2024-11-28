@@ -7,7 +7,8 @@ This rework consists of a full code rewriting, in order to implement more featur
 
 ## Requirements
 
-The project only requires `C++20` or greater and `cmake`.
+This project requieres a compiler whith full support for `C++20` or greater and `cmake`.
+It also depends on [spdlog](https://github.com/gabime/spdlog).
 
 Utilities are written in python. To install their dependencies:
 ```shell
@@ -15,19 +16,11 @@ pip install -r ./requirements.txt
 ```
 
 ## Installation
-The library can be installed using CMake. To build and install the project in the default folder run:
+The library can be installed using CMake.
+To build and install the project in the default folder run:
 ```shell
-cmake -B build && cmake --build build
+cmake -B build && make -C build
 sudo cmake --install build
-```
-Otherwise, it is possible to customize the installation path:
-```shell
-cmake -B build -DCMAKE_INSTALL_PREFIX=/path/to/install
-```
-then building and installing it (eventually in sudo mode) with:
-```shell
-cmake --build build
-cmake --install build
 ```
 
 ## Testing

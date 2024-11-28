@@ -24,12 +24,17 @@
 #include "../utility/queue.hpp"
 #include "../utility/Typedef.hpp"
 
+#include <spdlog/spdlog.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/sinks/basic_file_sink.h>
+
 namespace dsm {
   /// @brief The Node class represents the concept of a node in the network.
   /// @tparam Id The type of the node's id
   /// @tparam Size The type of the node's capacity
   class Node {
   protected:
+    inline static auto const pConsoleLogger{spdlog::stdout_color_mt("DSM_NODE_CONSOLE")};
     Id m_id;
     std::optional<std::pair<double, double>> m_coords;
     Size m_capacity;
@@ -103,7 +108,6 @@ namespace dsm {
 
     /// @brief Set the node's capacity
     /// @param capacity The node's capacity
-    /// @throws std::runtime_error if the capacity is smaller than the current queue size
     void setCapacity(Size capacity) override;
 
     /// @brief Put an agent in the node
@@ -111,14 +115,12 @@ namespace dsm {
     /// @details The agent's angle difference is used to order the agents in the node.
     ///          The agent with the smallest angle difference is the first one to be
     ///          removed from the node.
-    /// @throws std::runtime_error if the node is full
     void addAgent(double angle, Id agentId);
     /// @brief Put an agent in the node
     /// @param agentId The agent's id
     /// @details The agent's angle difference is used to order the agents in the node.
     ///          The agent with the smallest angle difference is the first one to be
     ///          removed from the node.
-    /// @throws std::runtime_error if the node is full
     void addAgent(Id agentId);
     /// @brief Removes an agent from the node
     /// @param agentId The agent's id
@@ -138,7 +140,7 @@ namespace dsm {
     }
     /// @brief Returns true if the node is full
     /// @return bool True if the node is full
-    bool isFull() const override { return m_agents.size() == this->m_capacity; }
+    bool isFull() const override { return m_agents.size() == m_capacity; }
 
     /// @brief Get the node's street priorities
     /// @details This function returns a std::set containing the node's street priorities.
@@ -155,7 +157,7 @@ namespace dsm {
     ///          since the last time this function was called. It also resets the counter.
     Size agentCounter();
 
-    virtual bool isIntersection() const noexcept override final { return true; }
+    bool isIntersection() const noexcept final { return true; }
   };
 
   template <typename Delay>
@@ -195,7 +197,6 @@ namespace dsm {
     void setDelay(std::pair<Delay, Delay> delay);
     /// @brief Set the node's phase
     /// @param phase The node's phase
-    /// @throw std::runtime_error if the delay is not set
     void setPhase(Delay phase);
     /// @brief Set the node's left turn ratio
     /// @param ratio A std::pair containing the left turn ratio
@@ -217,7 +218,6 @@ namespace dsm {
     /// @details This function is used to increase the node's counter
     ///          when the simulation is running. It automatically resets the counter
     ///          when it reaches the double of the delay value.
-    /// @throw std::runtime_error if the delay is not set
     void increaseCounter();
 
     /// @brief  Set the phase of the node after the current red-green cycle has passed
@@ -237,7 +237,7 @@ namespace dsm {
     /// @return bool True if the traffic light is green
     bool isGreen() const;
     bool isGreen(Id streetId) const;
-    bool isTrafficLight() const noexcept override { return true; }
+    bool isTrafficLight() const noexcept final { return true; }
   };
 
   template <typename Delay>
@@ -284,7 +284,8 @@ namespace dsm {
     requires(std::unsigned_integral<Delay>)
   void TrafficLight<Delay>::setPhase(Delay phase) {
     if (!m_delay.has_value()) {
-      throw std::runtime_error(buildLog("TrafficLight's delay has not been set."));
+      pConsoleLogger->critical("TrafficLight's delay has not been set.");
+      std::abort();
     }
     if (phase > m_delay.value().first + m_delay.value().second) {
       phase -= m_delay.value().first + m_delay.value().second;
@@ -315,7 +316,8 @@ namespace dsm {
     requires(std::unsigned_integral<Delay>)
   void TrafficLight<Delay>::increaseCounter() {
     if (!m_delay.has_value()) {
-      throw std::runtime_error(buildLog("TrafficLight's delay has not been set."));
+      pConsoleLogger->critical("TrafficLight's delay has not been set.");
+      std::abort();
     }
     ++m_counter;
     if (m_counter == m_delay.value().first + m_delay.value().second) {
@@ -332,7 +334,8 @@ namespace dsm {
     requires(std::unsigned_integral<Delay>)
   bool TrafficLight<Delay>::isGreen() const {
     if (!m_delay.has_value()) {
-      throw std::runtime_error(buildLog("TrafficLight's delay has not been set."));
+      pConsoleLogger->critical("TrafficLight's delay has not been set.");
+      std::abort();
     }
     return m_counter < m_delay.value().first;
   }
@@ -341,7 +344,8 @@ namespace dsm {
     requires(std::unsigned_integral<Delay>)
   bool TrafficLight<Delay>::isGreen(Id streetId) const {
     if (!m_delay.has_value()) {
-      throw std::runtime_error(buildLog("TrafficLight's delay has not been set."));
+      pConsoleLogger->critical("TrafficLight's delay has not been set.");
+      std::abort();
     }
     bool hasPriority{this->streetPriorities().contains(streetId)};
     if (this->isGreen()) {
@@ -374,7 +378,6 @@ namespace dsm {
 
     /// @brief Put an agent in the node
     /// @param agentId The agent's id
-    /// @throws std::runtime_error if the node is full
     void enqueue(Id agentId);
     /// @brief Removes the first agent from the node
     /// @return Id The agent's id
@@ -389,10 +392,10 @@ namespace dsm {
     }
     /// @brief Returns true if the node is full
     /// @return bool True if the node is full
-    bool isFull() const override { return m_agents.size() == this->m_capacity; }
+    bool isFull() const override { return m_agents.size() == m_capacity; }
     /// @brief Returns true if the node is a roundabout
     /// @return bool True if the node is a roundabout
-    bool isRoundabout() const noexcept override { return true; }
+    bool isRoundabout() const noexcept final { return true; }
   };
 
 };  // namespace dsm

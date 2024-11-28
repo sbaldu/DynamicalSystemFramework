@@ -421,7 +421,8 @@ namespace dsm {
 
   Roundabout& Graph::makeRoundabout(Id nodeId) {
     if (!m_nodes.contains(nodeId)) {
-      throw std::invalid_argument(buildLog("Node does not exist."));
+      pConsoleLogger->critical("Node {} does not exist in graph.", nodeId);
+      std::abort();
     }
     auto& pNode = m_nodes[nodeId];
     pNode = std::make_unique<Roundabout>(*pNode);
@@ -429,8 +430,8 @@ namespace dsm {
   }
   SpireStreet& Graph::makeSpireStreet(Id streetId) {
     if (!m_streets.contains(streetId)) {
-      throw std::invalid_argument(
-          buildLog(std::format("Street with id {} does not exist.", streetId)));
+      pConsoleLogger->critical("Street with id {} does not exist in graph.", streetId);
+      std::abort();
     }
     auto& pStreet = m_streets[streetId];
     pStreet = std::make_unique<SpireStreet>(pStreet->id(), *pStreet);
@@ -439,8 +440,8 @@ namespace dsm {
 
   void Graph::addStreet(std::shared_ptr<Street> street) {
     if (m_streets.contains(street->id())) {
-      throw std::invalid_argument(
-          buildLog(std::format("Street with id {} already exists.", street->id())));
+      pConsoleLogger->critical("Street with id {} already exists.", street->id());
+      std::abort();
     }
     // emplace nodes
     const auto srcId{street->nodePair().first};
@@ -457,8 +458,8 @@ namespace dsm {
 
   void Graph::addStreet(const Street& street) {
     if (m_streets.contains(street.id())) {
-      throw std::invalid_argument(
-          buildLog(std::format("Street with id {} already exists.", street.id())));
+      pConsoleLogger->critical("Street with id {} already exists.", street.id());
+      std::abort();
     }
     // emplace nodes
     const auto srcId{street.nodePair().first};
@@ -497,10 +498,11 @@ namespace dsm {
 
   const std::unique_ptr<Street>* Graph::oppositeStreet(Id streetId) const {
     if (!m_streets.contains(streetId)) {
-      throw std::invalid_argument(
-          buildLog(std::format("Street with id {} does not exist: maybe it has changed "
-                               "id once called buildAdj.",
-                               streetId)));
+      pConsoleLogger->critical(
+          "Street with id {} does not exist: maybe it has changed id once callde "
+          "buildAdj.",
+          streetId);
+      std::abort();
     }
     const auto& nodePair = m_streets.at(streetId)->nodePair();
     return this->street(nodePair.second, nodePair.first);

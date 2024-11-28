@@ -7,22 +7,24 @@ namespace dsm {
 
   void Intersection::setCapacity(Size capacity) {
     if (capacity < m_agents.size()) {
-      throw std::runtime_error(buildLog(std::format(
-          "Intersection capacity ({}) is smaller than the current queue size ({}).",
+      pConsoleLogger->critical(
+          "New capacity ({}) is smaller than the current agent size ({}).",
           capacity,
-          m_agents.size())));
+          m_agents.size());
+      std::abort();
     }
     Node::setCapacity(capacity);
   }
 
   void Intersection::addAgent(double angle, Id agentId) {
     if (isFull()) {
-      throw std::runtime_error(buildLog("Intersection is full."));
+      pConsoleLogger->critical("Intersection is full.");
+      std::abort();
     }
     for (auto const [angle, id] : m_agents) {
       if (id == agentId) {
-        throw std::runtime_error(
-            buildLog(std::format("Agent with id {} is already on the node.", agentId)));
+        pConsoleLogger->critical("Agent with id {} is already on the node.", agentId);
+        std::abort();
       }
     }
     auto iAngle{static_cast<int16_t>(angle * 100)};
@@ -58,12 +60,14 @@ namespace dsm {
 
   void Roundabout::enqueue(Id agentId) {
     if (isFull()) {
-      throw std::runtime_error(buildLog("Roundabout is full."));
+      pConsoleLogger->critical("Roundabout is full.");
+      std::abort();
     }
     for (const auto id : m_agents) {
       if (id == agentId) {
-        throw std::runtime_error(buildLog(
-            std::format("Agent with id {} is already on the roundabout.", agentId)));
+        pConsoleLogger->critical("Agent with id {} is already on the roundabout.",
+                                 agentId);
+        std::abort();
       }
     }
     m_agents.push(agentId);
@@ -71,7 +75,8 @@ namespace dsm {
 
   Id Roundabout::dequeue() {
     if (m_agents.empty()) {
-      throw std::runtime_error(buildLog("Roundabout is empty."));
+      pConsoleLogger->critical("Roundabout is empty.");
+      std::abort();
     }
     Id agentId{m_agents.front()};
     m_agents.pop();
