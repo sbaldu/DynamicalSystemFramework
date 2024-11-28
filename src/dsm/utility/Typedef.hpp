@@ -7,7 +7,7 @@ namespace dsm {
 
   using Id = uint32_t;
   using Size = uint32_t;
-  using Delay = uint8_t;
+  using Delay = uint16_t;
   using Time = uint64_t;
 
   enum Direction : uint8_t {
