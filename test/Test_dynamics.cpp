@@ -186,24 +186,42 @@ TEST_CASE("Dynamics") {
             "same as "
             "the itinerary") {
           CHECK_EQ(dynamics.agents().size(), 3);
+          CHECK(dynamics.agents().at(0)->streetId().has_value());
+          CHECK(dynamics.agents().at(1)->streetId().has_value());
+          CHECK(dynamics.agents().at(2)->streetId().has_value());
+#ifdef __APPLE__
+          CHECK_EQ(dynamics.itineraries()
+                       .at(dynamics.agents().at(0)->itineraryId())
+                       ->destination(),
+                   Itinerary2.destination());
+          CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 6);
+          CHECK_EQ(dynamics.itineraries()
+                       .at(dynamics.agents().at(1)->itineraryId())
+                       ->destination(),
+                   Itinerary1.destination());
+          CHECK_EQ(dynamics.agents().at(1)->streetId().value(), 1);
+          CHECK_EQ(dynamics.itineraries()
+                       .at(dynamics.agents().at(2)->itineraryId())
+                       ->destination(),
+                   Itinerary1.destination());
+          CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 8);
+#else
           CHECK_EQ(dynamics.itineraries()
                        .at(dynamics.agents().at(0)->itineraryId())
                        ->destination(),
                    Itinerary1.destination());
-          CHECK(dynamics.agents().at(0)->streetId().has_value());
           CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 3);
           CHECK_EQ(dynamics.itineraries()
                        .at(dynamics.agents().at(1)->itineraryId())
                        ->destination(),
                    Itinerary1.destination());
-          CHECK(dynamics.agents().at(1)->streetId().has_value());
           CHECK_EQ(dynamics.agents().at(1)->streetId().value(), 8);
           CHECK_EQ(dynamics.itineraries()
                        .at(dynamics.agents().at(2)->itineraryId())
                        ->destination(),
                    Itinerary2.destination());
-          CHECK(dynamics.agents().at(2)->streetId().has_value());
           CHECK_EQ(dynamics.agents().at(2)->streetId().value(), 1);
+#endif
         }
       }
     }
