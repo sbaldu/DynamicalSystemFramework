@@ -35,6 +35,11 @@ namespace dsm {
 
   using TimePoint = long long unsigned int;
 
+  template <typename T>
+  std::unique_ptr<T> clone(const std::unique_ptr<T>& ptr) {
+    return std::make_unique<T>(*ptr);
+  }
+
   /// @brief The Measurement struct represents the mean of a quantity and its standard deviation
   /// @tparam T The type of the quantity
   /// @param mean The mean
@@ -67,7 +72,7 @@ namespace dsm {
     requires(is_numeric_v<Delay>)
   class Dynamics {
   protected:
-    std::unordered_map<Id, std::unique_ptr<Itinerary>> m_itineraries;
+    std::vector<std::unique_ptr<Itinerary>> m_itineraries;
     std::map<Id, std::unique_ptr<Agent<Delay>>> m_agents;
     TimePoint m_time, m_previousSpireTime;
     Graph m_graph;
@@ -154,9 +159,8 @@ namespace dsm {
       }
       if (path.size() == 0) {
         throw std::runtime_error(
-            buildLog(std::format("Path with id {} and destination {} is empty. Please "
+            buildLog(std::format("Path destination {} is empty. Please "
                                  "check the adjacency matrix.",
-                                 pItinerary->id(),
                                  pItinerary->destination())));
       }
       pItinerary->setPath(path);
@@ -190,8 +194,7 @@ namespace dsm {
     /// @param destinationNodes The destination nodes
     /// @param updatePaths If true, the paths are updated
     /// @throws std::invalid_argument Ifone or more destination nodes do not exist
-    void setDestinationNodes(const std::span<Id>& destinationNodes,
-                             bool updatePaths = true);
+    void setDestinationNodes(std::span<Id> destinationNodes, bool updatePaths = true);
     /// @brief Set the speed of an agent
     /// @details This is a pure-virtual function, it must be implemented in the derived classes
     /// @param agentId The id of the agent
@@ -232,9 +235,11 @@ namespace dsm {
     /// @brief Get the graph
     /// @return const Graph&, The graph
     const Graph& graph() const { return m_graph; };
+
+    const Itinerary* itinerary(Id destination) const;
     /// @brief Get the itineraries
     /// @return const std::unordered_map<Id, Itinerary>&, The itineraries
-    const std::unordered_map<Id, std::unique_ptr<Itinerary>>& itineraries() const {
+    const std::vector<std::unique_ptr<Itinerary>>& itineraries() const {
       return m_itineraries;
     }
     /// @brief Get the agents
@@ -414,9 +419,12 @@ namespace dsm {
     requires(is_numeric_v<Delay>)
   Id Dynamics<Delay>::m_nextStreetId(Id agentId, Id nodeId, std::optional<Id> streetId) {
     auto possibleMoves = m_graph.adjMatrix().getRow(nodeId, true);
-    if (this->m_itineraries.size() > 0 &&
+    if (!this->m_itineraries.empty() &&
         this->m_uniformDist(this->m_generator) > this->m_errorProbability) {
-      const auto& it = this->m_itineraries[this->m_agents[agentId]->itineraryId()];
+      const auto& it =
+          *std::ranges::find_if(m_itineraries, [this, agentId](const auto& ptr) {
+            return ptr->destination() == m_agents[agentId]->itineraryId();
+          });
       if (it->destination() != nodeId) {
         possibleMoves = it->path().getRow(nodeId, true);
       }
@@ -492,7 +500,9 @@ namespace dsm {
         }
       }
       if (destinationNode->id() ==
-          m_itineraries[m_agents[agentId]->itineraryId()]->destination()) {
+          (*std::ranges::find_if(m_itineraries, [this, agentId](const auto& ptr) {
+            return m_agents[agentId]->itineraryId() == ptr->destination();
+          }))->destination()) {
         pStreet->dequeue(queueIndex);
         m_travelTimes.push_back(m_agents[agentId]->time());
         if (reinsert_agents) {
@@ -605,8 +615,10 @@ namespace dsm {
         agent->decrementDelay();
         if (agent->delay() == 0) {
           auto const nLanes = street->nLanes();
-          if (this->m_itineraries[agent->itineraryId()]->destination() ==
-              street->nodePair().second) {
+
+          if ((*std::ranges::find_if(m_itineraries, [&agent](const auto& ptr) {
+                return ptr->destination() == agent->itineraryId();
+              }))->destination() == street->nodePair().second) {
             std::uniform_int_distribution<size_t> laneDist{
                 0, static_cast<size_t>(nLanes - 1)};
             street->enqueue(agentId, laneDist(m_generator));
@@ -667,9 +679,10 @@ namespace dsm {
   template <typename Delay>
     requires(is_numeric_v<Delay>)
   void Dynamics<Delay>::setItineraries(std::span<Itinerary> itineraries) {
-    std::ranges::for_each(itineraries, [this](const auto& itinerary) {
-      this->m_itineraries.insert(std::make_unique<Itinerary>(itinerary));
-    });
+    std::transform(itineraries.begin(),
+                   itineraries.end(),
+                   m_itineraries.begin(),
+                   [this](const auto& pItinerary) { return clone(pItinerary); });
   }
 
   template <typename Delay>
@@ -705,18 +718,33 @@ namespace dsm {
 
   template <typename Delay>
     requires(is_numeric_v<Delay>)
-  void Dynamics<Delay>::setDestinationNodes(const std::span<Id>& destinationNodes,
+  void Dynamics<Delay>::setDestinationNodes(std::span<Id> destinationNodes,
                                             bool updatePaths) {
-    for (const auto& nodeId : destinationNodes) {
-      if (!m_graph.nodeSet().contains(nodeId)) {
-        throw std::invalid_argument(
-            buildLog(std::format("Node with id {} not found", nodeId)));
-      }
-      this->addItinerary(Itinerary{nodeId, nodeId});
-    }
+    m_itineraries.resize(destinationNodes.size());
+    std::transform(destinationNodes.begin(),
+                   destinationNodes.end(),
+                   m_itineraries.begin(),
+                   [this](auto nodeId) {
+                     if (!this->m_graph.nodeSet().contains(nodeId)) {
+                       throw std::invalid_argument(
+                           buildLog(std::format("Node with id {} not found", nodeId)));
+                     }
+                     return std::make_unique<Itinerary>(nodeId);
+                   });
     if (updatePaths) {
       this->updatePaths();
     }
+  }
+
+  template <typename Delay>
+    requires(is_numeric_v<Delay>)
+  const Itinerary* Dynamics<Delay>::itinerary(Id destination) const {
+    auto foundIt = std::find_if(m_itineraries.begin(),
+                                m_itineraries.end(),
+                                [destination](const auto& pItinerary) {
+                                  return pItinerary->destination() == destination;
+                                });
+    return (foundIt == m_itineraries.end()) ? nullptr : (*foundIt).get();
   }
 
   template <typename Delay>
@@ -725,7 +753,7 @@ namespace dsm {
     std::vector<std::thread> threads;
     threads.reserve(m_itineraries.size());
     std::exception_ptr pThreadException;
-    for (const auto& [itineraryId, itinerary] : m_itineraries) {
+    for (const auto& itinerary : m_itineraries) {
       threads.emplace_back(std::thread([this, &itinerary, &pThreadException] {
         try {
           this->m_updatePath(itinerary);
@@ -759,7 +787,7 @@ namespace dsm {
     }
     // Move transport capacity agents from each node
     for (const auto& [nodeId, pNode] : m_graph.nodeSet()) {
-      for (auto i = 0; i < pNode->transportCapacity(); ++i) {
+      for (auto i = 0u; i < pNode->transportCapacity(); ++i) {
         if (!this->m_evolveNode(pNode)) {
           break;
         }
@@ -940,29 +968,30 @@ namespace dsm {
   }
   template <typename Delay>
     requires(is_numeric_v<Delay>)
-  void Dynamics<Delay>::addAgent(Id srcNodeId, Id itineraryId) {
+  void Dynamics<Delay>::addAgent(Id srcNodeId, Id dstNodeId) {
     if (this->m_agents.size() + 1 > this->m_graph.maxCapacity()) {
       throw std::overflow_error(buildLog(
           std::format("Graph its already holding the max possible number of agents ({})",
                       this->m_graph.maxCapacity())));
     }
-    if (!(srcNodeId < this->m_graph.nodeSet().size())) {
-      throw std::invalid_argument(
-          buildLog(std::format("Node with id {} not found", srcNodeId)));
-    }
-    if (!(this->m_itineraries.contains(itineraryId))) {
-      throw std::invalid_argument(
-          buildLog(std::format("Itinerary with id {} not found", itineraryId)));
-    }
+    assert((void("Nodes indexes out of range."),
+            srcNodeId < this->m_graph.nodeSet().size() &&
+                dstNodeId < this->m_graph.nodeSet().size()));
+    assert((void("No itineray associated with the destination node."),
+            std::find_if(m_itineraries.begin(),
+                         m_itineraries.end(),
+                         [dstNodeId](const std::unique_ptr<Itinerary>& itinerary) {
+                           return itinerary->destination() == dstNodeId;
+                         }) != m_itineraries.end()));
     Size agentId{0};
     if (!this->m_agents.empty()) {
       agentId = this->m_agents.rbegin()->first + 1;
     }
-    this->addAgent(Agent<Delay>{agentId, itineraryId, srcNodeId});
+    this->addAgent(Agent<Delay>{agentId, dstNodeId, srcNodeId});
   }
   template <typename Delay>
     requires(is_numeric_v<Delay>)
-  void Dynamics<Delay>::addAgents(Id itineraryId,
+  void Dynamics<Delay>::addAgents(Id dstNodeId,
                                   Size nAgents,
                                   std::optional<Id> srcNodeId) {
     if (this->m_agents.size() + nAgents > this->m_graph.maxCapacity()) {
@@ -970,17 +999,18 @@ namespace dsm {
           std::format("Graph its already holding the max possible number of agents ({})",
                       this->m_graph.maxCapacity())));
     }
-    auto itineraryIt{m_itineraries.find(itineraryId)};
-    if (itineraryIt == m_itineraries.end()) {
-      throw std::invalid_argument(
-          buildLog(std::format("Itinerary with id {} not found", itineraryId)));
-    }
+    assert((void("No itineray associated with the destination node."),
+            std::find_if(m_itineraries.begin(),
+                         m_itineraries.end(),
+                         [dstNodeId](const std::unique_ptr<Itinerary>& itinerary) {
+                           return itinerary->destination() == dstNodeId;
+                         }) != m_itineraries.end()));
     Size agentId{0};
     if (!this->m_agents.empty()) {
       agentId = this->m_agents.rbegin()->first + 1;
     }
     for (Size i{0}; i < nAgents; ++i, ++agentId) {
-      this->addAgent(Agent<Delay>{agentId, itineraryId});
+      this->addAgent(Agent<Delay>{agentId, dstNodeId});
       if (srcNodeId.has_value()) {
         this->m_agents[agentId]->setSourceNodeId(srcNodeId.value());
       }
@@ -1035,9 +1065,8 @@ namespace dsm {
         0, static_cast<Size>(this->m_graph.streetSet().size() - 1)};
     for (Size i{0}; i < nAgents; ++i) {
       if (randomItinerary) {
-        auto itineraryIt{this->m_itineraries.begin()};
-        std::advance(itineraryIt, itineraryDist(this->m_generator));
-        itineraryId = itineraryIt->first;
+		auto randomItinerary = itineraryDist(this->m_generator);
+        itineraryId = m_itineraries[randomItinerary]->destination();
       }
       Id agentId{0};
       if (!this->m_agents.empty()) {
@@ -1135,16 +1164,13 @@ namespace dsm {
           }
         }
       }
-      // find the itinerary with the given destination as destination
-      auto itineraryIt{std::find_if(
-          m_itineraries.begin(), m_itineraries.end(), [dstId](const auto& itinerary) {
-            return itinerary.second->destination() == dstId;
-          })};
-      if (itineraryIt == m_itineraries.end()) {
-        throw std::invalid_argument(
-            buildLog(std::format("Itinerary with destination {} not found.", dstId)));
-      }
-      this->addAgent(srcId, itineraryIt->first);
+      assert((void("No itineray associated with the destination node."),
+              std::find_if(m_itineraries.begin(),
+                           m_itineraries.end(),
+                           [dstId](const std::unique_ptr<Itinerary>& itinerary) {
+                             return itinerary->destination() == dstId;
+                           }) != m_itineraries.end()));
+      this->addAgent(srcId, dstId);
       --nAgents;
     }
   }
@@ -1167,13 +1193,13 @@ namespace dsm {
   template <typename Delay>
     requires(is_numeric_v<Delay>)
   void Dynamics<Delay>::addItinerary(const Itinerary& itinerary) {
-    m_itineraries.emplace(itinerary.id(), std::make_unique<Itinerary>(itinerary));
+    m_itineraries.push_back(std::make_unique<Itinerary>(itinerary));
   }
 
   template <typename Delay>
     requires(is_numeric_v<Delay>)
   void Dynamics<Delay>::addItinerary(std::unique_ptr<Itinerary> itinerary) {
-    m_itineraries.emplace(itinerary->id(), std::move(itinerary));
+    m_itineraries.push_back(std::move(itinerary));
   }
 
   template <typename Delay>
@@ -1188,7 +1214,7 @@ namespace dsm {
     requires(is_numeric_v<Delay>)
   void Dynamics<Delay>::addItineraries(std::span<Itinerary> itineraries) {
     std::ranges::for_each(itineraries, [this](const auto& itinerary) -> void {
-      this->m_itineraries.insert(std::make_unique<Itinerary>(itinerary));
+      this->m_itineraries.push_back(std::make_unique<Itinerary>(itinerary));
     });
   }
 

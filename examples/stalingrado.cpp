@@ -87,7 +87,7 @@ int main() {
   dynamics.setSeed(69);
   dynamics.setMinSpeedRateo(0.95);
   dynamics.setSpeedFluctuationSTD(0.2);
-  Itinerary itinerary{0, 4};
+  Itinerary itinerary{4};
   dynamics.addItinerary(itinerary);
   dynamics.updatePaths();
 
@@ -113,7 +113,7 @@ int main() {
       if (progress % 300 == 0) {
         ofs << progress << ';' << spire.outputCounts(true) << std::endl;
       }
-      dynamics.addAgents(0, *it / 2, 0);
+      dynamics.addAgents(itinerary.destination(), *it / 2, 0);
     }
     dynamics.evolve(false);
     ++progress;

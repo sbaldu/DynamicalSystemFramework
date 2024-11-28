@@ -29,10 +29,10 @@ int main() {
   }
   std::cout << "Done.\n";
 
-  Itinerary it1{0, 118};
-  Itinerary it2{1, 115};
-  Itinerary it3{2, 112};
-  Itinerary it4{3, 109};
+  Itinerary it1{118};
+  Itinerary it2{115};
+  Itinerary it3{112};
+  Itinerary it4{109};
 
   std::cout << "Creating dynamics...\n";
 
