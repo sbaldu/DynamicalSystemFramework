@@ -932,7 +932,7 @@ namespace dsm {
   void Dynamics<delay_t>::addAgent(Id srcNodeId, Id itineraryId) {
     if (this->m_agents.size() + 1 > this->m_graph.maxCapacity()) {
       throw std::overflow_error(buildLog(
-          std::format("Graph its already holding the max possible number of agents ({})",
+          std::format("Graph is already holding the max possible number of agents ({})",
                       this->m_graph.maxCapacity())));
     }
     if (!(srcNodeId < this->m_graph.nodeSet().size())) {
@@ -956,7 +956,7 @@ namespace dsm {
                                     std::optional<Id> srcNodeId) {
     if (this->m_agents.size() + nAgents > this->m_graph.maxCapacity()) {
       throw std::overflow_error(buildLog(
-          std::format("Graph its already holding the max possible number of agents ({})",
+          std::format("Graph is already holding the max possible number of agents ({})",
                       this->m_graph.maxCapacity())));
     }
     auto itineraryIt{m_itineraries.find(itineraryId)};
@@ -996,7 +996,7 @@ namespace dsm {
   void Dynamics<delay_t>::addAgents(std::span<Agent<delay_t>> agents) {
     if (this->m_agents.size() + agents.size() > this->m_graph.maxCapacity()) {
       throw std::overflow_error(buildLog(
-          std::format("Graph its already holding the max possible number of agents ({})",
+          std::format("Graph is already holding the max possible number of agents ({})",
                       this->m_graph.maxCapacity())));
     }
     std::ranges::for_each(agents, [this](const auto& agent) -> void {
@@ -1010,7 +1010,7 @@ namespace dsm {
                                              std::optional<Id> itineraryId) {
     if (this->m_agents.size() + nAgents > this->m_graph.maxCapacity()) {
       throw std::overflow_error(buildLog(
-          std::format("Graph its already holding the max possible number of agents ({})",
+          std::format("Graph is already holding the max possible number of agents ({})",
                       this->m_graph.maxCapacity())));
     }
     if (this->m_itineraries.empty()) {
