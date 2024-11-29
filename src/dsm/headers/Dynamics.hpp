@@ -21,6 +21,7 @@
 #include <format>
 #include <thread>
 #include <exception>
+#include <execution>
 
 #include "Agent.hpp"
 #include "Itinerary.hpp"
@@ -746,17 +747,21 @@ namespace dsm {
       }
     }
     // Move transport capacity agents from each node
-    for (const auto& [nodeId, pNode] : m_graph.nodeSet()) {
-      for (auto i = 0; i < pNode->transportCapacity(); ++i) {
-        if (!this->m_evolveNode(pNode)) {
-          break;
-        }
-      }
-      if (pNode->isTrafficLight()) {
-        auto& tl = dynamic_cast<TrafficLight&>(*pNode);
-        ++tl;  // Increment the counter
-      }
-    }
+    std::for_each(std::execution::par_unseq,
+                  m_graph.nodeSet().begin(),
+                  m_graph.nodeSet().end(),
+                  [this](const auto& nodePair) {
+                    auto const& pNode = nodePair.second;
+                    for (auto i = 0; i < pNode->transportCapacity(); ++i) {
+                      if (!this->m_evolveNode(pNode)) {
+                        break;
+                      }
+                    }
+                    if (pNode->isTrafficLight()) {
+                      auto& tl = dynamic_cast<TrafficLight&>(*pNode);
+                      ++tl;  // Increment the counter
+                    }
+                  });
     // cycle over agents and update their times
     this->m_evolveAgents();
     // increment time simulation
