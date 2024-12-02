@@ -830,6 +830,8 @@ namespace dsm {
         } else if (!(redTime > greenTime) && (greenTime > delta) &&
                    (redQueue > greenQueue)) {
           tl.decreaseGreenTimes(delta);
+        } else {
+          tl.resetCycles();
         }
       } else if (optimizationType == TrafficLightOptimization::NEAREST_NEIGHBOUR) {
         // If the difference is not less than the threshold
