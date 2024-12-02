@@ -163,9 +163,12 @@ namespace dsm {
     /// @brief Convert an existing node to a traffic light
     /// @param nodeId The id of the node to convert to a traffic light
     /// @param cycleTime The traffic light's cycle time
+    /// @param counter The traffic light's counter initial value. Default is 0
     /// @return A reference to the traffic light
     /// @throws std::invalid_argument if the node does not exist
-    TrafficLight& makeTrafficLight(Id const nodeId, Delay const cycleTime);
+    TrafficLight& makeTrafficLight(Id const nodeId,
+                                   Delay const cycleTime,
+                                   Delay const counter = 0);
     /// @brief Convert an existing node into a roundabout
     /// @param nodeId The id of the node to convert to a roundabout
     /// @return A reference to the roundabout

@@ -63,15 +63,15 @@ namespace dsm {
     }
     for (const auto& [nodeId, node] : m_nodes) {
       // This is probably not the best way to do this
-      // if (node->isIntersection()) {
-      //   auto& intersection = dynamic_cast<Intersection&>(*node);
-      //   const auto& oldStreetPriorities{intersection.streetPriorities()};
-      //   std::set<Id> newStreetPriorities;
-      //   for (const auto streetId : oldStreetPriorities) {
-      //     newStreetPriorities.emplace(newStreetIds[streetId]);
-      //   }
-      //   intersection.setStreetPriorities(newStreetPriorities);
-      // }
+      if (node->isIntersection()) {
+        auto& intersection = dynamic_cast<Intersection&>(*node);
+        const auto& oldStreetPriorities{intersection.streetPriorities()};
+        std::set<Id> newStreetPriorities;
+        for (const auto streetId : oldStreetPriorities) {
+          newStreetPriorities.emplace(newStreetIds[streetId]);
+        }
+        intersection.setStreetPriorities(newStreetPriorities);
+      }
       if (node->isTrafficLight()) {
         auto& trafficLight = dynamic_cast<TrafficLight&>(*node);
         std::unordered_map<Id, std::vector<TrafficLightCycle>> newCycles;
@@ -427,12 +427,14 @@ namespace dsm {
     m_nodes.emplace(std::make_pair(node.id(), std::make_unique<Intersection>(node)));
   }
 
-  TrafficLight& Graph::makeTrafficLight(Id const nodeId, Delay const cycleTime) {
+  TrafficLight& Graph::makeTrafficLight(Id const nodeId,
+                                        Delay const cycleTime,
+                                        Delay const counter) {
     if (!m_nodes.contains(nodeId)) {
       throw std::invalid_argument(buildLog("Node does not exist."));
     }
     auto& pNode = m_nodes[nodeId];
-    pNode = std::make_unique<TrafficLight>(*pNode, cycleTime);
+    pNode = std::make_unique<TrafficLight>(*pNode, cycleTime, counter);
     return dynamic_cast<TrafficLight&>(*pNode);
   }
 
