@@ -2,6 +2,7 @@
 #include "Node.hpp"
 
 #include <cassert>
+#include <iostream>
 
 namespace dsm {
 
@@ -94,6 +95,11 @@ namespace dsm {
     }
   }
 
+  void TrafficLightCycle::reset() {
+    m_greenTime = m_defaultValues.first;
+    m_phase = m_defaultValues.second;
+  }
+
   void TrafficLight::setComplementaryCycle(Id const streetId, Id const existingCycle) {
     if (m_cycles.contains(streetId)) {
       throw std::invalid_argument(buildLog("Street id already exists."));
@@ -115,6 +121,55 @@ namespace dsm {
     auto handler{m_cycles.extract(oldStreetId)};
     handler.key() = newStreetId;
     m_cycles.insert(std::move(handler));
+  }
+
+  TrafficLight& TrafficLight::operator++() {
+    m_counter = (m_counter + 1) % m_cycleTime;
+    return *this;
+  }
+
+  Delay TrafficLight::maxGreenTime(bool priorityStreets) const {
+    Delay maxTime{0};
+    for (auto const& [streetId, cycles] : m_cycles) {
+      if (priorityStreets && m_streetPriorities.contains(streetId)) {
+        for (auto const& cycle : cycles) {
+          maxTime = std::max(maxTime, cycle.greenTime());
+        }
+      } else {
+        for (auto const& cycle : cycles) {
+          maxTime = std::max(maxTime, cycle.greenTime());
+        }
+      }
+    }
+    return maxTime;
+  }
+
+  void TrafficLight::increaseGreenTimes(Delay const delta) {
+    for (auto& [streetId, cycles] : m_cycles) {
+      if (m_streetPriorities.contains(streetId)) {
+        for (auto& cycle : cycles) {
+          cycle = TrafficLightCycle(cycle.greenTime() + delta, cycle.phase());
+        }
+      } else {
+        for (auto& cycle : cycles) {
+          cycle = TrafficLightCycle(cycle.greenTime() - delta, cycle.phase() + delta);
+        }
+      }
+    }
+  }
+
+  void TrafficLight::decreaseGreenTimes(Delay const delta) {
+    for (auto& [streetId, cycles] : m_cycles) {
+      if (!m_streetPriorities.contains(streetId)) {
+        for (auto& cycle : cycles) {
+          cycle = TrafficLightCycle(cycle.greenTime() + delta, cycle.phase());
+        }
+      } else {
+        for (auto& cycle : cycles) {
+          cycle = TrafficLightCycle(cycle.greenTime() - delta, cycle.phase() + delta);
+        }
+      }
+    }
   }
 
   bool TrafficLight::isGreen(Id const streetId, Direction direction) const {
@@ -141,6 +196,14 @@ namespace dsm {
         break;
     }
     return m_cycles.at(streetId)[direction].isGreen(m_cycleTime, m_counter);
+  }
+
+  void TrafficLight::resetCycles() {
+    for (auto& [streetId, cycles] : m_cycles) {
+      for (auto& cycle : cycles) {
+        cycle.reset();
+      }
+    }
   }
 
   Roundabout::Roundabout(const Node& node) : Node{node.id()} {

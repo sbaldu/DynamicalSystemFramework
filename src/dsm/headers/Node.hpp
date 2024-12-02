@@ -169,13 +169,16 @@ namespace dsm {
   private:
     Delay m_greenTime;
     Delay m_phase;
+    std::pair<Delay, Delay> m_defaultValues;
 
   public:
     /// @brief Construct a new TrafficLightCycle object
     /// @param greenTime Delay, the green time
     /// @param phase Delay, the phase
     TrafficLightCycle(Delay greenTime, Delay phase)
-        : m_greenTime{greenTime}, m_phase{phase} {}
+        : m_greenTime{greenTime},
+          m_phase{phase},
+          m_defaultValues{std::make_pair(m_greenTime, m_phase)} {}
 
     inline Delay greenTime() const { return m_greenTime; }
     inline Delay phase() const { return m_phase; }
@@ -184,6 +187,8 @@ namespace dsm {
     /// @param counter Delay, the current counter
     /// @return true if counter < m_phase || (counter >= m_phase + m_greenTime && counter < cycleTime)
     bool isGreen(Delay const cycleTime, Delay const counter) const;
+
+    void reset();
   };
 
   class TrafficLight : public Intersection {
@@ -199,13 +204,12 @@ namespace dsm {
     TrafficLight(Id id, Delay cycleTime)
         : Intersection{id}, m_cycleTime{cycleTime}, m_counter{0} {}
 
-    TrafficLight(Node const& node, Delay cycleTime)
-        : Intersection{node}, m_cycleTime{cycleTime}, m_counter{0} {}
+    TrafficLight(Node const& node, Delay const cycleTime, Delay const counter = 0)
+        : Intersection{node}, m_cycleTime{cycleTime}, m_counter{counter} {}
 
-    inline TrafficLight& operator++() {
-      m_counter = (m_counter + 1) % m_cycleTime;
-      return *this;
-    }
+    TrafficLight& operator++();
+
+    Delay maxGreenTime(bool priorityStreets) const;
     /// @brief Get the traffic light's total cycle time
     /// @return Delay The traffic light's cycle time
     inline Delay cycleTime() const { return m_cycleTime; }
@@ -231,6 +235,9 @@ namespace dsm {
     /// @param oldStreetId Id, the old street id
     /// @param newStreetId Id, the new street id
     void moveCycle(Id const oldStreetId, Id const newStreetId);
+
+    void increaseGreenTimes(Delay const delta);
+    void decreaseGreenTimes(Delay const delta);
     /// @brief Get the traffic light's cycles
     /// @return std::unordered_map<Id, std::vector<TrafficLightCycle>> const& The traffic light's cycles
     inline std::unordered_map<Id, std::vector<TrafficLightCycle>> const& cycles() const {
@@ -242,6 +249,7 @@ namespace dsm {
     /// @return true if the traffic light is green for the street and direction
     bool isGreen(Id const streetId, Direction direction) const;
 
+    void resetCycles();
     inline bool isTrafficLight() const noexcept final { return true; }
   };
 
