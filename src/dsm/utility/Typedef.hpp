@@ -19,5 +19,9 @@ namespace dsm {
     LEFTANDSTRAIGHT = 5,
     ANY = 6
   };
+  enum class TrafficLightOptimization : uint8_t {
+    BASE = 0,
+    NEAREST_NEIGHBOUR = 1
+  };
 
 };  // namespace dsm
