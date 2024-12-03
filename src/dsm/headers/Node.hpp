@@ -187,7 +187,8 @@ namespace dsm {
     /// @param counter Delay, the current counter
     /// @return true if counter < m_phase || (counter >= m_phase + m_greenTime && counter < cycleTime)
     bool isGreen(Delay const cycleTime, Delay const counter) const;
-
+    /// @brief Reset the green and phase values to the default values
+    /// @details The default values are the values that the cycle had when it was created
     void reset();
   };
 
@@ -218,7 +219,8 @@ namespace dsm {
     /// @param direction The direction
     /// @param cycle The traffic light cycle
     void setCycle(Id const streetId, Direction direction, TrafficLightCycle const& cycle);
-
+    /// @brief Set the traffic light's cycles
+    /// @param cycles std::unordered_map<Id, std::vector<TrafficLightCycle>> The traffic light's cycles
     inline void setCycles(std::unordered_map<Id, std::vector<TrafficLightCycle>> cycles) {
       m_cycles = std::move(cycles);
     }
@@ -235,8 +237,11 @@ namespace dsm {
     /// @param oldStreetId Id, the old street id
     /// @param newStreetId Id, the new street id
     void moveCycle(Id const oldStreetId, Id const newStreetId);
-
+    /// @brief Increase the green times of the traffic light for priority streets and decrease the green times for non-priority streets
+    /// @param delta Delay, the time to increase or decrease the green times
     void increaseGreenTimes(Delay const delta);
+    /// @brief Decrease the green times of the traffic light for priority streets and increase the green times for non-priority streets
+    /// @param delta Delay, the time to increase or decrease the green times
     void decreaseGreenTimes(Delay const delta);
     /// @brief Get the traffic light's cycles
     /// @return std::unordered_map<Id, std::vector<TrafficLightCycle>> const& The traffic light's cycles
@@ -248,7 +253,8 @@ namespace dsm {
     /// @param direction Direction, the direction
     /// @return true if the traffic light is green for the street and direction
     bool isGreen(Id const streetId, Direction direction) const;
-
+    /// @brief Resets all traffic light cycles
+    /// @details For more info, see @ref TrafficLightCycle::reset()
     void resetCycles();
     inline bool isTrafficLight() const noexcept final { return true; }
   };
