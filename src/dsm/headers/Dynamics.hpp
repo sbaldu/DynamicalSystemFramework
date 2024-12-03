@@ -222,7 +222,7 @@ namespace dsm {
     void optimizeTrafficLights(double const threshold = 0.,
                                double const densityTolerance = 0.,
                                TrafficLightOptimization optimizationType =
-                                   TrafficLightOptimization::NEAREST_NEIGHBOUR);
+                                   TrafficLightOptimization::DOUBLE_TAIL);
 
     /// @brief Get the graph
     /// @return const Graph&, The graph
@@ -822,7 +822,7 @@ namespace dsm {
       }
       auto const greenTime = tl.maxGreenTime(true);
       auto const redTime = tl.maxGreenTime(false);
-      if (optimizationType == TrafficLightOptimization::BASE) {
+      if (optimizationType == TrafficLightOptimization::SINGLE_TAIL) {
         if ((greenSum > redSum) && !(greenTime > redTime) && (greenQueue > redQueue)) {
           if (redTime > delta) {
             tl.increaseGreenTimes(delta);
@@ -833,7 +833,7 @@ namespace dsm {
         } else {
           tl.resetCycles();
         }
-      } else if (optimizationType == TrafficLightOptimization::NEAREST_NEIGHBOUR) {
+      } else if (optimizationType == TrafficLightOptimization::DOUBLE_TAIL) {
         // If the difference is not less than the threshold
         //    - Check that the incoming streets have a density less than the mean one (eventually + tolerance): I want to avoid being into the cluster, better to be out or on the border
         //    - If the previous check fails, do nothing
