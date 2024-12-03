@@ -126,7 +126,7 @@ namespace dsm {
         for (const auto [nextNodeId, _] : m_graph.adjMatrix().getRow(nodeId)) {
           if (nextNodeId == destinationID &&
               minDistance ==
-                  m_graph.streetSet().at(nodeId * dimension + nextNodeId)->length()) {
+                  m_graph.streetSet()[nodeId * dimension + nextNodeId]->length()) {
             path.insert(nodeId, nextNodeId, true);
             continue;
           }
@@ -136,7 +136,7 @@ namespace dsm {
             // if the shortest path exists, save the distance
             if (minDistance ==
                 result.value().distance() +
-                    m_graph.streetSet().at(nodeId * dimension + nextNodeId)->length()) {
+                    m_graph.streetSet()[nodeId * dimension + nextNodeId]->length()) {
               path.insert(nodeId, nextNodeId, true);
             }
           } else if ((nextNodeId != destinationID)) {
@@ -217,8 +217,10 @@ namespace dsm {
     /// @brief Optimize the traffic lights by changing the green and red times
     /// @param threshold double, The percentage of the mean capacity of the streets used as threshold for the delta between the two tails.
     /// @param densityTolerance double, The algorithm will consider all streets with density up to densityTolerance*meanDensity
+    /// @param optimizationType TrafficLightOptimization, The type of optimization. Default is DOUBLE_TAIL
     /// @details The function cycles over the traffic lights and, if the difference between the two tails is greater than
     ///   the threshold multiplied by the mean capacity of the streets, it changes the green and red times of the traffic light, keeping the total cycle time constant.
+    ///   The optimizationType parameter can be set to SINGLE_TAIL to use an algorith which looks only at the incoming street tails or to DOUBLE_TAIL to consider both incoming and outgoing street tails.
     void optimizeTrafficLights(double const threshold = 0.,
                                double const densityTolerance = 0.,
                                TrafficLightOptimization optimizationType =
@@ -414,9 +416,8 @@ namespace dsm {
                                        Id nodeId,
                                        std::optional<Id> streetId) {
     auto possibleMoves = m_graph.adjMatrix().getRow(nodeId, true);
-    if (this->m_itineraries.size() > 0 &&
-        this->m_uniformDist(this->m_generator) > this->m_errorProbability) {
-      const auto& it = this->m_itineraries[this->m_agents[agentId]->itineraryId()];
+    if (m_itineraries.size() > 0 && m_uniformDist(m_generator) > m_errorProbability) {
+      const auto& it = m_itineraries[m_agents[agentId]->itineraryId()];
       if (it->destination() != nodeId) {
         possibleMoves = it->path().getRow(nodeId, true);
       }
@@ -428,7 +429,7 @@ namespace dsm {
     auto iterator = possibleMoves.begin();
     // while loop to avoid U turns in non-roundabout junctions
     do {
-      p = moveDist(this->m_generator);
+      p = moveDist(m_generator);
       iterator = possibleMoves.begin();
       std::advance(iterator, p);
     } while (!m_graph.nodeSet().at(nodeId)->isRoundabout() and streetId.has_value() and
@@ -469,7 +470,7 @@ namespace dsm {
         continue;
       }
       m_agents[agentId]->setSpeed(0.);
-      const auto& destinationNode{this->m_graph.nodeSet()[pStreet->nodePair().second]};
+      const auto& destinationNode{m_graph.nodeSet()[pStreet->nodePair().second]};
       if (destinationNode->isFull()) {
         continue;
       }
@@ -490,7 +491,7 @@ namespace dsm {
                                   m_agents[agentId]->itineraryId(),
                                   m_agents[agentId]->srcNodeId().value()};
           if (m_agents[agentId]->srcNodeId().has_value()) {
-            newAgent.setSourceNodeId(this->m_agents[agentId]->srcNodeId().value());
+            newAgent.setSourceNodeId(m_agents[agentId]->srcNodeId().value());
           }
           this->removeAgent(agentId);
           this->addAgent(newAgent);
@@ -549,7 +550,7 @@ namespace dsm {
         return false;
       }
       auto const agentId{roundabout.agents().front()};
-      auto const& nextStreet{this->m_graph.streetSet()[m_agentNextStreetId[agentId]]};
+      auto const& nextStreet{m_graph.streetSet()[m_agentNextStreetId[agentId]]};
       if (!(nextStreet->isFull())) {
         if (m_agents[agentId]->streetId().has_value()) {
           const auto streetId = m_agents[agentId]->streetId().value();
@@ -578,7 +579,7 @@ namespace dsm {
   template <typename delay_t>
     requires(is_numeric_v<delay_t>)
   void Dynamics<delay_t>::m_evolveAgents() {
-    for (const auto& [agentId, agent] : this->m_agents) {
+    for (const auto& [agentId, agent] : m_agents) {
       if (agent->delay() > 0) {
         const auto& street{m_graph.streetSet()[agent->streetId().value()]};
         if (agent->delay() > 1) {
@@ -594,7 +595,7 @@ namespace dsm {
         agent->decrementDelay();
         if (agent->delay() == 0) {
           auto const nLanes = street->nLanes();
-          if (this->m_itineraries[agent->itineraryId()]->destination() ==
+          if (m_itineraries[agent->itineraryId()]->destination() ==
               street->nodePair().second) {
             std::uniform_int_distribution<size_t> laneDist{
                 0, static_cast<size_t>(nLanes - 1)};
@@ -628,7 +629,7 @@ namespace dsm {
       } else if (!agent->streetId().has_value() &&
                  !m_agentNextStreetId.contains(agentId)) {
         assert(agent->srcNodeId().has_value());
-        const auto& srcNode{this->m_graph.nodeSet()[agent->srcNodeId().value()]};
+        const auto& srcNode{m_graph.nodeSet()[agent->srcNodeId().value()]};
         if (srcNode->isFull()) {
           continue;
         }
@@ -657,7 +658,7 @@ namespace dsm {
     requires(is_numeric_v<delay_t>)
   void Dynamics<delay_t>::setItineraries(std::span<Itinerary> itineraries) {
     std::ranges::for_each(itineraries, [this](const auto& itinerary) {
-      this->m_itineraries.insert(std::make_unique<Itinerary>(itinerary));
+      m_itineraries.insert(std::make_unique<Itinerary>(itinerary));
     });
   }
 
@@ -761,7 +762,7 @@ namespace dsm {
     // cycle over agents and update their times
     this->m_evolveAgents();
     // increment time simulation
-    ++this->m_time;
+    ++m_time;
   }
 
   template <typename delay_t>
@@ -782,7 +783,7 @@ namespace dsm {
                       "bounded between 0-1. Inserted value: {}",
                       densityTolerance)));
     }
-    const auto meanDensityGlob = streetMeanDensity().mean;  // Measurement
+    auto const meanDensityGlob = streetMeanDensity().mean;  // Measurement
     for (const auto& [nodeId, pNode] : m_graph.nodeSet()) {
       if (!pNode->isTrafficLight()) {
         continue;
@@ -888,50 +889,50 @@ namespace dsm {
   template <typename delay_t>
     requires(is_numeric_v<delay_t>)
   void Dynamics<delay_t>::addAgent(const Agent<delay_t>& agent) {
-    if (this->m_agents.size() + 1 > this->m_graph.maxCapacity()) {
+    if (m_agents.size() + 1 > m_graph.maxCapacity()) {
       throw std::overflow_error(buildLog(
           std::format("Graph is already holding the max possible number of agents ({})",
-                      this->m_graph.maxCapacity())));
+                      m_graph.maxCapacity())));
     }
-    if (this->m_agents.contains(agent.id())) {
+    if (m_agents.contains(agent.id())) {
       throw std::invalid_argument(
           buildLog(std::format("Agent with id {} already exists.", agent.id())));
     }
-    this->m_agents.emplace(agent.id(), std::make_unique<Agent<delay_t>>(agent));
+    m_agents.emplace(agent.id(), std::make_unique<Agent<delay_t>>(agent));
   }
   template <typename delay_t>
     requires(is_numeric_v<delay_t>)
   void Dynamics<delay_t>::addAgent(std::unique_ptr<Agent<delay_t>> agent) {
-    if (this->m_agents.size() + 1 > this->m_graph.maxCapacity()) {
+    if (m_agents.size() + 1 > m_graph.maxCapacity()) {
       throw std::overflow_error(buildLog(
           std::format("Graph is already holding the max possible number of agents ({})",
-                      this->m_graph.maxCapacity())));
+                      m_graph.maxCapacity())));
     }
-    if (this->m_agents.contains(agent->id())) {
+    if (m_agents.contains(agent->id())) {
       throw std::invalid_argument(
           buildLog(std::format("Agent with id {} already exists.", agent->id())));
     }
-    this->m_agents.emplace(agent->id(), std::move(agent));
+    m_agents.emplace(agent->id(), std::move(agent));
   }
   template <typename delay_t>
     requires(is_numeric_v<delay_t>)
   void Dynamics<delay_t>::addAgent(Id srcNodeId, Id itineraryId) {
-    if (this->m_agents.size() + 1 > this->m_graph.maxCapacity()) {
+    if (m_agents.size() + 1 > m_graph.maxCapacity()) {
       throw std::overflow_error(buildLog(
           std::format("Graph is already holding the max possible number of agents ({})",
-                      this->m_graph.maxCapacity())));
+                      m_graph.maxCapacity())));
     }
-    if (!(srcNodeId < this->m_graph.nodeSet().size())) {
+    if (!(srcNodeId < m_graph.nodeSet().size())) {
       throw std::invalid_argument(
           buildLog(std::format("Node with id {} not found", srcNodeId)));
     }
-    if (!(this->m_itineraries.contains(itineraryId))) {
+    if (!(m_itineraries.contains(itineraryId))) {
       throw std::invalid_argument(
           buildLog(std::format("Itinerary with id {} not found", itineraryId)));
     }
     Size agentId{0};
-    if (!this->m_agents.empty()) {
-      agentId = this->m_agents.rbegin()->first + 1;
+    if (!m_agents.empty()) {
+      agentId = m_agents.rbegin()->first + 1;
     }
     this->addAgent(Agent<delay_t>{agentId, itineraryId, srcNodeId});
   }
@@ -940,10 +941,10 @@ namespace dsm {
   void Dynamics<delay_t>::addAgents(Id itineraryId,
                                     Size nAgents,
                                     std::optional<Id> srcNodeId) {
-    if (this->m_agents.size() + nAgents > this->m_graph.maxCapacity()) {
+    if (m_agents.size() + nAgents > m_graph.maxCapacity()) {
       throw std::overflow_error(buildLog(
           std::format("Graph is already holding the max possible number of agents ({})",
-                      this->m_graph.maxCapacity())));
+                      m_graph.maxCapacity())));
     }
     auto itineraryIt{m_itineraries.find(itineraryId)};
     if (itineraryIt == m_itineraries.end()) {
@@ -951,13 +952,13 @@ namespace dsm {
           buildLog(std::format("Itinerary with id {} not found", itineraryId)));
     }
     Size agentId{0};
-    if (!this->m_agents.empty()) {
-      agentId = this->m_agents.rbegin()->first + 1;
+    if (!m_agents.empty()) {
+      agentId = m_agents.rbegin()->first + 1;
     }
     for (Size i{0}; i < nAgents; ++i, ++agentId) {
       this->addAgent(Agent<delay_t>{agentId, itineraryId});
       if (srcNodeId.has_value()) {
-        this->m_agents[agentId]->setSourceNodeId(srcNodeId.value());
+        m_agents[agentId]->setSourceNodeId(srcNodeId.value());
       }
     }
   }
@@ -994,48 +995,48 @@ namespace dsm {
     requires(is_numeric_v<delay_t>)
   void Dynamics<delay_t>::addAgentsUniformly(Size nAgents,
                                              std::optional<Id> itineraryId) {
-    if (this->m_agents.size() + nAgents > this->m_graph.maxCapacity()) {
+    if (m_agents.size() + nAgents > m_graph.maxCapacity()) {
       throw std::overflow_error(buildLog(
           std::format("Graph is already holding the max possible number of agents ({})",
                       this->m_graph.maxCapacity())));
     }
-    if (this->m_itineraries.empty()) {
+    if (m_itineraries.empty()) {
       // TODO: make this possible for random agents
       throw std::invalid_argument(
           buildLog("It is not possible to add random agents without itineraries."));
     }
     const bool randomItinerary{!itineraryId.has_value()};
     std::uniform_int_distribution<Size> itineraryDist{
-        0, static_cast<Size>(this->m_itineraries.size() - 1)};
+        0, static_cast<Size>(m_itineraries.size() - 1)};
     std::uniform_int_distribution<Size> streetDist{
-        0, static_cast<Size>(this->m_graph.streetSet().size() - 1)};
+        0, static_cast<Size>(m_graph.streetSet().size() - 1)};
     for (Size i{0}; i < nAgents; ++i) {
       if (randomItinerary) {
-        auto itineraryIt{this->m_itineraries.begin()};
-        std::advance(itineraryIt, itineraryDist(this->m_generator));
+        auto itineraryIt{m_itineraries.begin()};
+        std::advance(itineraryIt, itineraryDist(m_generator));
         itineraryId = itineraryIt->first;
       }
       Id agentId{0};
-      if (!this->m_agents.empty()) {
-        agentId = this->m_agents.rbegin()->first + 1;
+      if (!m_agents.empty()) {
+        agentId = m_agents.rbegin()->first + 1;
       }
       Id streetId{0};
       do {
         // I dunno why this works and the following doesn't
-        const auto& streetSet = this->m_graph.streetSet();
+        const auto& streetSet = m_graph.streetSet();
         auto streetIt = streetSet.begin();
         // auto streetIt = this->m_graph->streetSet().begin();
-        Size step = streetDist(this->m_generator);
+        Size step = streetDist(m_generator);
         std::advance(streetIt, step);
         streetId = streetIt->first;
-      } while (this->m_graph.streetSet()[streetId]->isFull());
-      const auto& street{this->m_graph.streetSet()[streetId]};
+      } while (m_graph.streetSet()[streetId]->isFull());
+      const auto& street{m_graph.streetSet()[streetId]};
       Agent<delay_t> agent{agentId, itineraryId.value(), street->nodePair().first};
       agent.setStreetId(streetId);
       this->addAgent(agent);
       this->setAgentSpeed(agentId);
-      this->m_agents[agentId]->incrementDelay(
-          std::ceil(street->length() / this->m_agents[agentId]->speed()));
+      m_agents[agentId]->incrementDelay(
+          std::ceil(street->length() / m_agents[agentId]->speed()));
       street->addAgent(agentId);
       ++agentId;
     }
@@ -1164,7 +1165,7 @@ namespace dsm {
     requires(is_numeric_v<delay_t>)
   void Dynamics<delay_t>::addItineraries(std::span<Itinerary> itineraries) {
     std::ranges::for_each(itineraries, [this](const auto& itinerary) -> void {
-      this->m_itineraries.insert(std::make_unique<Itinerary>(itinerary));
+      m_itineraries.insert(std::make_unique<Itinerary>(itinerary));
     });
   }
 
@@ -1366,9 +1367,8 @@ namespace dsm {
     const auto& street{this->m_graph.streetSet()[agent->streetId().value()]};
     double speed{street->maxSpeed() *
                  (1. - this->m_minSpeedRateo * street->density(true))};
-    if (this->m_speedFluctuationSTD > 0.) {
-      std::normal_distribution<double> speedDist{speed,
-                                                 speed * this->m_speedFluctuationSTD};
+    if (m_speedFluctuationSTD > 0.) {
+      std::normal_distribution<double> speedDist{speed, speed * m_speedFluctuationSTD};
       speed = speedDist(this->m_generator);
     }
     speed < 0. ? agent->setSpeed(street->maxSpeed() * (1. - this->m_minSpeedRateo))
