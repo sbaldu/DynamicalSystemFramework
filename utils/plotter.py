@@ -56,7 +56,6 @@ from matplotlib import pyplot as plt
 import numpy as np
 import networkx as nx
 from tqdm import tqdm
-from functions import create_graph_from_adj
 
 PRESENTATION = True
 
@@ -233,12 +232,15 @@ if __name__ == "__main__":
     ############################################
 
     adj = np.loadtxt("../examples/data/matrix.dat", skiprows=1)
-    n = len(adj)
+    G = nx.from_numpy_array(adj, create_using=nx.DiGraph())
     # read the coordinates
     coord = pd.read_csv("../examples/data/coordinates.csv", sep=";")
     coord = coord.set_index("nodeId")
-    # create a directed graph
-    G, edges, pos = create_graph_from_adj(adj, coord)
+    # create the pos
+    pos = {}
+    # coord has id as index with lat, lon columns
+    for node in G.nodes():
+        pos[node] = (coord.loc[node]["lon"], coord.loc[node]["lat"])
 
     # Draws the graph for debugging
     nx.draw(G, pos, with_labels=True, node_size=100, node_color="skyblue", font_size=8)
@@ -296,8 +298,8 @@ if __name__ == "__main__":
             for col in temp_df.columns:
                 index = int(col)
                 density = temp_df.loc[time][col]
-                src = index // n
-                dst = index % n
+                src = index // G.number_of_nodes()
+                dst = index % G.number_of_nodes()
                 # remove edge
                 if density < K_C:
                     if copy.has_edge(src, dst):
@@ -333,8 +335,8 @@ if __name__ == "__main__":
         for col in DF_DEN.columns:
             index = int(col)
             density = DF_DEN.loc[time][col]
-            src = index // n
-            dst = index % n
+            src = index // G.number_of_nodes()
+            dst = index % G.number_of_nodes()
             # remove edge
             if density < K_C:
                 if copy.has_edge(src, dst):

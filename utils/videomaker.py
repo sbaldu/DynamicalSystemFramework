@@ -17,7 +17,6 @@ from PIL import ImageFont
 import pandas as pd
 import geopandas as gpd
 import contextily as ctx
-from functions import create_graph_from_adj
 import cv2
 
 # Constants
@@ -31,7 +30,7 @@ elif platform.system() == "Darwin":  # MAC OS
     FONT_PATH = "/System/Library/Fonts/Supplemental/Arial.ttf"
 
 
-def create_image(__row: pd.Series, __graph, __pos, __edges, __n, __gdf, __day):
+def create_image(__row: pd.Series, __graph, __pos, __n, __gdf, __day):
     """
     Generates and saves an image of a graph with edges colored based on density.
 
@@ -39,7 +38,6 @@ def create_image(__row: pd.Series, __graph, __pos, __edges, __n, __gdf, __day):
     __row (Series): A pandas DataFrame containing the data.
     __graph (Graph): A networkx Graph object.
     __pos (dict): A dictionary containing the positions of the nodes.
-    __edges (list): A list containing the edges.
     __n (int): The number of nodes in the graph.
     __gdf (GeoDataFrame): A geopandas GeoDataFrame containing the coordinates of the nodes.
 
@@ -54,9 +52,9 @@ def create_image(__row: pd.Series, __graph, __pos, __edges, __n, __gdf, __day):
         # set color of edge based on density using a colormap from green to red
         __graph[src][dst]["color"] = COLORMAP(density)
         # draw graph with colors
-    colors = [__graph[u][v]["color"] for u, v in __edges]
+    colors = [__graph[u][v]["color"] for u, v in __graph.edges()]
     # draw graph
-    _, ax = plt.subplots()
+    _, ax = plt.subplots(figsize=(16, 9))
     if __gdf is not None:
         limits = __gdf.total_bounds + np.array([-0.001, -0.001, 0.001, 0.001])
         ax.set_xlim(limits[0], limits[2])
@@ -64,19 +62,23 @@ def create_image(__row: pd.Series, __graph, __pos, __edges, __n, __gdf, __day):
     nx.draw_networkx_edges(
         __graph,
         __pos,
-        edgelist=__edges,
+        edgelist=__graph.edges(),
         edge_color=colors,
         ax=ax,
         connectionstyle="arc3,rad=0.05",
-        arrowsize=5,
+        arrowsize=10,
         arrowstyle="->",
+        width=2.5,
     )
-    nx.draw_networkx_nodes(__graph, __pos, ax=ax, node_size=69)
-    nx.draw_networkx_labels(__graph, __pos, ax=ax, font_size=5)
+    nx.draw_networkx_nodes(__graph, __pos, ax=ax, node_size=169)
+    nx.draw_networkx_labels(__graph, __pos, ax=ax, font_size=12)
     if __gdf is not None:
         # _gdf.plot(ax=ax)
         ctx.add_basemap(
-            ax, crs=__gdf.crs.to_string(), source=ctx.providers.OpenStreetMap.Mapnik
+            ax,
+            crs=__gdf.crs.to_string(),
+            source=ctx.providers.OpenStreetMap.Mapnik,
+            alpha=0.5,
         )
     plt.box(False)
     plt.title(
@@ -196,7 +198,10 @@ if __name__ == "__main__":
     if args.day is None:
         args.day = "(hh:mm)"
 
-    G, edges, pos = create_graph_from_adj(adj, coord)
+    G = nx.from_numpy_array(adj, create_using=nx.DiGraph())
+    pos = {}
+    for node in G.nodes():
+        pos[node] = (coord.loc[node]["lon"], coord.loc[node]["lat"])
 
     font = ImageFont.truetype(FONT_PATH, 35)
 
@@ -233,7 +238,6 @@ if __name__ == "__main__":
                         df.loc[time],
                         G,
                         pos,
-                        edges,
                         n,
                         GDF,
                         args.day,
