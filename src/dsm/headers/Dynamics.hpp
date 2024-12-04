@@ -824,11 +824,10 @@ namespace dsm {
       auto const greenTime = tl.maxGreenTime(true);
       auto const redTime = tl.maxGreenTime(false);
       if (optimizationType == TrafficLightOptimization::SINGLE_TAIL) {
-        if ((greenSum > redSum) && !(greenTime > redTime) && (greenQueue > redQueue)) {
-          if (redTime > delta) {
-            tl.increaseGreenTimes(delta);
-          }
-        } else if (!(redTime > greenTime) && (greenTime > delta) &&
+        if ((greenSum > redSum) && !(greenTime > redTime) && (redTime > delta) &&
+            (greenQueue > redQueue)) {
+          tl.increaseGreenTimes(delta);
+        } else if ((redSum > greenSum) && !(redTime > greenTime) && (greenTime > delta) &&
                    (redQueue > greenQueue)) {
           tl.decreaseGreenTimes(delta);
         } else {
