@@ -34,7 +34,7 @@ using Graph = dsm::Graph;
 using Dynamics = dsm::FirstOrderDynamics<Delay>;
 using Street = dsm::Street;
 using SpireStreet = dsm::SpireStreet;
-using TrafficLight = dsm::TrafficLight<Delay>;
+using TrafficLight = dsm::TrafficLight;
 
 void printLoadingBar(int const i, int const n) {
   std::cout << "Loading: " << std::setprecision(2) << std::fixed << (i * 100. / n) << "%"
@@ -149,7 +149,7 @@ int main(int argc, char** argv) {
 
   std::cout << "Traffic Lightning the simulation...\n";
   for (Unit i{0}; i < graph.nodeSet().size(); ++i) {
-    graph.makeTrafficLight<Delay>(i);
+    graph.makeTrafficLight(i, 120);
   }
   std::cout << "Making every street a spire...\n";
   for (const auto& [id, street] : graph.streetSet()) {
@@ -179,7 +179,6 @@ int main(int argc, char** argv) {
     while (value < 0.) {
       value = random();
     }
-    tl.setDelay(static_cast<Delay>(value));
     const auto& col = adj.getCol(nodeId, true);
     std::set<Unit> streets;
     const auto id = col.begin();
@@ -199,7 +198,14 @@ int main(int argc, char** argv) {
         streets.emplace(c);
       }
     }
-    tl.setStreetPriorities(streets);
+    for (auto const& streetId : streets) {
+      tl.setCycle(streetId, dsm::Direction::ANY, {static_cast<dsm::Delay>(value), 0});
+    }
+    for (const auto& [c, value] : col) {
+      if (streets.find(c) == streets.end()) {
+        tl.setComplementaryCycle(c, *streets.begin());
+      }
+    }
     ++sda[streets.size() - 1];
     // std::cout << "Node id: " << nodeId << " has " << streets.size()
     //           << "streets.\n";
@@ -313,7 +319,7 @@ int main(int argc, char** argv) {
     }
     dynamics.evolve(false);
     if (OPTIMIZE && (dynamics.time() % 420 == 0)) {
-      dynamics.optimizeTrafficLights(std::floor(420. / 60), 0.15, 3. / 10);
+      dynamics.optimizeTrafficLights(0.15, 3. / 10);
     }
     if (dynamics.time() % 2400 == 0 && nAgents > 0) {
       // auto meanDelta = std::accumulate(deltas.begin(), deltas.end(), 0) /

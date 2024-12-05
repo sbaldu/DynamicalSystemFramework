@@ -161,13 +161,14 @@ namespace dsm {
     void addNodes(T1&& node, Tn&&... nodes);
 
     /// @brief Convert an existing node to a traffic light
-    /// @tparam Delay The type of the traffic light's delay
     /// @param nodeId The id of the node to convert to a traffic light
+    /// @param cycleTime The traffic light's cycle time
+    /// @param counter The traffic light's counter initial value. Default is 0
     /// @return A reference to the traffic light
     /// @throws std::invalid_argument if the node does not exist
-    template <typename Delay>
-      requires(std::unsigned_integral<Delay>)
-    TrafficLight<Delay>& makeTrafficLight(Id nodeId);
+    TrafficLight& makeTrafficLight(Id const nodeId,
+                                   Delay const cycleTime,
+                                   Delay const counter = 0);
     /// @brief Convert an existing node into a roundabout
     /// @param nodeId The id of the node to convert to a roundabout
     /// @return A reference to the roundabout
@@ -280,17 +281,6 @@ namespace dsm {
   void Graph::addStreets(T1&& street, Tn&&... streets) {
     addStreet(std::forward<T1>(street));
     addStreets(std::forward<Tn>(streets)...);
-  }
-
-  template <typename Delay>
-    requires(std::unsigned_integral<Delay>)
-  TrafficLight<Delay>& Graph::makeTrafficLight(Id nodeId) {
-    if (!m_nodes.contains(nodeId)) {
-      throw std::invalid_argument(buildLog("Node does not exist."));
-    }
-    auto& pNode = m_nodes[nodeId];
-    pNode = std::make_unique<TrafficLight<Delay>>(*pNode);
-    return dynamic_cast<TrafficLight<Delay>&>(*pNode);
   }
 
 };  // namespace dsm

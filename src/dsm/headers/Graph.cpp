@@ -72,6 +72,14 @@ namespace dsm {
         }
         intersection.setStreetPriorities(newStreetPriorities);
       }
+      if (node->isTrafficLight()) {
+        auto& trafficLight = dynamic_cast<TrafficLight&>(*node);
+        std::unordered_map<Id, std::vector<TrafficLightCycle>> newCycles;
+        for (auto const& [streetId, cycles] : trafficLight.cycles()) {
+          newCycles.emplace(newStreetIds[streetId], std::move(cycles));
+        }
+        trafficLight.setCycles(newCycles);
+      }
     }
   }
 
@@ -417,6 +425,17 @@ namespace dsm {
 
   void Graph::addNode(const Intersection& node) {
     m_nodes.emplace(std::make_pair(node.id(), std::make_unique<Intersection>(node)));
+  }
+
+  TrafficLight& Graph::makeTrafficLight(Id const nodeId,
+                                        Delay const cycleTime,
+                                        Delay const counter) {
+    if (!m_nodes.contains(nodeId)) {
+      throw std::invalid_argument(buildLog("Node does not exist."));
+    }
+    auto& pNode = m_nodes[nodeId];
+    pNode = std::make_unique<TrafficLight>(*pNode, cycleTime, counter);
+    return dynamic_cast<TrafficLight&>(*pNode);
   }
 
   Roundabout& Graph::makeRoundabout(Id nodeId) {

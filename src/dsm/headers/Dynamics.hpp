@@ -32,9 +32,6 @@
 #include "../utility/Typedef.hpp"
 
 namespace dsm {
-
-  using TimePoint = long long unsigned int;
-
   /// @brief The Measurement struct represents the mean of a quantity and its standard deviation
   /// @tparam T The type of the quantity
   /// @param mean The mean
@@ -63,13 +60,13 @@ namespace dsm {
   /// @brief The Dynamics class represents the dynamics of the network.
   /// @tparam Id, The type of the graph's id. It must be an unsigned integral type.
   /// @tparam Size, The type of the graph's capacity. It must be an unsigned integral type.
-  template <typename Delay>
-    requires(is_numeric_v<Delay>)
+  template <typename delay_t>
+    requires(is_numeric_v<delay_t>)
   class Dynamics {
   protected:
     std::unordered_map<Id, std::unique_ptr<Itinerary>> m_itineraries;
-    std::map<Id, std::unique_ptr<Agent<Delay>>> m_agents;
-    TimePoint m_time, m_previousSpireTime;
+    std::map<Id, std::unique_ptr<Agent<delay_t>>> m_agents;
+    Time m_time, m_previousSpireTime, m_previousOptimizationTime;
     Graph m_graph;
     double m_errorProbability;
     double m_minSpeedRateo;
@@ -79,10 +76,10 @@ namespace dsm {
     std::vector<unsigned int> m_travelTimes;
     std::unordered_map<Id, Id> m_agentNextStreetId;
     bool m_forcePriorities;
-    std::optional<Delay> m_dataUpdatePeriod;
+    std::optional<delay_t> m_dataUpdatePeriod;
     std::unordered_map<Id, std::array<unsigned long long, 4>> m_turnCounts;
     std::unordered_map<Id, std::array<long, 4>> m_turnMapping;
-    std::unordered_map<Id, unsigned long long> m_streetTails;
+    std::unordered_map<Id, Size> m_streetTails;
 
     /// @brief Get the next street id
     /// @param agentId The id of the agent
@@ -95,13 +92,11 @@ namespace dsm {
     /// @brief Increase the turn counts
     virtual void m_increaseTurnCounts(Id streetId, double delta);
     /// @brief Evolve a street
-    /// @param streetId The id of the street
     /// @param pStreet A std::unique_ptr to the street
     /// @param reinsert_agents If true, the agents are reinserted in the simulation after they reach their destination
     /// @details If possible, removes the first agent of the street's queue, putting it in the destination node.
     /// If the agent is going into the destination node, it is removed from the simulation (and then reinserted if reinsert_agents is true)
-    virtual void m_evolveStreet(const Id streetId,
-                                const std::unique_ptr<Street>& pStreet,
+    virtual void m_evolveStreet(const std::unique_ptr<Street>& pStreet,
                                 bool reinsert_agents);
     /// @brief If possible, removes one agent from the node, putting it on the next street.
     /// @param pNode A std::unique_ptr to the node
@@ -131,7 +126,7 @@ namespace dsm {
         for (const auto [nextNodeId, _] : m_graph.adjMatrix().getRow(nodeId)) {
           if (nextNodeId == destinationID &&
               minDistance ==
-                  m_graph.streetSet().at(nodeId * dimension + nextNodeId)->length()) {
+                  m_graph.streetSet()[nodeId * dimension + nextNodeId]->length()) {
             path.insert(nodeId, nextNodeId, true);
             continue;
           }
@@ -141,7 +136,7 @@ namespace dsm {
             // if the shortest path exists, save the distance
             if (minDistance ==
                 result.value().distance() +
-                    m_graph.streetSet().at(nodeId * dimension + nextNodeId)->length()) {
+                    m_graph.streetSet()[nodeId * dimension + nextNodeId]->length()) {
               path.insert(nodeId, nextNodeId, true);
             }
           } else if ((nextNodeId != destinationID)) {
@@ -201,9 +196,9 @@ namespace dsm {
     /// @details If true, if an agent cannot move to the next street, the whole node is skipped
     void setForcePriorities(bool forcePriorities) { m_forcePriorities = forcePriorities; }
     /// @brief Set the data update period.
-    /// @param dataUpdatePeriod Delay, The period
+    /// @param dataUpdatePeriod delay_t, The period
     /// @details Some data, i.e. the street queue lengths, are stored only after a fixed amount of time which is represented by this variable.
-    void setDataUpdatePeriod(Delay dataUpdatePeriod) {
+    void setDataUpdatePeriod(delay_t dataUpdatePeriod) {
       m_dataUpdatePeriod = dataUpdatePeriod;
     }
 
@@ -220,14 +215,16 @@ namespace dsm {
     /// @param reinsert_agents If true, the agents are reinserted in the simulation after they reach their destination
     virtual void evolve(bool reinsert_agents = false);
     /// @brief Optimize the traffic lights by changing the green and red times
-    /// @param nCycles Delay, The number of cycles (times agents are being added) between two calls of this function
     /// @param threshold double, The percentage of the mean capacity of the streets used as threshold for the delta between the two tails.
     /// @param densityTolerance double, The algorithm will consider all streets with density up to densityTolerance*meanDensity
+    /// @param optimizationType TrafficLightOptimization, The type of optimization. Default is DOUBLE_TAIL
     /// @details The function cycles over the traffic lights and, if the difference between the two tails is greater than
     ///   the threshold multiplied by the mean capacity of the streets, it changes the green and red times of the traffic light, keeping the total cycle time constant.
-    void optimizeTrafficLights(Delay nCycles,
-                               double threshold = 0.,
-                               double densityTolerance = 0.);
+    ///   The optimizationType parameter can be set to SINGLE_TAIL to use an algorith which looks only at the incoming street tails or to DOUBLE_TAIL to consider both incoming and outgoing street tails.
+    void optimizeTrafficLights(double const threshold = 0.,
+                               double const densityTolerance = 0.,
+                               TrafficLightOptimization optimizationType =
+                                   TrafficLightOptimization::DOUBLE_TAIL);
 
     /// @brief Get the graph
     /// @return const Graph&, The graph
@@ -239,17 +236,19 @@ namespace dsm {
     }
     /// @brief Get the agents
     /// @return const std::unordered_map<Id, Agent<Id>>&, The agents
-    const std::map<Id, std::unique_ptr<Agent<Delay>>>& agents() const { return m_agents; }
+    const std::map<Id, std::unique_ptr<Agent<delay_t>>>& agents() const {
+      return m_agents;
+    }
     /// @brief Get the time
-    /// @return TimePoint The time
-    TimePoint time() const { return m_time; }
+    /// @return Time The time
+    Time time() const { return m_time; }
 
     /// @brief Add an agent to the simulation
     /// @param agent The agent
-    void addAgent(const Agent<Delay>& agent);
+    void addAgent(const Agent<delay_t>& agent);
     /// @brief Add an agent to the simulation
     /// @param agent std::unique_ptr to the agent
-    void addAgent(std::unique_ptr<Agent<Delay>> agent);
+    void addAgent(std::unique_ptr<Agent<delay_t>> agent);
     /// @brief Add an agent with given source node and itinerary
     /// @param srcNodeId The id of the source node
     /// @param itineraryId The id of the itinerary
@@ -276,7 +275,7 @@ namespace dsm {
     void addAgents(T1 agent, Tn... agents);
     /// @brief Add a set of agents to the simulation
     /// @param agents Generic container of agents, represented by an std::span
-    void addAgents(std::span<Agent<Delay>> agents);
+    void addAgents(std::span<Agent<delay_t>> agents);
     /// @brief Add a set of agents to the simulation
     /// @param nAgents The number of agents to add
     /// @param uniformly If true, the agents are added uniformly on the streets
@@ -375,11 +374,12 @@ namespace dsm {
     }
   };
 
-  template <typename Delay>
-    requires(is_numeric_v<Delay>)
-  Dynamics<Delay>::Dynamics(Graph& graph)
+  template <typename delay_t>
+    requires(is_numeric_v<delay_t>)
+  Dynamics<delay_t>::Dynamics(Graph& graph)
       : m_time{0},
         m_previousSpireTime{0},
+        m_previousOptimizationTime{0},
         m_graph{std::move(graph)},
         m_errorProbability{0.},
         m_minSpeedRateo{0.},
@@ -396,27 +396,28 @@ namespace dsm {
         const auto& delta = street->angle() - m_graph.streetSet()[ss]->angle();
         if (std::abs(delta) < std::numbers::pi) {
           if (delta < 0.) {
-            m_turnMapping[streetId][0] = ss;
+            m_turnMapping[streetId][dsm::Direction::RIGHT] = ss;
             ;  // right
           } else if (delta > 0.) {
-            m_turnMapping[streetId][2] = ss;  // left
+            m_turnMapping[streetId][dsm::Direction::LEFT] = ss;  // left
           } else {
-            m_turnMapping[streetId][1] = ss;  // straight
+            m_turnMapping[streetId][dsm::Direction::STRAIGHT] = ss;  // straight
           }
         } else {
-          m_turnMapping[streetId][3] = ss;  // U
+          m_turnMapping[streetId][dsm::Direction::UTURN] = ss;  // U
         }
       }
     }
   }
 
-  template <typename Delay>
-    requires(is_numeric_v<Delay>)
-  Id Dynamics<Delay>::m_nextStreetId(Id agentId, Id nodeId, std::optional<Id> streetId) {
+  template <typename delay_t>
+    requires(is_numeric_v<delay_t>)
+  Id Dynamics<delay_t>::m_nextStreetId(Id agentId,
+                                       Id nodeId,
+                                       std::optional<Id> streetId) {
     auto possibleMoves = m_graph.adjMatrix().getRow(nodeId, true);
-    if (this->m_itineraries.size() > 0 &&
-        this->m_uniformDist(this->m_generator) > this->m_errorProbability) {
-      const auto& it = this->m_itineraries[this->m_agents[agentId]->itineraryId()];
+    if (m_itineraries.size() > 0 && m_uniformDist(m_generator) > m_errorProbability) {
+      const auto& it = m_itineraries[m_agents[agentId]->itineraryId()];
       if (it->destination() != nodeId) {
         possibleMoves = it->path().getRow(nodeId, true);
       }
@@ -428,7 +429,7 @@ namespace dsm {
     auto iterator = possibleMoves.begin();
     // while loop to avoid U turns in non-roundabout junctions
     do {
-      p = moveDist(this->m_generator);
+      p = moveDist(m_generator);
       iterator = possibleMoves.begin();
       std::advance(iterator, p);
     } while (!m_graph.nodeSet().at(nodeId)->isRoundabout() and streetId.has_value() and
@@ -438,9 +439,9 @@ namespace dsm {
     return iterator->first;
   }
 
-  template <typename Delay>
-    requires(is_numeric_v<Delay>)
-  void Dynamics<Delay>::m_increaseTurnCounts(Id streetId, double delta) {
+  template <typename delay_t>
+    requires(is_numeric_v<delay_t>)
+  void Dynamics<delay_t>::m_increaseTurnCounts(Id streetId, double delta) {
     if (std::abs(delta) < std::numbers::pi) {
       if (delta < 0.) {
         ++m_turnCounts[streetId][0];  // right
@@ -454,11 +455,10 @@ namespace dsm {
     }
   }
 
-  template <typename Delay>
-    requires(is_numeric_v<Delay>)
-  void Dynamics<Delay>::m_evolveStreet(const Id streetId,
-                                       const std::unique_ptr<Street>& pStreet,
-                                       bool reinsert_agents) {
+  template <typename delay_t>
+    requires(is_numeric_v<delay_t>)
+  void Dynamics<delay_t>::m_evolveStreet(const std::unique_ptr<Street>& pStreet,
+                                         bool reinsert_agents) {
     auto const nLanes = pStreet->nLanes();
     for (auto queueIndex = 0; queueIndex < nLanes; ++queueIndex) {
       if (m_uniformDist(m_generator) > m_maxFlowPercentage ||
@@ -470,24 +470,14 @@ namespace dsm {
         continue;
       }
       m_agents[agentId]->setSpeed(0.);
-      const auto& destinationNode{this->m_graph.nodeSet()[pStreet->nodePair().second]};
+      const auto& destinationNode{m_graph.nodeSet()[pStreet->nodePair().second]};
       if (destinationNode->isFull()) {
         continue;
       }
       if (destinationNode->isTrafficLight()) {
-        auto& tl = dynamic_cast<TrafficLight<Delay>&>(*destinationNode);
-        if (tl.leftTurnRatio().has_value() && nLanes > 1 && queueIndex == nLanes - 1) {
-          if (tl.isGreen(streetId) &&
-              tl.counter() >
-                  tl.delay().value().first * (1. - tl.leftTurnRatio().value().first)) {
-            continue;
-          } else if (!tl.isGreen(streetId) &&
-                     tl.counter() > tl.delay().value().first +
-                                        tl.delay().value().second *
-                                            (1. - tl.leftTurnRatio().value().second)) {
-            continue;
-          }
-        } else if (!tl.isGreen(streetId)) {
+        auto& tl = dynamic_cast<TrafficLight&>(*destinationNode);
+        auto const direction{pStreet->laneMapping().at(queueIndex)};
+        if (!tl.isGreen(pStreet->id(), direction)) {
           continue;
         }
       }
@@ -497,11 +487,11 @@ namespace dsm {
         m_travelTimes.push_back(m_agents[agentId]->time());
         if (reinsert_agents) {
           // take last agent id in map
-          Agent<Delay> newAgent{static_cast<Id>(m_agents.rbegin()->first + 1),
-                                m_agents[agentId]->itineraryId(),
-                                m_agents[agentId]->srcNodeId().value()};
+          Agent<delay_t> newAgent{static_cast<Id>(m_agents.rbegin()->first + 1),
+                                  m_agents[agentId]->itineraryId(),
+                                  m_agents[agentId]->srcNodeId().value()};
           if (m_agents[agentId]->srcNodeId().has_value()) {
-            newAgent.setSourceNodeId(this->m_agents[agentId]->srcNodeId().value());
+            newAgent.setSourceNodeId(m_agents[agentId]->srcNodeId().value());
           }
           this->removeAgent(agentId);
           this->addAgent(newAgent);
@@ -519,7 +509,7 @@ namespace dsm {
       if (destinationNode->isIntersection()) {
         auto& intersection = dynamic_cast<Intersection&>(*destinationNode);
         auto const delta{nextStreet->deltaAngle(pStreet->angle())};
-        m_increaseTurnCounts(streetId, delta);
+        m_increaseTurnCounts(pStreet->id(), delta);
         intersection.addAgent(delta, agentId);
       } else if (destinationNode->isRoundabout()) {
         auto& roundabout = dynamic_cast<Roundabout&>(*destinationNode);
@@ -528,9 +518,9 @@ namespace dsm {
     }
   }
 
-  template <typename Delay>
-    requires(is_numeric_v<Delay>)
-  bool Dynamics<Delay>::m_evolveNode(const std::unique_ptr<Node>& pNode) {
+  template <typename delay_t>
+    requires(is_numeric_v<delay_t>)
+  bool Dynamics<delay_t>::m_evolveNode(const std::unique_ptr<Node>& pNode) {
     if (pNode->isIntersection()) {
       auto& intersection = dynamic_cast<Intersection&>(*pNode);
       if (intersection.agents().empty()) {
@@ -560,7 +550,7 @@ namespace dsm {
         return false;
       }
       auto const agentId{roundabout.agents().front()};
-      auto const& nextStreet{this->m_graph.streetSet()[m_agentNextStreetId[agentId]]};
+      auto const& nextStreet{m_graph.streetSet()[m_agentNextStreetId[agentId]]};
       if (!(nextStreet->isFull())) {
         if (m_agents[agentId]->streetId().has_value()) {
           const auto streetId = m_agents[agentId]->streetId().value();
@@ -586,10 +576,10 @@ namespace dsm {
     return true;
   }
 
-  template <typename Delay>
-    requires(is_numeric_v<Delay>)
-  void Dynamics<Delay>::m_evolveAgents() {
-    for (const auto& [agentId, agent] : this->m_agents) {
+  template <typename delay_t>
+    requires(is_numeric_v<delay_t>)
+  void Dynamics<delay_t>::m_evolveAgents() {
+    for (const auto& [agentId, agent] : m_agents) {
       if (agent->delay() > 0) {
         const auto& street{m_graph.streetSet()[agent->streetId().value()]};
         if (agent->delay() > 1) {
@@ -605,7 +595,7 @@ namespace dsm {
         agent->decrementDelay();
         if (agent->delay() == 0) {
           auto const nLanes = street->nLanes();
-          if (this->m_itineraries[agent->itineraryId()]->destination() ==
+          if (m_itineraries[agent->itineraryId()]->destination() ==
               street->nodePair().second) {
             std::uniform_int_distribution<size_t> laneDist{
                 0, static_cast<size_t>(nLanes - 1)};
@@ -639,7 +629,7 @@ namespace dsm {
       } else if (!agent->streetId().has_value() &&
                  !m_agentNextStreetId.contains(agentId)) {
         assert(agent->srcNodeId().has_value());
-        const auto& srcNode{this->m_graph.nodeSet()[agent->srcNodeId().value()]};
+        const auto& srcNode{m_graph.nodeSet()[agent->srcNodeId().value()]};
         if (srcNode->isFull()) {
           continue;
         }
@@ -664,17 +654,17 @@ namespace dsm {
     }
   }
 
-  template <typename Delay>
-    requires(is_numeric_v<Delay>)
-  void Dynamics<Delay>::setItineraries(std::span<Itinerary> itineraries) {
+  template <typename delay_t>
+    requires(is_numeric_v<delay_t>)
+  void Dynamics<delay_t>::setItineraries(std::span<Itinerary> itineraries) {
     std::ranges::for_each(itineraries, [this](const auto& itinerary) {
-      this->m_itineraries.insert(std::make_unique<Itinerary>(itinerary));
+      m_itineraries.insert(std::make_unique<Itinerary>(itinerary));
     });
   }
 
-  template <typename Delay>
-    requires(is_numeric_v<Delay>)
-  void Dynamics<Delay>::setMinSpeedRateo(double minSpeedRateo) {
+  template <typename delay_t>
+    requires(is_numeric_v<delay_t>)
+  void Dynamics<delay_t>::setMinSpeedRateo(double minSpeedRateo) {
     if (minSpeedRateo < 0. || minSpeedRateo > 1.) {
       throw std::invalid_argument(buildLog(std::format(
           "The minimum speed rateo ({}) must be between 0 and 1", minSpeedRateo)));
@@ -682,9 +672,9 @@ namespace dsm {
     m_minSpeedRateo = minSpeedRateo;
   }
 
-  template <typename Delay>
-    requires(is_numeric_v<Delay>)
-  void Dynamics<Delay>::setErrorProbability(double errorProbability) {
+  template <typename delay_t>
+    requires(is_numeric_v<delay_t>)
+  void Dynamics<delay_t>::setErrorProbability(double errorProbability) {
     if (errorProbability < 0. || errorProbability > 1.) {
       throw std::invalid_argument(buildLog(std::format(
           "The error probability ({}) must be between 0 and 1", errorProbability)));
@@ -692,9 +682,9 @@ namespace dsm {
     m_errorProbability = errorProbability;
   }
 
-  template <typename Delay>
-    requires(is_numeric_v<Delay>)
-  void Dynamics<Delay>::setMaxFlowPercentage(double maxFlowPercentage) {
+  template <typename delay_t>
+    requires(is_numeric_v<delay_t>)
+  void Dynamics<delay_t>::setMaxFlowPercentage(double maxFlowPercentage) {
     if (maxFlowPercentage < 0. || maxFlowPercentage > 1.) {
       throw std::invalid_argument(
           buildLog(std::format("The maximum flow percentage ({}) must be between 0 and 1",
@@ -703,10 +693,10 @@ namespace dsm {
     m_maxFlowPercentage = maxFlowPercentage;
   }
 
-  template <typename Delay>
-    requires(is_numeric_v<Delay>)
-  void Dynamics<Delay>::setDestinationNodes(const std::span<Id>& destinationNodes,
-                                            bool updatePaths) {
+  template <typename delay_t>
+    requires(is_numeric_v<delay_t>)
+  void Dynamics<delay_t>::setDestinationNodes(const std::span<Id>& destinationNodes,
+                                              bool updatePaths) {
     for (const auto& nodeId : destinationNodes) {
       if (!m_graph.nodeSet().contains(nodeId)) {
         throw std::invalid_argument(
@@ -719,9 +709,9 @@ namespace dsm {
     }
   }
 
-  template <typename Delay>
-    requires(is_numeric_v<Delay>)
-  void Dynamics<Delay>::updatePaths() {
+  template <typename delay_t>
+    requires(is_numeric_v<delay_t>)
+  void Dynamics<delay_t>::updatePaths() {
     std::vector<std::thread> threads;
     threads.reserve(m_itineraries.size());
     std::exception_ptr pThreadException;
@@ -743,9 +733,9 @@ namespace dsm {
       std::rethrow_exception(pThreadException);
   }
 
-  template <typename Delay>
-    requires(is_numeric_v<Delay>)
-  void Dynamics<Delay>::evolve(bool reinsert_agents) {
+  template <typename delay_t>
+    requires(is_numeric_v<delay_t>)
+  void Dynamics<delay_t>::evolve(bool reinsert_agents) {
     // move the first agent of each street queue, if possible, putting it in the next node
     bool const bUpdateData =
         m_dataUpdatePeriod.has_value() && m_time % m_dataUpdatePeriod.value() == 0;
@@ -754,7 +744,7 @@ namespace dsm {
         m_streetTails[streetId] += pStreet->nExitingAgents();
       }
       for (auto i = 0; i < pStreet->transportCapacity(); ++i) {
-        this->m_evolveStreet(streetId, pStreet, reinsert_agents);
+        this->m_evolveStreet(pStreet, reinsert_agents);
       }
     }
     // Move transport capacity agents from each node
@@ -765,21 +755,22 @@ namespace dsm {
         }
       }
       if (pNode->isTrafficLight()) {
-        auto& tl = dynamic_cast<TrafficLight<Delay>&>(*pNode);
-        tl.increaseCounter();
+        auto& tl = dynamic_cast<TrafficLight&>(*pNode);
+        ++tl;  // Increment the counter
       }
     }
     // cycle over agents and update their times
     this->m_evolveAgents();
     // increment time simulation
-    ++this->m_time;
+    ++m_time;
   }
 
-  template <typename Delay>
-    requires(is_numeric_v<Delay>)
-  void Dynamics<Delay>::optimizeTrafficLights(Delay nCycles,
-                                              double threshold,
-                                              double densityTolerance) {
+  template <typename delay_t>
+    requires(is_numeric_v<delay_t>)
+  void Dynamics<delay_t>::optimizeTrafficLights(
+      double const threshold,
+      double const densityTolerance,
+      TrafficLightOptimization const optimizationType) {
     if (threshold < 0 || threshold > 1) {
       throw std::invalid_argument(
           buildLog(std::format("The threshold parameter is a percentage and must be "
@@ -792,17 +783,12 @@ namespace dsm {
                       "bounded between 0-1. Inserted value: {}",
                       densityTolerance)));
     }
-    const auto meanDensityGlob = streetMeanDensity().mean;  // Measurement
-    for (const auto& [nodeId, node] : m_graph.nodeSet()) {
-      if (!node->isTrafficLight()) {
+    auto const meanDensityGlob = streetMeanDensity().mean;  // Measurement
+    for (const auto& [nodeId, pNode] : m_graph.nodeSet()) {
+      if (!pNode->isTrafficLight()) {
         continue;
       }
-      auto& tl = dynamic_cast<TrafficLight<Delay>&>(*node);
-      if (!tl.delay().has_value()) {
-        continue;
-      }
-      auto [greenTime, redTime] = tl.delay().value();
-      const auto cycleTime = greenTime + redTime;
+      auto& tl = dynamic_cast<TrafficLight&>(*pNode);
       const auto& streetPriorities = tl.streetPriorities();
       Size greenSum{0}, greenQueue{0};
       Size redSum{0}, redQueue{0};
@@ -819,156 +805,145 @@ namespace dsm {
           }
         }
       }
-      const Delay delta =
+      const auto nCycles = static_cast<double>(m_time - m_previousOptimizationTime) /
+                           m_dataUpdatePeriod.value();
+      const delay_t delta =
           std::floor(std::fabs(static_cast<int>(greenQueue - redQueue)) / nCycles);
+      // std::cout << std::format("GreenSum: {}, RedSum: {}, Delta: {}, nCycles: {}\n",
+      //  greenQueue, redQueue, delta, nCycles);
       if (delta == 0) {
         continue;
       }
       const Size smallest = std::min(greenSum, redSum);
+      // std::cout << std::format("GreenSum: {}, RedSum: {}, Smallest: {}\n", greenSum, redSum, smallest);
+      // std::cout << std::format("Diff: {}, Threshold * Smallest: {}\n", std::abs(static_cast<int>(greenSum - redSum)), threshold * smallest);
       if (std::abs(static_cast<int>(greenSum - redSum)) < threshold * smallest) {
-        tl.setDelay(std::floor(cycleTime / 2));
+        tl.resetCycles();
         continue;
       }
-      // If the difference is not less than the threshold
-      //    - Check that the incoming streets have a density less than the mean one (eventually + tolerance): I want to avoid being into the cluster, better to be out or on the border
-      //    - If the previous check fails, do nothing
-      double meanDensity_streets{0.};
-      {
-        // Store the ids of outgoing streets
-        const auto& row{m_graph.adjMatrix().getRow(nodeId, true)};
-        for (const auto& [streetId, _] : row) {
-          meanDensity_streets += m_graph.streetSet()[streetId]->density();
-        }
-        // Take the mean density of the outgoing streets
-        const auto nStreets = row.size();
-        if (nStreets > 1) {
-          meanDensity_streets /= nStreets;
-        }
-      }
-      //std::cout << '\t' << " -> Mean network density: " << std::setprecision(7) << meanDensityGlob << '\n';
-      //std::cout << '\t' << " -> Mean density of 4 outgoing streets: " << std::setprecision(7) << meanDensity_streets << '\n';
-      const auto ratio = meanDensityGlob / meanDensity_streets;
-      // densityTolerance represents the max border we want to consider
-      const auto dyn_thresh = std::tanh(ratio) * densityTolerance;
-      //std::cout << '\t' << " -> Parametro ratio: " << std::setprecision(7) << ratio << '\n';
-      //std::cout << '\t' << " -> Parametro dyn_thresh: " << std::setprecision(7) << dyn_thresh << '\n';
-      if (meanDensityGlob * (1. + dyn_thresh) > meanDensity_streets) {
-        //std::cout << '\t' << " -> I'm on the cluster's border" << '\n';
-        if (meanDensityGlob > meanDensity_streets) {
-          //std::cout << '\t' << " -> LESS than max density" << '\n';
-          if (!(redTime > greenTime) && (redSum > greenSum) && (greenTime > delta)) {
-            greenTime -= delta;
-            redTime += delta;
-            tl.setDelay(std::make_pair(greenTime, redTime));
-          } else if (!(greenTime > redTime) && (greenSum > redSum) && (redTime > delta)) {
-            greenTime += delta;
-            redTime -= delta;
-            tl.setDelay(std::make_pair(greenTime, redTime));
-          } else {
-            //std::cout << '\t' << " -> NOT entered into previous ifs" << '\n';
-            tl.setDelay(std::make_pair(greenTime, redTime));
-          }
-          //std::cout << '\t' << " -> greenTime: " << static_cast<unsigned int>(greenTime) << '\n';
-          //std::cout << '\t' << " -> redTime: " << static_cast<unsigned int>(redTime) << '\n';
-          //std::cout << '\t' << " -> modTime: " << tl.modTime() << '\n';
+      auto const greenTime = tl.maxGreenTime(true);
+      auto const redTime = tl.maxGreenTime(false);
+      if (optimizationType == TrafficLightOptimization::SINGLE_TAIL) {
+        if ((greenSum > redSum) && !(greenTime > redTime) && (redTime > delta) &&
+            (greenQueue > redQueue)) {
+          tl.increaseGreenTimes(delta);
+        } else if ((redSum > greenSum) && !(redTime > greenTime) && (greenTime > delta) &&
+                   (redQueue > greenQueue)) {
+          tl.decreaseGreenTimes(delta);
         } else {
-          //std::cout << '\t' << " -> GREATER than max density" << '\n';
-          if (!(redTime > greenTime) && (redSum > greenSum) &&
-              (greenTime > ratio * delta)) {
-            greenTime -= dyn_thresh * delta;  //
-            redTime += delta;
-            tl.setDelay(std::make_pair(greenTime, redTime));
-          } else if (!(greenTime > redTime) && (greenSum > redSum) &&
-                     (redTime > ratio * delta)) {
-            greenTime += delta;
-            redTime -= dyn_thresh * delta;  //
-            tl.setDelay(std::make_pair(greenTime, redTime));
-          } else if (!(redTime > greenTime) && (redSum < greenSum) && (redTime > delta)) {
-            greenTime += dyn_thresh * delta;  //
-            redTime -= delta;
-            tl.setDelay(std::make_pair(greenTime, redTime));
-          } else if (!(redTime < greenTime) && (redSum > greenSum) &&
-                     (greenTime > delta)) {
-            greenTime -= delta;
-            redTime += dyn_thresh * delta;  //
-            tl.setDelay(std::make_pair(greenTime, redTime));
-          } else {
-            //std::cout << '\t' << " -> NON sono entrato negli if precedenti" << '\n';
-            tl.setDelay(std::make_pair(greenTime, redTime));
-          }
-          //std::cout << '\t' << " -> greenTime: " << static_cast<unsigned int>(greenTime) << '\n';
-          //std::cout << '\t' << " -> redTime: " << static_cast<unsigned int>(redTime) << '\n';
-          //std::cout << '\t' << " -> modTime: " << tl.modTime() << '\n';
+          tl.resetCycles();
         }
-      } else {
-        //std::cout << '\t' << " -> I'm INTO the cluster" << '\n';
-        //std::cout << '\t' << " -> modTime: " << tl.modTime() << '\n';
+      } else if (optimizationType == TrafficLightOptimization::DOUBLE_TAIL) {
+        // If the difference is not less than the threshold
+        //    - Check that the incoming streets have a density less than the mean one (eventually + tolerance): I want to avoid being into the cluster, better to be out or on the border
+        //    - If the previous check fails, do nothing
+        double meanDensity_streets{0.};
+        {
+          // Store the ids of outgoing streets
+          const auto& row{m_graph.adjMatrix().getRow(nodeId, true)};
+          for (const auto& [streetId, _] : row) {
+            meanDensity_streets += m_graph.streetSet()[streetId]->density();
+          }
+          // Take the mean density of the outgoing streets
+          const auto nStreets = row.size();
+          if (nStreets > 1) {
+            meanDensity_streets /= nStreets;
+          }
+        }
+        auto const ratio = meanDensityGlob / meanDensity_streets;
+        // densityTolerance represents the max border we want to consider
+        auto const dyn_thresh = std::tanh(ratio) * densityTolerance;
+        if (meanDensityGlob * (1. + dyn_thresh) > meanDensity_streets) {
+          if (meanDensityGlob > meanDensity_streets) {
+            // Smaller than max density
+            if (!(redTime > greenTime) && (redSum > greenSum) && (greenTime > delta)) {
+              tl.decreaseGreenTimes(delta);
+            } else if (!(redTime < greenTime) && (greenSum > redSum) &&
+                       (redTime > delta)) {
+              tl.increaseGreenTimes(delta);
+            } else {
+              tl.resetCycles();
+            }
+          } else {
+            // Greater than max density
+            if (!(redTime > greenTime) && (redSum > greenSum) && (greenTime > delta)) {
+              tl.decreaseGreenTimes(delta * dyn_thresh);
+            } else if (!(redTime < greenTime) && (greenSum > redSum) &&
+                       (redTime > delta)) {
+              tl.increaseGreenTimes(delta * dyn_thresh);
+            } else {
+              tl.resetCycles();
+            }
+          }
+        }
       }
     }
+    // Cleaning variables
     for (auto& [id, element] : m_streetTails) {
       element = 0;
     }
+    m_previousOptimizationTime = m_time;
   }
 
-  template <typename Delay>
-    requires(is_numeric_v<Delay>)
-  void Dynamics<Delay>::addAgent(const Agent<Delay>& agent) {
-    if (this->m_agents.size() + 1 > this->m_graph.maxCapacity()) {
+  template <typename delay_t>
+    requires(is_numeric_v<delay_t>)
+  void Dynamics<delay_t>::addAgent(const Agent<delay_t>& agent) {
+    if (m_agents.size() + 1 > m_graph.maxCapacity()) {
       throw std::overflow_error(buildLog(
           std::format("Graph is already holding the max possible number of agents ({})",
-                      this->m_graph.maxCapacity())));
+                      m_graph.maxCapacity())));
     }
-    if (this->m_agents.contains(agent.id())) {
+    if (m_agents.contains(agent.id())) {
       throw std::invalid_argument(
           buildLog(std::format("Agent with id {} already exists.", agent.id())));
     }
-    this->m_agents.emplace(agent.id(), std::make_unique<Agent<Delay>>(agent));
+    m_agents.emplace(agent.id(), std::make_unique<Agent<delay_t>>(agent));
   }
-  template <typename Delay>
-    requires(is_numeric_v<Delay>)
-  void Dynamics<Delay>::addAgent(std::unique_ptr<Agent<Delay>> agent) {
-    if (this->m_agents.size() + 1 > this->m_graph.maxCapacity()) {
+  template <typename delay_t>
+    requires(is_numeric_v<delay_t>)
+  void Dynamics<delay_t>::addAgent(std::unique_ptr<Agent<delay_t>> agent) {
+    if (m_agents.size() + 1 > m_graph.maxCapacity()) {
       throw std::overflow_error(buildLog(
           std::format("Graph is already holding the max possible number of agents ({})",
-                      this->m_graph.maxCapacity())));
+                      m_graph.maxCapacity())));
     }
-    if (this->m_agents.contains(agent->id())) {
+    if (m_agents.contains(agent->id())) {
       throw std::invalid_argument(
           buildLog(std::format("Agent with id {} already exists.", agent->id())));
     }
-    this->m_agents.emplace(agent->id(), std::move(agent));
+    m_agents.emplace(agent->id(), std::move(agent));
   }
-  template <typename Delay>
-    requires(is_numeric_v<Delay>)
-  void Dynamics<Delay>::addAgent(Id srcNodeId, Id itineraryId) {
-    if (this->m_agents.size() + 1 > this->m_graph.maxCapacity()) {
+  template <typename delay_t>
+    requires(is_numeric_v<delay_t>)
+  void Dynamics<delay_t>::addAgent(Id srcNodeId, Id itineraryId) {
+    if (m_agents.size() + 1 > m_graph.maxCapacity()) {
       throw std::overflow_error(buildLog(
-          std::format("Graph its already holding the max possible number of agents ({})",
-                      this->m_graph.maxCapacity())));
+          std::format("Graph is already holding the max possible number of agents ({})",
+                      m_graph.maxCapacity())));
     }
-    if (!(srcNodeId < this->m_graph.nodeSet().size())) {
+    if (!(srcNodeId < m_graph.nodeSet().size())) {
       throw std::invalid_argument(
           buildLog(std::format("Node with id {} not found", srcNodeId)));
     }
-    if (!(this->m_itineraries.contains(itineraryId))) {
+    if (!(m_itineraries.contains(itineraryId))) {
       throw std::invalid_argument(
           buildLog(std::format("Itinerary with id {} not found", itineraryId)));
     }
     Size agentId{0};
-    if (!this->m_agents.empty()) {
-      agentId = this->m_agents.rbegin()->first + 1;
+    if (!m_agents.empty()) {
+      agentId = m_agents.rbegin()->first + 1;
     }
-    this->addAgent(Agent<Delay>{agentId, itineraryId, srcNodeId});
+    this->addAgent(Agent<delay_t>{agentId, itineraryId, srcNodeId});
   }
-  template <typename Delay>
-    requires(is_numeric_v<Delay>)
-  void Dynamics<Delay>::addAgents(Id itineraryId,
-                                  Size nAgents,
-                                  std::optional<Id> srcNodeId) {
-    if (this->m_agents.size() + nAgents > this->m_graph.maxCapacity()) {
+  template <typename delay_t>
+    requires(is_numeric_v<delay_t>)
+  void Dynamics<delay_t>::addAgents(Id itineraryId,
+                                    Size nAgents,
+                                    std::optional<Id> srcNodeId) {
+    if (m_agents.size() + nAgents > m_graph.maxCapacity()) {
       throw std::overflow_error(buildLog(
-          std::format("Graph its already holding the max possible number of agents ({})",
-                      this->m_graph.maxCapacity())));
+          std::format("Graph is already holding the max possible number of agents ({})",
+                      m_graph.maxCapacity())));
     }
     auto itineraryIt{m_itineraries.find(itineraryId)};
     if (itineraryIt == m_itineraries.end()) {
@@ -976,38 +951,38 @@ namespace dsm {
           buildLog(std::format("Itinerary with id {} not found", itineraryId)));
     }
     Size agentId{0};
-    if (!this->m_agents.empty()) {
-      agentId = this->m_agents.rbegin()->first + 1;
+    if (!m_agents.empty()) {
+      agentId = m_agents.rbegin()->first + 1;
     }
     for (Size i{0}; i < nAgents; ++i, ++agentId) {
-      this->addAgent(Agent<Delay>{agentId, itineraryId});
+      this->addAgent(Agent<delay_t>{agentId, itineraryId});
       if (srcNodeId.has_value()) {
-        this->m_agents[agentId]->setSourceNodeId(srcNodeId.value());
+        m_agents[agentId]->setSourceNodeId(srcNodeId.value());
       }
     }
   }
 
-  template <typename Delay>
-    requires(is_numeric_v<Delay>)
+  template <typename delay_t>
+    requires(is_numeric_v<delay_t>)
   template <typename... Tn>
     requires(is_agent_v<Tn> && ...)
-  void Dynamics<Delay>::addAgents(Tn... agents) {}
+  void Dynamics<delay_t>::addAgents(Tn... agents) {}
 
-  template <typename Delay>
-    requires(is_numeric_v<Delay>)
+  template <typename delay_t>
+    requires(is_numeric_v<delay_t>)
   template <typename T1, typename... Tn>
     requires(is_agent_v<T1> && (is_agent_v<Tn> && ...))
-  void Dynamics<Delay>::addAgents(T1 agent, Tn... agents) {
+  void Dynamics<delay_t>::addAgents(T1 agent, Tn... agents) {
     addAgent(agent);
     addAgents(agents...);
   }
 
-  template <typename Delay>
-    requires(is_numeric_v<Delay>)
-  void Dynamics<Delay>::addAgents(std::span<Agent<Delay>> agents) {
+  template <typename delay_t>
+    requires(is_numeric_v<delay_t>)
+  void Dynamics<delay_t>::addAgents(std::span<Agent<delay_t>> agents) {
     if (this->m_agents.size() + agents.size() > this->m_graph.maxCapacity()) {
       throw std::overflow_error(buildLog(
-          std::format("Graph its already holding the max possible number of agents ({})",
+          std::format("Graph is already holding the max possible number of agents ({})",
                       this->m_graph.maxCapacity())));
     }
     std::ranges::for_each(agents, [this](const auto& agent) -> void {
@@ -1015,64 +990,65 @@ namespace dsm {
     });
   }
 
-  template <typename Delay>
-    requires(is_numeric_v<Delay>)
-  void Dynamics<Delay>::addAgentsUniformly(Size nAgents, std::optional<Id> itineraryId) {
-    if (this->m_agents.size() + nAgents > this->m_graph.maxCapacity()) {
+  template <typename delay_t>
+    requires(is_numeric_v<delay_t>)
+  void Dynamics<delay_t>::addAgentsUniformly(Size nAgents,
+                                             std::optional<Id> itineraryId) {
+    if (m_agents.size() + nAgents > m_graph.maxCapacity()) {
       throw std::overflow_error(buildLog(
-          std::format("Graph its already holding the max possible number of agents ({})",
+          std::format("Graph is already holding the max possible number of agents ({})",
                       this->m_graph.maxCapacity())));
     }
-    if (this->m_itineraries.empty()) {
+    if (m_itineraries.empty()) {
       // TODO: make this possible for random agents
       throw std::invalid_argument(
           buildLog("It is not possible to add random agents without itineraries."));
     }
     const bool randomItinerary{!itineraryId.has_value()};
     std::uniform_int_distribution<Size> itineraryDist{
-        0, static_cast<Size>(this->m_itineraries.size() - 1)};
+        0, static_cast<Size>(m_itineraries.size() - 1)};
     std::uniform_int_distribution<Size> streetDist{
-        0, static_cast<Size>(this->m_graph.streetSet().size() - 1)};
+        0, static_cast<Size>(m_graph.streetSet().size() - 1)};
     for (Size i{0}; i < nAgents; ++i) {
       if (randomItinerary) {
-        auto itineraryIt{this->m_itineraries.begin()};
-        std::advance(itineraryIt, itineraryDist(this->m_generator));
+        auto itineraryIt{m_itineraries.begin()};
+        std::advance(itineraryIt, itineraryDist(m_generator));
         itineraryId = itineraryIt->first;
       }
       Id agentId{0};
-      if (!this->m_agents.empty()) {
-        agentId = this->m_agents.rbegin()->first + 1;
+      if (!m_agents.empty()) {
+        agentId = m_agents.rbegin()->first + 1;
       }
       Id streetId{0};
       do {
         // I dunno why this works and the following doesn't
-        const auto& streetSet = this->m_graph.streetSet();
+        const auto& streetSet = m_graph.streetSet();
         auto streetIt = streetSet.begin();
         // auto streetIt = this->m_graph->streetSet().begin();
-        Size step = streetDist(this->m_generator);
+        Size step = streetDist(m_generator);
         std::advance(streetIt, step);
         streetId = streetIt->first;
-      } while (this->m_graph.streetSet()[streetId]->isFull());
-      const auto& street{this->m_graph.streetSet()[streetId]};
-      Agent<Delay> agent{agentId, itineraryId.value(), street->nodePair().first};
+      } while (m_graph.streetSet()[streetId]->isFull());
+      const auto& street{m_graph.streetSet()[streetId]};
+      Agent<delay_t> agent{agentId, itineraryId.value(), street->nodePair().first};
       agent.setStreetId(streetId);
       this->addAgent(agent);
       this->setAgentSpeed(agentId);
-      this->m_agents[agentId]->incrementDelay(
-          std::ceil(street->length() / this->m_agents[agentId]->speed()));
+      m_agents[agentId]->incrementDelay(
+          std::ceil(street->length() / m_agents[agentId]->speed()));
       street->addAgent(agentId);
       ++agentId;
     }
   }
 
-  template <typename Delay>
-    requires(is_numeric_v<Delay>)
+  template <typename delay_t>
+    requires(is_numeric_v<delay_t>)
   template <typename TContainer>
     requires(std::is_same_v<TContainer, std::unordered_map<Id, double>> ||
              std::is_same_v<TContainer, std::map<Id, double>>)
-  void Dynamics<Delay>::addAgentsRandomly(Size nAgents,
-                                          const TContainer& src_weights,
-                                          const TContainer& dst_weights) {
+  void Dynamics<delay_t>::addAgentsRandomly(Size nAgents,
+                                            const TContainer& src_weights,
+                                            const TContainer& dst_weights) {
     if (src_weights.size() == 1 && dst_weights.size() == 1 &&
         src_weights.begin()->first == dst_weights.begin()->first) {
       throw std::invalid_argument(buildLog(
@@ -1149,58 +1125,58 @@ namespace dsm {
     }
   }
 
-  template <typename Delay>
-    requires(is_numeric_v<Delay>)
-  void Dynamics<Delay>::removeAgent(Size agentId) {
+  template <typename delay_t>
+    requires(is_numeric_v<delay_t>)
+  void Dynamics<delay_t>::removeAgent(Size agentId) {
     m_agents.erase(agentId);
   }
 
-  template <typename Delay>
-    requires(is_numeric_v<Delay>)
+  template <typename delay_t>
+    requires(is_numeric_v<delay_t>)
   template <typename T1, typename... Tn>
     requires(std::is_convertible_v<T1, Size> && (std::is_convertible_v<Tn, Size> && ...))
-  void Dynamics<Delay>::removeAgents(T1 id, Tn... ids) {
+  void Dynamics<delay_t>::removeAgents(T1 id, Tn... ids) {
     removeAgent(id);
     removeAgents(ids...);
   }
 
-  template <typename Delay>
-    requires(is_numeric_v<Delay>)
-  void Dynamics<Delay>::addItinerary(const Itinerary& itinerary) {
+  template <typename delay_t>
+    requires(is_numeric_v<delay_t>)
+  void Dynamics<delay_t>::addItinerary(const Itinerary& itinerary) {
     m_itineraries.emplace(itinerary.id(), std::make_unique<Itinerary>(itinerary));
   }
 
-  template <typename Delay>
-    requires(is_numeric_v<Delay>)
-  void Dynamics<Delay>::addItinerary(std::unique_ptr<Itinerary> itinerary) {
+  template <typename delay_t>
+    requires(is_numeric_v<delay_t>)
+  void Dynamics<delay_t>::addItinerary(std::unique_ptr<Itinerary> itinerary) {
     m_itineraries.emplace(itinerary->id(), std::move(itinerary));
   }
 
-  template <typename Delay>
-    requires(is_numeric_v<Delay>)
+  template <typename delay_t>
+    requires(is_numeric_v<delay_t>)
   template <typename... Tn>
     requires(is_itinerary_v<Tn> && ...)
-  void Dynamics<Delay>::addItineraries(Tn... itineraries) {
+  void Dynamics<delay_t>::addItineraries(Tn... itineraries) {
     (this->addItinerary(itineraries), ...);
   }
 
-  template <typename Delay>
-    requires(is_numeric_v<Delay>)
-  void Dynamics<Delay>::addItineraries(std::span<Itinerary> itineraries) {
+  template <typename delay_t>
+    requires(is_numeric_v<delay_t>)
+  void Dynamics<delay_t>::addItineraries(std::span<Itinerary> itineraries) {
     std::ranges::for_each(itineraries, [this](const auto& itinerary) -> void {
-      this->m_itineraries.insert(std::make_unique<Itinerary>(itinerary));
+      m_itineraries.insert(std::make_unique<Itinerary>(itinerary));
     });
   }
 
-  template <typename Delay>
-    requires(is_numeric_v<Delay>)
-  void Dynamics<Delay>::resetTime() {
+  template <typename delay_t>
+    requires(is_numeric_v<delay_t>)
+  void Dynamics<delay_t>::resetTime() {
     m_time = 0;
   }
 
-  template <typename Delay>
-    requires(is_numeric_v<Delay>)
-  Measurement<double> Dynamics<Delay>::agentMeanSpeed() const {
+  template <typename delay_t>
+    requires(is_numeric_v<delay_t>)
+  Measurement<double> Dynamics<delay_t>::agentMeanSpeed() const {
     if (m_agents.size() == 0) {
       return Measurement(0., 0.);
     }
@@ -1225,9 +1201,9 @@ namespace dsm {
     return Measurement(mean, std::sqrt(variance));
   }
 
-  template <typename Delay>
-    requires(is_numeric_v<Delay>)
-  Measurement<double> Dynamics<Delay>::streetMeanDensity(bool normalized) const {
+  template <typename delay_t>
+    requires(is_numeric_v<delay_t>)
+  Measurement<double> Dynamics<delay_t>::streetMeanDensity(bool normalized) const {
     if (m_graph.streetSet().size() == 0) {
       return Measurement(0., 0.);
     }
@@ -1239,9 +1215,9 @@ namespace dsm {
     return Measurement<double>(densities);
   }
 
-  template <typename Delay>
-    requires(is_numeric_v<Delay>)
-  Measurement<double> Dynamics<Delay>::streetMeanFlow() const {
+  template <typename delay_t>
+    requires(is_numeric_v<delay_t>)
+  Measurement<double> Dynamics<delay_t>::streetMeanFlow() const {
     std::vector<double> flows;
     flows.reserve(m_graph.streetSet().size());
     for (const auto& [streetId, street] : m_graph.streetSet()) {
@@ -1250,10 +1226,10 @@ namespace dsm {
     return Measurement<double>(flows);
   }
 
-  template <typename Delay>
-    requires(is_numeric_v<Delay>)
-  Measurement<double> Dynamics<Delay>::streetMeanFlow(double threshold,
-                                                      bool above) const {
+  template <typename delay_t>
+    requires(is_numeric_v<delay_t>)
+  Measurement<double> Dynamics<delay_t>::streetMeanFlow(double threshold,
+                                                        bool above) const {
     std::vector<double> flows;
     flows.reserve(m_graph.streetSet().size());
     for (const auto& [streetId, street] : m_graph.streetSet()) {
@@ -1266,9 +1242,9 @@ namespace dsm {
     return Measurement<double>(flows);
   }
 
-  template <typename Delay>
-    requires(is_numeric_v<Delay>)
-  Measurement<double> Dynamics<Delay>::meanSpireInputFlow(bool resetValue) {
+  template <typename delay_t>
+    requires(is_numeric_v<delay_t>)
+  Measurement<double> Dynamics<delay_t>::meanSpireInputFlow(bool resetValue) {
     auto deltaTime{m_time - m_previousSpireTime};
     if (deltaTime == 0) {
       return Measurement(0., 0.);
@@ -1285,9 +1261,9 @@ namespace dsm {
     return Measurement<double>(flows);
   }
 
-  template <typename Delay>
-    requires(is_numeric_v<Delay>)
-  Measurement<double> Dynamics<Delay>::meanSpireOutputFlow(bool resetValue) {
+  template <typename delay_t>
+    requires(is_numeric_v<delay_t>)
+  Measurement<double> Dynamics<delay_t>::meanSpireOutputFlow(bool resetValue) {
     auto deltaTime{m_time - m_previousSpireTime};
     if (deltaTime == 0) {
       return Measurement(0., 0.);
@@ -1304,9 +1280,9 @@ namespace dsm {
     return Measurement<double>(flows);
   }
 
-  template <typename Delay>
-    requires(is_numeric_v<Delay>)
-  Measurement<double> Dynamics<Delay>::meanTravelTime(bool clearData) {
+  template <typename delay_t>
+    requires(is_numeric_v<delay_t>)
+  Measurement<double> Dynamics<delay_t>::meanTravelTime(bool clearData) {
     if (m_travelTimes.size() == 0) {
       return Measurement(0., 0.);
     }
@@ -1325,9 +1301,9 @@ namespace dsm {
     return Measurement(mean, std::sqrt(variance));
   }
 
-  template <typename Delay>
-    requires(is_numeric_v<Delay>)
-  std::unordered_map<Id, std::array<double, 4>> Dynamics<Delay>::turnProbabilities(
+  template <typename delay_t>
+    requires(is_numeric_v<delay_t>)
+  std::unordered_map<Id, std::array<double, 4>> Dynamics<delay_t>::turnProbabilities(
       bool reset) {
     std::unordered_map<Id, std::array<double, 4>> res;
     for (auto& [streetId, counts] : m_turnCounts) {
@@ -1348,16 +1324,16 @@ namespace dsm {
     return res;
   }
 
-  template <typename Delay>
-    requires(std::unsigned_integral<Delay>)
-  class FirstOrderDynamics : public Dynamics<Delay> {
+  template <typename delay_t>
+    requires(std::unsigned_integral<delay_t>)
+  class FirstOrderDynamics : public Dynamics<delay_t> {
     double m_speedFluctuationSTD;
 
   public:
     /// @brief Construct a new First Order Dynamics object
     /// @param graph, The graph representing the network
     FirstOrderDynamics(Graph& graph)
-        : Dynamics<Delay>(graph), m_speedFluctuationSTD{0.} {};
+        : Dynamics<delay_t>(graph), m_speedFluctuationSTD{0.} {};
     /// @brief Set the speed of an agent
     /// @param agentId The id of the agent
     /// @throw std::invalid_argument, If the agent is not found
@@ -1383,25 +1359,24 @@ namespace dsm {
     Measurement<double> streetMeanSpeed(double threshold, bool above) const override;
   };
 
-  template <typename Delay>
-    requires(std::unsigned_integral<Delay>)
-  void FirstOrderDynamics<Delay>::setAgentSpeed(Size agentId) {
+  template <typename delay_t>
+    requires(std::unsigned_integral<delay_t>)
+  void FirstOrderDynamics<delay_t>::setAgentSpeed(Size agentId) {
     const auto& agent{this->m_agents[agentId]};
     const auto& street{this->m_graph.streetSet()[agent->streetId().value()]};
     double speed{street->maxSpeed() *
                  (1. - this->m_minSpeedRateo * street->density(true))};
-    if (this->m_speedFluctuationSTD > 0.) {
-      std::normal_distribution<double> speedDist{speed,
-                                                 speed * this->m_speedFluctuationSTD};
+    if (m_speedFluctuationSTD > 0.) {
+      std::normal_distribution<double> speedDist{speed, speed * m_speedFluctuationSTD};
       speed = speedDist(this->m_generator);
     }
     speed < 0. ? agent->setSpeed(street->maxSpeed() * (1. - this->m_minSpeedRateo))
                : agent->setSpeed(speed);
   }
 
-  template <typename Delay>
-    requires(std::unsigned_integral<Delay>)
-  void FirstOrderDynamics<Delay>::setSpeedFluctuationSTD(double speedFluctuationSTD) {
+  template <typename delay_t>
+    requires(std::unsigned_integral<delay_t>)
+  void FirstOrderDynamics<delay_t>::setSpeedFluctuationSTD(double speedFluctuationSTD) {
     if (speedFluctuationSTD < 0.) {
       throw std::invalid_argument(
           buildLog("The speed fluctuation standard deviation must be positive."));
@@ -1409,9 +1384,9 @@ namespace dsm {
     m_speedFluctuationSTD = speedFluctuationSTD;
   }
 
-  template <typename Delay>
-    requires(std::unsigned_integral<Delay>)
-  double FirstOrderDynamics<Delay>::streetMeanSpeed(Id streetId) const {
+  template <typename delay_t>
+    requires(std::unsigned_integral<delay_t>)
+  double FirstOrderDynamics<delay_t>::streetMeanSpeed(Id streetId) const {
     const auto& street{this->m_graph.streetSet().at(streetId)};
     if (street->nAgents() == 0) {
       return street->maxSpeed();
@@ -1457,9 +1432,9 @@ namespace dsm {
     return meanSpeed / n;
   }
 
-  template <typename Delay>
-    requires(std::unsigned_integral<Delay>)
-  Measurement<double> FirstOrderDynamics<Delay>::streetMeanSpeed() const {
+  template <typename delay_t>
+    requires(std::unsigned_integral<delay_t>)
+  Measurement<double> FirstOrderDynamics<delay_t>::streetMeanSpeed() const {
     if (this->m_agents.size() == 0) {
       return Measurement(0., 0.);
     }
@@ -1470,10 +1445,10 @@ namespace dsm {
     }
     return Measurement<double>(speeds);
   }
-  template <typename Delay>
-    requires(std::unsigned_integral<Delay>)
-  Measurement<double> FirstOrderDynamics<Delay>::streetMeanSpeed(double threshold,
-                                                                 bool above) const {
+  template <typename delay_t>
+    requires(std::unsigned_integral<delay_t>)
+  Measurement<double> FirstOrderDynamics<delay_t>::streetMeanSpeed(double threshold,
+                                                                   bool above) const {
     if (this->m_agents.size() == 0) {
       return Measurement(0., 0.);
     }

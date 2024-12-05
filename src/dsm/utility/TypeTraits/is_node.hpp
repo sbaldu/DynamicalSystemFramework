@@ -10,8 +10,6 @@ namespace dsm {
 
   class Intersection;
 
-  template <typename Delay>
-    requires(std::unsigned_integral<Delay>)
   class TrafficLight;
 
   class Roundabout;
@@ -45,17 +43,17 @@ namespace dsm {
   template <>
   struct is_node<std::unique_ptr<Intersection>> : std::true_type {};
 
-  template <typename Delay>
-  struct is_node<TrafficLight<Delay>> : std::true_type {};
+  template <>
+  struct is_node<TrafficLight> : std::true_type {};
 
-  template <typename Delay>
-  struct is_node<const TrafficLight<Delay>> : std::true_type {};
+  template <>
+  struct is_node<const TrafficLight> : std::true_type {};
 
-  template <typename Delay>
-  struct is_node<const TrafficLight<Delay>&> : std::true_type {};
+  template <>
+  struct is_node<const TrafficLight&> : std::true_type {};
 
-  template <typename Delay>
-  struct is_node<std::unique_ptr<TrafficLight<Delay>>> : std::true_type {};
+  template <>
+  struct is_node<std::unique_ptr<TrafficLight>> : std::true_type {};
 
   template <>
   struct is_node<Roundabout> : std::true_type {};
