@@ -81,9 +81,7 @@ def create_image(__row: pd.Series, __graph, __pos, __n, __gdf, __day):
             alpha=0.5,
         )
     plt.box(False)
-    plt.title(
-        f"Time: {(__row.name // 3600):02d}:{(__row.name % 3600) // 60:02d} {__day}"
-    )
+    plt.title(f"{__day} {(__row.name // 3600):02d}:{(__row.name % 3600) // 60:02d}")
     plt.savefig(
         f"./temp_img/{(__row.name / 3600):.2f}.png", dpi=300, bbox_inches="tight"
     )
@@ -229,7 +227,7 @@ if __name__ == "__main__":
 
     with mp.Pool() as pool:
         jobs = []
-
+        plt.tight_layout()
         for time in df.index:
             jobs.append(
                 pool.apply_async(
