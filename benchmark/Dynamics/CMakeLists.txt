@@ -14,5 +14,7 @@ set(EXECUTABLE_OUTPUT_PATH ../../)
 include_directories(../../src/dsm/headers)
 include_directories(../../src/dsm/utility/)
 
+file(GLOB SOURCES "../../src/dsm/headers/*.cpp")
+
 # Compile
-add_executable(bench_dynamics.out BenchDynamics.cpp)
+add_executable(bench_dynamics.out BenchDynamics.cpp ${SOURCES})

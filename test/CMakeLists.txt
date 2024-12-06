@@ -10,7 +10,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # Add code coverage options
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     message(STATUS "Enable code coverage")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -g --coverage")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -g --coverage -fprofile-update=atomic")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
 endif()
 
@@ -29,7 +29,9 @@ if(NOT doctest_POPULATED)
 endif()
 
 # add as executable all cpp files into '.' folder
-file(GLOB SOURCES "*.cpp")
+file(GLOB TEST_SOURCES "*.cpp")
+file(GLOB SRC_SOURCES "../src/dsm/headers/*.cpp")
+list(APPEND SOURCES ${TEST_SOURCES} ${SRC_SOURCES})
 
 # Define the executable
 add_executable(dsm_tests.out ${SOURCES})

@@ -21,3 +21,14 @@
 *cache
 
 temp*
+
+# Examples generated files
+examples/sctl*
+examples/scrb*
+examples/*.csv
+
+# Utils generated folders
+__pycache__
+images
+examples/debug
+examples/release

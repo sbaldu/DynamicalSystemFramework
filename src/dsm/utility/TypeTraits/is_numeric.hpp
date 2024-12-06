@@ -1,5 +1,5 @@
-#ifndef is_numeric_hpp
-#define is_numeric_hpp
+
+#pragma once
 
 #include <concepts>
 #include <cstdint>
@@ -21,5 +21,3 @@ namespace dsm {
   inline constexpr bool is_numeric_v = is_numeric<T>::value;
 
 };  // namespace dsm
-
-#endif

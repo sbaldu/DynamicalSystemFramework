@@ -4,15 +4,14 @@
 /// @details The DijkstraResult class represents the result of a Dijkstra algorithm.
 /// 		 It is templated by the type of the graph's id.
 
-#ifndef DijkstraResult_hpp
-#define DijkstraResult_hpp
+#pragma once
+
+#include "Typedef.hpp"
 
 namespace dsm {
 
   /// @brief The DijkstraResult class represents the result of a Dijkstra algorithm.
   /// @tparam Id, The type of the graph's id. Must be an unsigned integral type.
-  template <typename Id>
-    requires(std::unsigned_integral<Id>)
   class DijkstraResult {
   private:
     std::vector<Id> m_path;
@@ -35,5 +34,3 @@ namespace dsm {
     double distance() const { return m_distance; }
   };
 };  // namespace dsm
-
-#endif

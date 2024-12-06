@@ -1,1 +1,11 @@
-osmnx==1.8.0
+contextily
+geopandas
+matplotlib
+networkx
+numpy
+osmnx
+pandas
+Pillow
+seaborn
+tqdm
+opencv-python

@@ -9,9 +9,9 @@
 
 #include "doctest.h"
 
-using Graph = dsm::Graph<uint, uint>;
-using SparseMatrix = dsm::SparseMatrix<uint, bool>;
-using Street = dsm::Street<uint, uint>;
+using Graph = dsm::Graph;
+using SparseMatrix = dsm::SparseMatrix<bool>;
+using Street = dsm::Street;
 using Path = std::vector<uint>;
 
 template <typename T1, typename T2>
@@ -128,15 +128,31 @@ TEST_CASE("Graph") {
     CHECK(graph2.nodeSet().size() == 3);
     CHECK(graph2.streetSet().size() == 4);
   }
-  SUBCASE("importCoordinates") {
-    Graph graph{};
-    CHECK_THROWS(graph.importCoordinates("./data/coords.txt"));
-    graph.importMatrix("./data/matrix.dsm");
-    graph.importCoordinates("./data/coords.dsm");
-    const auto& nodes = graph.nodeSet();
-    CHECK_EQ(nodes.at(0)->coords(), std::make_pair(0., 0.));
-    CHECK_EQ(nodes.at(1)->coords(), std::make_pair(1., 0.));
-    CHECK_EQ(nodes.at(2)->coords(), std::make_pair(2., 0.));
+  SUBCASE("Coordinates import/export") {
+    GIVEN("A Graph object with the adj matrix imported") {
+      Graph graph{};
+      graph.importMatrix("./data/matrix.dsm");
+      auto const& nodes = graph.nodeSet();
+      WHEN("We import the coordinates in dsm format") {
+        graph.importCoordinates("./data/coords.dsm");
+        THEN("The coordinates are correctly imported") {
+          CHECK_EQ(nodes.at(0)->coords(), std::make_pair(0., 0.));
+          CHECK_EQ(nodes.at(1)->coords(), std::make_pair(1., 0.));
+          CHECK_EQ(nodes.at(2)->coords(), std::make_pair(2., 0.));
+        }
+        THEN("We are able to save coordinates in csv format") {
+          graph.exportCoordinates("./data/coordinates.csv");
+        }
+      }
+      WHEN("We import the coordinates in csv format") {
+        graph.importCoordinates("./data/coordinates.csv");
+        THEN("The coordinates are correctly imported") {
+          CHECK_EQ(nodes.at(0)->coords(), std::make_pair(0., 0.));
+          CHECK_EQ(nodes.at(1)->coords(), std::make_pair(1., 0.));
+          CHECK_EQ(nodes.at(2)->coords(), std::make_pair(2., 0.));
+        }
+      }
+    }
   }
   SUBCASE("importMatrix - raw matrix") {
     Graph graph{};
@@ -165,13 +181,33 @@ TEST_CASE("Graph") {
     CHECK_THROWS(graph.importMatrix("./data/not_found.dsm"));
   }
   SUBCASE("importOSMNodes and importOSMEdges") {
-    Graph graph{};
-    graph.importOSMNodes("./data/nodes.csv");
-    CHECK_EQ(graph.nodeSet().size(), 25);
-    graph.importOSMEdges("./data/edges.csv");
-    CHECK_EQ(graph.streetSet().size(), 60);
-    graph.buildAdj();
-    CHECK_EQ(graph.adjMatrix().size(), 60);
+    GIVEN("A graph object") {
+      Graph graph{};
+      WHEN("We import nodes and edges from OSM") {
+        graph.importOSMNodes("./data/nodes.csv");
+        graph.importOSMEdges("./data/edges.csv");
+        THEN("Sizes are correct") {
+          CHECK_EQ(graph.nodeSet().size(), 25);
+          CHECK_EQ(graph.streetSet().size(), 60);
+        }
+        THEN("We are able to build the adjacency matrix") {
+          graph.buildAdj();
+          CHECK_EQ(graph.adjMatrix().size(), 60);
+        }
+      }
+      WHEN("We import many nodes and edges from OSM") {
+        graph.importOSMNodes("./data/nodes_big.csv");
+        graph.importOSMEdges("./data/edges_big.csv");
+        THEN("Sizes are correct") {
+          CHECK_EQ(graph.nodeSet().size(), 4077);
+          CHECK_EQ(graph.streetSet().size(), 8875);
+        }
+        THEN("We are able to build the adjacency matrix") {
+          graph.buildAdj();
+          CHECK_EQ(graph.adjMatrix().size(), 8875);
+        }
+      }
+    }
   }
   SUBCASE("street") {
     /// GIVEN: a graph
@@ -194,9 +230,13 @@ TEST_CASE("Graph") {
       graph.addStreet(Street{1, 1, 1., std::make_pair(0, 1)});
       graph.buildAdj();
       WHEN("We make node 0 a traffic light") {
-        graph.makeTrafficLight<uint8_t>(0);
+        auto& tl = graph.makeTrafficLight(0, 60);
         THEN("The node 0 is a traffic light") {
           CHECK(graph.nodeSet().at(0)->isTrafficLight());
+        }
+        THEN("The traffic light has the correct parameters") {
+          CHECK_EQ(tl.id(), 0);
+          CHECK_EQ(tl.cycleTime(), 60);
         }
       }
     }
@@ -457,20 +497,43 @@ TEST_CASE("Dijkstra") {
     CHECK_FALSE(result.has_value());
   }
 
-  SUBCASE("street") {
-    /// GIVEN: a graph
-    /// WHEN: we add a street
-    /// THEN: the street is added
-    Graph graph{};
-    Street street{1, 1, 1., std::make_pair(0, 1)};
-    graph.addStreet(street);
-    auto result = graph.street(0, 1);
-    CHECK(result);
-    const auto& street2 = *result;
-    CHECK_EQ(street2->id(), 1);
-    CHECK_EQ(street2->length(), 1.);
-    CHECK_EQ(street2->capacity(), 1);
-    CHECK_FALSE(graph.street(1, 0));
+  SUBCASE("street and oppositeStreet") {
+    GIVEN("A Graph object with two streets") {
+      Graph graph{};
+      Street street{1, 1, 1., std::make_pair(0, 1)};
+      Street opposite{2, 1, 1., std::make_pair(1, 0)};
+      graph.addStreets(street, opposite);
+      graph.buildAdj();
+      WHEN("We search for a street") {
+        auto result = graph.street(0, 1);
+        THEN("The street is found and has correct values") {
+          CHECK(result);
+          const auto& road = *result;
+          CHECK_EQ(road->id(), 1);
+          CHECK_EQ(road->length(), 1.);
+          CHECK_EQ(road->capacity(), 1);
+        }
+      }
+      WHEN("We search for the opposite street") {
+        auto result = graph.oppositeStreet(1);
+        THEN("The opposite street is found and has correct values") {
+          CHECK(result);
+          const auto& road = *result;
+          CHECK_EQ(road->id(), 2);
+          CHECK_EQ(road->length(), 1.);
+          CHECK_EQ(road->capacity(), 1);
+        }
+      }
+      WHEN("We search for a not existing street") {
+        auto result = graph.street(1, 2);
+        THEN("The street is not found") { CHECK_FALSE(result); }
+      }
+      WHEN("We search for the opposite of a not existing street") {
+        THEN("It throws an exception") {
+          CHECK_THROWS_AS(graph.oppositeStreet(3), std::invalid_argument);
+        }
+      }
+    }
   }
 
   SUBCASE("equal length") {
@@ -491,5 +554,44 @@ TEST_CASE("Dijkstra") {
 
     auto result = graph.shortestPath(46, 118);
     CHECK(result.has_value());
+  }
+  SUBCASE("adjustNodeCapacities and normalizeStreetCapacities") {
+    GIVEN("A graph composed of three streets with a different lane number") {
+      Street s1(0, 1, 10., 30., std::make_pair(0, 1), 1);
+      Street s2(1, 1, 40., 30., std::make_pair(1, 2), 2);
+      Street s3(2, 1, 75., 30., std::make_pair(3, 1), 3);
+      Street s4(3, 1, 55., 30., std::make_pair(1, 4), 1);
+      Graph graph{};
+      graph.addStreets(s1, s2, s3, s4);
+      graph.buildAdj();
+      WHEN("We adjust node capacities") {
+        graph.adjustNodeCapacities();
+        auto const& nodes = graph.nodeSet();
+        THEN("The node capacities are correct") {
+          CHECK_EQ(nodes.at(0)->capacity(), 1);
+          CHECK_EQ(nodes.at(1)->capacity(), 4);
+          CHECK_EQ(nodes.at(2)->capacity(), 2);
+          CHECK_EQ(nodes.at(3)->capacity(), 3);
+          CHECK_EQ(nodes.at(4)->capacity(), 1);
+        }
+        THEN("The transport capacities are correct") {
+          CHECK_EQ(nodes.at(0)->transportCapacity(), 1);
+          CHECK_EQ(nodes.at(1)->transportCapacity(), 3);
+          CHECK_EQ(nodes.at(2)->transportCapacity(), 0);
+          CHECK_EQ(nodes.at(3)->transportCapacity(), 3);
+          CHECK_EQ(nodes.at(4)->transportCapacity(), 0);
+        }
+      }
+      WHEN("We normalize street capacities") {
+        graph.normalizeStreetCapacities();
+        auto const& streets = graph.streetSet();
+        THEN("The street capacities are correct") {
+          CHECK_EQ(streets.at(1)->capacity(), 2);
+          CHECK_EQ(streets.at(7)->capacity(), 16);
+          CHECK_EQ(streets.at(16)->capacity(), 45);
+          CHECK_EQ(streets.at(9)->capacity(), 11);
+        }
+      }
+    }
   }
 }

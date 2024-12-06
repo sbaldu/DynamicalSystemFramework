@@ -1,8 +1,9 @@
-#ifndef Logger_hpp
-#define Logger_hpp
+
+#pragma once
 
 #include <string>
 #include <source_location>
+#include <format>
 
 namespace dsm {
 
@@ -11,14 +12,14 @@ namespace dsm {
     std::string operator()(
         const std::string& message,
         const std::source_location location = std::source_location::current()) {
-      return "File: " + static_cast<std::string>(location.file_name()) + '(' +
-             std::to_string(location.line()) + ':' + std::to_string(location.column()) +
-             ") `" + static_cast<std::string>(location.function_name()) +
-             "': " + message + '\n';
+      return std::format("File: {} ({}:{}) \'{}\': {}\n",
+                         location.file_name(),
+                         location.line(),
+                         location.column(),
+                         location.function_name(),
+                         message);
     };
   };
 
   static Logger buildLog;
 }  // namespace dsm
-
-#endif

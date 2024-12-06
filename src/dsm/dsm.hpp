@@ -2,23 +2,20 @@
 #define dsm_hpp
 
 #include <cstdint>
+#include <format>
 
-static constexpr uint8_t DSM_VERSION_MAJOR = 1;
-static constexpr uint8_t DSM_VERSION_MINOR = 3;
-static constexpr uint8_t DSM_VERSION_PATCH = 12;
-static constexpr uint8_t DSM_VERSION_BUILD = 0;
+static constexpr uint8_t DSM_VERSION_MAJOR = 2;
+static constexpr uint8_t DSM_VERSION_MINOR = 2;
+static constexpr uint8_t DSM_VERSION_PATCH = 0;
 
-#include <string>
+static auto const DSM_VERSION =
+    std::format("{}.{}.{}", DSM_VERSION_MAJOR, DSM_VERSION_MINOR, DSM_VERSION_PATCH);
 
 namespace dsm {
-  std::string version();
-}
-
-std::string dsm::version() {
-  return std::to_string(DSM_VERSION_MAJOR) + "." + std::to_string(DSM_VERSION_MINOR) +
-         "." + std::to_string(DSM_VERSION_PATCH) + "." +
-         std::to_string(DSM_VERSION_BUILD);
-}
+  /// @brief Returns the version of the DSM library
+  /// @return The version of the DSM library
+  auto const& version() { return DSM_VERSION; };
+}  // namespace dsm
 
 #include "headers/Agent.hpp"
 #include "headers/Graph.hpp"

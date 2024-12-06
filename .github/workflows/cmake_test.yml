@@ -1,4 +1,4 @@
-name: Run tests on CMake
+name: Run tests on Ubuntu
 
 on:
   push:
@@ -11,7 +11,7 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
     - name: Update apt repo
