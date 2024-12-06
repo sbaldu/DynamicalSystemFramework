@@ -235,23 +235,23 @@ namespace dsm {
     /// @param source The source node
     /// @param destination The destination node
     /// @return A DijkstraResult object containing the path and the distance
-    template <typename Func = std::function<double(const Graph<Id, Size>*, Id, Id)>>
-      requires(std::is_same_v<std::invoke_result_t<Func, const Graph<Id, Size>*, Id, Id>,
+    template <typename Func = std::function<double(const Graph*, Id, Id)>>
+      requires(std::is_same_v<std::invoke_result_t<Func, const Graph*, Id, Id>,
                               double>)
-    std::optional<DijkstraResult<Id>> shortestPath(const Node<Id, Size>& source,
-                                                   const Node<Id, Size>& destination,
-                                                   Func f = streetLength<Id, Size>) const;
-    
+    std::optional<DijkstraResult> shortestPath(const Node& source,
+                                                   const Node& destination,
+                                                   Func f = streetLength) const;
+
     /// @brief Get the shortest path between two nodes using dijkstra algorithm
     /// @param source The source node id
     /// @param destination The destination node id
     /// @return A DijkstraResult object containing the path and the distance
-    template <typename Func = std::function<double(const Graph<Id, Size>*, Id, Id)>>
-      requires(std::is_same_v<std::invoke_result_t<Func, const Graph<Id, Size>*, Id, Id>,
+    template <typename Func = std::function<double(const Graph*, Id, Id)>>
+      requires(std::is_same_v<std::invoke_result_t<Func, const Graph*, Id, Id>,
                               double>)
-    std::optional<DijkstraResult<Id>> shortestPath(Id source,
+    std::optional<DijkstraResult> shortestPath(Id source,
                                                    Id destination,
-                                                   Func f = streetLength<Id, Size>) const;
+                                                   Func f = streetLength) const;
   };
 
   template <typename... Tn>
@@ -294,23 +294,19 @@ namespace dsm {
     addStreets(std::forward<Tn>(streets)...);
   }
 
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   template <typename Func>
-    requires(
-        std::is_same_v<std::invoke_result_t<Func, const Graph<Id, Size>*, Id, Id>, double>)
-  std::optional<DijkstraResult<Id>> Graph<Id, Size>::shortestPath(
-      const Node<Id, Size>& source, const Node<Id, Size>& destination, Func f) const {
+    requires(std::is_same_v<std::invoke_result_t<Func, const Graph*, Id, Id>, double>)
+  std::optional<DijkstraResult> Graph::shortestPath(const Node& source,
+                                                    const Node& destination,
+                                                    Func f) const {
     return this->shortestPath(source.id(), destination.id());
   }
 
-  template <typename Id, typename Size>
-    requires(std::unsigned_integral<Id> && std::unsigned_integral<Size>)
   template <typename Func>
-    requires(
-        std::is_same_v<std::invoke_result_t<Func, const Graph<Id, Size>*, Id, Id>, double>)
-  std::optional<DijkstraResult<Id>> Graph<Id, Size>::shortestPath(
-      Id source, Id destination, Func getStreetWeight) const {
+    requires(std::is_same_v<std::invoke_result_t<Func, const Graph*, Id, Id>, double>)
+  std::optional<DijkstraResult> Graph::shortestPath(Id source,
+                                                    Id destination,
+                                                    Func getStreetWeight) const {
     const Id sourceId{source};
 
     std::unordered_set<Id> unvisitedNodes;
@@ -392,6 +388,6 @@ namespace dsm {
     }
 
     std::reverse(path.begin(), path.end());
-    return DijkstraResult<Id>(path, prev[destination].second);
+    return DijkstraResult(path, prev[destination].second);
   }
 };  // namespace dsm
