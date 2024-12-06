@@ -23,6 +23,7 @@
 #include <exception>
 
 #include "Agent.hpp"
+#include "DijkstraWeights.hpp"
 #include "Itinerary.hpp"
 #include "Graph.hpp"
 #include "SparseMatrix.hpp"

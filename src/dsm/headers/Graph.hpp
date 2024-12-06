@@ -26,6 +26,7 @@
 #include <cassert>
 #include <format>
 
+#include "DijkstraWeights.hpp"
 #include "Node.hpp"
 #include "SparseMatrix.hpp"
 #include "Street.hpp"
@@ -234,13 +235,21 @@ namespace dsm {
     /// @param source The source node
     /// @param destination The destination node
     /// @return A DijkstraResult object containing the path and the distance
-    std::optional<DijkstraResult> shortestPath(const Intersection& source,
-                                               const Intersection& destination) const;
+    template <typename Func = std::function<double(const Graph*, Id, Id)>>
+      requires(std::is_same_v<std::invoke_result_t<Func, const Graph*, Id, Id>, double>)
+    std::optional<DijkstraResult> shortestPath(const Node& source,
+                                               const Node& destination,
+                                               Func f = streetLength) const;
+
     /// @brief Get the shortest path between two nodes using dijkstra algorithm
     /// @param source The source node id
     /// @param destination The destination node id
     /// @return A DijkstraResult object containing the path and the distance
-    std::optional<DijkstraResult> shortestPath(Id source, Id destination) const;
+    template <typename Func = std::function<double(const Graph*, Id, Id)>>
+      requires(std::is_same_v<std::invoke_result_t<Func, const Graph*, Id, Id>, double>)
+    std::optional<DijkstraResult> shortestPath(Id source,
+                                               Id destination,
+                                               Func f = streetLength) const;
   };
 
   template <typename... Tn>
@@ -283,4 +292,100 @@ namespace dsm {
     addStreets(std::forward<Tn>(streets)...);
   }
 
+  template <typename Func>
+    requires(std::is_same_v<std::invoke_result_t<Func, const Graph*, Id, Id>, double>)
+  std::optional<DijkstraResult> Graph::shortestPath(const Node& source,
+                                                    const Node& destination,
+                                                    Func f) const {
+    return this->shortestPath(source.id(), destination.id());
+  }
+
+  template <typename Func>
+    requires(std::is_same_v<std::invoke_result_t<Func, const Graph*, Id, Id>, double>)
+  std::optional<DijkstraResult> Graph::shortestPath(Id source,
+                                                    Id destination,
+                                                    Func getStreetWeight) const {
+    const Id sourceId{source};
+
+    std::unordered_set<Id> unvisitedNodes;
+    bool source_found{false};
+    bool dest_found{false};
+    std::for_each(m_nodes.begin(),
+                  m_nodes.end(),
+                  [&unvisitedNodes, &source_found, &dest_found, source, destination](
+                      const auto& node) -> void {
+                    if (!source_found && node.first == source) {
+                      source_found = true;
+                    }
+                    if (!dest_found && node.first == destination) {
+                      dest_found = true;
+                    }
+                    unvisitedNodes.emplace(node.first);
+                  });
+    if (!source_found || !dest_found) {
+      return std::nullopt;
+    }
+
+    const size_t n_nodes{m_nodes.size()};
+    auto adj{m_adjacency};
+
+    std::unordered_set<Id> visitedNodes;
+    std::vector<std::pair<Id, double>> dist(n_nodes);
+    std::for_each(dist.begin(), dist.end(), [count = 0](auto& element) mutable -> void {
+      element.first = count;
+      element.second = std::numeric_limits<double>::max();
+      ++count;
+    });
+    dist[source] = std::make_pair(source, 0.);
+
+    std::vector<std::pair<Id, double>> prev(n_nodes);
+    std::for_each(prev.begin(), prev.end(), [](auto& pair) -> void {
+      pair.first = std::numeric_limits<Id>::max();
+      pair.second = std::numeric_limits<double>::max();
+    });
+    prev[source].second = 0.;
+
+    while (unvisitedNodes.size() != 0) {
+      source = *std::min_element(unvisitedNodes.begin(),
+                                 unvisitedNodes.end(),
+                                 [&dist](const auto& a, const auto& b) -> bool {
+                                   return dist[a].second < dist[b].second;
+                                 });
+
+      unvisitedNodes.erase(source);
+      visitedNodes.emplace(source);
+
+      const auto& neighbors{adj.getRow(source)};
+      for (const auto& neighbour : neighbors) {
+        // if the node has already been visited, skip it
+        if (visitedNodes.find(neighbour.first) != visitedNodes.end()) {
+          continue;
+        }
+        double streetWeight = getStreetWeight(this, source, neighbour.first);
+        // if current path is shorter than the previous one, update the distance
+        if (streetWeight + dist[source].second < dist[neighbour.first].second) {
+          dist[neighbour.first].second = streetWeight + dist[source].second;
+          prev[neighbour.first] = std::make_pair(source, dist[neighbour.first].second);
+        }
+      }
+
+      adj.emptyColumn(source);
+    }
+
+    std::vector<Id> path{destination};
+    Id previous{destination};
+    while (true) {
+      previous = prev[previous].first;
+      if (previous == std::numeric_limits<Id>::max()) {
+        return std::nullopt;
+      }
+      path.push_back(previous);
+      if (previous == sourceId) {
+        break;
+      }
+    }
+
+    std::reverse(path.begin(), path.end());
+    return DijkstraResult(path, prev[destination].second);
+  }
 };  // namespace dsm
