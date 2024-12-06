@@ -236,22 +236,20 @@ namespace dsm {
     /// @param destination The destination node
     /// @return A DijkstraResult object containing the path and the distance
     template <typename Func = std::function<double(const Graph*, Id, Id)>>
-      requires(std::is_same_v<std::invoke_result_t<Func, const Graph*, Id, Id>,
-                              double>)
+      requires(std::is_same_v<std::invoke_result_t<Func, const Graph*, Id, Id>, double>)
     std::optional<DijkstraResult> shortestPath(const Node& source,
-                                                   const Node& destination,
-                                                   Func f = streetLength) const;
+                                               const Node& destination,
+                                               Func f = streetLength) const;
 
     /// @brief Get the shortest path between two nodes using dijkstra algorithm
     /// @param source The source node id
     /// @param destination The destination node id
     /// @return A DijkstraResult object containing the path and the distance
     template <typename Func = std::function<double(const Graph*, Id, Id)>>
-      requires(std::is_same_v<std::invoke_result_t<Func, const Graph*, Id, Id>,
-                              double>)
+      requires(std::is_same_v<std::invoke_result_t<Func, const Graph*, Id, Id>, double>)
     std::optional<DijkstraResult> shortestPath(Id source,
-                                                   Id destination,
-                                                   Func f = streetLength) const;
+                                               Id destination,
+                                               Func f = streetLength) const;
   };
 
   template <typename... Tn>
