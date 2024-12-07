@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16.0)
 
-project(Benchmark VERSION 1.0.1 LANGUAGES CXX)
+project(Benchmark VERSION 2.3.0 LANGUAGES CXX)
 
 # set the C++ standard
 set(CMAKE_CXX_STANDARD 20)
