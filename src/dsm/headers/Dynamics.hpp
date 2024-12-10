@@ -719,6 +719,7 @@ namespace dsm {
     for (const auto& [itineraryId, pItinerary] : m_itineraries) {
       m_pool.enqueue([this, &pItinerary] { this->m_updatePath(pItinerary); });
     }
+    m_pool.waitAll();
   }
 
   template <typename delay_t>
@@ -737,16 +738,19 @@ namespace dsm {
     }
     // Move transport capacity agents from each node
     for (const auto& [nodeId, pNode] : m_graph.nodeSet()) {
-      for (auto i = 0; i < pNode->transportCapacity(); ++i) {
-        if (!this->m_evolveNode(pNode)) {
-          break;
+      m_pool.enqueue([this, &pNode] {
+        for (auto i = 0; i < pNode->transportCapacity(); ++i) {
+          if (!this->m_evolveNode(pNode)) {
+            break;
+          }
         }
-      }
-      if (pNode->isTrafficLight()) {
-        auto& tl = dynamic_cast<TrafficLight&>(*pNode);
-        ++tl;  // Increment the counter
-      }
+        if (pNode->isTrafficLight()) {
+          auto& tl = dynamic_cast<TrafficLight&>(*pNode);
+          ++tl;  // Increment the counter
+        }
+      });
     }
+    m_pool.waitAll();
     // cycle over agents and update their times
     this->m_evolveAgents();
     // increment time simulation

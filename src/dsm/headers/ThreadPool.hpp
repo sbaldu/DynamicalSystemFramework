@@ -2,6 +2,7 @@
 
 #include "../utility/Typedef.hpp"
 
+#include <atomic>
 #include <condition_variable>
 #include <functional>
 #include <mutex>
@@ -13,6 +14,7 @@ namespace dsm {
   class ThreadPool {
   private:
     bool m_stop;
+    std::atomic<size_t> m_nActiveTasks;
     std::vector<std::thread> m_threads;
     std::queue<std::function<void()>> m_tasks;
     std::mutex m_mutex;
@@ -23,5 +25,6 @@ namespace dsm {
     ~ThreadPool();
 
     void enqueue(std::function<void()> task);
+    void waitAll();
   };
 }  // namespace dsm

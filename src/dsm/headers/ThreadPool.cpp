@@ -4,7 +4,7 @@
 #include <stdexcept>
 
 namespace dsm {
-  ThreadPool::ThreadPool(const unsigned int nThreads) : m_stop(false) {
+  ThreadPool::ThreadPool(const unsigned int nThreads) : m_stop(false), m_nActiveTasks{0} {
     for (size_t i = 0; i < nThreads; ++i) {
       m_threads.emplace_back([this]() {
         while (true) {
@@ -21,6 +21,12 @@ namespace dsm {
             m_tasks.pop();
           }
           task();
+          {
+            std::unique_lock<std::mutex> lock(m_mutex);
+            if (--m_nActiveTasks == 0) {
+              m_cv.notify_all();  // Notify that all tasks are done
+            }
+          }
         }
       });
     }
@@ -40,8 +46,14 @@ namespace dsm {
   void ThreadPool::enqueue(std::function<void()> task) {
     {
       std::unique_lock<std::mutex> lock(m_mutex);
+      ++m_nActiveTasks;
       m_tasks.emplace(std::move(task));
     }
     m_cv.notify_one();
+  }
+
+  void ThreadPool::waitAll() {
+    std::unique_lock<std::mutex> lock(m_mutex);
+    m_cv.wait(lock, [this]() { return m_nActiveTasks == 0; });
   }
 }  // namespace dsm
