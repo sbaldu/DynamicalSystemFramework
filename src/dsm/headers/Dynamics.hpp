@@ -27,6 +27,7 @@
 #include "Itinerary.hpp"
 #include "Graph.hpp"
 #include "SparseMatrix.hpp"
+#include "ThreadPool.hpp"
 #include "../utility/TypeTraits/is_agent.hpp"
 #include "../utility/TypeTraits/is_itinerary.hpp"
 #include "../utility/Logger.hpp"
@@ -81,6 +82,7 @@ namespace dsm {
     std::unordered_map<Id, std::array<unsigned long long, 4>> m_turnCounts;
     std::unordered_map<Id, std::array<long, 4>> m_turnMapping;
     std::unordered_map<Id, Size> m_streetTails;
+    ThreadPool m_pool;
 
     /// @brief Get the next street id
     /// @param agentId The id of the agent
@@ -385,7 +387,8 @@ namespace dsm {
         m_errorProbability{0.},
         m_minSpeedRateo{0.},
         m_maxFlowPercentage{1.},
-        m_forcePriorities{false} {
+        m_forcePriorities{false},
+        m_pool{ThreadPool()} {
     for (const auto& [streetId, street] : m_graph.streetSet()) {
       m_streetTails.emplace(streetId, 0);
       m_turnCounts.emplace(streetId, std::array<unsigned long long, 4>{0, 0, 0, 0});
@@ -713,25 +716,10 @@ namespace dsm {
   template <typename delay_t>
     requires(is_numeric_v<delay_t>)
   void Dynamics<delay_t>::updatePaths() {
-    std::vector<std::thread> threads;
-    threads.reserve(m_itineraries.size());
-    std::exception_ptr pThreadException;
-    for (const auto& [itineraryId, itinerary] : m_itineraries) {
-      threads.emplace_back(std::thread([this, &itinerary, &pThreadException] {
-        try {
-          this->m_updatePath(itinerary);
-        } catch (...) {
-          if (!pThreadException)
-            pThreadException = std::current_exception();
-        }
-      }));
+    for (const auto& [itineraryId, pItinerary] : m_itineraries) {
+      m_pool.enqueue([this, &pItinerary] { this->m_updatePath(pItinerary); });
     }
-    for (auto& thread : threads) {
-      thread.join();
-    }
-    // Throw the exception launched first
-    if (pThreadException)
-      std::rethrow_exception(pThreadException);
+    m_pool.waitAll();
   }
 
   template <typename delay_t>
@@ -750,16 +738,19 @@ namespace dsm {
     }
     // Move transport capacity agents from each node
     for (const auto& [nodeId, pNode] : m_graph.nodeSet()) {
-      for (auto i = 0; i < pNode->transportCapacity(); ++i) {
-        if (!this->m_evolveNode(pNode)) {
-          break;
+      m_pool.enqueue([this, &pNode] {
+        for (auto i = 0; i < pNode->transportCapacity(); ++i) {
+          if (!this->m_evolveNode(pNode)) {
+            break;
+          }
         }
-      }
-      if (pNode->isTrafficLight()) {
-        auto& tl = dynamic_cast<TrafficLight&>(*pNode);
-        ++tl;  // Increment the counter
-      }
+        if (pNode->isTrafficLight()) {
+          auto& tl = dynamic_cast<TrafficLight&>(*pNode);
+          ++tl;  // Increment the counter
+        }
+      });
     }
+    m_pool.waitAll();
     // cycle over agents and update their times
     this->m_evolveAgents();
     // increment time simulation

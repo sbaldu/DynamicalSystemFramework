@@ -2,6 +2,7 @@
 #pragma once
 
 #include <cstdint>
+#include <thread>
 
 namespace dsm {
 
@@ -9,6 +10,11 @@ namespace dsm {
   using Size = uint32_t;
   using Delay = uint16_t;
   using Time = uint64_t;
+  #ifdef __APPLE__
+  using Thread = std::thread;
+  #else
+  using Thread = std::jthread;
+  #endif
 
   enum Direction : uint8_t {
     RIGHT = 0,     // delta < 0
