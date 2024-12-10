@@ -28,6 +28,9 @@
 
 #include "DijkstraWeights.hpp"
 #include "Node.hpp"
+#include "Intersection.hpp"
+#include "TrafficLight.hpp"
+#include "Roundabout.hpp"
 #include "SparseMatrix.hpp"
 #include "Street.hpp"
 #include "../utility/DijkstraResult.hpp"

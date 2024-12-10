@@ -2,7 +2,6 @@
 
 #include "Dynamics.hpp"
 #include "Graph.hpp"
-#include "Node.hpp"
 #include "SparseMatrix.hpp"
 #include "Street.hpp"
 

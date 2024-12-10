@@ -3,7 +3,7 @@
 #include <numbers>
 
 #include "Agent.hpp"
-#include "Node.hpp"
+#include "Intersection.hpp"
 #include "Street.hpp"
 #include "../utility/Typedef.hpp"
 
