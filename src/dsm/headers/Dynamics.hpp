@@ -27,6 +27,7 @@
 #include "Itinerary.hpp"
 #include "Graph.hpp"
 #include "SparseMatrix.hpp"
+#include "ThreadPool.hpp"
 #include "../utility/TypeTraits/is_agent.hpp"
 #include "../utility/TypeTraits/is_itinerary.hpp"
 #include "../utility/Logger.hpp"
@@ -713,25 +714,10 @@ namespace dsm {
   template <typename delay_t>
     requires(is_numeric_v<delay_t>)
   void Dynamics<delay_t>::updatePaths() {
-    std::vector<std::thread> threads;
-    threads.reserve(m_itineraries.size());
-    std::exception_ptr pThreadException;
-    for (const auto& [itineraryId, itinerary] : m_itineraries) {
-      threads.emplace_back(std::thread([this, &itinerary, &pThreadException] {
-        try {
-          this->m_updatePath(itinerary);
-        } catch (...) {
-          if (!pThreadException)
-            pThreadException = std::current_exception();
-        }
-      }));
+    ThreadPool pool(m_itineraries.size());
+    for (const auto& [itineraryId, pItinerary] : m_itineraries) {
+      pool.enqueue([this, &pItinerary] { this->m_updatePath(pItinerary); });
     }
-    for (auto& thread : threads) {
-      thread.join();
-    }
-    // Throw the exception launched first
-    if (pThreadException)
-      std::rethrow_exception(pThreadException);
   }
 
   template <typename delay_t>
