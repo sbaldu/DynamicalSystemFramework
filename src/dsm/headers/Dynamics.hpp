@@ -82,6 +82,7 @@ namespace dsm {
     std::unordered_map<Id, std::array<unsigned long long, 4>> m_turnCounts;
     std::unordered_map<Id, std::array<long, 4>> m_turnMapping;
     std::unordered_map<Id, Size> m_streetTails;
+    ThreadPool m_pool;
 
     /// @brief Get the next street id
     /// @param agentId The id of the agent
@@ -386,7 +387,8 @@ namespace dsm {
         m_errorProbability{0.},
         m_minSpeedRateo{0.},
         m_maxFlowPercentage{1.},
-        m_forcePriorities{false} {
+        m_forcePriorities{false},
+        m_pool{ThreadPool()} {
     for (const auto& [streetId, street] : m_graph.streetSet()) {
       m_streetTails.emplace(streetId, 0);
       m_turnCounts.emplace(streetId, std::array<unsigned long long, 4>{0, 0, 0, 0});
@@ -714,9 +716,8 @@ namespace dsm {
   template <typename delay_t>
     requires(is_numeric_v<delay_t>)
   void Dynamics<delay_t>::updatePaths() {
-    ThreadPool pool(m_itineraries.size());
     for (const auto& [itineraryId, pItinerary] : m_itineraries) {
-      pool.enqueue([this, &pItinerary] { this->m_updatePath(pItinerary); });
+      m_pool.enqueue([this, &pItinerary] { this->m_updatePath(pItinerary); });
     }
   }
 

@@ -19,7 +19,7 @@ namespace dsm {
     std::condition_variable m_cv;
 
   public:
-    ThreadPool(unsigned int nThreads = std::thread::hardware_concurrency());
+    ThreadPool(const unsigned int nThreads = std::thread::hardware_concurrency());
     ~ThreadPool();
 
     void enqueue(std::function<void()> task);

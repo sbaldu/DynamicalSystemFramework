@@ -4,8 +4,7 @@
 #include <stdexcept>
 
 namespace dsm {
-  ThreadPool::ThreadPool(unsigned int nThreads) : m_stop(false) {
-    nThreads = std::min(nThreads, std::thread::hardware_concurrency());
+  ThreadPool::ThreadPool(const unsigned int nThreads) : m_stop(false) {
     for (size_t i = 0; i < nThreads; ++i) {
       m_threads.emplace_back([this]() {
         while (true) {
