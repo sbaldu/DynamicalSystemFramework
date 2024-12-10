@@ -1,6 +1,8 @@
 #include <cstdint>
 
 #include "Node.hpp"
+#include "Intersection.hpp"
+#include "TrafficLight.hpp"
 
 #include "doctest.h"
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
