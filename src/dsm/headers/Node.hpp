@@ -52,6 +52,7 @@ namespace dsm {
           m_name{other.m_name},
           m_capacity{other.m_capacity},
           m_transportCapacity{other.m_transportCapacity} {};
+    virtual ~Node() = default;
 
     Node& operator=(Node const& other) {
       if (this != &other) {
