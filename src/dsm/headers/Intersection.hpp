@@ -1,3 +1,11 @@
+/// @file src/dsm/headers/Intersection.hpp
+/// @brief Header file for the Intersection class
+
+/// @details This file contains the definition of the Intersection class. The Intersection class
+///          represents a node in the road network. It is derived from the Node class and has a
+///          multimap of agents waiting to pass through the intersection. Agents are ordered by
+///          their angle difference, emulating real-world precedence.
+
 #pragma once
 
 #include "Node.hpp"

@@ -1,3 +1,12 @@
+/// @file src/dsm/headers/TrafficLight.hpp
+/// @brief Header file for the TrafficLight class
+
+/// @details This file contains the definition of the TrafficLightCycle and TrafficLight classes.
+///          The TrafficLightCycle class represents a cycle of a traffic light, with a green time
+///          and a phase. The TrafficLight class represents a traffic light intersection node in
+///          the road network. It is derived from the Intersection class and has a map of cycles for each
+///          street queue.
+
 #pragma once
 
 #include "Intersection.hpp"

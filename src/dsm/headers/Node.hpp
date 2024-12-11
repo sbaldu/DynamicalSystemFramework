@@ -1,13 +1,8 @@
 /// @file       /src/dsm/headers/Node.hpp
 /// @brief      Defines the Node class.
 ///
-/// @details    This file contains the definition of the Node class.
-///             The Node class represents a node in the network. It is templated by the type
-///             of the node's id, which must be an unsigned integral type.
-///             The derived classes are:
-///             - Intersection: represents an intersection node with a map of agents
-///               - TrafficLight: represents a traffic light intersection node
-///             - Roundabout: represents a roundabout node with a queue of agents
+/// @details    The Node class represents the concept of a node in the network.
+///             It is a virtual class that needs to be implemented by derived classes.
 
 #pragma once
 

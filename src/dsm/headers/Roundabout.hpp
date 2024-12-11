@@ -1,3 +1,10 @@
+/// @file src/dsm/headers/Roundabout.hpp
+/// @brief Header file for the Roundabout class
+
+/// @details This file contains the definition of the Roundabout class. The Roundabout class
+///          represents a roundabout node in the road network. It is derived from the Node
+///          class and has a queue of agents waiting to exit the roundabout.
+
 #pragma once
 
 #include "Node.hpp"
