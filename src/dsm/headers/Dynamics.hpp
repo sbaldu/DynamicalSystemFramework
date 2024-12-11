@@ -109,41 +109,89 @@ namespace dsm {
     /// @brief Update the path of a single itinerary
     /// @param pItinerary An std::unique_prt to the itinerary
     void m_updatePath(const std::unique_ptr<Itinerary>& pItinerary) {
-      const Size dimension = m_graph.adjMatrix().getRowDim();
-      const auto destinationID = pItinerary->destination();
+      Size const dimension = m_graph.adjMatrix().getRowDim();
+      auto const destinationID = pItinerary->destination();
+      auto trip = pItinerary->trip();
       SparseMatrix<bool> path{dimension, dimension};
-      // cycle over the nodes
-      for (const auto& [nodeId, node] : m_graph.nodeSet()) {
-        if (nodeId == destinationID) {
-          continue;
-        }
-        auto result{m_graph.shortestPath(nodeId, destinationID)};
-        if (!result.has_value()) {
-          continue;
-        }
-        // save the minimum distance between i and the destination
-        const auto minDistance{result.value().distance()};
-        for (const auto [nextNodeId, _] : m_graph.adjMatrix().getRow(nodeId)) {
-          if (nextNodeId == destinationID &&
-              minDistance ==
-                  m_graph.streetSet()[nodeId * dimension + nextNodeId]->length()) {
-            path.insert(nodeId, nextNodeId, true);
+      if (trip.empty()) {
+        // cycle over the nodes
+        for (const auto& [nodeId, node] : m_graph.nodeSet()) {
+          if (nodeId == destinationID) {
             continue;
           }
-          result = m_graph.shortestPath(nextNodeId, destinationID);
-
-          if (result.has_value()) {
-            // if the shortest path exists, save the distance
-            if (minDistance ==
-                result.value().distance() +
+          auto result{m_graph.shortestPath(nodeId, destinationID)};
+          if (!result.has_value()) {
+            continue;
+          }
+          // save the minimum distance between i and the destination
+          const auto minDistance{result.value().distance()};
+          for (const auto [nextNodeId, _] : m_graph.adjMatrix().getRow(nodeId)) {
+            if (nextNodeId == destinationID &&
+                minDistance ==
                     m_graph.streetSet()[nodeId * dimension + nextNodeId]->length()) {
               path.insert(nodeId, nextNodeId, true);
+              continue;
             }
-          } else if ((nextNodeId != destinationID)) {
-            std::cerr << std::format("WARNING: No path found from node {} to node {}",
-                                     nextNodeId,
-                                     destinationID)
-                      << std::endl;
+            result = m_graph.shortestPath(nextNodeId, destinationID);
+
+            if (result.has_value()) {
+              // if the shortest path exists, save the distance
+              if (minDistance ==
+                  result.value().distance() +
+                      m_graph.streetSet()[nodeId * dimension + nextNodeId]->length()) {
+                path.insert(nodeId, nextNodeId, true);
+              }
+            } else if ((nextNodeId != destinationID)) {
+              std::cerr << std::format("WARNING: No path found from node {} to node {}",
+                                       nextNodeId,
+                                       destinationID)
+                        << std::endl;
+            }
+          }
+        }
+      } else {
+        // Process the nodes in the order they appear in the trip vector
+        for (size_t i = 0; i < trip.size(); ++i) {
+          const auto nodeId = trip[i];
+
+          // Skip if the current node is the destination
+          if (nodeId == destinationID) {
+            continue;
+          }
+
+          // Find the shortest path from the current node to the destination
+          auto result = m_graph.shortestPath(nodeId, destinationID);
+          if (!result.has_value()) {
+            throw std::runtime_error(buildLog(std::format(
+                "No path found from node {} to node {}", nodeId, destinationID)));
+          }
+
+          const auto minDistance = result.value().distance();
+
+          // Check each neighbor of the current node in the adjacency matrix
+          for (const auto& [nextNodeId, _] : m_graph.adjMatrix().getRow(nodeId)) {
+            if (nextNodeId == destinationID &&
+                minDistance ==
+                    m_graph.streetSet()[nodeId * dimension + nextNodeId]->length()) {
+              path.insert(nodeId, nextNodeId, true);
+              continue;
+            }
+
+            result = m_graph.shortestPath(nextNodeId, destinationID);
+            if (result.has_value()) {
+              // If a valid path exists, check the condition
+              if (minDistance ==
+                  result.value().distance() +
+                      m_graph.streetSet()[nodeId * dimension + nextNodeId]->length()) {
+                path.insert(nodeId, nextNodeId, true);
+              }
+            } else if (nextNodeId != destinationID) {
+              // Handle case where no path is found from node to destination
+              std::cerr << std::format("WARNING: No path found from node {} to node {}",
+                                       nextNodeId,
+                                       destinationID)
+                        << std::endl;
+            }
           }
         }
       }
