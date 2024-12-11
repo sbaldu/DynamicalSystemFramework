@@ -24,7 +24,6 @@ namespace dsm {
     Size m_agentCounter;
 
   public:
-    Intersection() = default;
     /// @brief Construct a new Intersection object
     /// @param id The node's id
     explicit Intersection(Id id) : Node{id} {};

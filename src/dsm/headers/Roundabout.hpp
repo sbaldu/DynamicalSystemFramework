@@ -19,7 +19,6 @@ namespace dsm {
     dsm::queue<Id> m_agents;
 
   public:
-    Roundabout() = default;
     /// @brief Construct a new Roundabout object
     /// @param id The node's id
     explicit Roundabout(Id id) : Node{id} {};
