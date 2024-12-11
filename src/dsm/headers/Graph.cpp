@@ -446,6 +446,16 @@ namespace dsm {
     pNode = std::make_unique<Roundabout>(*pNode);
     return dynamic_cast<Roundabout&>(*pNode);
   }
+
+  Station& Graph::makeStation(Id nodeId, const unsigned int managementTime) {
+    if (!m_nodes.contains(nodeId)) {
+      throw std::invalid_argument(buildLog("Node does not exist."));
+    }
+    auto& pNode = m_nodes[nodeId];
+    pNode = std::make_unique<Station>(*pNode, managementTime);
+    return dynamic_cast<Station&>(*pNode);
+  }
+
   SpireStreet& Graph::makeSpireStreet(Id streetId) {
     if (!m_streets.contains(streetId)) {
       throw std::invalid_argument(
@@ -523,6 +533,24 @@ namespace dsm {
     }
     const auto& nodePair = m_streets.at(streetId)->nodePair();
     return this->street(nodePair.second, nodePair.first);
+  }
+
+  SparseMatrix<bool> Graph::getPath(const std::span<Id>& trip) const {
+    SparseMatrix<bool> path{m_adjacency.getRowDim(), m_adjacency.getColDim()};
+    for (Size i{0}; i < trip.size() - 1; ++i) {
+      // Find the shortest path between the two nodes
+      auto result = shortestPath(trip[i], trip[i + 1]);
+      if (!result.has_value()) {
+        throw std::invalid_argument(buildLog(
+            std::format("No path found between nodes {} and {}.", trip[i], trip[i + 1])));
+      }
+      const auto& resultingPath = result.value().path();
+      // Add the path to the matrix
+      for (Size j{0}; j < resultingPath.size() - 1; ++j) {
+        path.insert(resultingPath[j], resultingPath[j + 1], true);
+      }
+    }
+    return path;
   }
 
 };  // namespace dsm

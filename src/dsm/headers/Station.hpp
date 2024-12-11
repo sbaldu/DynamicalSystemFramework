@@ -26,6 +26,10 @@ namespace dsm {
     /// @param coords A std::pair containing the station's coordinates (lat, lon)
     /// @param managementTime The time it takes between two train departures/arrivals
     Station(Id id, std::pair<double, double> coords, Delay managementTime);
+    /// @brief Construct a new Station object
+    /// @param node A Node object representing the station
+    /// @param managementTime The time it takes between two train departures/arrivals
+    Station(Node const& node, Delay managementTime);
     /// @brief Construct a new Station object by copying another Station object
     /// @param other The Station object to copy
     Station(Station const& other);

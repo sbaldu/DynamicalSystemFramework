@@ -7,6 +7,9 @@ namespace dsm {
   Station::Station(Id id, std::pair<double, double> coords, Delay managementTime)
       : Node(id, coords), m_managementTime{managementTime} {}
 
+  Station::Station(Node const& node, Delay managementTime)
+      : Node(node), m_managementTime{managementTime} {}
+
   Station::Station(Station const& other)
       : Node(other), m_managementTime{other.m_managementTime}, m_trains{other.m_trains} {}
 
