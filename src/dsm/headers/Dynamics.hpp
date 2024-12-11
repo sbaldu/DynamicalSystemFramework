@@ -73,7 +73,6 @@ namespace dsm {
     double m_minSpeedRateo;
     double m_maxFlowPercentage;
     mutable std::mt19937_64 m_generator{std::random_device{}()};
-    std::uniform_real_distribution<double> m_uniformDist{0., 1.};
     std::vector<unsigned int> m_travelTimes;
     std::unordered_map<Id, Id> m_agentNextStreetId;
     bool m_forcePriorities;
@@ -417,7 +416,8 @@ namespace dsm {
                                        Id nodeId,
                                        std::optional<Id> streetId) {
     auto possibleMoves = m_graph.adjMatrix().getRow(nodeId, true);
-    if (m_itineraries.size() > 0 && m_uniformDist(m_generator) > m_errorProbability) {
+    std::uniform_real_distribution<double> uniformDist{0., 1.};
+    if (m_itineraries.size() > 0 && uniformDist(m_generator) > m_errorProbability) {
       const auto& it = m_itineraries[m_agents[agentId]->itineraryId()];
       if (it->destination() != nodeId) {
         possibleMoves = it->path().getRow(nodeId, true);
@@ -461,8 +461,9 @@ namespace dsm {
   void Dynamics<delay_t>::m_evolveStreet(const std::unique_ptr<Street>& pStreet,
                                          bool reinsert_agents) {
     auto const nLanes = pStreet->nLanes();
+    std::uniform_real_distribution<double> uniformDist{0., 1.};
     for (auto queueIndex = 0; queueIndex < nLanes; ++queueIndex) {
-      if (m_uniformDist(m_generator) > m_maxFlowPercentage ||
+      if (uniformDist(m_generator) > m_maxFlowPercentage ||
           pStreet->queue(queueIndex).empty()) {
         continue;
       }
