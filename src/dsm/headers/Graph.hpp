@@ -210,6 +210,9 @@ namespace dsm {
     /// @brief Get the graph's adjacency matrix
     /// @return A std::shared_ptr to the graph's adjacency matrix
     const SparseMatrix<bool>& adjMatrix() const { return m_adjacency; }
+    /// @brief Get the graph's number of nodes
+    /// @return size_t The number of nodes in the graph
+    size_t nNodes() const { return m_nodes.size(); }
     /// @brief Get the graph's node map
     /// @return A std::unordered_map containing the graph's nodes
     const std::unordered_map<Id, std::unique_ptr<Node>>& nodeSet() const {
@@ -218,6 +221,9 @@ namespace dsm {
     /// @brief Get the graph's node map
     /// @return A std::unordered_map containing the graph's nodes
     std::unordered_map<Id, std::unique_ptr<Node>>& nodeSet() { return m_nodes; }
+    /// @brief Get the Graph's number of streets
+    /// @return size_t The number of streets in the graph
+    size_t nEdges() const { return m_streets.size(); }
     /// @brief Get the graph's street map
     /// @return A std::unordered_map containing the graph's streets
     const std::unordered_map<Id, std::unique_ptr<Street>>& streetSet() const {
