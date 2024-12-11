@@ -1,6 +1,6 @@
 #include <cstdint>
 
-#include "Dynamics.hpp"
+#include "FirstOrderDynamics.hpp"
 #include "Graph.hpp"
 #include "SparseMatrix.hpp"
 #include "Street.hpp"
@@ -175,7 +175,6 @@ TEST_CASE("Dynamics") {
       auto graph = Graph{};
       graph.importMatrix("./data/matrix.dsm");
       Dynamics dynamics(graph);
-      dynamics.setSeed(69);
       Itinerary Itinerary1{0, 2}, Itinerary2{1, 1};
       dynamics.addItinerary(Itinerary1);
       dynamics.addItinerary(Itinerary2);
@@ -231,7 +230,6 @@ TEST_CASE("Dynamics") {
       auto graph = Graph{};
       graph.importMatrix("./data/matrix.dat");
       Dynamics dynamics{graph};
-      dynamics.setSeed(69);
       WHEN("We add one agent for existing itinerary") {
         std::unordered_map<uint32_t, double> src{{0, 1.}};
         std::unordered_map<uint32_t, double> dst{{2, 1.}};
@@ -453,7 +451,6 @@ TEST_CASE("Dynamics") {
       graph.addStreets(s1, s2, s3);
       graph.buildAdj();
       Dynamics dynamics{graph};
-      dynamics.setSeed(69);
       Itinerary itinerary{0, 2};
       dynamics.addItinerary(itinerary);
       dynamics.updatePaths();
@@ -488,7 +485,6 @@ TEST_CASE("Dynamics") {
       graph2.addStreets(s1, s2);
       graph2.buildAdj();
       Dynamics dynamics{graph2};
-      dynamics.setSeed(69);
       Itinerary itinerary{0, 1};
       dynamics.addItinerary(itinerary);
       dynamics.updatePaths();
@@ -516,7 +512,6 @@ TEST_CASE("Dynamics") {
       graph2.addStreets(s1, s2);
       graph2.buildAdj();
       Dynamics dynamics{graph2};
-      dynamics.setSeed(69);
       Itinerary itinerary{0, 1};
       dynamics.addItinerary(itinerary);
       dynamics.updatePaths();
@@ -560,7 +555,6 @@ TEST_CASE("Dynamics") {
       graph2.addStreets(s1, s2, s3, s4);
       graph2.buildAdj();
       Dynamics dynamics{graph2};
-      dynamics.setSeed(69);
       Itinerary itinerary{0, 2};
       dynamics.addItinerary(itinerary);
       dynamics.updatePaths();
@@ -626,7 +620,6 @@ TEST_CASE("Dynamics") {
       graph2.buildStreetAngles();
 
       Dynamics dynamics{graph2};
-      dynamics.setSeed(69);
 
       std::vector<uint32_t> destinationNodes{0, 2, 3, 4};
       dynamics.setDestinationNodes(destinationNodes);
@@ -698,7 +691,6 @@ TEST_CASE("Dynamics") {
       graph2.buildStreetAngles();
 
       Dynamics dynamics{graph2};
-      dynamics.setSeed(69);
 
       std::vector<uint32_t> destinationNodes{0, 2, 3, 4};
       dynamics.setDestinationNodes(destinationNodes);
@@ -819,7 +811,6 @@ TEST_CASE("Dynamics") {
       auto& rb = graph2.makeRoundabout(1);
       graph2.adjustNodeCapacities();
       Dynamics dynamics{graph2};
-      dynamics.setSeed(69);
       Itinerary itinerary{0, 2};
       Itinerary itinerary2{1, 0};
       dynamics.addItinerary(itinerary);
@@ -858,7 +849,6 @@ TEST_CASE("Dynamics") {
       graph2.addStreets(s1, s2);
       graph2.buildAdj();
       Dynamics dynamics{graph2};
-      dynamics.setSeed(69);
       Itinerary itinerary{0, 2};
       dynamics.addItinerary(itinerary);
       dynamics.updatePaths();
@@ -893,7 +883,6 @@ TEST_CASE("Dynamics") {
     }
     Dynamics dynamics{graph2};
     dynamics.setMinSpeedRateo(0.5);
-    dynamics.setSeed(69);
     Itinerary itinerary{0, 2};
     dynamics.addItinerary(itinerary);
     dynamics.updatePaths();
@@ -961,7 +950,6 @@ TEST_CASE("Dynamics") {
       graph2.buildAdj();
       Dynamics dynamics{graph2};
       dynamics.graph().nodeSet().at(0)->setCapacity(3);
-      dynamics.setSeed(69);
       Itinerary itinerary{0, 2};
       Itinerary itinerary2{1, 1};
       dynamics.addItinerary(itinerary);
@@ -1024,7 +1012,6 @@ TEST_CASE("Dynamics") {
       graph2.buildAdj();
       graph2.makeSpireStreet(1);
       Dynamics dynamics{graph2};
-      dynamics.setSeed(69);
       Itinerary itinerary{0, 2};
       dynamics.addItinerary(itinerary);
       dynamics.updatePaths();
@@ -1057,7 +1044,6 @@ TEST_CASE("Dynamics") {
       graph2.buildAdj();
       graph2.makeSpireStreet(1);
       Dynamics dynamics{graph2};
-      dynamics.setSeed(69);
       Itinerary itinerary{0, 2};
       dynamics.addItinerary(itinerary);
       dynamics.updatePaths();
