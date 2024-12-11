@@ -619,12 +619,14 @@ namespace dsm {
     requires(is_numeric_v<delay_t>)
   Measurement<unsigned int> RoadDynamics<delay_t>::meanTravelTime(bool clearData) {
     std::vector<unsigned int> travelTimes;
-    if (clearData) {
-      std::swap(travelTimes, m_travelTimes);
-    } else {
-      travelTimes.reserve(m_travelTimes.size());
-      for (const auto& time : m_travelTimes) {
-        travelTimes.push_back(time);
+    if (!m_travelTimes.empty()) {
+      if (clearData) {
+        std::swap(travelTimes, m_travelTimes);
+      } else {
+        travelTimes.reserve(m_travelTimes.size());
+        for (const auto& time : m_travelTimes) {
+          travelTimes.push_back(time);
+        }
       }
     }
     return Measurement<unsigned int>(travelTimes);

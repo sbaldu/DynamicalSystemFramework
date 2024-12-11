@@ -622,9 +622,11 @@ namespace dsm {
     requires(is_numeric_v<delay_t>)
   Measurement<double> Dynamics<delay_t>::agentMeanSpeed() const {
     std::vector<double> speeds;
-    speeds.reserve(m_agents.size());
-    for (const auto& [agentId, agent] : m_agents) {
-      speeds.push_back(agent->speed());
+    if (!m_agents.empty()) {
+      speeds.reserve(m_agents.size());
+      for (const auto& [agentId, agent] : m_agents) {
+        speeds.push_back(agent->speed());
+      }
     }
     return Measurement<double>(speeds);
   }
