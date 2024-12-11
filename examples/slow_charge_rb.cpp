@@ -90,11 +90,11 @@ int main(int argc, char** argv) {
   }
   graph.buildAdj();
 
-  std::cout << "Number of nodes: " << graph.nodeSet().size() << '\n';
-  std::cout << "Number of streets: " << graph.streetSet().size() << '\n';
+  std::cout << "Number of nodes: " << graph.nNodes() << '\n';
+  std::cout << "Number of streets: " << graph.nEdges() << '\n';
 
   std::cout << "Rounding the simulation...\n";
-  for (Unit i{0}; i < graph.nodeSet().size(); ++i) {
+  for (Unit i{0}; i < graph.nNodes(); ++i) {
     graph.makeRoundabout(i);
   }
   std::cout << "Making every street a spire...\n";

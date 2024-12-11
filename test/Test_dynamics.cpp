@@ -56,8 +56,8 @@ TEST_CASE("Dynamics") {
       WHEN("A dynamics object is created") {
         Dynamics dynamics(graph);
         THEN("The node and the street sets are the same") {
-          CHECK_EQ(dynamics.graph().nodeSet().size(), 3);
-          CHECK_EQ(dynamics.graph().streetSet().size(), 4);
+          CHECK_EQ(dynamics.graph().nNodes(), 3);
+          CHECK_EQ(dynamics.graph().nEdges(), 4);
         }
         THEN("The mean speed, density, flow and travel time are 0") {
           CHECK_EQ(dynamics.agentMeanSpeed().mean, 0.);
