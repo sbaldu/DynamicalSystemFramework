@@ -35,8 +35,8 @@ TEST_CASE("Graph") {
     Graph graph{};
     graph.addStreet(street);
     graph.buildAdj();
-    CHECK(graph.streetSet().size() == 1);
-    CHECK_EQ(graph.nodeSet().size(), 2);
+    CHECK_EQ(graph.nEdges(), 1);
+    CHECK_EQ(graph.nNodes(), 2);
     CHECK(graph.adjMatrix().size() == 1);
   }
 
@@ -48,8 +48,8 @@ TEST_CASE("Graph") {
     sm.insert(2, 3, true);
     sm.insert(3, 2, true);
     Graph graph{sm};
-    CHECK(graph.nodeSet().size() == 4);
-    CHECK(graph.streetSet().size() == 5);
+    CHECK_EQ(graph.nNodes(), 4);
+    CHECK_EQ(graph.nEdges(), 5);
     CHECK(graph.adjMatrix().size() == 5);
     CHECK(graph.adjMatrix().contains(1, 2));
     CHECK(graph.adjMatrix().contains(2, 3));
@@ -71,8 +71,8 @@ TEST_CASE("Graph") {
     graph.addStreet(s5);
     graph.buildAdj();
 
-    CHECK_EQ(graph.streetSet().size(), 5);
-    CHECK_EQ(graph.nodeSet().size(), 4);
+    CHECK_EQ(graph.nEdges(), 5);
+    CHECK_EQ(graph.nNodes(), 4);
     CHECK_EQ(graph.adjMatrix().size(), 5);
     CHECK(graph.adjMatrix().contains(0, 1));
     CHECK(graph.adjMatrix().contains(1, 2));
@@ -90,8 +90,8 @@ TEST_CASE("Graph") {
     graph.addStreets(s1, s2, s3, s4, s5);
     graph.buildAdj();
 
-    CHECK_EQ(graph.streetSet().size(), 5);
-    CHECK_EQ(graph.nodeSet().size(), 4);
+    CHECK_EQ(graph.nEdges(), 5);
+    CHECK_EQ(graph.nNodes(), 4);
     CHECK_EQ(graph.adjMatrix().size(), 5);
     CHECK(graph.adjMatrix().contains(0, 1));
     CHECK(graph.adjMatrix().contains(1, 2));
@@ -113,8 +113,8 @@ TEST_CASE("Graph") {
     CHECK(graph.adjMatrix().operator()(6));
     CHECK(graph.adjMatrix().operator()(3));
     CHECK(graph.adjMatrix().operator()(1));
-    CHECK(graph.nodeSet().size() == 3);
-    CHECK(graph.streetSet().size() == 4);
+    CHECK_EQ(graph.nNodes(), 3);
+    CHECK_EQ(graph.nEdges(), 4);
     graph.exportMatrix("./data/temp.dsm", false);
     Graph graph2{};
     graph2.importMatrix("./data/temp.dsm");
@@ -125,8 +125,8 @@ TEST_CASE("Graph") {
     CHECK(graph2.adjMatrix().operator()(6));
     CHECK(graph2.adjMatrix().operator()(3));
     CHECK(graph2.adjMatrix().operator()(1));
-    CHECK(graph2.nodeSet().size() == 3);
-    CHECK(graph2.streetSet().size() == 4);
+    CHECK_EQ(graph2.nNodes(), 3);
+    CHECK_EQ(graph2.nEdges(), 4);
   }
   SUBCASE("Coordinates import/export") {
     GIVEN("A Graph object with the adj matrix imported") {
@@ -164,8 +164,8 @@ TEST_CASE("Graph") {
     CHECK(graph.adjMatrix().operator()(1, 0));
     CHECK(graph.adjMatrix().operator()(1, 2));
     CHECK(graph.adjMatrix().operator()(2, 1));
-    CHECK(graph.nodeSet().size() == 3);
-    CHECK(graph.streetSet().size() == 4);
+    CHECK_EQ(graph.nNodes(), 3);
+    CHECK_EQ(graph.nEdges(), 4);
     CHECK_EQ(graph.streetSet()[1]->length(), 500);
     CHECK_EQ(graph.streetSet()[3]->length(), 200);
     CHECK_EQ(graph.streetSet()[5]->length(), 1);
@@ -187,8 +187,8 @@ TEST_CASE("Graph") {
         graph.importOSMNodes("./data/nodes.csv");
         graph.importOSMEdges("./data/edges.csv");
         THEN("Sizes are correct") {
-          CHECK_EQ(graph.nodeSet().size(), 25);
-          CHECK_EQ(graph.streetSet().size(), 60);
+          CHECK_EQ(graph.nNodes(), 25);
+          CHECK_EQ(graph.nEdges(), 60);
         }
         THEN("We are able to build the adjacency matrix") {
           graph.buildAdj();
@@ -199,8 +199,8 @@ TEST_CASE("Graph") {
         graph.importOSMNodes("./data/nodes_big.csv");
         graph.importOSMEdges("./data/edges_big.csv");
         THEN("Sizes are correct") {
-          CHECK_EQ(graph.nodeSet().size(), 4077);
-          CHECK_EQ(graph.streetSet().size(), 8875);
+          CHECK_EQ(graph.nNodes(), 4077);
+          CHECK_EQ(graph.nEdges(), 8875);
         }
         THEN("We are able to build the adjacency matrix") {
           graph.buildAdj();
