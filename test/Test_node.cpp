@@ -3,12 +3,15 @@
 #include "Node.hpp"
 #include "Intersection.hpp"
 #include "TrafficLight.hpp"
+#include "Station.hpp"
+#include "../utility/Typedef.hpp"
 
 #include "doctest.h"
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 
 using Intersection = dsm::Intersection;
 using TrafficLight = dsm::TrafficLight;
+using Station = dsm::Station;
 
 TEST_CASE("Intersection") {
   SUBCASE("Constructor") {
@@ -206,4 +209,69 @@ TEST_CASE("TrafficLight") {
   //     }
   //   }
   // }
+}
+
+TEST_CASE("Station") {
+  SUBCASE("Constructors") {
+    constexpr dsm::Id id = 1;
+    constexpr dsm::Delay managementTime = 2;
+    constexpr double lat = 2.5;
+    constexpr double lon = 3.5;
+    const std::string name = "S0001";
+    GIVEN("A Station object") {
+      WHEN("The Station is created using only an Id") {
+        Station station{id, managementTime};
+        THEN("Parameters are set correctly") {
+          CHECK_EQ(station.id(), id);
+          CHECK_EQ(station.managementTime(), managementTime);
+          CHECK_EQ(station.capacity(), 1);
+          CHECK_EQ(station.transportCapacity(), 1);
+          CHECK(station.name().empty());
+        }
+      }
+      WHEN("The Station is created using an Id and coordinates") {
+        Station station{id, std::make_pair(lat, lon), managementTime};
+        THEN("Parameters are set correctly") {
+          CHECK_EQ(station.id(), id);
+          CHECK_EQ(station.managementTime(), managementTime);
+          CHECK_EQ(station.capacity(), 1);
+          CHECK_EQ(station.transportCapacity(), 1);
+          CHECK(station.name().empty());
+        }
+      }
+      WHEN("The Station is created using a copy constructor") {
+        Station base{id, std::make_pair(lat, lon), managementTime};
+        base.setCapacity(2);
+        base.setTransportCapacity(3);
+        base.setName(name);
+        auto copy = base;
+        THEN("Parameters are set correctly") {
+          CHECK_EQ(copy.id(), id);
+          CHECK_EQ(copy.managementTime(), managementTime);
+          CHECK_EQ(copy.capacity(), 2);
+          CHECK_EQ(copy.transportCapacity(), 3);
+          CHECK_EQ(copy.name(), name);
+        }
+      }
+    }
+  }
+  SUBCASE("Enqueue and dequeue") {
+    constexpr dsm::Id id = 1;
+    constexpr dsm::Delay managementTime = 2;
+    GIVEN("A Station object") {
+      Station station{id, managementTime};
+      WHEN("A train is enqueued") {
+        station.enqueue(1, dsm::train_t::BUS);
+        THEN("The train is enqueued correctly") { CHECK_EQ(station.dequeue(), 1); }
+      }
+      WHEN("Multiple trains are enqueued") {
+        station.enqueue(1, dsm::train_t::RV);
+        station.enqueue(2, dsm::train_t::FRECCIAROSSA);
+        THEN("The trains are enqueued correctly") {
+          CHECK_EQ(station.dequeue(), 2);
+          CHECK_EQ(station.dequeue(), 1);
+        }
+      }
+    }
+  }
 }
