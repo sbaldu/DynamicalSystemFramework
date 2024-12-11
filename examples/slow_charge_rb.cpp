@@ -120,7 +120,7 @@ int main(int argc, char** argv) {
 
   std::cout << "Creating dynamics...\n";
 
-  Dynamics dynamics{graph};
+  Dynamics dynamics{graph, SEED};
   Unit n{0};
   {
     std::vector<Unit> destinationNodes;
@@ -134,7 +134,6 @@ int main(int argc, char** argv) {
   }
   std::cout << "Number of exits: " << n << '\n';
 
-  dynamics.setSeed(SEED);
   dynamics.setErrorProbability(0.05);
   dynamics.setMaxFlowPercentage(0.7707);
   // dynamics.setForcePriorities(true);

@@ -83,7 +83,6 @@ int main() {
 
   // Create the dynamics
   Dynamics dynamics{graph};
-  dynamics.setSeed(69);
   dynamics.setMinSpeedRateo(0.95);
   dynamics.setSpeedFluctuationSTD(0.2);
   Itinerary itinerary{0, 4};
