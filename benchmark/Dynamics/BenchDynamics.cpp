@@ -2,7 +2,7 @@
 
 #include "Graph.hpp"
 #include "Itinerary.hpp"
-#include "Dynamics.hpp"
+#include "FirstOrderDynamics.hpp"
 #include "Bench.hpp"
 
 using Graph = dsm::Graph;
