@@ -62,7 +62,7 @@ namespace dsm {
     void setCoords(std::pair<double, double> coords) { m_coords = std::move(coords); }
     /// @brief Set the node's name
     /// @param name The node's name
-    void setName(std::string name) { m_name = std::move(name); }
+    void setName(const std::string& name) { m_name = name; }
     /// @brief Set the node's capacity
     /// @param capacity The node's capacity
     virtual void setCapacity(Size capacity) { m_capacity = capacity; }

@@ -12,24 +12,52 @@ using TrafficLight = dsm::TrafficLight;
 
 TEST_CASE("Intersection") {
   SUBCASE("Constructor") {
-    /*This tests the constructor that takes an Id.
-    GIVEN: An Id
-    WHEN: A Intersection is constructed
-    THEN: The Id is set correctly
-    */
-    Intersection node{1};
-    CHECK(node.id() == 1);
-  }
-  SUBCASE("Constructor") {
-    /*This tests the constructor that takes an Id and coordinates.
-    GIVEN: An Id and coordinates
-    WHEN: A Intersection is constructed
-    THEN: The Id and coordinates are set correctly
-    */
-    Intersection node{1, std::make_pair(2.5, 3.5)};
-    CHECK(node.id() == 1);
-    CHECK(node.coords().value().first == 2.5);
-    CHECK(node.coords().value().second == 3.5);
+    GIVEN("Some parameters") {
+      constexpr dsm::Id id = 1;
+      constexpr double lat = 2.5;
+      constexpr double lon = 3.5;
+      constexpr dsm::Size capacity = 2;
+      constexpr dsm::Size transportCapacity = 3;
+      const std::string name = "MyName";
+      WHEN("An Intersection is created using only an Id") {
+        Intersection intersection{id};
+        THEN("Parameters are set correctly") {
+          CHECK_EQ(intersection.id(), id);
+          CHECK_FALSE(intersection.coords().has_value());
+          CHECK_EQ(intersection.capacity(), 1);
+          CHECK_EQ(intersection.transportCapacity(), 1);
+          CHECK(intersection.name().empty());
+        }
+      }
+      WHEN("An Intersection is created using an Id and coordinates") {
+        Intersection intersection{id, std::make_pair(lat, lon)};
+        THEN("Parameters are set correctly") {
+          CHECK_EQ(intersection.id(), id);
+          CHECK(intersection.coords().has_value());
+          CHECK_EQ(intersection.coords().value().first, lat);
+          CHECK_EQ(intersection.coords().value().second, lon);
+          CHECK_EQ(intersection.capacity(), 1);
+          CHECK_EQ(intersection.transportCapacity(), 1);
+          CHECK(intersection.name().empty());
+        }
+      }
+      WHEN("An intersection is created using copy constructor") {
+        Intersection base{id, std::make_pair(lat, lon)};
+        base.setCapacity(capacity);
+        base.setTransportCapacity(transportCapacity);
+        base.setName(name);
+        auto copy = base;
+        THEN("Parameters are set correctly") {
+          CHECK_EQ(copy.id(), id);
+          CHECK(copy.coords().has_value());
+          CHECK_EQ(copy.coords().value().first, lat);
+          CHECK_EQ(copy.coords().value().second, lon);
+          CHECK_EQ(copy.capacity(), capacity);
+          CHECK_EQ(copy.transportCapacity(), transportCapacity);
+          CHECK_EQ(copy.name(), name);
+        }
+      }
+    }
   }
 }
 
