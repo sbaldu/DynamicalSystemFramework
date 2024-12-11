@@ -45,7 +45,7 @@ namespace dsm {
     double m_errorProbability;
     double m_minSpeedRateo;
     double m_maxFlowPercentage;
-    std::vector<Period> m_travelTimes;
+    std::vector<double> m_travelTimes;
     std::unordered_map<Id, Id> m_agentNextStreetId;
     bool m_forcePriorities;
     std::optional<delay_t> m_dataUpdatePeriod;
@@ -132,7 +132,7 @@ namespace dsm {
     /// @brief Get the mean travel time of the agents in \f$s\f$
     /// @param clearData If true, the travel times are cleared after the computation
     /// @return Measurement<double> The mean travel time of the agents and the standard
-    Measurement<Period> meanTravelTime(bool clearData = false);
+    Measurement<double> meanTravelTime(bool clearData = false);
     /// @brief Get the turn counts of the agents
     /// @return const std::array<unsigned long long, 3>& The turn counts
     /// @details The array contains the counts of left (0), straight (1), right (2) and U (3) turns
@@ -617,8 +617,8 @@ namespace dsm {
 
   template <typename delay_t>
     requires(is_numeric_v<delay_t>)
-  Measurement<Period> RoadDynamics<delay_t>::meanTravelTime(bool clearData) {
-    std::vector<Period> travelTimes;
+  Measurement<double> RoadDynamics<delay_t>::meanTravelTime(bool clearData) {
+    std::vector<double> travelTimes;
     if (!m_travelTimes.empty()) {
       if (clearData) {
         std::swap(travelTimes, m_travelTimes);
@@ -629,7 +629,7 @@ namespace dsm {
         }
       }
     }
-    return Measurement<Period>(travelTimes);
+    return Measurement<double>(travelTimes);
   }
 
   template <typename delay_t>
