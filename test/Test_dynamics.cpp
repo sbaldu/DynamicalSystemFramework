@@ -529,10 +529,10 @@ TEST_CASE("Dynamics") {
         dynamics.evolve(true);
         THEN("The agent is reinserted") {
           CHECK_EQ(dynamics.agents().size(), 1);
-          CHECK_EQ(dynamics.agents().at(1)->time(), 1);
-          CHECK_EQ(dynamics.agents().at(1)->delay(), 0);
-          CHECK_FALSE(dynamics.agents().at(1)->streetId().has_value());
-          CHECK_EQ(dynamics.agents().at(1)->speed(), 0.);
+          CHECK_EQ(dynamics.agents().at(0)->time(), 1);
+          CHECK_EQ(dynamics.agents().at(0)->delay(), 0);
+          CHECK_FALSE(dynamics.agents().at(0)->streetId().has_value());
+          CHECK_EQ(dynamics.agents().at(0)->speed(), 0.);
         }
       }
     }

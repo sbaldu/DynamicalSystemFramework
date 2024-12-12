@@ -403,10 +403,7 @@ namespace dsm {
       agentId = m_agents.rbegin()->first + 1;
     }
     for (Size i{0}; i < nAgents; ++i, ++agentId) {
-      this->addAgent(Agent<delay_t>{agentId, itineraryId});
-      if (srcNodeId.has_value()) {
-        m_agents[agentId]->setSourceNodeId(srcNodeId.value());
-      }
+      this->addAgent(Agent<delay_t>{agentId, itineraryId, srcNodeId});
     }
   }
 
