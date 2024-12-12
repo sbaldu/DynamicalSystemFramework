@@ -78,12 +78,11 @@ int main() {
   graph.buildAdj();
   auto& spire = graph.makeSpireStreet(19);
 
-  std::cout << "Intersections: " << graph.nodeSet().size() << '\n';
-  std::cout << "Streets: " << graph.streetSet().size() << '\n';
+  std::cout << "Intersections: " << graph.nNodes() << '\n';
+  std::cout << "Streets: " << graph.nEdges() << '\n';
 
   // Create the dynamics
-  Dynamics dynamics{graph};
-  dynamics.setSeed(69);
+  Dynamics dynamics{graph, 69};
   dynamics.setMinSpeedRateo(0.95);
   dynamics.setSpeedFluctuationSTD(0.2);
   Itinerary itinerary{0, 4};

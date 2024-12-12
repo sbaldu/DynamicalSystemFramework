@@ -1,13 +1,8 @@
 /// @file       /src/dsm/headers/Node.hpp
 /// @brief      Defines the Node class.
 ///
-/// @details    This file contains the definition of the Node class.
-///             The Node class represents a node in the network. It is templated by the type
-///             of the node's id, which must be an unsigned integral type.
-///             The derived classes are:
-///             - Intersection: represents an intersection node with a map of agents
-///               - TrafficLight: represents a traffic light intersection node
-///             - Roundabout: represents a roundabout node with a queue of agents
+/// @details    The Node class represents the concept of a node in the network.
+///             It is a virtual class that needs to be implemented by derived classes.
 
 #pragma once
 
@@ -19,6 +14,7 @@
 #include <map>
 #include <format>
 #include <cassert>
+#include <string>
 
 #include "../utility/Logger.hpp"
 #include "../utility/queue.hpp"
@@ -32,25 +28,42 @@ namespace dsm {
   protected:
     Id m_id;
     std::optional<std::pair<double, double>> m_coords;
+    std::string m_name;
     Size m_capacity;
     Size m_transportCapacity;
 
   public:
     /// @brief Construct a new Node object with capacity 1
     /// @param id The node's id
-    explicit Node(Id id) : m_id{id}, m_capacity{1}, m_transportCapacity{1} {}
+    explicit Node(Id id) : m_id{id}, m_name{""}, m_capacity{1}, m_transportCapacity{1} {}
     /// @brief Construct a new Node object with capacity 1
     /// @param id The node's id
     /// @param coords A std::pair containing the node's coordinates (lat, lon)
     Node(Id id, std::pair<double, double> coords)
-        : m_id{id}, m_coords{std::move(coords)}, m_capacity{1}, m_transportCapacity{1} {}
+        : m_id{id},
+          m_coords{std::move(coords)},
+          m_name{""},
+          m_capacity{1},
+          m_transportCapacity{1} {}
 
     Node(Node const& other)
         : m_id{other.m_id},
           m_coords{other.m_coords},
+          m_name{other.m_name},
           m_capacity{other.m_capacity},
           m_transportCapacity{other.m_transportCapacity} {};
     virtual ~Node() = default;
+
+    Node& operator=(Node const& other) {
+      if (this != &other) {
+        m_id = other.m_id;
+        m_coords = other.m_coords;
+        m_name = other.m_name;
+        m_capacity = other.m_capacity;
+        m_transportCapacity = other.m_transportCapacity;
+      }
+      return *this;
+    }
 
     /// @brief Set the node's id
     /// @param id The node's id
@@ -58,6 +71,9 @@ namespace dsm {
     /// @brief Set the node's coordinates
     /// @param coords A std::pair containing the node's coordinates (lat, lon)
     void setCoords(std::pair<double, double> coords) { m_coords = std::move(coords); }
+    /// @brief Set the node's name
+    /// @param name The node's name
+    void setName(const std::string& name) { m_name = name; }
     /// @brief Set the node's capacity
     /// @param capacity The node's capacity
     virtual void setCapacity(Size capacity) { m_capacity = capacity; }
@@ -70,6 +86,9 @@ namespace dsm {
     /// @brief Get the node's coordinates
     /// @return std::optional<std::pair<double, double>> A std::pair containing the node's coordinates
     const std::optional<std::pair<double, double>>& coords() const { return m_coords; }
+    /// @brief Get the node's name
+    /// @return std::string The node's name
+    const std::string& name() const { return m_name; }
     /// @brief Get the node's capacity
     /// @return Size The node's capacity
     Size capacity() const { return m_capacity; }
