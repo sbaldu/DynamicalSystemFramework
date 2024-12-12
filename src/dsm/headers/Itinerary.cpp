@@ -4,9 +4,6 @@
 namespace dsm {
   Itinerary::Itinerary(Id id, Id destination) : m_id{id}, m_destination{destination} {}
 
-  Itinerary::Itinerary(Id id, const std::vector<Id>& trip)
-      : m_id{id}, m_destination{trip.back()}, m_trip{trip} {}
-
   void Itinerary::setPath(SparseMatrix<bool> path) {
     if (path.getRowDim() != path.getColDim()) {
       throw std::invalid_argument(buildLog(

@@ -443,17 +443,6 @@ TEST_CASE("Dynamics") {
         }
       }
     }
-    GIVEN("A dynamics object and an itinerary with trip") {
-      Graph graph2{};
-      std::vector<dsm::Id> trip{7, 114, 119};
-      graph2.importMatrix("./data/matrix.dat");
-      Itinerary it1{0, trip};
-      Dynamics dynamics{graph2};
-      dynamics.addItinerary(it1);
-      dynamics.updatePaths();
-      auto const& it = dynamics.itineraries().at(0);
-      CHECK_EQ(it->path().size(), 15);
-    }
   }
   SUBCASE("Evolve") {
     GIVEN("A dynamics object and an itinerary") {

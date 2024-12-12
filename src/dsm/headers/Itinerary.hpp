@@ -23,17 +23,12 @@ namespace dsm {
   private:
     Id m_id;
     Id m_destination;
-    std::vector<Id> m_trip;  // Nodes to visit in order to reach the destination
     SparseMatrix<bool> m_path;
 
   public:
     /// @brief Construct a new Itinerary object
     /// @param destination The itinerary's destination
     Itinerary(Id id, Id destination);
-    /// @brief Construct a new Itinerary object
-    /// @param id The itinerary's id
-    /// @param trip The itinerary's trip, i.e. the nodes to visit in order to reach the destination
-    Itinerary(Id id, const std::vector<Id>& trip);
 
     /// @brief Set the itinerary's path
     /// @param path An adjacency matrix made by a SparseMatrix representing the itinerary's path
@@ -46,10 +41,6 @@ namespace dsm {
     /// @brief Get the itinerary's destination
     /// @return Id, The itinerary's destination
     Id destination() const { return m_destination; }
-    /// @brief Get the itinerary's trip
-    /// @return std::vector<Id>, The itinerary's trip, i.e. the nodes to visit in order to reach the
-    /// destination
-    const std::vector<Id>& trip() const { return m_trip; }
     /// @brief Get the itinerary's path
     /// @return SparseMatrix<Id, bool>, An adjacency matrix made by a SparseMatrix representing the
     /// itinerary's path
