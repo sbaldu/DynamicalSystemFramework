@@ -44,8 +44,10 @@ namespace dsm {
 
     Measurement(T mean, T std) : mean{mean}, std{std} {}
     Measurement(std::span<T> data) {
-      auto x_mean = T{}, x2_mean = T{};
+      auto x_mean = static_cast<T>(0), x2_mean = static_cast<T>(0);
       if (data.empty()) {
+        mean = static_cast<T>(0);
+        std = static_cast<T>(0);
         return;
       }
 
