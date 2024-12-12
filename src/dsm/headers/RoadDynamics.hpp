@@ -261,10 +261,6 @@ namespace dsm {
       }
       if (destinationNode->id() ==
           this->m_itineraries[pAgent->itineraryId()]->destination()) {
-        pAgent->updateItinerary();
-      }
-      if (destinationNode->id() ==
-          this->m_itineraries[pAgent->itineraryId()]->destination()) {
         pStreet->dequeue(queueIndex);
         m_travelTimes.push_back(pAgent->time());
         if (reinsert_agents) {
@@ -370,6 +366,10 @@ namespace dsm {
         agent->decrementDelay();
         if (agent->delay() == 0) {
           auto const nLanes = street->nLanes();
+          if (this->m_itineraries[agent->itineraryId()]->destination() ==
+              street->nodePair().second) {
+            agent->updateItinerary();
+          }
           if (this->m_itineraries[agent->itineraryId()]->destination() ==
               street->nodePair().second) {
             std::uniform_int_distribution<size_t> laneDist{
