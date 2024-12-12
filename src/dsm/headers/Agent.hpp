@@ -53,9 +53,6 @@ namespace dsm {
     /// @brief Set the street occupied by the agent
     /// @param streetId The id of the street currently occupied by the agent
     void setStreetId(Id streetId) { m_streetId = streetId; }
-    /// @brief Set the agent's itinerary
-    /// @param itineraryId The agent's itinerary
-    void setItineraryId(std::vector<Id> itineraryId) { m_trip = itineraryId; }
     /// @brief Set the agent's speed
     /// @param speed, The agent's speed
     /// @throw std::invalid_argument, if speed is negative
