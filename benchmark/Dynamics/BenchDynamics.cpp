@@ -2,7 +2,7 @@
 
 #include "Graph.hpp"
 #include "Itinerary.hpp"
-#include "Dynamics.hpp"
+#include "FirstOrderDynamics.hpp"
 #include "Bench.hpp"
 
 using Graph = dsm::Graph;
@@ -28,7 +28,6 @@ int main() {
   dynamics.addItinerary(it2);
   dynamics.addItinerary(it3);
   dynamics.addItinerary(it4);
-  dynamics.setSeed(69);
   dynamics.setErrorProbability(0.3);
   dynamics.setMinSpeedRateo(0.95);
 
