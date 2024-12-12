@@ -132,7 +132,7 @@ namespace dsm {
   public:
     /// @brief Construct a new Dynamics object
     /// @param graph The graph representing the network
-    Dynamics(Graph& graph, const unsigned int seed);
+    Dynamics(Graph& graph, std::optional<unsigned int> seed);
 
     virtual void setAgentSpeed(Size agentId) = 0;
     virtual void evolve(bool reinsert_agents = false) = 0;
@@ -283,12 +283,14 @@ namespace dsm {
 
   template <typename delay_t>
     requires(is_numeric_v<delay_t>)
-  Dynamics<delay_t>::Dynamics(Graph& graph, const unsigned int seed)
+  Dynamics<delay_t>::Dynamics(Graph& graph, std::optional<unsigned int> seed)
       : m_graph{std::move(graph)},
         m_time{0},
         m_previousSpireTime{0},
         m_generator{std::random_device{}()} {
-    m_generator.seed(seed);
+    if (seed.has_value()) {
+      m_generator.seed(seed.value());
+    }
   }
 
   template <typename delay_t>

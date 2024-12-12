@@ -82,7 +82,7 @@ namespace dsm {
   public:
     /// @brief Construct a new RoadDynamics object
     /// @param graph The graph representing the network
-    RoadDynamics(Graph& graph, const unsigned int seed);
+    RoadDynamics(Graph& graph, std::optional<unsigned int> seed);
 
     /// @brief Set the minim speed rateo, i.e. the minim speed with respect to the speed limit
     /// @param minSpeedRateo The minim speed rateo
@@ -151,7 +151,7 @@ namespace dsm {
 
   template <typename delay_t>
     requires(is_numeric_v<delay_t>)
-  RoadDynamics<delay_t>::RoadDynamics(Graph& graph, const unsigned int seed)
+  RoadDynamics<delay_t>::RoadDynamics(Graph& graph, std::optional<unsigned int> seed)
       : Dynamics<delay_t>(graph, seed),
         m_previousOptimizationTime{0},
         m_errorProbability{0.},

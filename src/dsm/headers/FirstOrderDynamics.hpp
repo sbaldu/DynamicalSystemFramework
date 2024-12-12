@@ -11,7 +11,7 @@ namespace dsm {
   public:
     /// @brief Construct a new First Order Dynamics object
     /// @param graph, The graph representing the network
-    FirstOrderDynamics(Graph& graph, const unsigned int seed = 69)
+    FirstOrderDynamics(Graph& graph, std::optional<unsigned int> seed)
         : RoadDynamics<delay_t>(graph, seed), m_speedFluctuationSTD{0.} {};
     /// @brief Set the speed of an agent
     /// @param agentId The id of the agent
