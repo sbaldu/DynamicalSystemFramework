@@ -266,8 +266,6 @@ namespace dsm {
     std::optional<DijkstraResult> shortestPath(Id source,
                                                Id destination,
                                                Func f = streetLength) const;
-
-    SparseMatrix<bool> getPath(const std::span<Id>& trip) const;
   };
 
   template <typename... Tn>

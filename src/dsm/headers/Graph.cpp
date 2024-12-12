@@ -534,23 +534,4 @@ namespace dsm {
     const auto& nodePair = m_streets.at(streetId)->nodePair();
     return this->street(nodePair.second, nodePair.first);
   }
-
-  SparseMatrix<bool> Graph::getPath(const std::span<Id>& trip) const {
-    SparseMatrix<bool> path{m_adjacency.getRowDim(), m_adjacency.getColDim()};
-    for (Size i{0}; i < trip.size() - 1; ++i) {
-      // Find the shortest path between the two nodes
-      auto result = shortestPath(trip[i], trip[i + 1]);
-      if (!result.has_value()) {
-        throw std::invalid_argument(buildLog(
-            std::format("No path found between nodes {} and {}.", trip[i], trip[i + 1])));
-      }
-      const auto& resultingPath = result.value().path();
-      // Add the path to the matrix
-      for (Size j{0}; j < resultingPath.size() - 1; ++j) {
-        path.insert(resultingPath[j], resultingPath[j + 1], true);
-      }
-    }
-    return path;
-  }
-
 };  // namespace dsm

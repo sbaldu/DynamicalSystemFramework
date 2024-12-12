@@ -594,48 +594,4 @@ TEST_CASE("Dijkstra") {
       }
     }
   }
-  SUBCASE("getPath") {
-    GIVEN("A graph with the standard 120x120 adj matrix") {
-      Graph graph{};
-      graph.importMatrix("./data/matrix.dat", false);
-      WHEN("We get the path for a given trip") {
-        std::vector<dsm::Id> trip{69, 57, 56, 44, 43, 7};
-        auto result = graph.getPath(trip);
-        THEN("The path is correct") {
-          CHECK_EQ(result.getRowDim(), 120);
-          CHECK_EQ(result.getColDim(), 120);
-          CHECK_EQ(result.size(), 7);
-          CHECK(result(69, 57));
-          CHECK(result(57, 56));
-          CHECK(result(56, 44));
-          CHECK(result(44, 43));
-          CHECK(result(43, 31));
-          CHECK(result(31, 19));
-          CHECK(result(19, 7));
-        }
-      }
-      WHEN("WE get the path for a given trip with multiple options") {
-        std::vector<dsm::Id> trip{69, 56, 44, 43, 7};
-        auto result = graph.getPath(trip);
-        THEN("The path is correct") {
-          CHECK_EQ(result.getRowDim(), 120);
-          CHECK_EQ(result.getColDim(), 120);
-          // CHECK_EQ(result.size(), 10);
-          // Branch 1
-          CHECK(result(69, 57));
-          CHECK(result(57, 56));
-          // Branch 2
-          // CHECK(result(69, 68));
-          // CHECK(result(68, 56));
-          // Common path
-          CHECK(result(57, 56));
-          CHECK(result(56, 44));
-          CHECK(result(44, 43));
-          CHECK(result(43, 31));
-          CHECK(result(31, 19));
-          CHECK(result(19, 7));
-        }
-      }
-    }
-  }
 }
