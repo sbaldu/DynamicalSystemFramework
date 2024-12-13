@@ -120,7 +120,7 @@ int main(int argc, char** argv) {
 
   std::cout << "Creating dynamics...\n";
 
-  Dynamics dynamics{graph, SEED};
+  Dynamics dynamics{graph, SEED, 0.95};
   Unit n{0};
   {
     std::vector<Unit> destinationNodes;
@@ -138,7 +138,6 @@ int main(int argc, char** argv) {
   dynamics.setMaxFlowPercentage(0.7707);
   // dynamics.setForcePriorities(true);
   dynamics.setSpeedFluctuationSTD(0.1);
-  dynamics.setMinSpeedRateo(0.95);
 
   std::cout << "Done." << std::endl;
   std::cout << "Running simulation...\n";

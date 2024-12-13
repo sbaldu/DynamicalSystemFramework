@@ -912,8 +912,7 @@ TEST_CASE("Dynamics") {
       node->setCapacity(4);
       node->setTransportCapacity(4);
     }
-    Dynamics dynamics{graph2, 69};
-    dynamics.setMinSpeedRateo(0.5);
+    Dynamics dynamics{graph2, 69, 0.5};
     Itinerary itinerary{0, 2};
     dynamics.addItinerary(itinerary);
     dynamics.updatePaths();

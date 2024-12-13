@@ -43,7 +43,6 @@ namespace dsm {
   protected:
     Time m_previousOptimizationTime;
     double m_errorProbability;
-    double m_minSpeedRateo;
     double m_maxFlowPercentage;
     std::vector<double> m_travelTimes;
     std::unordered_map<Id, Id> m_agentNextStreetId;
@@ -82,12 +81,9 @@ namespace dsm {
   public:
     /// @brief Construct a new RoadDynamics object
     /// @param graph The graph representing the network
+    /// @param seed The seed for the random number generator
     RoadDynamics(Graph& graph, std::optional<unsigned int> seed);
 
-    /// @brief Set the minim speed rateo, i.e. the minim speed with respect to the speed limit
-    /// @param minSpeedRateo The minim speed rateo
-    /// @throw std::invalid_argument If the minim speed rateo is not between 0 and 1
-    void setMinSpeedRateo(double minSpeedRateo);
     /// @brief Set the error probability
     /// @param errorProbability The error probability
     /// @throw std::invalid_argument If the error probability is not between 0 and 1
@@ -155,7 +151,6 @@ namespace dsm {
       : Dynamics<Agent<delay_t>>(graph, seed),
         m_previousOptimizationTime{0},
         m_errorProbability{0.},
-        m_minSpeedRateo{0.},
         m_maxFlowPercentage{1.},
         m_forcePriorities{false} {
     for (const auto& [streetId, street] : this->m_graph.streetSet()) {
@@ -427,16 +422,6 @@ namespace dsm {
       }
       agent->incrementTime();
     }
-  }
-
-  template <typename delay_t>
-    requires(is_numeric_v<delay_t>)
-  void RoadDynamics<delay_t>::setMinSpeedRateo(double minSpeedRateo) {
-    if (minSpeedRateo < 0. || minSpeedRateo > 1.) {
-      throw std::invalid_argument(buildLog(std::format(
-          "The minimum speed rateo ({}) must be between 0 and 1", minSpeedRateo)));
-    }
-    m_minSpeedRateo = minSpeedRateo;
   }
 
   template <typename delay_t>
