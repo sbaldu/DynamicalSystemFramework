@@ -57,7 +57,7 @@ import numpy as np
 import networkx as nx
 from tqdm import tqdm
 
-PRESENTATION = True
+PRESENTATION = False
 
 
 class RealTimePeakDetection:
@@ -267,17 +267,21 @@ if __name__ == "__main__":
             df_den_array.append(temp)
 
     # make an unique dataframe as mean of all the dataframes
+    DF = None
     if len(df_array) > 0:
         DF = pd.concat(df_array)
         DF = DF.groupby(DF.index).mean()
     else:
-        DF = None
+        print("No data found")
+        exit()
 
+    DF_DEN = None
     if len(df_den_array) > 0:
         DF_DEN = pd.concat(df_den_array)
         DF_DEN = DF_DEN.groupby(DF_DEN.index).mean()
     else:
-        DF_DEN = None
+        print("No density data found")
+        exit()
 
     ############################################
     # Load densities

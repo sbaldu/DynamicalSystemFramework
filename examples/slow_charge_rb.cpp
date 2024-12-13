@@ -18,7 +18,6 @@ namespace fs = std::filesystem;
 
 std::atomic<unsigned int> progress{0};
 std::atomic<bool> bExitFlag{false};
-uint nAgents{450};
 
 // uncomment these lines to print densities, flows and speeds
 #define PRINT_DENSITIES
@@ -42,15 +41,16 @@ void printLoadingBar(int const i, int const n) {
 }
 
 int main(int argc, char** argv) {
-  if (argc != 4) {
+  if (argc != 5) {
     std::cerr << "Usage: " << argv[0]
-              << " <SEED> <ERROR_PROBABILITY> <OUT_FOLDER_BASE>\n";
+              << " <SEED> <ERROR_PROBABILITY> <OUT_FOLDER_BASE> <INIT_NAGENTS>\n";
     return 1;
   }
 
   const int SEED = std::stoi(argv[1]);  // seed for random number generator
   const double ERROR_PROBABILITY{std::stod(argv[2])};
   const std::string BASE_OUT_FOLDER{argv[3]};
+  auto nAgents{std::stoul(argv[4])};
 
   std::cout << "-------------------------------------------------\n";
   std::cout << "Input parameters:\n";
