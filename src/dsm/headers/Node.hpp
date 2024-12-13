@@ -102,5 +102,7 @@ namespace dsm {
     virtual bool isIntersection() const noexcept { return false; }
     virtual bool isTrafficLight() const noexcept { return false; }
     virtual bool isRoundabout() const noexcept { return false; }
+
+    virtual bool isStation() const noexcept { return false; }
   };
 };  // namespace dsm

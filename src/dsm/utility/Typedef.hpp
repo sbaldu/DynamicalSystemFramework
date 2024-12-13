@@ -20,5 +20,15 @@ namespace dsm {
     ANY = 6
   };
   enum class TrafficLightOptimization : uint8_t { SINGLE_TAIL = 0, DOUBLE_TAIL = 1 };
+  enum train_t : uint8_t {
+    BUS = 0,           // Autobus
+    SFM = 1,           // Servizio Ferroviario Metropolitano
+    R = 2,             // Regionale
+    RV = 3,            // Regionale Veloce
+    IC = 4,            // InterCity (Notte)
+    FRECCIA = 5,       // Frecciabianca / Frecciargento
+    FRECCIAROSSA = 6,  // Frecciarossa
+    ES = 7,            // Eurostar
+  };
 
 };  // namespace dsm

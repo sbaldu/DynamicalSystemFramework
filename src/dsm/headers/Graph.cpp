@@ -446,6 +446,16 @@ namespace dsm {
     pNode = std::make_unique<Roundabout>(*pNode);
     return dynamic_cast<Roundabout&>(*pNode);
   }
+
+  Station& Graph::makeStation(Id nodeId, const unsigned int managementTime) {
+    if (!m_nodes.contains(nodeId)) {
+      throw std::invalid_argument(buildLog("Node does not exist."));
+    }
+    auto& pNode = m_nodes[nodeId];
+    pNode = std::make_unique<Station>(*pNode, managementTime);
+    return dynamic_cast<Station&>(*pNode);
+  }
+
   SpireStreet& Graph::makeSpireStreet(Id streetId) {
     if (!m_streets.contains(streetId)) {
       throw std::invalid_argument(
@@ -524,5 +534,4 @@ namespace dsm {
     const auto& nodePair = m_streets.at(streetId)->nodePair();
     return this->street(nodePair.second, nodePair.first);
   }
-
 };  // namespace dsm

@@ -31,6 +31,7 @@
 #include "Intersection.hpp"
 #include "TrafficLight.hpp"
 #include "Roundabout.hpp"
+#include "Station.hpp"
 #include "SparseMatrix.hpp"
 #include "Street.hpp"
 #include "../utility/DijkstraResult.hpp"
@@ -183,6 +184,12 @@ namespace dsm {
     /// @return A reference to the spire street
     /// @throws std::invalid_argument if the street does not exist
     SpireStreet& makeSpireStreet(Id streetId);
+    /// @brief Convert an existing node into a station
+    /// @param nodeId The id of the node to convert to a station
+    /// @param managementTime The station's management time
+    /// @return A reference to the station
+    /// @throws std::invalid_argument if the node does not exist
+    Station& makeStation(Id nodeId, const unsigned int managementTime);
 
     /// @brief Add a street to the graph
     /// @param street A std::shared_ptr to the street to add
