@@ -17,47 +17,42 @@
 #include "../utility/Typedef.hpp"
 
 #include <concepts>
-#include <stdexcept>
 #include <limits>
 #include <optional>
+#include <stdexcept>
+#include <vector>
 
 namespace dsm {
   /// @brief The Agent class represents an agent in the network.
-  /// @tparam Id, The type of the agent's id. It must be an unsigned integral type.
-  /// @tparam Size, The type of the size of a street. It must be an unsigned integral type.
   /// @tparam delay_t, The type of the agent's delay. It must be a numeric type (see utility/TypeTraits/is_numeric.hpp).
   template <typename delay_t>
     requires(is_numeric_v<delay_t>)
   class Agent {
   private:
     Id m_id;
-    Id m_itineraryId;
+    std::vector<Id> m_trip;
     std::optional<Id> m_streetId;
     std::optional<Id> m_srcNodeId;
     delay_t m_delay;
     double m_speed;
     double m_distance;    // Travelled distance
     unsigned int m_time;  // Travelled time
+    size_t m_itineraryIdx;
 
   public:
     /// @brief Construct a new Agent object
     /// @param id The agent's id
     /// @param itineraryId The agent's itinerary
-    Agent(Id id, Id itineraryId);
+    /// @param srcNodeId Optional, The id of the source node of the agent
+    Agent(Id id, Id itineraryId, std::optional<Id> srcNodeId = std::nullopt);
     /// @brief Construct a new Agent object
     /// @param id The agent's id
-    /// @param itineraryId The agent's itinerary
-    /// @param srcNodeId The id of the source node of the agent
-    Agent(Id id, Id itineraryId, Id srcNodeId);
+    /// @param itineraryIds The agent's itinerary
+    /// @param srcNodeId Optional, The id of the source node of the agent
+    Agent(Id id, std::vector<Id> const& trip, std::optional<Id> srcNodeId = std::nullopt);
     /// @brief Set the street occupied by the agent
     /// @param streetId The id of the street currently occupied by the agent
     void setStreetId(Id streetId) { m_streetId = streetId; }
-    /// @brief Set the source node id of the agent
-    /// @param srcNodeId The id of the source node of the agent
-    void setSourceNodeId(Id srcNodeId) { m_srcNodeId = srcNodeId; }
-    /// @brief Set the agent's itinerary
-    /// @param itineraryId The agent's itinerary
-    void setItineraryId(Id itineraryId) { m_itineraryId = itineraryId; }
     /// @brief Set the agent's speed
     /// @param speed, The agent's speed
     /// @throw std::invalid_argument, if speed is negative
@@ -87,13 +82,29 @@ namespace dsm {
     void incrementTime(unsigned int const time);
     /// @brief Reset the agent's time to 0
     void resetTime() { m_time = 0; }
+    /// @brief Update the agent's itinerary
+    /// @details If possible, the agent's itinerary is updated by removing the first element
+    /// from the itinerary's vector.
+    void updateItinerary();
+    /// @brief Reset the agent
+    /// @details Reset the following values:
+    /// - street id = std::nullopt
+    /// - delay = 0
+    /// - speed = 0
+    /// - distance = 0
+    /// - time = 0
+    /// - itinerary index = 0
+    void reset();
 
     /// @brief Get the agent's id
     /// @return The agent's id
     Id id() const { return m_id; }
     /// @brief Get the agent's itinerary
     /// @return The agent's itinerary
-    Id itineraryId() const { return m_itineraryId; }
+    Id itineraryId() const { return m_trip[m_itineraryIdx]; }
+    /// @brief Get the agent's trip
+    /// @return The agent's trip
+    std::vector<Id> const& trip() const { return m_trip; }
     /// @brief Get the id of the street currently occupied by the agent
     /// @return The id of the street currently occupied by the agent
     std::optional<Id> streetId() const { return m_streetId; }
@@ -116,24 +127,27 @@ namespace dsm {
 
   template <typename delay_t>
     requires(is_numeric_v<delay_t>)
-  Agent<delay_t>::Agent(Id id, Id itineraryId)
+  Agent<delay_t>::Agent(Id id, Id itineraryId, std::optional<Id> srcNodeId)
       : m_id{id},
-        m_itineraryId{itineraryId},
-        m_delay{0},
-        m_speed{0.},
-        m_distance{0.},
-        m_time{0} {}
-
-  template <typename delay_t>
-    requires(is_numeric_v<delay_t>)
-  Agent<delay_t>::Agent(Id id, Id itineraryId, Id srcNodeId)
-      : m_id{id},
-        m_itineraryId{itineraryId},
+        m_trip{itineraryId},
         m_srcNodeId{srcNodeId},
         m_delay{0},
         m_speed{0.},
         m_distance{0.},
-        m_time{0} {}
+        m_time{0},
+        m_itineraryIdx{0} {}
+
+  template <typename delay_t>
+    requires(is_numeric_v<delay_t>)
+  Agent<delay_t>::Agent(Id id, std::vector<Id> const& trip, std::optional<Id> srcNodeId)
+      : m_id{id},
+        m_trip{trip},
+        m_srcNodeId{srcNodeId},
+        m_delay{0},
+        m_speed{0.},
+        m_distance{0.},
+        m_time{0},
+        m_itineraryIdx{0} {}
 
   template <typename delay_t>
     requires(is_numeric_v<delay_t>)
@@ -142,6 +156,23 @@ namespace dsm {
       throw std::invalid_argument(buildLog("Speed must be positive"));
     }
     m_speed = speed;
+  }
+  template <typename delay_t>
+    requires(is_numeric_v<delay_t>)
+  void Agent<delay_t>::updateItinerary() {
+    if (m_itineraryIdx < m_trip.size() - 1) {
+      ++m_itineraryIdx;
+    }
+  }
+  template <typename delay_t>
+    requires(is_numeric_v<delay_t>)
+  void Agent<delay_t>::reset() {
+    m_streetId = std::nullopt;
+    m_delay = 0;
+    m_speed = 0.;
+    m_distance = 0.;
+    m_time = 0;
+    m_itineraryIdx = 0;
   }
   template <typename delay_t>
     requires(is_numeric_v<delay_t>)

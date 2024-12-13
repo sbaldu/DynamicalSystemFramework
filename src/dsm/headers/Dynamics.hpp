@@ -81,8 +81,8 @@ namespace dsm {
     /// @brief Update the path of a single itinerary using Dijsktra's algorithm
     /// @param pItinerary An std::unique_prt to the itinerary
     void m_updatePath(const std::unique_ptr<Itinerary>& pItinerary) {
-      const Size dimension = m_graph.adjMatrix().getRowDim();
-      const auto destinationID = pItinerary->destination();
+      Size const dimension = m_graph.adjMatrix().getRowDim();
+      auto const destinationID = pItinerary->destination();
       SparseMatrix<bool> path{dimension, dimension};
       // cycle over the nodes
       for (const auto& [nodeId, node] : m_graph.nodeSet()) {
@@ -403,10 +403,7 @@ namespace dsm {
       agentId = m_agents.rbegin()->first + 1;
     }
     for (Size i{0}; i < nAgents; ++i, ++agentId) {
-      this->addAgent(Agent<delay_t>{agentId, itineraryId});
-      if (srcNodeId.has_value()) {
-        m_agents[agentId]->setSourceNodeId(srcNodeId.value());
-      }
+      this->addAgent(Agent<delay_t>{agentId, itineraryId, srcNodeId});
     }
   }
 
