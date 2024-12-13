@@ -473,9 +473,7 @@ TEST_CASE("Dynamics") {
           CHECK_EQ(dynamics.agents().at(0)->speed(), 13.8888888889);
         }
         dynamics.evolve(false);
-        THEN("And again, reaching the destination") {
-          CHECK_EQ(dynamics.agents().size(), 0);
-        }
+        THEN("And again, reaching the destination") { CHECK(dynamics.agents().empty()); }
       }
     }
     GIVEN("A dynamics object, an itinerary and an agent") {
@@ -500,9 +498,7 @@ TEST_CASE("Dynamics") {
           CHECK_EQ(dynamics.agents().at(0)->distance(), 13.8888888889);
         }
         dynamics.evolve(false);
-        THEN("The agent reaches the destination") {
-          CHECK_EQ(dynamics.agents().size(), 0);
-        }
+        THEN("The agent reaches the destination") { CHECK(dynamics.agents().empty()); }
       }
     }
     GIVEN("A dynamics object, an itinerary and an agent") {
@@ -529,11 +525,46 @@ TEST_CASE("Dynamics") {
         dynamics.evolve(true);
         THEN("The agent is reinserted") {
           CHECK_EQ(dynamics.agents().size(), 1);
-          CHECK_EQ(dynamics.agents().at(1)->time(), 1);
-          CHECK_EQ(dynamics.agents().at(1)->delay(), 0);
-          CHECK_FALSE(dynamics.agents().at(1)->streetId().has_value());
-          CHECK_EQ(dynamics.agents().at(1)->speed(), 0.);
+          CHECK_EQ(dynamics.agents().at(0)->time(), 1);
+          CHECK_EQ(dynamics.agents().at(0)->delay(), 0);
+          CHECK_FALSE(dynamics.agents().at(0)->streetId().has_value());
+          CHECK_EQ(dynamics.agents().at(0)->speed(), 0.);
         }
+      }
+    }
+    GIVEN("A simple network and an agent with forced itinerary") {
+      Street s0_1{1, 1, 30., 15., std::make_pair(0, 1)};
+      Street s1_0{3, 1, 30., 15., std::make_pair(1, 0)};
+      Street s1_2{5, 1, 30., 15., std::make_pair(1, 2)};
+      Street s2_1{7, 1, 30., 15., std::make_pair(2, 1)};
+      Graph graph2;
+      graph2.addStreets(s0_1, s1_0, s1_2, s2_1);
+      graph2.buildAdj();
+      Dynamics dynamics{graph2, 69};
+      std::vector<dsm::Id> dsts{1, 2};
+      dynamics.setDestinationNodes(dsts);
+      std::vector<dsm::Id> trip{2, 1};
+      Agent agent{0, trip, 0};
+      dynamics.addAgent(agent);
+      auto const& pAgent{dynamics.agents().at(0)};
+      WHEN("We evolve the dynamics") {
+        dynamics.evolve(false);
+        dynamics.evolve(false);
+        dynamics.evolve(false);
+        dynamics.evolve(false);
+        dynamics.evolve(false);
+        THEN("The agent goes first into node 2") {
+          CHECK_EQ(pAgent->streetId().value(), 5);
+          CHECK_EQ(pAgent->distance(), 60.);
+        }
+        dynamics.evolve(false);
+        dynamics.evolve(false);
+        THEN("The agent goes then to node 1") {
+          CHECK_EQ(pAgent->streetId().value(), 7);
+          CHECK_EQ(pAgent->distance(), 90.);
+        }
+        dynamics.evolve(false);
+        THEN("The agent reaches the destination") { CHECK(dynamics.agents().empty()); }
       }
     }
   }
@@ -836,7 +867,7 @@ TEST_CASE("Dynamics") {
         THEN("The agent with priority leaves the roundabout") {
           CHECK_EQ(dynamics.agents().at(0)->streetId().value(), 5);
           CHECK_EQ(dynamics.agents().at(1)->streetId().value(), 3);
-          CHECK_EQ(rb.agents().size(), 0);
+          CHECK(rb.agents().empty());
         }
       }
     }

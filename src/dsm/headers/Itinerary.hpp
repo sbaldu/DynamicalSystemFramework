@@ -22,21 +22,14 @@ namespace dsm {
   class Itinerary {
   private:
     Id m_id;
-    SparseMatrix<bool> m_path;
     Id m_destination;
+    SparseMatrix<bool> m_path;
 
   public:
     /// @brief Construct a new Itinerary object
     /// @param destination The itinerary's destination
     Itinerary(Id id, Id destination);
-    /// @brief Construct a new Itinerary object
-    /// @param destination The itinerary's destination
-    /// @param path An adjacency matrix made by a SparseMatrix representing the itinerary's path
-    Itinerary(Id id, Id destination, SparseMatrix<bool> path);
 
-    /// @brief Set the itinerary's destination
-    /// @param destination The itinerary's destination
-    void setDestination(Id destination);
     /// @brief Set the itinerary's path
     /// @param path An adjacency matrix made by a SparseMatrix representing the itinerary's path
     /// @throw std::invalid_argument, if the itinerary's source or destination is not in the path's

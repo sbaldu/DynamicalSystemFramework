@@ -243,10 +243,11 @@ namespace dsm {
         continue;
       }
       const auto agentId{pStreet->queue(queueIndex).front()};
-      if (this->m_agents[agentId]->delay() > 0) {
+      auto const& pAgent{this->m_agents[agentId]};
+      if (pAgent->delay() > 0) {
         continue;
       }
-      this->m_agents[agentId]->setSpeed(0.);
+      pAgent->setSpeed(0.);
       const auto& destinationNode{this->m_graph.nodeSet()[pStreet->nodePair().second]};
       if (destinationNode->isFull()) {
         continue;
@@ -259,19 +260,12 @@ namespace dsm {
         }
       }
       if (destinationNode->id() ==
-          this->m_itineraries[this->m_agents[agentId]->itineraryId()]->destination()) {
+          this->m_itineraries[pAgent->itineraryId()]->destination()) {
         pStreet->dequeue(queueIndex);
-        m_travelTimes.push_back(this->m_agents[agentId]->time());
+        m_travelTimes.push_back(pAgent->time());
         if (reinsert_agents) {
-          // take last agent id in map
-          Agent<delay_t> newAgent{static_cast<Id>(this->m_agents.rbegin()->first + 1),
-                                  this->m_agents[agentId]->itineraryId(),
-                                  this->m_agents[agentId]->srcNodeId().value()};
-          if (this->m_agents[agentId]->srcNodeId().has_value()) {
-            newAgent.setSourceNodeId(this->m_agents[agentId]->srcNodeId().value());
-          }
-          this->removeAgent(agentId);
-          this->addAgent(newAgent);
+          // reset Agent's values
+          pAgent->reset();
         } else {
           this->removeAgent(agentId);
         }
@@ -372,6 +366,10 @@ namespace dsm {
         agent->decrementDelay();
         if (agent->delay() == 0) {
           auto const nLanes = street->nLanes();
+          if (this->m_itineraries[agent->itineraryId()]->destination() ==
+              street->nodePair().second) {
+            agent->updateItinerary();
+          }
           if (this->m_itineraries[agent->itineraryId()]->destination() ==
               street->nodePair().second) {
             std::uniform_int_distribution<size_t> laneDist{
