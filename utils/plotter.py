@@ -49,6 +49,7 @@ Plots:
 """
 
 import os
+import sys
 from argparse import ArgumentParser
 import pandas as pd
 import seaborn as sns
@@ -273,7 +274,7 @@ if __name__ == "__main__":
         DF = DF.groupby(DF.index).mean()
     else:
         print("No data found")
-        exit()
+        sys.exit()
 
     DF_DEN = None
     if len(df_den_array) > 0:
@@ -281,7 +282,7 @@ if __name__ == "__main__":
         DF_DEN = DF_DEN.groupby(DF_DEN.index).mean()
     else:
         print("No density data found")
-        exit()
+        sys.exit()
 
     ############################################
     # Load densities
