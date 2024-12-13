@@ -21,7 +21,7 @@ using Delay = uint8_t;
 
 using Graph = dsm::Graph;
 using Itinerary = dsm::Itinerary;
-using Dynamics = dsm::FirstOrderDynamics<Delay>;
+using Dynamics = dsm::FirstOrderDynamics;
 using Street = dsm::Street;
 using SpireStreet = dsm::SpireStreet;
 using TrafficLight = dsm::TrafficLight;

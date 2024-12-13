@@ -7,7 +7,7 @@
 
 #include "doctest.h"
 
-using Dynamics = dsm::FirstOrderDynamics<uint16_t>;
+using Dynamics = dsm::FirstOrderDynamics;
 using Graph = dsm::Graph;
 using SparseMatrix = dsm::SparseMatrix<bool>;
 using Street = dsm::Street;

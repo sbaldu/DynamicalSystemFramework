@@ -7,7 +7,7 @@
 
 using Graph = dsm::Graph;
 using Itinerary = dsm::Itinerary;
-using Dynamics = dsm::FirstOrderDynamics<uint32_t>;
+using Dynamics = dsm::FirstOrderDynamics;
 
 using Bench = sb::Bench<long long int>;
 

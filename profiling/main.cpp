@@ -10,7 +10,7 @@ using unit = uint32_t;
 
 using Graph = dsm::Graph;
 using Itinerary = dsm::Itinerary;
-using Dynamics = dsm::FirstOrderDynamics<unit>;
+using Dynamics = dsm::FirstOrderDynamics;
 
 int main() {
   Graph graph{};

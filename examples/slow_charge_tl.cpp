@@ -31,7 +31,7 @@ using Unit = unsigned int;
 using Delay = uint8_t;
 
 using Graph = dsm::Graph;
-using Dynamics = dsm::FirstOrderDynamics<Delay>;
+using Dynamics = dsm::FirstOrderDynamics;
 using Street = dsm::Street;
 using SpireStreet = dsm::SpireStreet;
 using TrafficLight = dsm::TrafficLight;
