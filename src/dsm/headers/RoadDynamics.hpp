@@ -39,7 +39,7 @@ namespace dsm {
   /// @tparam Size, The type of the graph's capacity. It must be an unsigned integral type.
   template <typename delay_t>
     requires(is_numeric_v<delay_t>)
-  class RoadDynamics : public Dynamics<delay_t> {
+  class RoadDynamics : public Dynamics<Agent<delay_t>> {
   protected:
     Time m_previousOptimizationTime;
     double m_errorProbability;
@@ -152,7 +152,7 @@ namespace dsm {
   template <typename delay_t>
     requires(is_numeric_v<delay_t>)
   RoadDynamics<delay_t>::RoadDynamics(Graph& graph, std::optional<unsigned int> seed)
-      : Dynamics<delay_t>(graph, seed),
+      : Dynamics<Agent<delay_t>>(graph, seed),
         m_previousOptimizationTime{0},
         m_errorProbability{0.},
         m_minSpeedRateo{0.},
