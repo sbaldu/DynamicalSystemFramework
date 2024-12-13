@@ -6,13 +6,15 @@ namespace dsm {
   template <typename delay_t>
     requires(std::unsigned_integral<delay_t>)
   class FirstOrderDynamics : public RoadDynamics<delay_t> {
+    double m_alpha;
     double m_speedFluctuationSTD;
 
   public:
     /// @brief Construct a new First Order Dynamics object
     /// @param graph, The graph representing the network
-    FirstOrderDynamics(Graph& graph, std::optional<unsigned int> seed = std::nullopt)
-        : RoadDynamics<delay_t>(graph, seed), m_speedFluctuationSTD{0.} {};
+    FirstOrderDynamics(Graph& graph,
+                       std::optional<unsigned int> seed = std::nullopt,
+                       double minSpeedRateo = 0.);
     /// @brief Set the speed of an agent
     /// @param agentId The id of the agent
     /// @throw std::invalid_argument, If the agent is not found
@@ -40,16 +42,47 @@ namespace dsm {
 
   template <typename delay_t>
     requires(std::unsigned_integral<delay_t>)
+  FirstOrderDynamics<delay_t>::FirstOrderDynamics(Graph& graph,
+                                                  std::optional<unsigned int> seed,
+                                                  double minSpeedRateo)
+      : RoadDynamics<delay_t>(graph, seed),
+        m_alpha{0.},
+        m_speedFluctuationSTD{0.} {
+    if (minSpeedRateo < 0. || minSpeedRateo > 1.) {
+      throw std::invalid_argument(buildLog(
+          std::format("The minimum speed rateo must be between 0 and 1, but it is {}",
+                      minSpeedRateo)));
+    } else {
+      m_alpha = minSpeedRateo;
+    }
+    double globMaxTimePenalty{0.};
+    for (const auto& [streetId, street] : this->m_graph.streetSet()) {
+      globMaxTimePenalty =
+          std::max(globMaxTimePenalty,
+                   std::ceil(street->length() /
+                             ((1. - m_alpha) * street->maxSpeed())));
+    }
+    if (globMaxTimePenalty > static_cast<double>(std::numeric_limits<delay_t>::max())) {
+      throw std::overflow_error(
+          buildLog(std::format("The maximum time penalty ({}) is greater than the "
+                               "maximum value of delay_t ({})",
+                               globMaxTimePenalty,
+                               std::numeric_limits<delay_t>::max())));
+    }
+  }
+
+  template <typename delay_t>
+    requires(std::unsigned_integral<delay_t>)
   void FirstOrderDynamics<delay_t>::setAgentSpeed(Size agentId) {
     const auto& agent{this->m_agents[agentId]};
     const auto& street{this->m_graph.streetSet()[agent->streetId().value()]};
     double speed{street->maxSpeed() *
-                 (1. - this->m_minSpeedRateo * street->density(true))};
+                 (1. - m_alpha * street->density(true))};
     if (m_speedFluctuationSTD > 0.) {
       std::normal_distribution<double> speedDist{speed, speed * m_speedFluctuationSTD};
       speed = speedDist(this->m_generator);
     }
-    speed < 0. ? agent->setSpeed(street->maxSpeed() * (1. - this->m_minSpeedRateo))
+    speed < 0. ? agent->setSpeed(street->maxSpeed() * (1. - m_alpha))
                : agent->setSpeed(speed);
   }
 
@@ -74,7 +107,7 @@ namespace dsm {
     Size n{0};
     if (street->nExitingAgents() == 0) {
       n = static_cast<Size>(street->waitingAgents().size());
-      double alpha{this->m_minSpeedRateo / street->capacity()};
+      double alpha{m_alpha / street->capacity()};
       meanSpeed = street->maxSpeed() * n * (1. - 0.5 * alpha * (n - 1.));
     } else {
       for (const auto& agentId : street->waitingAgents()) {
