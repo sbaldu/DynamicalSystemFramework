@@ -57,6 +57,7 @@ int main(int argc, char** argv) {
   std::cout << "Seed: " << SEED << '\n';
   std::cout << "Error probability: " << ERROR_PROBABILITY << '\n';
   std::cout << "Base output folder: " << BASE_OUT_FOLDER << '\n';
+  std::cout << "Initial number of agents: " << nAgents << '\n';
   std::cout << "-------------------------------------------------\n";
 
   const std::string IN_MATRIX{"./data/matrix.dat"};       // input matrix file
@@ -83,12 +84,11 @@ int main(int argc, char** argv) {
   graph.importCoordinates(IN_COORDS);
   std::cout << "Setting street parameters..." << '\n';
   for (const auto& [streetId, street] : graph.streetSet()) {
-    street->setLength(2e3);
-    street->setCapacity(225);
     street->setTransportCapacity(1);
     street->setMaxSpeed(13.9);
   }
   graph.buildAdj();
+  graph.normalizeStreetCapacities();
 
   std::cout << "Number of nodes: " << graph.nNodes() << '\n';
   std::cout << "Number of streets: " << graph.nEdges() << '\n';
