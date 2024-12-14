@@ -39,7 +39,7 @@ namespace dsm {
   /// @tparam Size, The type of the graph's capacity. It must be an unsigned integral type.
   template <typename delay_t>
     requires(is_numeric_v<delay_t>)
-  class RoadDynamics : public Dynamics<delay_t> {
+  class RoadDynamics : public Dynamics<Agent<delay_t>> {
   protected:
     Time m_previousOptimizationTime;
     double m_errorProbability;
@@ -82,10 +82,7 @@ namespace dsm {
     /// @brief Construct a new RoadDynamics object
     /// @param graph The graph representing the network
     /// @param seed The seed for the random number generator
-    /// @param minSpeedRateo The minimum speed rateo
-    RoadDynamics(Graph& graph,
-                 std::optional<unsigned int> seed,
-                 double minSpeedRateo = 0.);
+    RoadDynamics(Graph& graph, std::optional<unsigned int> seed);
 
     /// @brief Set the error probability
     /// @param errorProbability The error probability
@@ -150,10 +147,8 @@ namespace dsm {
 
   template <typename delay_t>
     requires(is_numeric_v<delay_t>)
-  RoadDynamics<delay_t>::RoadDynamics(Graph& graph,
-                                      std::optional<unsigned int> seed,
-                                      double minSpeedRateo)
-      : Dynamics<delay_t>(graph, seed),
+  RoadDynamics<delay_t>::RoadDynamics(Graph& graph, std::optional<unsigned int> seed)
+      : Dynamics<Agent<delay_t>>(graph, seed),
         m_previousOptimizationTime{0},
         m_errorProbability{0.},
         m_maxFlowPercentage{1.},

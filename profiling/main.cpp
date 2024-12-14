@@ -10,7 +10,7 @@ using unit = uint32_t;
 
 using Graph = dsm::Graph;
 using Itinerary = dsm::Itinerary;
-using Dynamics = dsm::FirstOrderDynamics<unit>;
+using Dynamics = dsm::FirstOrderDynamics;
 
 int main() {
   Graph graph{};
@@ -36,13 +36,12 @@ int main() {
 
   std::cout << "Creating dynamics...\n";
 
-  Dynamics dynamics{graph};
+  Dynamics dynamics{graph, std::nullopt, 0.95};
   dynamics.addItinerary(it1);
   dynamics.addItinerary(it2);
   dynamics.addItinerary(it3);
   dynamics.addItinerary(it4);
   dynamics.setErrorProbability(0.3);
-  dynamics.setMinSpeedRateo(0.95);
   dynamics.updatePaths();
 
   std::cout << "Done.\n"

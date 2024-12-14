@@ -18,7 +18,6 @@ namespace fs = std::filesystem;
 
 std::atomic<unsigned int> progress{0};
 std::atomic<bool> bExitFlag{false};
-uint nAgents{450};
 
 // uncomment these lines to print densities, flows and speeds
 #define PRINT_DENSITIES
@@ -30,7 +29,7 @@ using Unit = unsigned int;
 using Delay = uint8_t;
 
 using Graph = dsm::Graph;
-using Dynamics = dsm::FirstOrderDynamics<Delay>;
+using Dynamics = dsm::FirstOrderDynamics;
 using Street = dsm::Street;
 using SpireStreet = dsm::SpireStreet;
 using Roundabout = dsm::Roundabout;
@@ -42,21 +41,23 @@ void printLoadingBar(int const i, int const n) {
 }
 
 int main(int argc, char** argv) {
-  if (argc != 4) {
+  if (argc != 5) {
     std::cerr << "Usage: " << argv[0]
-              << " <SEED> <ERROR_PROBABILITY> <OUT_FOLDER_BASE>\n";
+              << " <SEED> <ERROR_PROBABILITY> <OUT_FOLDER_BASE> <INIT_NAGENTS>\n";
     return 1;
   }
 
   const int SEED = std::stoi(argv[1]);  // seed for random number generator
   const double ERROR_PROBABILITY{std::stod(argv[2])};
   const std::string BASE_OUT_FOLDER{argv[3]};
+  auto nAgents{std::stoul(argv[4])};
 
   std::cout << "-------------------------------------------------\n";
   std::cout << "Input parameters:\n";
   std::cout << "Seed: " << SEED << '\n';
   std::cout << "Error probability: " << ERROR_PROBABILITY << '\n';
   std::cout << "Base output folder: " << BASE_OUT_FOLDER << '\n';
+  std::cout << "Initial number of agents: " << nAgents << '\n';
   std::cout << "-------------------------------------------------\n";
 
   const std::string IN_MATRIX{"./data/matrix.dat"};       // input matrix file
@@ -83,12 +84,11 @@ int main(int argc, char** argv) {
   graph.importCoordinates(IN_COORDS);
   std::cout << "Setting street parameters..." << '\n';
   for (const auto& [streetId, street] : graph.streetSet()) {
-    street->setLength(2e3);
-    street->setCapacity(225);
     street->setTransportCapacity(1);
     street->setMaxSpeed(13.9);
   }
   graph.buildAdj();
+  graph.normalizeStreetCapacities();
 
   std::cout << "Number of nodes: " << graph.nNodes() << '\n';
   std::cout << "Number of streets: " << graph.nEdges() << '\n';
