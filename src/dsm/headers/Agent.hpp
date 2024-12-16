@@ -28,7 +28,7 @@ namespace dsm {
   template <typename delay_t>
     requires(is_numeric_v<delay_t>)
   class Agent {
-  private:
+  protected:
     Id m_id;
     std::vector<Id> m_trip;
     std::optional<Id> m_streetId;
@@ -96,7 +96,7 @@ namespace dsm {
     /// - distance = 0
     /// - time = 0
     /// - itinerary index = 0
-    void reset();
+    virtual void reset();
 
     /// @brief Get the agent's id
     /// @return The agent's id

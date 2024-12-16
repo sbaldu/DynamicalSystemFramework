@@ -14,6 +14,7 @@ namespace dsm {
   class Station : public Node {
   private:
     Delay m_managementTime;
+    Time m_lastEventTime;
     std::multimap<train_t, Id, std::greater<train_t>> m_trains;
 
   public:
@@ -49,6 +50,11 @@ namespace dsm {
     /// @brief Check if the station is full
     /// @return True if the station is full, false otherwise
     bool isFull() const final;
+    /// @brief Check if the station is active
+    /// @param currentTime The current time
+    /// @return True if the station is active, false otherwise
+    /// @details A station is considered active if it has passed management time since the last event
+    bool isActive(Time currentTime) const;
     /// @brief Check if the node is a station
     /// @return True
     bool isStation() const noexcept final;
