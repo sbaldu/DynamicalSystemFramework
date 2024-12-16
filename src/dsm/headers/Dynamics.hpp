@@ -134,7 +134,7 @@ namespace dsm {
     /// @param graph The graph representing the network
     Dynamics(Graph& graph, std::optional<unsigned int> seed);
 
-    virtual void setAgentSpeed(Size agentId) = 0;
+    virtual void setAgentSpeed(Id agentId) = 0;
     virtual void evolve(bool reinsert_agents = false) = 0;
 
     /// @brief Update the paths of the itineraries based on the actual travel times
