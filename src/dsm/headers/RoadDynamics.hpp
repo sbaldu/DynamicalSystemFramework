@@ -44,6 +44,7 @@ namespace dsm {
     Time m_previousOptimizationTime;
     double m_errorProbability;
     double m_maxFlowPercentage;
+    double m_passageProbability;
     std::vector<double> m_travelTimes;
     std::unordered_map<Id, Id> m_agentNextStreetId;
     bool m_forcePriorities;
@@ -93,6 +94,8 @@ namespace dsm {
     /// @details The maximum flow percentage is the percentage of the maximum flow that a street can transmit. Default is 1 (100%).
     /// @throw std::invalid_argument If the maximum flow percentage is not between 0 and 1
     void setMaxFlowPercentage(double maxFlowPercentage);
+
+    void setPassageProbability(double passageProbability);
     /// @brief Set the force priorities flag
     /// @param forcePriorities The flag
     /// @details If true, if an agent cannot move to the next street, the whole node is skipped
@@ -152,6 +155,7 @@ namespace dsm {
         m_previousOptimizationTime{0},
         m_errorProbability{0.},
         m_maxFlowPercentage{1.},
+        m_passageProbability{1.1},
         m_forcePriorities{false} {
     for (const auto& [streetId, street] : this->m_graph.streetSet()) {
       m_streetTails.emplace(streetId, 0);
@@ -183,13 +187,16 @@ namespace dsm {
   Id RoadDynamics<delay_t>::m_nextStreetId(Id agentId,
                                            Id nodeId,
                                            std::optional<Id> streetId) {
+    auto const& pAgent{this->m_agents[agentId]};
     auto possibleMoves = this->m_graph.adjMatrix().getRow(nodeId, true);
-    std::uniform_real_distribution<double> uniformDist{0., 1.};
-    if (this->m_itineraries.size() > 0 &&
-        uniformDist(this->m_generator) > m_errorProbability) {
-      const auto& it = this->m_itineraries[this->m_agents[agentId]->itineraryId()];
-      if (it->destination() != nodeId) {
-        possibleMoves = it->path().getRow(nodeId, true);
+    if (!pAgent->isRandom()) {
+      std::uniform_real_distribution<double> uniformDist{0., 1.};
+      if (this->m_itineraries.size() > 0 &&
+          uniformDist(this->m_generator) > m_errorProbability) {
+        const auto& it = this->m_itineraries[pAgent->itineraryId()];
+        if (it->destination() != nodeId) {
+          possibleMoves = it->path().getRow(nodeId, true);
+        }
       }
     }
     assert(possibleMoves.size() > 0);
@@ -254,8 +261,19 @@ namespace dsm {
           continue;
         }
       }
-      if (destinationNode->id() ==
-          this->m_itineraries[pAgent->itineraryId()]->destination()) {
+      bool bArrived{false};
+      std::uniform_real_distribution<double> uniformDist{0., 1.};
+      if (uniformDist(this->m_generator) > m_passageProbability) {
+        m_agentNextStreetId.erase(agentId);
+        bArrived = true;
+      }
+      if (!pAgent->isRandom()) {
+        if (destinationNode->id() ==
+            this->m_itineraries[pAgent->itineraryId()]->destination()) {
+          bArrived = true;
+        }
+      }
+      if (bArrived) {
         pStreet->dequeue(queueIndex);
         m_travelTimes.push_back(pAgent->time());
         if (reinsert_agents) {
@@ -361,12 +379,18 @@ namespace dsm {
         agent->decrementDelay();
         if (agent->delay() == 0) {
           auto const nLanes = street->nLanes();
-          if (this->m_itineraries[agent->itineraryId()]->destination() ==
-              street->nodePair().second) {
-            agent->updateItinerary();
+          bool bArrived{false};
+          if (!agent->isRandom()) {
+            if (this->m_itineraries[agent->itineraryId()]->destination() ==
+                street->nodePair().second) {
+              agent->updateItinerary();
+            }
+            if (this->m_itineraries[agent->itineraryId()]->destination() ==
+                street->nodePair().second) {
+              bArrived = true;
+            }
           }
-          if (this->m_itineraries[agent->itineraryId()]->destination() ==
-              street->nodePair().second) {
+          if (bArrived) {
             std::uniform_int_distribution<size_t> laneDist{
                 0, static_cast<size_t>(nLanes - 1)};
             street->enqueue(agentId, laneDist(this->m_generator));
@@ -443,6 +467,16 @@ namespace dsm {
                                maxFlowPercentage)));
     }
     m_maxFlowPercentage = maxFlowPercentage;
+  }
+
+  template <typename delay_t>
+    requires(is_numeric_v<delay_t>)
+  void RoadDynamics<delay_t>::setPassageProbability(double passageProbability) {
+    if (passageProbability < 0. || passageProbability > 1.) {
+      throw std::invalid_argument(buildLog(std::format(
+          "The passage probability ({}) must be between 0 and 1", passageProbability)));
+    }
+    m_passageProbability = passageProbability;
   }
 
   template <typename delay_t>
