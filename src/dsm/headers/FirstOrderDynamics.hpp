@@ -4,12 +4,15 @@
 
 namespace dsm {
   class FirstOrderDynamics : public RoadDynamics<Delay> {
+    double m_alpha;
     double m_speedFluctuationSTD;
 
   public:
     /// @brief Construct a new First Order Dynamics object
     /// @param graph, The graph representing the network
-    FirstOrderDynamics(Graph& graph, std::optional<unsigned int> seed = std::nullopt);
+    explicit FirstOrderDynamics(Graph& graph,
+                                std::optional<unsigned int> seed = std::nullopt,
+                                double alpha = 0.);
     /// @brief Set the speed of an agent
     /// @param agentId The id of the agent
     /// @throw std::invalid_argument, If the agent is not found

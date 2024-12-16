@@ -28,8 +28,6 @@ int main() {
   dynamics.addItinerary(it2);
   dynamics.addItinerary(it3);
   dynamics.addItinerary(it4);
-  dynamics.setErrorProbability(0.3);
-  dynamics.setMinSpeedRateo(0.95);
 
   const int n_rep{100};
   Bench b1(n_rep);

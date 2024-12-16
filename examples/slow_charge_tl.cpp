@@ -18,7 +18,6 @@ namespace fs = std::filesystem;
 
 std::atomic<unsigned int> progress{0};
 std::atomic<bool> bExitFlag{false};
-uint nAgents{315};  // 315 for error probability 0.3, 450 for error probability 0.05
 
 // uncomment these lines to print densities, flows and speeds
 #define PRINT_DENSITIES
@@ -43,9 +42,10 @@ void printLoadingBar(int const i, int const n) {
 }
 
 int main(int argc, char** argv) {
-  if (argc != 5) {
-    std::cerr << "Usage: " << argv[0]
-              << " <SEED> <ERROR_PROBABILITY> <OUT_FOLDER_BASE> <OPTIMIZE>\n";
+  if (argc != 6) {
+    std::cerr
+        << "Usage: " << argv[0]
+        << " <SEED> <ERROR_PROBABILITY> <OUT_FOLDER_BASE> <OPTIMIZE> <INIT_NAGENTS>\n";
     return 1;
   }
 
@@ -54,6 +54,7 @@ int main(int argc, char** argv) {
   std::string BASE_OUT_FOLDER{argv[3]};
   const bool OPTIMIZE{std::string(argv[4]) != std::string("0")};
   BASE_OUT_FOLDER += OPTIMIZE ? "_op/" : "/";
+  auto nAgents{std::stoul(argv[5])};
 
   const std::string IN_MATRIX{"./data/matrix.dat"};       // input matrix file
   const std::string IN_COORDS{"./data/coordinates.dsm"};  // input coords file
@@ -68,6 +69,7 @@ int main(int argc, char** argv) {
   std::cout << "Seed: " << SEED << '\n';
   std::cout << "Error probability: " << ERROR_PROBABILITY << '\n';
   std::cout << "Base output folder: " << BASE_OUT_FOLDER << '\n';
+  std::cout << "Initial number of agents: " << nAgents << '\n';
   if (OPTIMIZE) {
     std::cout << "Traffic light optimization ENABLED.\n";
   }
@@ -89,12 +91,11 @@ int main(int argc, char** argv) {
   graph.importCoordinates(IN_COORDS);
   std::cout << "Setting street parameters..." << '\n';
   for (const auto& [streetId, street] : graph.streetSet()) {
-    street->setLength(2e3);
-    street->setCapacity(225);
     street->setTransportCapacity(1);
     street->setMaxSpeed(13.9);
   }
   graph.buildAdj();
+  graph.normalizeStreetCapacities();
   const auto dv = graph.adjMatrix().getDegreeVector();
 
   // graph.addStreet(Street(100002, std::make_pair(0, 108)));
@@ -216,7 +217,7 @@ int main(int argc, char** argv) {
 
   std::cout << "Creating dynamics...\n";
 
-  Dynamics dynamics{graph, SEED};
+  Dynamics dynamics{graph, SEED, 0.95};
   Unit n{0};
   {
     std::vector<Unit> destinationNodes;
@@ -234,7 +235,6 @@ int main(int argc, char** argv) {
   // dynamics.setMaxFlowPercentage(0.69);
   // dynamics.setForcePriorities(false);
   dynamics.setSpeedFluctuationSTD(0.1);
-  dynamics.setMinSpeedRateo(0.95);
   if (OPTIMIZE)
     dynamics.setDataUpdatePeriod(30);  // Store data every 30 time steps
 
