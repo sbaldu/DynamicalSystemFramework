@@ -193,6 +193,8 @@ namespace dsm {
                            const TContainer& src_weights,
                            const TContainer& dst_weights);
 
+    void addRandomAgents(Size nAgents, std::optional<Id> srcNodeId = std::nullopt);
+
     /// @brief Remove an agent from the simulation
     /// @param agentId the id of the agent to remove
     void removeAgent(Size agentId);
@@ -553,6 +555,22 @@ namespace dsm {
       }
       this->addAgent(srcId, itineraryIt->first);
       --nAgents;
+    }
+  }
+
+  template <typename agent_t>
+  void Dynamics<agent_t>::addRandomAgents(Size nAgents, std::optional<Id> srcNodeId) {
+    if (m_agents.size() + nAgents > m_graph.maxCapacity()) {
+      throw std::overflow_error(buildLog(
+          std::format("Graph is already holding the max possible number of agents ({})",
+                      m_graph.maxCapacity())));
+    }
+    Id agentId{0};
+    if (!m_agents.empty()) {
+      agentId = m_agents.rbegin()->first + 1;
+    }
+    for (auto i{0}; i < nAgents; ++i) {
+      this->addAgent(agent_t{agentId, srcNodeId});
     }
   }
 
