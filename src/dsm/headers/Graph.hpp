@@ -121,9 +121,12 @@ namespace dsm {
     /// the number of rows and columns and the following elements being the matrix elements.
     /// @param fileName The name of the file to import the adjacency matrix from.
     /// @param isAdj A boolean value indicating if the file contains the adjacency matrix or the distance matrix.
+    /// @param defaultSpeed The default speed limit for the streets
     /// @throws std::invalid_argument if the file is not found or invalid
     /// The matrix format is deduced from the file extension. Currently only .dsm files are supported.
-    void importMatrix(const std::string& fileName, bool isAdj = true);
+    void importMatrix(const std::string& fileName,
+                      bool isAdj = true,
+                      double defaultSpeed = 13.8888888889);
     /// @brief Import the graph's nodes from a file
     /// @param fileName The name of the file to import the nodes from.
     /// @throws std::invalid_argument if the file is not found, invalid or the format is not supported

@@ -143,7 +143,7 @@ namespace dsm {
     }
   }
 
-  void Graph::importMatrix(const std::string& fileName, bool isAdj) {
+  void Graph::importMatrix(const std::string& fileName, bool isAdj, double defaultSpeed) {
     // check the file extension
     std::string fileExt = fileName.substr(fileName.find_last_of(".") + 1);
     if (fileExt == "dsm") {
@@ -178,6 +178,7 @@ namespace dsm {
         if (!isAdj) {
           m_streets[index]->setLength(val);
         }
+        m_streets[index]->setMaxSpeed(defaultSpeed);
       }
     } else {
       // default case: read the file as a matrix with the first two elements being the number of rows and columns and
@@ -223,6 +224,7 @@ namespace dsm {
           if (!isAdj) {
             m_streets[index]->setLength(value);
           }
+          m_streets[index]->setMaxSpeed(defaultSpeed);
         }
         ++index;
       }

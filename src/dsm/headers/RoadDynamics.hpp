@@ -359,6 +359,8 @@ namespace dsm {
   template <typename delay_t>
     requires(is_numeric_v<delay_t>)
   void RoadDynamics<delay_t>::m_evolveAgents() {
+    std::uniform_int_distribution<Id> nodeDist{
+        0, static_cast<Id>(this->m_graph.nNodes() - 1)};
     for (const auto& [agentId, agent] : this->m_agents) {
       if (agent->delay() > 0) {
         const auto& street{this->m_graph.streetSet()[agent->streetId().value()]};
@@ -418,8 +420,9 @@ namespace dsm {
         }
       } else if (!agent->streetId().has_value() &&
                  !m_agentNextStreetId.contains(agentId)) {
-        assert(agent->srcNodeId().has_value());
-        const auto& srcNode{this->m_graph.nodeSet()[agent->srcNodeId().value()]};
+        Id srcNodeId = agent->srcNodeId().has_value() ? agent->srcNodeId().value()
+                                                      : nodeDist(this->m_generator);
+        const auto& srcNode{this->m_graph.nodeSet()[srcNodeId]};
         if (srcNode->isFull()) {
           continue;
         }

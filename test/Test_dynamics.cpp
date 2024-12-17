@@ -127,7 +127,7 @@ TEST_CASE("Dynamics") {
       WHEN("We add the agent") {
         dynamics.addAgent(0, 2);
         THEN("The agent is added") {
-          CHECK_EQ(dynamics.agents().size(), 1);
+          CHECK_EQ(dynamics.nAgents(), 1);
           const auto& agent = dynamics.agents().at(0);
           CHECK_EQ(agent->id(), 0);
           CHECK_EQ(agent->srcNodeId().value(), 0);
@@ -163,7 +163,7 @@ TEST_CASE("Dynamics") {
         THEN(
             "The number of agents is 1 and the destination is the same as the "
             "itinerary") {
-          CHECK_EQ(dynamics.agents().size(), 1);
+          CHECK_EQ(dynamics.nAgents(), 1);
           CHECK_EQ(dynamics.itineraries()
                        .at(dynamics.agents().at(0)->itineraryId())
                        ->destination(),
@@ -184,7 +184,7 @@ TEST_CASE("Dynamics") {
             "The number of agents is 3, the destination and the street is the "
             "same as "
             "the itinerary") {
-          CHECK_EQ(dynamics.agents().size(), 3);
+          CHECK_EQ(dynamics.nAgents(), 3);
           CHECK(dynamics.agents().at(0)->streetId().has_value());
           CHECK(dynamics.agents().at(1)->streetId().has_value());
           CHECK(dynamics.agents().at(2)->streetId().has_value());
@@ -236,7 +236,7 @@ TEST_CASE("Dynamics") {
         dynamics.addItinerary(Itinerary{0, 2});
         dynamics.addAgentsRandomly(1, src, dst);
         THEN("The agents are correctly set") {
-          CHECK_EQ(dynamics.agents().size(), 1);
+          CHECK_EQ(dynamics.nAgents(), 1);
           CHECK_EQ(dynamics.itineraries()
                        .at(dynamics.agents().at(0)->itineraryId())
                        ->destination(),
@@ -252,7 +252,7 @@ TEST_CASE("Dynamics") {
         dynamics.addItinerary(Itinerary{2, 107});
         dynamics.addAgentsRandomly(3, src, dst);
         THEN("The agents are correctly set") {
-          CHECK_EQ(dynamics.agents().size(), 3);
+          CHECK_EQ(dynamics.nAgents(), 3);
           CHECK_EQ(dynamics.itineraries()
                        .at(dynamics.agents().at(0)->itineraryId())
                        ->destination(),
@@ -279,6 +279,28 @@ TEST_CASE("Dynamics") {
       }
     }
   }
+  SUBCASE("addRandomAgents") {
+    GIVEN("A dynamics object") {
+      auto const p{0.1};
+      auto const n{100};
+      auto graph = Graph{};
+      graph.importMatrix("./data/matrix.dat", false);
+      graph.buildAdj();
+      graph.normalizeStreetCapacities();
+      Dynamics dynamics{graph, 69};
+      dynamics.setPassageProbability(p);
+      WHEN("We add some agent") {
+        dynamics.addRandomAgents(n);
+        THEN("The number of agents is correct") { CHECK_EQ(dynamics.nAgents(), 100); }
+        THEN("If we evolve the dynamics agent disappear gradually") {
+          for (auto i{0}; i < 40; ++i) {
+            dynamics.evolve(false);
+          }
+          CHECK(dynamics.nAgents() < n);
+        }
+      }
+    }
+  }
   SUBCASE("addAgents") {
     GIVEN("A dynamics object and one itinerary") {
       auto graph = Graph{};
@@ -296,7 +318,7 @@ TEST_CASE("Dynamics") {
         THEN(
             "The number of agents is 1 and the destination is the same as the "
             "itinerary") {
-          CHECK_EQ(dynamics.agents().size(), 1);
+          CHECK_EQ(dynamics.nAgents(), 1);
           CHECK_EQ(dynamics.itineraries()
                        .at(dynamics.agents().at(0)->itineraryId())
                        ->destination(),
@@ -305,7 +327,7 @@ TEST_CASE("Dynamics") {
       }
       WHEN("We add 69 agents with itinerary 0") {
         dynamics.addAgents(0, 69);
-        THEN("The number of agents is 69") { CHECK_EQ(dynamics.agents().size(), 69); }
+        THEN("The number of agents is 69") { CHECK_EQ(dynamics.nAgents(), 69); }
       }
     }
   }
@@ -524,7 +546,7 @@ TEST_CASE("Dynamics") {
         }
         dynamics.evolve(true);
         THEN("The agent is reinserted") {
-          CHECK_EQ(dynamics.agents().size(), 1);
+          CHECK_EQ(dynamics.nAgents(), 1);
           CHECK_EQ(dynamics.agents().at(0)->time(), 1);
           CHECK_EQ(dynamics.agents().at(0)->delay(), 0);
           CHECK_FALSE(dynamics.agents().at(0)->streetId().has_value());
