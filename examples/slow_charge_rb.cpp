@@ -135,7 +135,7 @@ int main(int argc, char** argv) {
   std::cout << "Number of exits: " << n << '\n';
 
   dynamics.setErrorProbability(0.05);
-  dynamics.setMaxFlowPercentage(0.7707);
+  dynamics.setPassageProbability(0.7707);
   // dynamics.setForcePriorities(true);
   dynamics.setSpeedFluctuationSTD(0.1);
 
