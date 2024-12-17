@@ -51,7 +51,7 @@ int main() {
   Street s01{1, 2281 / 8, 2281., 13.9, std::make_pair(0, 1)};
   Street s12{7, 118 / 8, 118., 13.9, std::make_pair(1, 2)};
   Street s23{13, 222 / 8, 222., 13.9, std::make_pair(2, 3)};
-  Street s34{19, 651 / 4, 651., 13.9, std::make_pair(3, 4)};
+  Street s34{19, 1, 651., 13.9, std::make_pair(3, 4), 2};
   // Viale Aldo Moro
   TrafficLight tl1{1, 132};
   tl1.setCycle(s01.id(), dsm::Direction::ANY, {62, 0});
@@ -76,6 +76,8 @@ int main() {
   graph.addNode(std::make_unique<TrafficLight>(tl4));
   graph.addStreets(s01, s12, s23, s34);
   graph.buildAdj();
+  graph.adjustNodeCapacities();
+  graph.normalizeStreetCapacities();
   auto& spire = graph.makeSpireStreet(19);
 
   std::cout << "Intersections: " << graph.nNodes() << '\n';
@@ -84,7 +86,7 @@ int main() {
   // Create the dynamics
   Dynamics dynamics{graph, 69, 0.95};
   dynamics.setSpeedFluctuationSTD(0.2);
-  Itinerary itinerary{0, 4};
+  Itinerary itinerary{4, 4};
   dynamics.addItinerary(itinerary);
   dynamics.updatePaths();
 
@@ -108,7 +110,7 @@ int main() {
       if (progress % 300 == 0) {
         ofs << progress << ';' << spire.outputCounts(true) << std::endl;
       }
-      dynamics.addAgents(0, *it / 2, 0);
+      dynamics.addAgents(4, *it / 2, 0);
     }
     dynamics.evolve(false);
     ++progress;

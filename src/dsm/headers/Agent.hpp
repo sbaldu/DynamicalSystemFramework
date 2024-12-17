@@ -42,9 +42,11 @@ namespace dsm {
   public:
     /// @brief Construct a new Agent object
     /// @param id The agent's id
-    /// @param itineraryId The agent's itinerary
+    /// @param itineraryId Optional, The agent's destination node. If not provided, the agent is a random agent
     /// @param srcNodeId Optional, The id of the source node of the agent
-    Agent(Id id, Id itineraryId, std::optional<Id> srcNodeId = std::nullopt);
+    Agent(Id id,
+          std::optional<Id> itineraryId = std::nullopt,
+          std::optional<Id> srcNodeId = std::nullopt);
     /// @brief Construct a new Agent object
     /// @param id The agent's id
     /// @param itineraryIds The agent's itinerary
@@ -123,13 +125,17 @@ namespace dsm {
     /// @brief Get the agent's travel time
     /// @return The agent's travel time
     unsigned int time() const { return m_time; }
+    /// @brief Return true if the agent is a random agent
+    /// @return True if the agent is a random agent, false otherwise
+    bool isRandom() const { return m_trip.empty(); }
   };
 
   template <typename delay_t>
     requires(is_numeric_v<delay_t>)
-  Agent<delay_t>::Agent(Id id, Id itineraryId, std::optional<Id> srcNodeId)
+  Agent<delay_t>::Agent(Id id, std::optional<Id> itineraryId, std::optional<Id> srcNodeId)
       : m_id{id},
-        m_trip{itineraryId},
+        m_trip{itineraryId.has_value() ? std::vector<Id>{itineraryId.value()}
+                                       : std::vector<Id>{}},
         m_srcNodeId{srcNodeId},
         m_delay{0},
         m_speed{0.},

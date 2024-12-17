@@ -193,6 +193,8 @@ namespace dsm {
                            const TContainer& src_weights,
                            const TContainer& dst_weights);
 
+    void addRandomAgents(Size nAgents, std::optional<Id> srcNodeId = std::nullopt);
+
     /// @brief Remove an agent from the simulation
     /// @param agentId the id of the agent to remove
     void removeAgent(Size agentId);
@@ -239,6 +241,9 @@ namespace dsm {
     /// @brief Get the agents
     /// @return const std::unordered_map<Id, Agent<Id>>&, The agents
     const std::map<Id, std::unique_ptr<agent_t>>& agents() const { return m_agents; }
+    /// @brief Get the number of agents currently in the simulation
+    /// @return Size The number of agents
+    const Size nAgents() const { return m_agents.size(); }
     /// @brief Get the time
     /// @return Time The time
     Time time() const { return m_time; }
@@ -557,12 +562,27 @@ namespace dsm {
   }
 
   template <typename agent_t>
+  void Dynamics<agent_t>::addRandomAgents(Size nAgents, std::optional<Id> srcNodeId) {
+    if (m_agents.size() + nAgents > m_graph.maxCapacity()) {
+      throw std::overflow_error(buildLog(
+          std::format("Graph is already holding the max possible number of agents ({})",
+                      m_graph.maxCapacity())));
+    }
+    Id agentId{0};
+    if (!m_agents.empty()) {
+      agentId = m_agents.rbegin()->first + 1;
+    }
+    for (auto i{0}; i < nAgents; ++i, ++agentId) {
+      this->addAgent(agent_t{agentId, srcNodeId});
+    }
+  }
+
+  template <typename agent_t>
   void Dynamics<agent_t>::removeAgent(Size agentId) {
     m_agents.erase(agentId);
   }
 
   template <typename agent_t>
-
   template <typename T1, typename... Tn>
     requires(std::is_convertible_v<T1, Size> && (std::is_convertible_v<Tn, Size> && ...))
   void Dynamics<agent_t>::removeAgents(T1 id, Tn... ids) {

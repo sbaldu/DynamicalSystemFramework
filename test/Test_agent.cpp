@@ -44,5 +44,12 @@ TEST_CASE("Agent") {
         }
       }
     }
+    GIVEN("An agent it") {
+      uint16_t agentId{1};
+      WHEN("The agent is constructed") {
+        auto randomAgent = Agent{agentId};
+        THEN("The agent is a random agent") { CHECK(randomAgent.isRandom()); }
+      }
+    }
   }
 }
