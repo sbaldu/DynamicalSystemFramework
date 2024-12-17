@@ -43,7 +43,6 @@ namespace dsm {
   protected:
     Time m_previousOptimizationTime;
     double m_errorProbability;
-    double m_maxFlowPercentage;
     double m_passageProbability;
     std::vector<double> m_travelTimes;
     std::unordered_map<Id, Id> m_agentNextStreetId;
@@ -89,11 +88,6 @@ namespace dsm {
     /// @param errorProbability The error probability
     /// @throw std::invalid_argument If the error probability is not between 0 and 1
     void setErrorProbability(double errorProbability);
-    /// @brief Set the maximum flow percentage
-    /// @param maxFlowPercentage The maximum flow percentage
-    /// @details The maximum flow percentage is the percentage of the maximum flow that a street can transmit. Default is 1 (100%).
-    /// @throw std::invalid_argument If the maximum flow percentage is not between 0 and 1
-    void setMaxFlowPercentage(double maxFlowPercentage);
 
     void setPassageProbability(double passageProbability);
     /// @brief Set the force priorities flag
@@ -154,8 +148,7 @@ namespace dsm {
       : Dynamics<Agent<delay_t>>(graph, seed),
         m_previousOptimizationTime{0},
         m_errorProbability{0.},
-        m_maxFlowPercentage{1.},
-        m_passageProbability{1.1},
+        m_passageProbability{1.},
         m_forcePriorities{false} {
     for (const auto& [streetId, street] : this->m_graph.streetSet()) {
       m_streetTails.emplace(streetId, 0);
@@ -240,8 +233,7 @@ namespace dsm {
     auto const nLanes = pStreet->nLanes();
     std::uniform_real_distribution<double> uniformDist{0., 1.};
     for (auto queueIndex = 0; queueIndex < nLanes; ++queueIndex) {
-      if (uniformDist(this->m_generator) > m_maxFlowPercentage ||
-          pStreet->queue(queueIndex).empty()) {
+      if (pStreet->queue(queueIndex).empty()) {
         continue;
       }
       const auto agentId{pStreet->queue(queueIndex).front()};
@@ -261,11 +253,15 @@ namespace dsm {
           continue;
         }
       }
+      auto const bCanPass = uniformDist(this->m_generator) < m_passageProbability;
       bool bArrived{false};
-      std::uniform_real_distribution<double> uniformDist{0., 1.};
-      if (uniformDist(this->m_generator) > m_passageProbability) {
-        m_agentNextStreetId.erase(agentId);
-        bArrived = true;
+      if (!bCanPass) {
+        if (pAgent->isRandom()) {
+          m_agentNextStreetId.erase(agentId);
+          bArrived = true;
+        } else {
+          continue;
+        }
       }
       if (!pAgent->isRandom()) {
         if (destinationNode->id() ==
@@ -456,17 +452,6 @@ namespace dsm {
           "The error probability ({}) must be between 0 and 1", errorProbability)));
     }
     m_errorProbability = errorProbability;
-  }
-
-  template <typename delay_t>
-    requires(is_numeric_v<delay_t>)
-  void RoadDynamics<delay_t>::setMaxFlowPercentage(double maxFlowPercentage) {
-    if (maxFlowPercentage < 0. || maxFlowPercentage > 1.) {
-      throw std::invalid_argument(
-          buildLog(std::format("The maximum flow percentage ({}) must be between 0 and 1",
-                               maxFlowPercentage)));
-    }
-    m_maxFlowPercentage = maxFlowPercentage;
   }
 
   template <typename delay_t>
