@@ -232,9 +232,9 @@ namespace dsm {
     // TODO: implement the following functions
     // We can implement the base version of these functions by cycling over agents... I won't do it for now.
     // Grufoony - 19/02/2024
-    virtual double streetMeanSpeed(Id) const = 0;
-    virtual Measurement<double> streetMeanSpeed() const = 0;
-    virtual Measurement<double> streetMeanSpeed(double, bool) const = 0;
+    virtual double streetMeanSpeed(Id streetId) const;
+    virtual Measurement<double> streetMeanSpeed() const;
+    virtual Measurement<double> streetMeanSpeed(double, bool) const;
     /// @brief Get the mean density of the streets in \f$m^{-1}\f$
     /// @return Measurement<double> The mean density of the streets and the standard deviation
     Measurement<double> streetMeanDensity(bool normalized = false) const;
@@ -413,6 +413,45 @@ namespace dsm {
       speeds.reserve(m_agents.size());
       for (const auto& [agentId, agent] : m_agents) {
         speeds.push_back(agent->speed());
+      }
+    }
+    return Measurement<double>(speeds);
+  }
+
+  template <typename agent_t>
+  double Dynamics<agent_t>::streetMeanSpeed(Id streetId) const {
+    auto const& pStreet{m_graph.streetSet().at(streetId)};
+    auto const nAgents{pStreet->nAgents()};
+    if (nAgents == 0) {
+      return 0.;
+    }
+    double speed{0.};
+    for (auto const& agentId : pStreet->waitingAgents()) {
+      speed += m_agents.at(agentId)->speed();
+    }
+    return speed / nAgents;
+  }
+
+  template <typename agent_t>
+  Measurement<double> Dynamics<agent_t>::streetMeanSpeed() const {
+    std::vector<double> speeds;
+    speeds.reserve(m_graph.streetSet().size());
+    for (const auto& [streetId, street] : m_graph.streetSet()) {
+      speeds.push_back(streetMeanSpeed(streetId));
+    }
+    return Measurement<double>(speeds);
+  }
+
+  template <typename agent_t>
+  Measurement<double> Dynamics<agent_t>::streetMeanSpeed(double threshold,
+                                                         bool above) const {
+    std::vector<double> speeds;
+    speeds.reserve(m_graph.streetSet().size());
+    for (const auto& [streetId, street] : m_graph.streetSet()) {
+      if (above && (street->density(true) > threshold)) {
+        speeds.push_back(streetMeanSpeed(streetId));
+      } else if (!above && (street->density(true) < threshold)) {
+        speeds.push_back(streetMeanSpeed(streetId));
       }
     }
     return Measurement<double>(speeds);
