@@ -110,7 +110,7 @@ int main() {
       if (progress % 300 == 0) {
         ofs << progress << ';' << spire.outputCounts(true) << std::endl;
       }
-      dynamics.addAgents(4, *it / 2, 0);
+      dynamics.addAgents(*it / 2, 4, 0);
     }
     dynamics.evolve(false);
     ++progress;
