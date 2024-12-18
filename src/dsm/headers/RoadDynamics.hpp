@@ -101,7 +101,22 @@ namespace dsm {
       m_dataUpdatePeriod = dataUpdatePeriod;
     }
 
-
+    /// @brief Add a set of agents to the simulation
+    /// @param nAgents The number of agents to add
+    /// @param uniformly If true, the agents are added uniformly on the streets
+    /// @throw std::runtime_error If there are no itineraries
+    void addAgentsUniformly(Size nAgents, std::optional<Id> itineraryId = std::nullopt);
+    /// @brief Add a set of agents to the simulation
+    /// @param nAgents The number of agents to add
+    /// @param src_weights The weights of the source nodes
+    /// @param dst_weights The weights of the destination nodes
+    /// @throw std::invalid_argument If the source and destination nodes are the same
+    template <typename TContainer>
+      requires(std::is_same_v<TContainer, std::unordered_map<Id, double>> ||
+               std::is_same_v<TContainer, std::map<Id, double>>)
+    void addAgentsRandomly(Size nAgents,
+                           const TContainer& src_weights,
+                           const TContainer& dst_weights);
 
     /// @brief Evolve the simulation
     /// @details Evolve the simulation by moving the agents and updating the travel times.
@@ -469,7 +484,142 @@ namespace dsm {
     m_passageProbability = passageProbability;
   }
 
+  template <typename delay_t>
+    requires(is_numeric_v<delay_t>)
+  void RoadDynamics<delay_t>::addAgentsUniformly(Size nAgents,
+                                                 std::optional<Id> optItineraryId) {
+    if (this->m_itineraries.empty()) {
+      // TODO: make this possible for random agents
+      throw std::invalid_argument(
+          buildLog("It is not possible to add random agents without itineraries."));
+    }
+    Id itineraryId{0};
+    const bool randomItinerary{!optItineraryId.has_value()};
+    if (!randomItinerary) {
+      itineraryId = optItineraryId.value();
+    }
+    std::uniform_int_distribution<Size> itineraryDist{
+        0, static_cast<Size>(this->m_itineraries.size() - 1)};
+    std::uniform_int_distribution<Size> streetDist{
+        0, static_cast<Size>(this->m_graph.nEdges() - 1)};
+    for (Size i{0}; i < nAgents; ++i) {
+      if (randomItinerary) {
+        auto itineraryIt{this->m_itineraries.begin()};
+        std::advance(itineraryIt, itineraryDist(this->m_generator));
+        itineraryId = itineraryIt->first;
+      }
+      Id agentId{0};
+      if (!this->m_agents.empty()) {
+        agentId = this->m_agents.rbegin()->first + 1;
+      }
+      Id streetId{0};
+      do {
+        auto streetIt = this->m_graph.streetSet().begin();
+        Size step = streetDist(this->m_generator);
+        std::advance(streetIt, step);
+        streetId = streetIt->first;
+      } while (this->m_graph.streetSet()[streetId]->isFull() &&
+               this->m_agents.size() < this->m_graph.maxCapacity());
+      const auto& street{this->m_graph.streetSet()[streetId]};
+      this->addAgent(agentId, itineraryId, street->nodePair().first);
+      this->m_agents[agentId]->setStreetId(streetId);
+      this->setAgentSpeed(agentId);
+      this->m_agents[agentId]->incrementDelay(
+          std::ceil(street->length() / this->m_agents[agentId]->speed()));
+      street->addAgent(agentId);
+      ++agentId;
+    }
+  }
 
+  template <typename delay_t>
+    requires(is_numeric_v<delay_t>)
+  template <typename TContainer>
+    requires(std::is_same_v<TContainer, std::unordered_map<Id, double>> ||
+             std::is_same_v<TContainer, std::map<Id, double>>)
+  void RoadDynamics<delay_t>::addAgentsRandomly(Size nAgents,
+                                                const TContainer& src_weights,
+                                                const TContainer& dst_weights) {
+    if (src_weights.size() == 1 && dst_weights.size() == 1 &&
+        src_weights.begin()->first == dst_weights.begin()->first) {
+      throw std::invalid_argument(buildLog(
+          std::format("The only source node {} is also the only destination node.",
+                      src_weights.begin()->first)));
+    }
+    auto const srcSum{std::accumulate(
+        src_weights.begin(),
+        src_weights.end(),
+        0.,
+        [](double sum, const std::pair<Id, double>& p) {
+          if (p.second < 0.) {
+            throw std::invalid_argument(buildLog(std::format(
+                "Negative weight ({}) for source node {}.", p.second, p.first)));
+          }
+          return sum + p.second;
+        })};
+    auto const dstSum{std::accumulate(
+        dst_weights.begin(),
+        dst_weights.end(),
+        0.,
+        [](double sum, const std::pair<Id, double>& p) {
+          if (p.second < 0.) {
+            throw std::invalid_argument(buildLog(std::format(
+                "Negative weight ({}) for destination node {}.", p.second, p.first)));
+          }
+          return sum + p.second;
+        })};
+    std::uniform_real_distribution<double> srcUniformDist{0., srcSum};
+    std::uniform_real_distribution<double> dstUniformDist{0., dstSum};
+    Id agentId{0};
+    if (!this->m_agents.empty()) {
+      agentId = this->m_agents.rbegin()->first + 1;
+    }
+    while (nAgents > 0) {
+      Id srcId{0}, dstId{0};
+      if (dst_weights.size() == 1) {
+        dstId = dst_weights.begin()->first;
+        srcId = dstId;
+      }
+      double dRand, sum;
+      while (srcId == dstId) {
+        dRand = srcUniformDist(this->m_generator);
+        sum = 0.;
+        for (const auto& [id, weight] : src_weights) {
+          srcId = id;
+          sum += weight;
+          if (dRand < sum) {
+            break;
+          }
+        }
+      }
+      if (src_weights.size() > 1) {
+        dstId = srcId;
+      }
+      while (dstId == srcId) {
+        dRand = dstUniformDist(this->m_generator);
+        sum = 0.;
+        for (const auto& [id, weight] : dst_weights) {
+          dstId = id;
+          sum += weight;
+          if (dRand < sum) {
+            break;
+          }
+        }
+      }
+      // find the itinerary with the given destination as destination
+      auto itineraryIt{std::find_if(this->m_itineraries.begin(),
+                                    this->m_itineraries.end(),
+                                    [dstId](const auto& itinerary) {
+                                      return itinerary.second->destination() == dstId;
+                                    })};
+      if (itineraryIt == this->m_itineraries.end()) {
+        throw std::invalid_argument(
+            buildLog(std::format("Itinerary with destination {} not found.", dstId)));
+      }
+      this->addAgent(agentId, itineraryIt->first, srcId);
+      --nAgents;
+      ++agentId;
+    }
+  }
 
   template <typename delay_t>
     requires(is_numeric_v<delay_t>)
