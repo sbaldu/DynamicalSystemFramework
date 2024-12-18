@@ -186,8 +186,6 @@ namespace dsm {
                            const TContainer& src_weights,
                            const TContainer& dst_weights);
 
-    void addRandomAgents(Size nAgents, std::optional<Id> srcNodeId = std::nullopt);
-
     /// @brief Remove an agent from the simulation
     /// @param agentId the id of the agent to remove
     void removeAgent(Size agentId);
