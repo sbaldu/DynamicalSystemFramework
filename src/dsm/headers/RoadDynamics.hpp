@@ -101,6 +101,15 @@ namespace dsm {
       m_dataUpdatePeriod = dataUpdatePeriod;
     }
 
+    /// @brief Add an agent with given source node and itinerary
+    /// @param srcNodeId The id of the source node
+    /// @param itineraryId The id of the itinerary
+    /// @throws std::invalid_argument If the source node or the itinerary are not found
+    void addVehicle(std::optional<Id> srcNodeId, std::optional<Id> itineraryId);
+
+    void addVehicles(Size nAgents,
+                     std::optional<Id> srcNodeId,
+                     std::optional<Id> itineraryId);
     /// @brief Evolve the simulation
     /// @details Evolve the simulation by moving the agents and updating the travel times.
     /// In particular:
@@ -465,6 +474,29 @@ namespace dsm {
           "The passage probability ({}) must be between 0 and 1", passageProbability)));
     }
     m_passageProbability = passageProbability;
+  }
+
+  template <typename delay_t>
+    requires(is_numeric_v<delay_t>)
+  void RoadDynamics<delay_t>::addVehicle(std::optional<Id> srcNodeId,
+                                         std::optional<Id> itineraryId) {
+    if (srcNodeId.has_value()) {
+      if (!(srcNodeId.value() < this->m_graph.nNodes())) {
+        throw std::invalid_argument(
+            buildLog(std::format("Node with id {} not found", srcNodeId.value())));
+      }
+    }
+    if (itineraryId.has_value()) {
+      if (!(this->m_itineraries.contains(itineraryId.value()))) {
+        throw std::invalid_argument(
+            buildLog(std::format("Itinerary with id {} not found", itineraryId.value())));
+      }
+    }
+    Size agentId{0};
+    if (!this->m_agents.empty()) {
+      agentId = this->m_agents.rbegin()->first + 1;
+    }
+    this->addAgent(agentId, itineraryId, srcNodeId);
   }
 
   template <typename delay_t>

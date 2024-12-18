@@ -148,24 +148,17 @@ namespace dsm {
                              bool updatePaths = true);
 
     /// @brief Add an agent to the simulation
-    /// @param agent The agent
-    void addAgent(const agent_t& agent);
-    /// @brief Add an agent to the simulation
     /// @param agent std::unique_ptr to the agent
     void addAgent(std::unique_ptr<agent_t> agent);
-    /// @brief Add an agent with given source node and itinerary
-    /// @param srcNodeId The id of the source node
-    /// @param itineraryId The id of the itinerary
-    /// @throws std::invalid_argument If the source node or the itinerary are not found
-    void addAgent(Id srcNodeId, Id itineraryId);
-    /// @brief Add a pack of agents to the simulation
-    /// @param itineraryId The index of the itinerary
-    /// @param nAgents The number of agents to add
-    /// @throw std::invalid_argument If the itinerary is not found
-    /// @details adds nAgents agents with the same itinerary of id itineraryId
-    void addAgents(Id itineraryId,
-                   Size nAgents = 1,
-                   std::optional<Id> srcNodeId = std::nullopt);
+
+    template <typename... TArgs>
+      requires(std::is_constructible_v<agent_t, TArgs...>)
+    void addAgent(TArgs&&... args);
+
+    template <typename... TArgs>
+      requires(std::is_constructible_v<agent_t, Id, TArgs...>)
+    void addAgents(Size nAgents, TArgs&&... args);
+
     /// @brief Add a pack of agents to the simulation
     /// @param agents Parameter pack of agents
     template <typename... Tn>
@@ -180,12 +173,12 @@ namespace dsm {
     /// @brief Add a set of agents to the simulation
     /// @param agents Generic container of agents, represented by an std::span
     void addAgents(std::span<agent_t> agents);
+
     /// @brief Add a set of agents to the simulation
     /// @param nAgents The number of agents to add
     /// @param uniformly If true, the agents are added uniformly on the streets
     /// @throw std::runtime_error If there are no itineraries
-    virtual void addAgentsUniformly(Size nAgents,
-                                    std::optional<Id> itineraryId = std::nullopt);
+    void addAgentsUniformly(Size nAgents, std::optional<Id> itineraryId = std::nullopt);
     template <typename TContainer>
       requires(std::is_same_v<TContainer, std::unordered_map<Id, double>> ||
                std::is_same_v<TContainer, std::map<Id, double>>)
@@ -199,8 +192,7 @@ namespace dsm {
     /// @param agentId the id of the agent to remove
     void removeAgent(Size agentId);
     template <typename T1, typename... Tn>
-      requires(std::is_convertible_v<T1, Size> &&
-               (std::is_convertible_v<Tn, Size> && ...))
+      requires(std::is_convertible_v<T1, Id> && (std::is_convertible_v<Tn, Size> && ...))
     /// @brief Remove a pack of agents from the simulation
     /// @param id the id of the first agent to remove
     /// @param ids the pack of ides of the agents to remove
@@ -334,19 +326,6 @@ namespace dsm {
   }
 
   template <typename agent_t>
-  void Dynamics<agent_t>::addAgent(const agent_t& agent) {
-    if (m_agents.size() + 1 > m_graph.maxCapacity()) {
-      throw std::overflow_error(buildLog(
-          std::format("Graph is already holding the max possible number of agents ({})",
-                      m_graph.maxCapacity())));
-    }
-    if (m_agents.contains(agent.id())) {
-      throw std::invalid_argument(
-          buildLog(std::format("Agent with id {} already exists.", agent.id())));
-    }
-    m_agents.emplace(agent.id(), std::make_unique<agent_t>(agent));
-  }
-  template <typename agent_t>
   void Dynamics<agent_t>::addAgent(std::unique_ptr<agent_t> agent) {
     if (m_agents.size() + 1 > m_graph.maxCapacity()) {
       throw std::overflow_error(buildLog(
@@ -359,47 +338,24 @@ namespace dsm {
     }
     m_agents.emplace(agent->id(), std::move(agent));
   }
+
   template <typename agent_t>
-  void Dynamics<agent_t>::addAgent(Id srcNodeId, Id itineraryId) {
-    if (m_agents.size() + 1 > m_graph.maxCapacity()) {
-      throw std::overflow_error(buildLog(
-          std::format("Graph is already holding the max possible number of agents ({})",
-                      m_graph.maxCapacity())));
-    }
-    if (!(srcNodeId < m_graph.nodeSet().size())) {
-      throw std::invalid_argument(
-          buildLog(std::format("Node with id {} not found", srcNodeId)));
-    }
-    if (!(m_itineraries.contains(itineraryId))) {
-      throw std::invalid_argument(
-          buildLog(std::format("Itinerary with id {} not found", itineraryId)));
-    }
-    Size agentId{0};
-    if (!m_agents.empty()) {
-      agentId = m_agents.rbegin()->first + 1;
-    }
-    this->addAgent(agent_t{agentId, itineraryId, srcNodeId});
+  template <typename... TArgs>
+    requires(std::is_constructible_v<agent_t, TArgs...>)
+  void Dynamics<agent_t>::addAgent(TArgs&&... args) {
+    addAgent(std::make_unique<agent_t>(std::forward<TArgs>(args)...));
   }
+
   template <typename agent_t>
-  void Dynamics<agent_t>::addAgents(Id itineraryId,
-                                    Size nAgents,
-                                    std::optional<Id> srcNodeId) {
-    if (m_agents.size() + nAgents > m_graph.maxCapacity()) {
-      throw std::overflow_error(buildLog(
-          std::format("Graph is already holding the max possible number of agents ({})",
-                      m_graph.maxCapacity())));
-    }
-    auto itineraryIt{m_itineraries.find(itineraryId)};
-    if (itineraryIt == m_itineraries.end()) {
-      throw std::invalid_argument(
-          buildLog(std::format("Itinerary with id {} not found", itineraryId)));
-    }
-    Size agentId{0};
+  template <typename... TArgs>
+    requires(std::is_constructible_v<agent_t, Id, TArgs...>)
+  void Dynamics<agent_t>::addAgents(Size nAgents, TArgs&&... args) {
+    Id agentId{0};
     if (!m_agents.empty()) {
       agentId = m_agents.rbegin()->first + 1;
     }
-    for (Size i{0}; i < nAgents; ++i, ++agentId) {
-      this->addAgent(agent_t{agentId, itineraryId, srcNodeId});
+    for (size_t i{0}; i < nAgents; ++i, ++agentId) {
+      addAgent(std::make_unique<agent_t>(agentId, std::forward<TArgs>(args)...));
     }
   }
 
@@ -412,40 +368,34 @@ namespace dsm {
   template <typename T1, typename... Tn>
     requires(is_agent_v<T1> && (is_agent_v<Tn> && ...))
   void Dynamics<agent_t>::addAgents(T1 agent, Tn... agents) {
-    addAgent(agent);
+    addAgent(std::make_unique<agent_t>(agent));
     addAgents(agents...);
   }
 
   template <typename agent_t>
   void Dynamics<agent_t>::addAgents(std::span<agent_t> agents) {
-    if (this->m_agents.size() + agents.size() > this->m_graph.maxCapacity()) {
-      throw std::overflow_error(buildLog(
-          std::format("Graph is already holding the max possible number of agents ({})",
-                      this->m_graph.maxCapacity())));
-    }
     std::ranges::for_each(agents, [this](const auto& agent) -> void {
-      this->m_agents.push_back(std::make_unique(agent));
+      addAgent(std::make_unique<agent_t>(agent));
     });
   }
 
   template <typename agent_t>
   void Dynamics<agent_t>::addAgentsUniformly(Size nAgents,
-                                             std::optional<Id> itineraryId) {
-    if (m_agents.size() + nAgents > m_graph.maxCapacity()) {
-      throw std::overflow_error(buildLog(
-          std::format("Graph is already holding the max possible number of agents ({})",
-                      this->m_graph.maxCapacity())));
-    }
+                                             std::optional<Id> optItineraryId) {
     if (m_itineraries.empty()) {
       // TODO: make this possible for random agents
       throw std::invalid_argument(
           buildLog("It is not possible to add random agents without itineraries."));
     }
-    const bool randomItinerary{!itineraryId.has_value()};
+    Id itineraryId{0};
+    const bool randomItinerary{!optItineraryId.has_value()};
+    if (!randomItinerary) {
+      itineraryId = optItineraryId.value();
+    }
     std::uniform_int_distribution<Size> itineraryDist{
         0, static_cast<Size>(m_itineraries.size() - 1)};
     std::uniform_int_distribution<Size> streetDist{
-        0, static_cast<Size>(m_graph.streetSet().size() - 1)};
+        0, static_cast<Size>(m_graph.nEdges() - 1)};
     for (Size i{0}; i < nAgents; ++i) {
       if (randomItinerary) {
         auto itineraryIt{m_itineraries.begin()};
@@ -458,18 +408,16 @@ namespace dsm {
       }
       Id streetId{0};
       do {
-        // I dunno why this works and the following doesn't
-        const auto& streetSet = m_graph.streetSet();
-        auto streetIt = streetSet.begin();
-        // auto streetIt = this->m_graph->streetSet().begin();
+        auto streetIt = m_graph.streetSet().begin();
         Size step = streetDist(m_generator);
         std::advance(streetIt, step);
         streetId = streetIt->first;
-      } while (m_graph.streetSet()[streetId]->isFull());
+      } while (m_graph.streetSet()[streetId]->isFull() &&
+               m_agents.size() < m_graph.maxCapacity());
       const auto& street{m_graph.streetSet()[streetId]};
-      agent_t agent{agentId, itineraryId.value(), street->nodePair().first};
-      agent.setStreetId(streetId);
-      this->addAgent(agent);
+      this->addAgent(
+          std::make_unique<agent_t>(agentId, itineraryId, street->nodePair().first));
+      m_agents[agentId]->setStreetId(streetId);
       this->setAgentSpeed(agentId);
       m_agents[agentId]->incrementDelay(
           std::ceil(street->length() / m_agents[agentId]->speed()));
@@ -515,6 +463,10 @@ namespace dsm {
         })};
     std::uniform_real_distribution<double> srcUniformDist{0., srcSum};
     std::uniform_real_distribution<double> dstUniformDist{0., dstSum};
+    Id agentId{0};
+    if (!m_agents.empty()) {
+      agentId = m_agents.rbegin()->first + 1;
+    }
     while (nAgents > 0) {
       Id srcId{0}, dstId{0};
       if (dst_weights.size() == 1) {
@@ -556,24 +508,9 @@ namespace dsm {
         throw std::invalid_argument(
             buildLog(std::format("Itinerary with destination {} not found.", dstId)));
       }
-      this->addAgent(srcId, itineraryIt->first);
+      addAgent(agentId, itineraryIt->first, srcId);
       --nAgents;
-    }
-  }
-
-  template <typename agent_t>
-  void Dynamics<agent_t>::addRandomAgents(Size nAgents, std::optional<Id> srcNodeId) {
-    if (m_agents.size() + nAgents > m_graph.maxCapacity()) {
-      throw std::overflow_error(buildLog(
-          std::format("Graph is already holding the max possible number of agents ({})",
-                      m_graph.maxCapacity())));
-    }
-    Id agentId{0};
-    if (!m_agents.empty()) {
-      agentId = m_agents.rbegin()->first + 1;
-    }
-    for (auto i{0}; i < nAgents; ++i, ++agentId) {
-      this->addAgent(agent_t{agentId, srcNodeId});
+      ++agentId;
     }
   }
 

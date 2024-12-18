@@ -125,23 +125,13 @@ TEST_CASE("Dynamics") {
       Dynamics dynamics{graph, 69};
       dynamics.addItinerary(Itinerary{2, 2});
       WHEN("We add the agent") {
-        dynamics.addAgent(0, 2);
+        dynamics.addAgent(0, 2, 0);
         THEN("The agent is added") {
           CHECK_EQ(dynamics.nAgents(), 1);
           const auto& agent = dynamics.agents().at(0);
           CHECK_EQ(agent->id(), 0);
           CHECK_EQ(agent->srcNodeId().value(), 0);
           CHECK_EQ(agent->itineraryId(), 2);
-        }
-      }
-      WHEN("We try to add an agent with a non-existing source node") {
-        THEN("An exception is thrown") {
-          CHECK_THROWS_AS(dynamics.addAgent(3, 2), std::invalid_argument);
-        }
-      }
-      WHEN("We try to add an agent with a non-existing itinerary") {
-        THEN("An exception is thrown") {
-          CHECK_THROWS_AS(dynamics.addAgent(0, 0), std::invalid_argument);
         }
       }
     }
@@ -290,7 +280,7 @@ TEST_CASE("Dynamics") {
       Dynamics dynamics{graph, 69};
       dynamics.setPassageProbability(p);
       WHEN("We add some agent") {
-        dynamics.addRandomAgents(n);
+        dynamics.addAgents(n);
         THEN("The number of agents is correct") { CHECK_EQ(dynamics.nAgents(), 100); }
         THEN("If we evolve the dynamics agent disappear gradually") {
           for (auto i{0}; i < 40; ++i) {
@@ -308,13 +298,8 @@ TEST_CASE("Dynamics") {
       Dynamics dynamics{graph, 69};
       Itinerary itinerary{0, 2};
       dynamics.addItinerary(itinerary);
-      WHEN("We add an agent with itinerary 1") {
-        THEN("An exception is thrown") {
-          CHECK_THROWS_AS(dynamics.addAgents(1), std::invalid_argument);
-        }
-      }
-      WHEN("We add and agent with itinerary 0") {
-        dynamics.addAgents(0);
+      WHEN("We add an agent with itinerary 0") {
+        dynamics.addAgent(0, 0);
         THEN(
             "The number of agents is 1 and the destination is the same as the "
             "itinerary") {
@@ -326,7 +311,7 @@ TEST_CASE("Dynamics") {
         }
       }
       WHEN("We add 69 agents with itinerary 0") {
-        dynamics.addAgents(0, 69);
+        dynamics.addAgents(69, 0);
         THEN("The number of agents is 69") { CHECK_EQ(dynamics.nAgents(), 69); }
       }
     }
@@ -345,10 +330,8 @@ TEST_CASE("Dynamics") {
       WHEN("We add more than one agent") {
         THEN("It throws") {
           CHECK_THROWS_AS(dynamics.addAgentsUniformly(1), std::overflow_error);
-          CHECK_THROWS_AS(dynamics.addAgents(0, 1), std::overflow_error);
-          auto dummyAgent = Agent(0, 0);
-          CHECK_THROWS_AS(dynamics.addAgent(dummyAgent), std::overflow_error);
-          CHECK_THROWS_AS(dynamics.addAgent(std::make_unique<Agent>(dummyAgent)),
+          CHECK_THROWS_AS(dynamics.addAgent(1, 0, 0), std::overflow_error);
+          CHECK_THROWS_AS(dynamics.addAgent(std::make_unique<Agent>(Agent(1, 0))),
                           std::overflow_error);
         }
       }
@@ -477,7 +460,7 @@ TEST_CASE("Dynamics") {
       dynamics.addItinerary(itinerary);
       dynamics.updatePaths();
       WHEN("We add an agent randomly and evolve the dynamics") {
-        dynamics.addAgent(Agent(0, 0, 0));
+        dynamics.addAgent(0, 0, 0);
         dynamics.evolve(false);
         dynamics.evolve(false);
         THEN("The agent evolves") {
@@ -508,7 +491,7 @@ TEST_CASE("Dynamics") {
       Itinerary itinerary{0, 1};
       dynamics.addItinerary(itinerary);
       dynamics.updatePaths();
-      dynamics.addAgent(Agent(0, 0, 0));
+      dynamics.addAgent(0, 0, 0);
       WHEN("We evolve the dynamics") {
         dynamics.evolve(false);
         dynamics.evolve(false);
@@ -533,7 +516,7 @@ TEST_CASE("Dynamics") {
       Itinerary itinerary{0, 1};
       dynamics.addItinerary(itinerary);
       dynamics.updatePaths();
-      dynamics.addAgent(Agent(0, 0, 0));
+      dynamics.addAgent(0, 0, 0);
       WHEN("We evolve the dynamics with reinsertion") {
         dynamics.evolve(true);
         dynamics.evolve(true);
@@ -566,8 +549,7 @@ TEST_CASE("Dynamics") {
       std::vector<dsm::Id> dsts{1, 2};
       dynamics.setDestinationNodes(dsts);
       std::vector<dsm::Id> trip{2, 1};
-      Agent agent{0, trip, 0};
-      dynamics.addAgent(agent);
+      dynamics.addAgent(0, trip, 0);
       auto const& pAgent{dynamics.agents().at(0)};
       WHEN("We evolve the dynamics") {
         dynamics.evolve(false);
@@ -611,7 +593,7 @@ TEST_CASE("Dynamics") {
       Itinerary itinerary{0, 2};
       dynamics.addItinerary(itinerary);
       dynamics.updatePaths();
-      dynamics.addAgent(Agent(0, 0, 0));
+      dynamics.addAgent(0, 0, 0);
       WHEN("We evolve the dynamics") {
         dynamics.evolve(false);
         THEN(
@@ -802,8 +784,8 @@ TEST_CASE("Dynamics") {
         Dynamics dynamics{graph2, 69};
         std::vector<dsm::Id> destinationNodes{0, 2, 3, 4};
         dynamics.setDestinationNodes(destinationNodes);
-        dynamics.addAgents(0, 7, 2);
-        dynamics.addAgents(2, 7, 0);
+        dynamics.addAgents(7, 0, 2);
+        dynamics.addAgents(7, 2, 0);
         dynamics.setDataUpdatePeriod(4);
         auto const& cycles{tl.cycles()};
         WHEN("We evolve the dynamics and optimize traffic lights") {
@@ -827,10 +809,10 @@ TEST_CASE("Dynamics") {
             "We evolve the dynamics and optimize traffic lights with outgoing "
             "streets "
             "full") {
-          dynamics.addAgents(0, 5, 1);
-          dynamics.addAgents(2, 5, 1);
-          dynamics.addAgents(3, 5, 1);
-          dynamics.addAgents(4, 5, 1);
+          dynamics.addAgents(5, 0, 1);
+          dynamics.addAgents(5, 2, 1);
+          dynamics.addAgents(5, 3, 1);
+          dynamics.addAgents(5, 4, 1);
           for (int i = 0; i < 15; ++i) {
             dynamics.evolve(false);
           }
@@ -869,14 +851,14 @@ TEST_CASE("Dynamics") {
       dynamics.addItinerary(itinerary);
       dynamics.addItinerary(itinerary2);
       dynamics.updatePaths();
-      dynamics.addAgent(Agent(0, 0, 0));
-      dynamics.addAgent(Agent(1, 1, 2));
+      dynamics.addAgent(0, 0, 0);
+      dynamics.addAgent(1, 1, 2);
       WHEN(
           "We evolve the dynamics adding an agent on the path of the agent "
           "with "
           "priority") {
         dynamics.evolve(false);
-        dynamics.addAgent(Agent(2, 0, 1));
+        dynamics.addAgent(2, 0, 1);
         dynamics.evolve(false);
         dynamics.evolve(false);
         THEN("The agents are trapped into the roundabout") {
@@ -905,7 +887,7 @@ TEST_CASE("Dynamics") {
       Itinerary itinerary{0, 2};
       dynamics.addItinerary(itinerary);
       dynamics.updatePaths();
-      dynamics.addAgent(Agent(0, 0, 0));
+      dynamics.addAgent(0, 0, 0);
       WHEN("We evolve the dynamics") {
         dynamics.evolve(false);
         dynamics.evolve(false);
@@ -938,7 +920,7 @@ TEST_CASE("Dynamics") {
     Itinerary itinerary{0, 2};
     dynamics.addItinerary(itinerary);
     dynamics.updatePaths();
-    dynamics.addAgents(0, 4, 0);
+    dynamics.addAgents(4, 0, 0);
     dynamics.evolve(false);
     dynamics.evolve(false);
     double meanSpeed{0.};
@@ -956,7 +938,7 @@ TEST_CASE("Dynamics") {
     CHECK_EQ(dynamics.streetMeanSpeed(0.2, true).std, 0.);
     CHECK_EQ(dynamics.streetMeanSpeed(0.2, false).mean, 15.);
     CHECK_EQ(dynamics.streetMeanSpeed(0.2, false).std, 0.);
-    dynamics.addAgents(0, 10, 0);
+    (10, 0, 0);
     dynamics.evolve(false);
     meanSpeed = 0.;
     for (const auto& [agentId, agent] : dynamics.agents()) {
@@ -1009,9 +991,9 @@ TEST_CASE("Dynamics") {
       dynamics.updatePaths();
       WHEN("We add agents and evolve the dynamics") {
         // add an agent in C, D, A
-        dynamics.addAgent(Agent(0, 0, 4));
-        dynamics.addAgent(Agent(1, 0, 3));
-        dynamics.addAgent(Agent(2, 0, 1));
+        dynamics.addAgent(0, 0, 4);
+        dynamics.addAgent(1, 0, 3);
+        dynamics.addAgent(2, 0, 1);
         dynamics.evolve(false);
         dynamics.evolve(false);
         dynamics.evolve(false);
@@ -1031,9 +1013,9 @@ TEST_CASE("Dynamics") {
         }
       }
       WHEN("We add agents of another itinerary and update the dynamics") {
-        dynamics.addAgent(Agent(0, 1, 2));
-        dynamics.addAgent(Agent(1, 1, 3));
-        dynamics.addAgent(Agent(2, 1, 4));
+        dynamics.addAgent(0, 1, 2);
+        dynamics.addAgent(1, 1, 3);
+        dynamics.addAgent(2, 1, 4);
         dynamics.evolve(false);
         dynamics.evolve(false);
         dynamics.evolve(false);
@@ -1067,7 +1049,7 @@ TEST_CASE("Dynamics") {
       Itinerary itinerary{0, 2};
       dynamics.addItinerary(itinerary);
       dynamics.updatePaths();
-      dynamics.addAgent(Agent(0, 0, 0));
+      dynamics.addAgent(0, 0, 0);
       WHEN("We evolve the dynamics") {
         dynamics.evolve(false);
         dynamics.evolve(false);
@@ -1099,7 +1081,7 @@ TEST_CASE("Dynamics") {
       Itinerary itinerary{0, 2};
       dynamics.addItinerary(itinerary);
       dynamics.updatePaths();
-      dynamics.addAgent(Agent(0, 0, 0));
+      dynamics.addAgent(0, 0, 0);
       WHEN("We evolve the dynamics") {
         dynamics.evolve(false);
         dynamics.evolve(false);
