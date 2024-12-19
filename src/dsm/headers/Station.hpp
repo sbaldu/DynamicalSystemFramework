@@ -40,7 +40,7 @@ namespace dsm {
     void enqueue(Id trainId, train_t trainType);
     /// @brief Dequeue a train from the station
     /// @return The id of the dequeued train
-    Id dequeue();
+    std::optional<Id> dequeue();
     /// @brief Get the time it takes between two train departures/arrivals
     /// @return The management time
     Delay managementTime() const;

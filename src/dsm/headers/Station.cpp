@@ -20,7 +20,10 @@ namespace dsm {
     m_trains.emplace(trainType, trainId);
   }
 
-  Id Station::dequeue() {
+  std::optional<Id> Station::dequeue() {
+    if (m_trains.empty()) {
+      return std::nullopt;
+    }
     auto it = m_trains.begin();
     Id trainId = it->second;
     m_trains.erase(it);
