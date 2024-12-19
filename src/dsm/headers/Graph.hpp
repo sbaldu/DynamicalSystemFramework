@@ -155,9 +155,11 @@ namespace dsm {
     /// @brief Add a node to the graph
     /// @param node A std::unique_ptr to the node to add
     void addNode(std::unique_ptr<Node> node);
-    /// @brief Add a node to the graph
-    /// @param node A reference to the node to add
-    void addNode(const Intersection& node);
+
+    template <typename node_t, typename... TArgs>
+      requires(std::is_base_of_v<Node, node_t>,
+               std::constructible_from<node_t, Id, TArgs...>)
+    node_t& addNode(Id id, TArgs&&... args);
 
     template <typename... Tn>
       requires(is_node_v<std::remove_reference_t<Tn>> && ...)
@@ -195,8 +197,8 @@ namespace dsm {
     Station& makeStation(Id nodeId, const unsigned int managementTime);
 
     /// @brief Add a street to the graph
-    /// @param street A std::shared_ptr to the street to add
-    void addStreet(std::shared_ptr<Street> street);
+    /// @param street A std::unique_ptr to the street to add
+    void addStreet(std::unique_ptr<Street> street);
     /// @brief Add a street to the graph
     /// @param street A reference to the street to add
     void addStreet(const Street& street);
@@ -271,10 +273,16 @@ namespace dsm {
                                                Func f = streetLength) const;
   };
 
+  template <typename node_t, typename... TArgs>
+    requires(std::is_base_of_v<Node, node_t>,
+             std::constructible_from<node_t, Id, TArgs...>)
+  node_t& Graph::addNode(Id id, TArgs&&... args) {
+    addNode(std::make_unique<node_t>(id, std::forward<TArgs>(args)...));
+    return dynamic_cast<node_t&>(*m_nodes[id]);
+  }
   template <typename... Tn>
     requires(is_node_v<std::remove_reference_t<Tn>> && ...)
   void Graph::addNodes(Tn&&... nodes) {}
-
   template <typename T1, typename... Tn>
     requires is_node_v<std::remove_reference_t<T1>> &&
              (is_node_v<std::remove_reference_t<Tn>> && ...)

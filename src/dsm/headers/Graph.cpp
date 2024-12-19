@@ -425,10 +425,6 @@ namespace dsm {
     m_nodes.emplace(std::make_pair(node->id(), std::move(node)));
   }
 
-  void Graph::addNode(const Intersection& node) {
-    m_nodes.emplace(std::make_pair(node.id(), std::make_unique<Intersection>(node)));
-  }
-
   TrafficLight& Graph::makeTrafficLight(Id const nodeId,
                                         Delay const cycleTime,
                                         Delay const counter) {
@@ -468,7 +464,7 @@ namespace dsm {
     return dynamic_cast<SpireStreet&>(*pStreet);
   }
 
-  void Graph::addStreet(std::shared_ptr<Street> street) {
+  void Graph::addStreet(std::unique_ptr<Street> street) {
     if (m_streets.contains(street->id())) {
       throw std::invalid_argument(
           buildLog(std::format("Street with id {} already exists.", street->id())));
@@ -483,7 +479,7 @@ namespace dsm {
       m_nodes.emplace(dstId, std::make_unique<Intersection>(dstId));
     }
     // emplace street
-    m_streets.emplace(street->id(), street.get());
+    m_streets.emplace(std::make_pair(street->id(), std::move(street)));
   }
 
   void Graph::addStreet(const Street& street) {
