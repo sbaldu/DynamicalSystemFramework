@@ -196,6 +196,10 @@ namespace dsm {
     /// @throws std::invalid_argument if the node does not exist
     Station& makeStation(Id nodeId, const unsigned int managementTime);
 
+    template <typename edge_t, typename... TArgs>
+      requires(std::is_base_of_v<Street, edge_t>,
+               std::constructible_from<edge_t, Id, TArgs...>)
+    edge_t& addEdge(Id id, TArgs&&... args);
     /// @brief Add a street to the graph
     /// @param street A std::unique_ptr to the street to add
     void addStreet(std::unique_ptr<Street> street);
@@ -289,6 +293,14 @@ namespace dsm {
   void Graph::addNodes(T1&& node, Tn&&... nodes) {
     addNode(std::forward<T1>(node));
     addNodes(std::forward<Tn>(nodes)...);
+  }
+
+  template <typename edge_t, typename... TArgs>
+    requires(std::is_base_of_v<Street, edge_t>,
+             std::constructible_from<edge_t, Id, TArgs...>)
+  edge_t& Graph::addEdge(Id id, TArgs&&... args) {
+    addStreet(std::make_unique<edge_t>(id, std::forward<TArgs>(args)...));
+    return dynamic_cast<edge_t&>(*m_streets[id]);
   }
 
   template <typename T1>
