@@ -20,13 +20,12 @@ int main() {
   Bench b1(n_rep);
 
   std::cout << "Benchmarking addNode\n";
-  Intersection n1(std::rand());
-  b1.benchmark([&g1](const Intersection& node) -> void { g1.addNode(node); }, n1);
+  b1.benchmark([&g1]() -> void { g1.addNode<Intersection>(std::rand()); });
   b1.print();
   std::cout << "Benchmarking addNodes overhead for a single node\n";
-  n1 = Intersection(std::rand());
-  b1.benchmark([&g1](const Intersection& node) -> void { g1.addNodes(node); }, n1);
-  b1.print();
+  // n1 = Intersection(std::rand());
+  // b1.benchmark([&g1](const Intersection& node) -> void { g1.addNodes(node); }, n1);
+  // b1.print();
 
   // std::cout << "Benchmarking addStreet\n";
   // Street s1(std::rand(), std::make_pair(0, 1));
