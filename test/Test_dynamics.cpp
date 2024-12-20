@@ -954,33 +954,20 @@ TEST_CASE("Dynamics") {
   }
   SUBCASE("Intersection priorities") {
     GIVEN("A dynamics object with five nodes and eight streets") {
-      Intersection nodeO{0, std::make_pair(0, 0)};
-      Intersection nodeA{1, std::make_pair(-1, 1)};
-      Intersection nodeB{2, std::make_pair(1, 1)};
-      Intersection nodeC{3, std::make_pair(1, -1)};
-      Intersection nodeD{4, std::make_pair(-1, -1)};
-      Street sAO{0, 1, 10., 10., std::make_pair(1, 0)};
-      Street sBO{1, 1, 10., 10., std::make_pair(2, 0)};
-      Street sCO{2, 1, 10., 10., std::make_pair(3, 0)};
-      Street sDO{3, 1, 10., 10., std::make_pair(4, 0)};
-      Street sOA{4, 1, 10., 10., std::make_pair(0, 1)};
-      Street sOB{5, 1, 10., 10., std::make_pair(0, 2)};
-      Street sOC{6, 1, 10., 10., std::make_pair(0, 3)};
-      Street sOD{7, 1, 10., 10., std::make_pair(0, 4)};
       Graph graph2;
-      graph2.addNode(nodeO);
-      graph2.addNode(nodeA);
-      graph2.addNode(nodeB);
-      graph2.addNode(nodeC);
-      graph2.addNode(nodeD);
-      graph2.addStreet(sAO);
-      graph2.addStreet(sBO);
-      graph2.addStreet(sCO);
-      graph2.addStreet(sDO);
-      graph2.addStreet(sOA);
-      graph2.addStreet(sOB);
-      graph2.addStreet(sOC);
-      graph2.addStreet(sOD);
+      auto& nodeO = graph2.addNode<Intersection>(0, std::make_pair(0, 0));
+      auto& nodeA = graph2.addNode<Intersection>(1, std::make_pair(-1, 1));
+      auto& nodeB = graph2.addNode<Intersection>(2, std::make_pair(1, 1));
+      auto& nodeC = graph2.addNode<Intersection>(3, std::make_pair(1, -1));
+      auto& nodeD = graph2.addNode<Intersection>(4, std::make_pair(-1, -1));
+      auto& sOA = graph2.addEdge<Street>(0, 1, 10., 10., std::make_pair(0, 1));
+      auto& sOB = graph2.addEdge<Street>(1, 1, 10., 10., std::make_pair(0, 2));
+      auto& sOC = graph2.addEdge<Street>(2, 1, 10., 10., std::make_pair(0, 3));
+      auto& sOD = graph2.addEdge<Street>(3, 1, 10., 10., std::make_pair(0, 4));
+      auto& sAO = graph2.addEdge<Street>(4, 1, 10., 10., std::make_pair(1, 0));
+      auto& sBO = graph2.addEdge<Street>(5, 1, 10., 10., std::make_pair(2, 0));
+      auto& sCO = graph2.addEdge<Street>(6, 1, 10., 10., std::make_pair(3, 0));
+      auto& sDO = graph2.addEdge<Street>(7, 1, 10., 10., std::make_pair(4, 0));
       graph2.buildAdj();
       Dynamics dynamics{graph2, 69};
       dynamics.graph().nodeSet().at(0)->setCapacity(3);
@@ -1038,13 +1025,10 @@ TEST_CASE("Dynamics") {
   }
   SUBCASE("meanSpireFlow") {
     GIVEN("A network with a spireStreet and a normal street") {
-      SpireStreet ss{0, 1, 10., 5., std::make_pair(0, 1)};
-      Street s{1, 1, 10., 10., std::make_pair(1, 2)};
       Graph graph2;
-      graph2.addStreet(ss);
-      graph2.addStreet(s);
+      graph2.addEdge<SpireStreet>(0, 1, 10., 5., std::make_pair(0, 1));
+      graph2.addEdge<Street>(1, 1, 10., 10., std::make_pair(1, 2));
       graph2.buildAdj();
-      graph2.makeSpireStreet(1);
       Dynamics dynamics{graph2, 69};
       Itinerary itinerary{0, 2};
       dynamics.addItinerary(itinerary);
@@ -1070,13 +1054,10 @@ TEST_CASE("Dynamics") {
   }
   SUBCASE("meanSpireFlow") {
     GIVEN("A network with a spireStreet and a normal street") {
-      SpireStreet ss{0, 1, 10., 5., std::make_pair(0, 1)};
-      Street s{1, 1, 10., 10., std::make_pair(1, 2)};
       Graph graph2;
-      graph2.addStreet(ss);
-      graph2.addStreet(s);
+      graph2.addEdge<SpireStreet>(0, 1, 10., 5., std::make_pair(0, 1));
+      graph2.addEdge<Street>(1, 1, 10., 10., std::make_pair(1, 2));
       graph2.buildAdj();
-      graph2.makeSpireStreet(1);
       Dynamics dynamics{graph2, 69};
       Itinerary itinerary{0, 2};
       dynamics.addItinerary(itinerary);

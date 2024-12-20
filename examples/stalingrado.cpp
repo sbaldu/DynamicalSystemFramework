@@ -46,6 +46,7 @@ int main() {
   const auto MAX_TIME{static_cast<Unit>(timeUnit * vehiclesToInsert.size())};
 
   // Create the graph
+  Graph graph;
 
   // Street(StreetId, Capacity, Length, vMax, (from, to))
   Street s01{1, 2281 / 8, 2281., 13.9, std::make_pair(0, 1)};
@@ -53,27 +54,22 @@ int main() {
   Street s23{13, 222 / 8, 222., 13.9, std::make_pair(2, 3)};
   Street s34{19, 1, 651., 13.9, std::make_pair(3, 4), 2};
   // Viale Aldo Moro
-  TrafficLight tl1{1, 132};
+  auto& tl1 = graph.addNode<TrafficLight>(1, 132);
   tl1.setCycle(s01.id(), dsm::Direction::ANY, {62, 0});
   tl1.setCapacity(1);
   // Via Donato Creti
-  TrafficLight tl2{2, 141};
+  auto& tl2 = graph.addNode<TrafficLight>(2, 141);
   tl2.setCycle(s12.id(), dsm::Direction::ANY, {72, 0});
   tl2.setCapacity(1);
   // Via del Lavoro
-  TrafficLight tl3{3, 138};
+  auto& tl3 = graph.addNode<TrafficLight>(3, 138);
   tl3.setCycle(s23.id(), dsm::Direction::ANY, {88, 0});
   tl3.setCapacity(1);
   // Viali
-  TrafficLight tl4{4, 131};
+  auto& tl4 = graph.addNode<TrafficLight>(4, 131);
   tl4.setCycle(s34.id(), dsm::Direction::ANY, {81, 0});
   tl4.setCapacity(1);
 
-  Graph graph;
-  graph.addNode(std::make_unique<TrafficLight>(tl1));
-  graph.addNode(std::make_unique<TrafficLight>(tl2));
-  graph.addNode(std::make_unique<TrafficLight>(tl3));
-  graph.addNode(std::make_unique<TrafficLight>(tl4));
   graph.addStreets(s01, s12, s23, s34);
   graph.buildAdj();
   graph.adjustNodeCapacities();

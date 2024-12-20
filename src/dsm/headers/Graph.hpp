@@ -155,9 +155,14 @@ namespace dsm {
     /// @brief Add a node to the graph
     /// @param node A std::unique_ptr to the node to add
     void addNode(std::unique_ptr<Node> node);
-    /// @brief Add a node to the graph
-    /// @param node A reference to the node to add
-    void addNode(const Intersection& node);
+    /// @brief Add a node of type node_t to the graph
+    /// @param id The node's id
+    /// @param args The node's arguments to forward to the constructor
+    /// @return A reference to the added node
+    template <typename node_t, typename... TArgs>
+      requires(std::is_base_of_v<Node, node_t>,
+               std::constructible_from<node_t, Id, TArgs...>)
+    node_t& addNode(Id id, TArgs&&... args);
 
     template <typename... Tn>
       requires(is_node_v<std::remove_reference_t<Tn>> && ...)
@@ -194,9 +199,17 @@ namespace dsm {
     /// @throws std::invalid_argument if the node does not exist
     Station& makeStation(Id nodeId, const unsigned int managementTime);
 
+    /// @brief Add an edge of type edge_t to the graph
+    /// @param edge A std::unique_ptr to the edge to add
+    /// @param args The edge's arguments to forward to the constructor
+    /// @return A reference to the added edge
+    template <typename edge_t, typename... TArgs>
+      requires(std::is_base_of_v<Street, edge_t>,
+               std::constructible_from<edge_t, Id, TArgs...>)
+    edge_t& addEdge(Id id, TArgs&&... args);
     /// @brief Add a street to the graph
-    /// @param street A std::shared_ptr to the street to add
-    void addStreet(std::shared_ptr<Street> street);
+    /// @param street A std::unique_ptr to the street to add
+    void addStreet(std::unique_ptr<Street> street);
     /// @brief Add a street to the graph
     /// @param street A reference to the street to add
     void addStreet(const Street& street);
@@ -271,16 +284,30 @@ namespace dsm {
                                                Func f = streetLength) const;
   };
 
+  template <typename node_t, typename... TArgs>
+    requires(std::is_base_of_v<Node, node_t>,
+             std::constructible_from<node_t, Id, TArgs...>)
+  node_t& Graph::addNode(Id id, TArgs&&... args) {
+    addNode(std::make_unique<node_t>(id, std::forward<TArgs>(args)...));
+    return dynamic_cast<node_t&>(*m_nodes[id]);
+  }
   template <typename... Tn>
     requires(is_node_v<std::remove_reference_t<Tn>> && ...)
   void Graph::addNodes(Tn&&... nodes) {}
-
   template <typename T1, typename... Tn>
     requires is_node_v<std::remove_reference_t<T1>> &&
              (is_node_v<std::remove_reference_t<Tn>> && ...)
   void Graph::addNodes(T1&& node, Tn&&... nodes) {
     addNode(std::forward<T1>(node));
     addNodes(std::forward<Tn>(nodes)...);
+  }
+
+  template <typename edge_t, typename... TArgs>
+    requires(std::is_base_of_v<Street, edge_t>,
+             std::constructible_from<edge_t, Id, TArgs...>)
+  edge_t& Graph::addEdge(Id id, TArgs&&... args) {
+    addStreet(std::make_unique<edge_t>(id, std::forward<TArgs>(args)...));
+    return dynamic_cast<edge_t&>(*m_streets[id]);
   }
 
   template <typename T1>
