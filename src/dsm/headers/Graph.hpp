@@ -155,7 +155,10 @@ namespace dsm {
     /// @brief Add a node to the graph
     /// @param node A std::unique_ptr to the node to add
     void addNode(std::unique_ptr<Node> node);
-
+    /// @brief Add a node of type node_t to the graph
+    /// @param id The node's id
+    /// @param args The node's arguments to forward to the constructor
+    /// @return A reference to the added node
     template <typename node_t, typename... TArgs>
       requires(std::is_base_of_v<Node, node_t>,
                std::constructible_from<node_t, Id, TArgs...>)
@@ -196,6 +199,10 @@ namespace dsm {
     /// @throws std::invalid_argument if the node does not exist
     Station& makeStation(Id nodeId, const unsigned int managementTime);
 
+    /// @brief Add an edge of type edge_t to the graph
+    /// @param edge A std::unique_ptr to the edge to add
+    /// @param args The edge's arguments to forward to the constructor
+    /// @return A reference to the added edge
     template <typename edge_t, typename... TArgs>
       requires(std::is_base_of_v<Street, edge_t>,
                std::constructible_from<edge_t, Id, TArgs...>)
