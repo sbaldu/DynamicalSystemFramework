@@ -186,25 +186,53 @@ TEST_CASE("Graph") {
       WHEN("We import nodes and edges from OSM") {
         graph.importOSMNodes("./data/nodes.csv");
         graph.importOSMEdges("./data/edges.csv");
+        std::ifstream fNodes{"./data/nodes.csv"};
+        // get number of lines
+        std::string line;
+        int nNodes{-1};  // -1 because of the header
+        while (std::getline(fNodes, line)) {
+          ++nNodes;
+        }
+        fNodes.close();
+        std::ifstream fEdges{"./data/edges.csv"};
+        int nEdges{-1};  // -1 because of the header
+        while (std::getline(fEdges, line)) {
+          ++nEdges;
+        }
+        fEdges.close();
         THEN("Sizes are correct") {
-          CHECK_EQ(graph.nNodes(), 25);
-          CHECK_EQ(graph.nEdges(), 60);
+          CHECK_EQ(graph.nNodes(), nNodes);
+          CHECK_EQ(graph.nEdges(), nEdges);
         }
         THEN("We are able to build the adjacency matrix") {
           graph.buildAdj();
-          CHECK_EQ(graph.adjMatrix().size(), 60);
+          CHECK_EQ(graph.adjMatrix().size(), nEdges);
         }
       }
       WHEN("We import many nodes and edges from OSM") {
         graph.importOSMNodes("./data/nodes_big.csv");
         graph.importOSMEdges("./data/edges_big.csv");
+        std::ifstream fNodes{"./data/nodes_big.csv"};
+        // get number of lines
+        std::string line;
+        int nNodes{-1};  // -1 because of the header
+        while (std::getline(fNodes, line)) {
+          ++nNodes;
+        }
+        fNodes.close();
+        std::ifstream fEdges{"./data/edges_big.csv"};
+        int nEdges{-1};  // -1 because of the header
+        while (std::getline(fEdges, line)) {
+          ++nEdges;
+        }
+        fEdges.close();
         THEN("Sizes are correct") {
-          CHECK_EQ(graph.nNodes(), 4077);
-          CHECK_EQ(graph.nEdges(), 8875);
+          CHECK_EQ(graph.nNodes(), nNodes);
+          CHECK_EQ(graph.nEdges(), nEdges);
         }
         THEN("We are able to build the adjacency matrix") {
           graph.buildAdj();
-          CHECK_EQ(graph.adjMatrix().size(), 8875);
+          CHECK_EQ(graph.adjMatrix().size(), nEdges);
         }
       }
     }
