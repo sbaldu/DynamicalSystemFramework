@@ -252,11 +252,15 @@ namespace dsm {
       }
     } else if (fileExt == "csv") {
       std::ifstream ifs{fileName};
-      assert((void("Coordinates file not found."), ifs.is_open()));
+      if (!ifs.is_open()) {
+        throw std::invalid_argument(buildLog("Cannot find file: " + fileName));
+      }
       // Check if the first line is nodeId;lat;lon
       std::string line;
       std::getline(ifs, line);
-      assert((void("Invalid file format."), line == "nodeId;lat;lon"));
+      if (line != "nodeId;lat;lon") {
+        throw std::invalid_argument(buildLog("Invalid file format."));
+      }
       double dLat, dLon;
       while (!ifs.eof()) {
         std::getline(ifs, line);
@@ -304,10 +308,16 @@ namespace dsm {
         std::getline(iss, lat, ';');
         std::getline(iss, lon, ';');
         std::getline(iss, highway, ';');
-        Id nodeId{static_cast<Id>(std::stoul(id))};
-        m_nodes.emplace(nodeIndex,
-                        std::make_unique<Intersection>(
-                            nodeIndex, std::make_pair(std::stod(lat), std::stod(lon))));
+        auto const nodeId{static_cast<Id>(std::stoul(id))};
+        if (highway.find("traffic_signals") != std::string::npos) {
+          addNode<TrafficLight>(
+              nodeIndex, 60, std::make_pair(std::stod(lat), std::stod(lon)));
+        } else if (highway.find("roundabout") != std::string::npos) {
+          addNode<Roundabout>(nodeIndex, std::make_pair(std::stod(lat), std::stod(lon)));
+        } else {
+          addNode<Intersection>(nodeIndex,
+                                std::make_pair(std::stod(lat), std::stod(lon)));
+        }
         m_nodeMapping.emplace(std::make_pair(nodeId, nodeIndex));
         ++nodeIndex;
       }
@@ -321,9 +331,8 @@ namespace dsm {
     if (fileExt == "csv") {
       std::ifstream file{fileName};
       if (!file.is_open()) {
-        std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
-                              __FILE__ + ": " + "File not found"};
-        throw std::invalid_argument(errrorMsg);
+        throw std::invalid_argument(
+            buildLog(std::format("File \'{}\' not found", fileName)));
       }
       std::string line;
       std::getline(file, line);  // skip first line
@@ -333,8 +342,8 @@ namespace dsm {
           continue;
         }
         std::istringstream iss{line};
-        std::string sourceId, targetId, length, oneway, lanes, highway, maxspeed, bridge;
-        // u;v;length;oneway;highway;maxspeed;bridge
+        std::string sourceId, targetId, length, oneway, lanes, highway, maxspeed, name;
+        // u;v;length;oneway;highway;maxspeed;name
         std::getline(iss, sourceId, ';');
         std::getline(iss, targetId, ';');
         std::getline(iss, length, ';');
@@ -342,45 +351,39 @@ namespace dsm {
         std::getline(iss, lanes, ';');
         std::getline(iss, highway, ';');
         std::getline(iss, maxspeed, ';');
-        std::getline(iss, bridge, ';');
-        try {
-          std::stod(maxspeed);
-        } catch (const std::invalid_argument& e) {
-          maxspeed = "30";
-        }
-
-        uint8_t numLanes;
-        if (lanes.empty()) {
-          numLanes = 1;  // Default to 1 lane if no value is provided
+        std::getline(iss, name, ';');
+        if (maxspeed.empty()) {
+          maxspeed = "30";  // Default to 30 km/h if no maxspeed is provided
         } else {
           try {
-            // Convert lanes to a double first, then cast to uint8_t
-            double lanesVal = std::stod(lanes);
-            if (lanesVal < 1 || std::isnan(lanesVal)) {
-              numLanes = 1;  // Default to 1 if lanes is invalid
-            } else {
-              numLanes = static_cast<uint8_t>(lanesVal);  // Cast to uint8_t
-            }
-          } catch (const std::invalid_argument&) {
-            numLanes = 1;  // Default to 1 if conversion fails
+            std::stod(maxspeed);
+          } catch (const std::invalid_argument& e) {
+            maxspeed = "30";  // Default to 30 km/h if maxspeed is invalid
+          }
+        }
+
+        if (lanes.empty()) {
+          lanes = "1";  // Default to 1 lane if no value is provided
+        } else {
+          try {
+            std::stoul(lanes);
+          } catch (const std::invalid_argument& e) {
+            lanes = "1";  // Default to 1 lane if lanes is invalid
           }
         }
 
         Id streetId = std::stoul(sourceId) + std::stoul(targetId) * m_nodes.size();
-        m_streets.emplace(
-            streetId,
-            std::make_unique<Street>(streetId,
-                                     1,
-                                     std::stod(maxspeed),
-                                     std::stod(length),
-                                     std::make_pair(m_nodeMapping[std::stoul(sourceId)],
-                                                    m_nodeMapping[std::stoul(targetId)]),
-                                     numLanes));
+        addEdge<Street>(streetId,
+                        std::stod(length) / 5,
+                        std::stod(maxspeed),
+                        std::stod(length),
+                        std::make_pair(m_nodeMapping[std::stoul(sourceId)],
+                                       m_nodeMapping[std::stoul(targetId)]),
+                        std::stoul(lanes),
+                        name);
       }
     } else {
-      std::string errrorMsg{"Error at line " + std::to_string(__LINE__) + " in file " +
-                            __FILE__ + ": " + "File extension not supported"};
-      throw std::invalid_argument(errrorMsg);
+      throw std::invalid_argument(buildLog("File extension not supported"));
     }
   }
 

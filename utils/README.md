@@ -3,11 +3,15 @@
 In order to get data correctly formatted from OpenStreetMap you can use the *get_osm_data.py* script, passing as argument the locality for which you want the data.
 For example:
 ```shell
-python3 get_osm_data.py postua, vercelli, italy
+python3 get_osm_data.py --place "Postua, Piemonte, Italy"
+```
+For big cities, it is also possible to exclude residential areas:
+```shell
+python3 get_osm_data.py --place "Bologna, Emilia-Romagna, Italy" --exclude-residential True
 ```
 
-## Gifter
-Script to generate a GIF from the data in the temp_img folder, produced by the main library.
+## Videomaker
+Script to generate a `mp4` video of the network evolution, using street densities as input.
 With this, one can see the evolution of the network over time.
 
 ## Plotter
