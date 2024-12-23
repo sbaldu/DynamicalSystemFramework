@@ -13,13 +13,16 @@ The files are saved in the current directory.
 """
 
 from argparse import ArgumentParser
+import logging
 import osmnx as ox
 import networkx as nx
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
-import logging
+import pandas as pd
+from shapely.geometry import MultiLineString, LineString
+from shapely.ops import linemerge
 
-RGBA_RED = (1, 0, 0, 0.1)
+RGBA_RED = (1, 0, 0, 0.3)
 RGBA_WHITE = (1, 1, 1, 1)
 
 FLAGS_MOTORWAY = ["motorway", "motorway_link"]
@@ -43,116 +46,144 @@ FLAGS_RESIDENTIAL = [
 ]
 
 
-def simplify_graph(_G):
-    G = _G.copy()
+def merge_edges(
+    graph: nx.DiGraph, previous_node: int, successive_node: int, node: int
+) -> dict:
+    """
+    Merge two edges into a single edge.
+    The function merges the edges into a single edge if the following conditions are met:
+    - the name of the two edges is the same
+    - the number of lanes is the same
+    - the geometry of the two edges is contiguous
+    - the coordinates of the previous_node and successive_node are in the geometry
+
+    Parameters:
+    ----------------
+    graph (networkx.DiGraph): the graph
+    previous_node (int): the previous node
+    successive_node (int): the successive node
+    node (int): the id of the node which will be removed
+
+    Returns:
+    ----------------
+    dict: the new edge
+    """
+    try:
+        data_u = graph.get_edge_data(previous_node, node)[0]
+        data_v = graph.get_edge_data(node, successive_node)[0]
+        data_u.setdefault("lanes", 1)
+        data_v.setdefault("lanes", 1)
+        if (
+            not (data_u["name"] in data_v["name"] or data_v["name"] in data_u["name"])
+            or data_u["lanes"] != data_v["lanes"]
+        ):
+            return None
+        edge_uv = data_u.copy()
+        # set length as the sum
+        edge_uv["length"] = data_u["length"] + data_v["length"]
+        edge_uv["lanes"] = int(data_u["lanes"])
+        # merge also linestrings
+        edge_uv["geometry"] = data_u["geometry"].union(data_v["geometry"])
+        if isinstance(edge_uv["geometry"], MultiLineString):
+            edge_uv["geometry"] = linemerge(edge_uv["geometry"])
+        else:
+            edge_uv["geometry"] = edge_uv["geometry"]
+        if isinstance(edge_uv["geometry"], LineString):
+            coords = list(edge_uv["geometry"].coords)
+        else:
+            # If it's still a MultiLineString,
+            # handle it by iterating through its individual LineStrings
+            coords = []
+            for line in edge_uv["geometry"]:
+                coords.extend(
+                    list(line.coords)
+                )  # Add coords from each individual LineString
+        # take the list from coordinates of previous_node to coordinates of successive_node
+        u_coords = (graph.nodes[previous_node]["x"], graph.nodes[previous_node]["y"])
+        v_coords = (
+            graph.nodes[successive_node]["x"],
+            graph.nodes[successive_node]["y"],
+        )
+        if u_coords not in coords or v_coords not in coords:
+            return None
+        # cut coords from u_index to v_index
+        edge_uv["geometry"] = LineString(
+            coords[coords.index(u_coords) : coords.index(v_coords)]
+        )
+    except TypeError:
+        # type error means that data_u or data_v cannot be created,
+        # which means that the road is a one-way road
+        # thus, skip the type error
+        return None
+
+    return edge_uv
+
+
+def simplify_graph(graph_original: nx.DiGraph) -> nx.DiGraph:
+    """
+    Simplify the graph by removing nodes that have only two neighborsand are actually the same
+    street.
+    The function merges the edges into a single edge.
+
+    Parameters:
+    ----------------
+    graph_original (networkx.DiGraph): the graph to simplify
+
+    Returns:
+    ----------------
+    networkx.DiGraph: the simplified graph
+    """
+    graph = graph_original.copy()
     previous_nodes = 0
-    while previous_nodes != len(G.nodes):
-        logging.info(f"New cycle: current_nodes={len(G.nodes)}")
-        previous_nodes = len(G.nodes)
-        for node in G.copy().nodes:
+    while previous_nodes != len(graph.nodes):
+        logging.info("New cycle: current_nodes=%d", len(graph.nodes))
+        previous_nodes = len(graph.nodes)
+        for node in graph.copy().nodes:
             # define neighborus as list of predecessors and successors
-            neighbours = list(G.predecessors(node)) + list(G.successors(node))
+            neighbours = list(graph.predecessors(node)) + list(graph.successors(node))
             if (
                 len(neighbours) != 2
-                or G.in_degree(node) != G.out_degree(node)
-                or G.in_degree(node) > 2
+                or graph.in_degree(node) != graph.out_degree(node)
+                or graph.in_degree(node) > 2
             ):
                 continue
             u, v = neighbours
-            if G.has_edge(u, v):
+            if graph.has_edge(u, v):
                 continue
-            # print(f"Node {node} has {len(neighbours)} neighbours and in_degree={G.in_degree(node)} out_degree={G.out_degree(node)}")
-            edge_uv = None
-            edge_vu = None
-            try:
-                data_u = G.get_edge_data(u, node)[0]
-                data_v = G.get_edge_data(node, v)[0]
-                string1 = (
-                    " ".join(data_u["name"])
-                    if isinstance(data_u["name"], list)
-                    else data_u["name"]
-                )
-                string2 = (
-                    " ".join(data_v["name"])
-                    if isinstance(data_v["name"], list)
-                    else data_v["name"]
-                )
-                if string1 in string2 or string2 in string1:
-                    edge_uv = data_u
-                    # set length as the sum
-                    edge_uv["length"] = data_u["length"] + data_v["length"]
-                    if "lanes" in edge_uv:
-                        if "lanes" in data_v:
-                            edge_uv["lanes"] = max(data_u["lanes"], data_v["lanes"])
-                    else:
-                        edge_uv["lanes"] = 1
-                    # merge also linestrings
-                    edge_uv["geometry"] = data_u["geometry"].union(data_v["geometry"])
-                # else:
-                # print(f"Edges {u} -> {node} and {node} -> {v} have different names: {data_u['name']} and {data_v['name']}")
-            except Exception as e:
-                logging.warning(f"Error while merging edges {data_u} and {data_v}: {e}")
-            try:
-                data_u = G.get_edge_data(node, u)[0]
-                data_v = G.get_edge_data(v, node)[0]
-                if not "name" in data_u:
-                    data_u["name"] = ""
-                if not "name" in data_v:
-                    data_v["name"] = ""
-                string1 = (
-                    " ".join(data_u["name"])
-                    if isinstance(data_u["name"], list)
-                    else data_u["name"]
-                )
-                string2 = (
-                    " ".join(data_v["name"])
-                    if isinstance(data_v["name"], list)
-                    else data_v["name"]
-                )
-                if string1 in string2 or string2 in string1:
-                    edge_vu = data_u
-                    # set length as the sum
-                    edge_vu["length"] = data_u["length"] + data_v["length"]
-                    # if it has lane attribute, use max, else 1
-                    if "lanes" in edge_vu:
-                        if "lanes" in data_v:
-                            edge_vu["lanes"] = max(data_u["lanes"], data_v["lanes"])
-                    else:
-                        edge_vu["lanes"] = 1
-                    # merge also linestrings
-                    edge_vu["geometry"] = data_u["geometry"].union(data_v["geometry"])
-                # else:
-                #     print(f"Edges {v} -> {node} and {node} -> {u} have different names: {data_u['name']} and {data_v['name']}")
-            except Exception as e:
-                logging.warning(f"Error while merging edges {data_u} and {data_v}: {e}")
+            edge_uv = merge_edges(graph, u, v, node)
+            edge_vu = merge_edges(graph, v, u, node)
 
             if not (edge_uv is None and edge_vu is None):
                 if edge_uv is not None:
                     # print(f"Edges {u} -> {node} and {node} -> {v} can be merged.")
-                    G.add_edge(
+                    graph.add_edge(
                         u,
                         v,
                         length=edge_uv["length"],
                         name=edge_uv["name"],
                         geometry=edge_uv["geometry"],
                     )
-                    # print(f"Added edge {G.get_edge_data(u, v)}")
+                    # print(f"Added edge {graph.get_edge_data(u, v)}")
                 if edge_vu is not None:
                     # print(f"Edges {v} -> {node} and {node} -> {u} can be merged.")
-                    G.add_edge(
+                    graph.add_edge(
                         v,
                         u,
                         length=edge_vu["length"],
                         name=edge_vu["name"],
                         geometry=edge_vu["geometry"],
                     )
-                    # print(f"Added edge {G.get_edge_data(v, u)}")
-                G.remove_node(node)
+                    # print(f"Added edge {graph.get_edge_data(v, u)}")
+                graph.remove_node(node)
                 # print(f"Removed node {node}")
 
-    # assert that G has not isolated nodes
-    assert list(nx.isolates(G)) == []
-    return G
+    # Remove all nodes that are not in the giant component
+    graph.remove_nodes_from(
+        set(graph.nodes) - max(list(nx.weakly_connected_components(graph)), key=len)
+    )
+    # assert that graph has not isolated nodes
+    assert not list(nx.isolates(graph))
+    return graph
 
 
 if __name__ == "__main__":
@@ -175,16 +206,16 @@ if __name__ == "__main__":
         help="Exclude residential roads from the data",
     )
     parser = parser.parse_args()
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
     # set up colored logging
     logging.addLevelName(
-        logging.INFO, "\033[1;32m%s\033[1;0m" % logging.getLevelName(logging.INFO)
+        logging.INFO, f"\033[1;32m{logging.getLevelName(logging.INFO)}\033[1;0m"
     )
     logging.addLevelName(
-        logging.WARNING, "\033[1;33m%s\033[1;0m" % logging.getLevelName(logging.WARNING)
+        logging.WARNING, f"\033[1;33m{logging.getLevelName(logging.WARNING)}\033[1;0m"
     )
     logging.addLevelName(
-        logging.ERROR, "\033[1;31m%s\033[1;0m" % logging.getLevelName(logging.ERROR)
+        logging.ERROR, f"\033[1;31m{logging.getLevelName(logging.ERROR)}\033[1;0m"
     )
 
     # get the street network for San Cesario sul Panaro
@@ -196,9 +227,12 @@ if __name__ == "__main__":
         lambda x: x[-1] if isinstance(x, list) else x
     )
     if "lanes" not in gdf_edges.columns:
-        gdf_edges["lanes"] = None
+        gdf_edges["lanes"] = 1
     gdf_edges["lanes"] = gdf_edges["lanes"].apply(
-        lambda x: max(x) if isinstance(x, list) else 1 if x is None else x
+        lambda x: max(x) if isinstance(x, list) else 1 if pd.isna(x) else x
+    )
+    gdf_edges["name"] = gdf_edges["name"].apply(
+        lambda x: " ".join(x) if isinstance(x, list) else " " if pd.isna(x) else x
     )
     # gdf_edges = gdf_edges[~gdf_edges["access"].isin(["no", "private"])]
 
