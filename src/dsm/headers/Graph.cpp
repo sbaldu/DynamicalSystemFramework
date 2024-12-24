@@ -470,7 +470,10 @@ namespace dsm {
   void Graph::addStreet(std::unique_ptr<Street> street) {
     if (m_streets.contains(street->id())) {
       throw std::invalid_argument(
-          buildLog(std::format("Street with id {} already exists.", street->id())));
+          buildLog(std::format("Street with id {} from {} to {} already exists.",
+                               street->id(),
+                               street->nodePair().first,
+                               street->nodePair().second)));
     }
     // emplace nodes
     const auto srcId{street->nodePair().first};
@@ -488,7 +491,10 @@ namespace dsm {
   void Graph::addStreet(const Street& street) {
     if (m_streets.contains(street.id())) {
       throw std::invalid_argument(
-          buildLog(std::format("Street with id {} already exists.", street.id())));
+          buildLog(std::format("Street with id {} from {} to {} already exists.",
+                               street.id(),
+                               street.nodePair().first,
+                               street.nodePair().second)));
     }
     // emplace nodes
     const auto srcId{street.nodePair().first};
