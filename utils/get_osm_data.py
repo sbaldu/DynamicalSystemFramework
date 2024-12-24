@@ -273,6 +273,7 @@ if __name__ == "__main__":
     fig.set_size_inches(16, 9)
     plt.savefig("final_graph.png")
 
+    gdf_nodes, gdf_edges = ox.graph_to_gdfs(G)
     # notice that osmnid is the index of the gdf_nodes DataFrame, so take it as a column
     gdf_nodes.reset_index(inplace=True)
     gdf_edges.reset_index(inplace=True)
