@@ -181,8 +181,8 @@ def simplify_graph(graph_original: nx.DiGraph) -> nx.DiGraph:
     graph.remove_nodes_from(
         set(graph.nodes) - max(list(nx.weakly_connected_components(graph)), key=len)
     )
-    # assert that graph has not isolated nodes
-    assert not list(nx.isolates(graph))
+    # remove all self-loops
+    graph.remove_edges_from(list(nx.selfloop_edges(graph)))
     return graph
 
 
@@ -220,7 +220,9 @@ if __name__ == "__main__":
 
     # get the street network for San Cesario sul Panaro
     G_ALL = ox.graph_from_place(parser.place, network_type="drive")
-    print(f"Graph created with {len(G_ALL.nodes)} nodes and {len(G_ALL.edges)} edges.")
+    logging.info(
+        "Graph created with %d nodes and %d edges.", len(G_ALL.nodes), len(G_ALL.edges)
+    )
 
     gdf_nodes, gdf_edges = ox.graph_to_gdfs(G_ALL)
     gdf_edges["highway"] = gdf_edges["highway"].apply(
@@ -247,11 +249,19 @@ if __name__ == "__main__":
     # rebuild the graph
     G = ox.graph_from_gdfs(gdf_nodes, gdf_edges)
     G.remove_nodes_from(list(nx.isolates(G)))
-    print(f"Graph filtered: now it has {len(G.nodes)} nodes and {len(G.edges)} edges.")
-    G = simplify_graph(G)
-    print(
-        f"Graph simplified: now it has {len(G.nodes)} nodes and {len(G.edges)} edges."
+    logging.info(
+        "Graph filtered: now it has %d nodes and %d edges.", len(G.nodes), len(G.edges)
     )
+    G = simplify_graph(G)
+    logging.info(
+        "Graph simplified: now it has %d nodes and %d edges.",
+        len(G.nodes),
+        len(G.edges),
+    )
+    # assert that graph has not isolated nodes
+    assert not list(nx.isolates(G))
+    # assert that graph has not self-loops
+    assert not list(nx.selfloop_edges(G))
 
     fig, ax = ox.plot_graph(
         G_ALL,
