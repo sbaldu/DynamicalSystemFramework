@@ -415,7 +415,7 @@ namespace dsm {
     for (const auto& [id, node] : m_nodes) {
       file << id << ';';
       if (node->coords().has_value()) {
-        file << node->coords().value().first << ';' << node->coords().value().second;
+        file << node->coords().value().second << ';' << node->coords().value().first;
       } else {
         file << "Nan;Nan";
       }
