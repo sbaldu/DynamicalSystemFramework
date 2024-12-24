@@ -305,8 +305,8 @@ namespace dsm {
         std::string id, lat, lon, highway;
         // osmid;x;y;highway
         std::getline(iss, id, ';');
-        std::getline(iss, lat, ';');
         std::getline(iss, lon, ';');
+        std::getline(iss, lat, ';');
         std::getline(iss, highway, ';');
         auto const nodeId{static_cast<Id>(std::stoul(id))};
         if (highway.find("traffic_signals") != std::string::npos) {
@@ -415,7 +415,7 @@ namespace dsm {
     for (const auto& [id, node] : m_nodes) {
       file << id << ';';
       if (node->coords().has_value()) {
-        file << node->coords().value().second << ';' << node->coords().value().first;
+        file << node->coords().value().first << ';' << node->coords().value().second;
       } else {
         file << "Nan;Nan";
       }
