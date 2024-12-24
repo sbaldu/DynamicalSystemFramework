@@ -183,6 +183,30 @@ def simplify_graph(graph_original: nx.DiGraph) -> nx.DiGraph:
     )
     # remove all self-loops
     graph.remove_edges_from(list(nx.selfloop_edges(graph)))
+    # check if there are edges with same u and v. If true, keep only the one with the bigger lanes
+    edges_to_remove = []
+    seen_edges = {}
+
+    for u, v, data in graph.edges(data=True):
+        lanes = data.get("lanes", 0)
+
+        if (u, v) not in seen_edges:
+            seen_edges[(u, v)] = (lanes, None)  # Store first edge and its lanes count
+        else:
+            existing_lanes, existing_edge = seen_edges[(u, v)]
+
+            if lanes > existing_lanes:
+                edges_to_remove.append(
+                    existing_edge
+                )  # Remove the previous edge if the current one has more lanes
+                seen_edges[(u, v)] = (lanes, (u, v))  # Update to keep current edge
+            else:
+                edges_to_remove.append(
+                    (u, v)
+                )  # Remove the current edge if it has fewer 'lanes'
+
+    graph.remove_edges_from(edges_to_remove)
+
     return graph
 
 
@@ -287,6 +311,9 @@ if __name__ == "__main__":
     # notice that osmnid is the index of the gdf_nodes DataFrame, so take it as a column
     gdf_nodes.reset_index(inplace=True)
     gdf_edges.reset_index(inplace=True)
+
+    # assert that there are no edges with the same u and v
+    assert not gdf_edges.duplicated(subset=["u", "v"]).any()
     # Prepare node dataframe
     gdf_nodes = gdf_nodes[["osmid", "x", "y", "highway"]]
     # Prepare edge dataframe
