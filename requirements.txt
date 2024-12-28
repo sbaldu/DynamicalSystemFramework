@@ -9,3 +9,4 @@ Pillow
 seaborn
 tqdm
 opencv-python
+shapely
